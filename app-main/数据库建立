@@ -1,0 +1,17 @@
+CREATE DATABASE my_database;
+
+USE my_database;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    lastLogin DATETIME,
+    gender VARCHAR(10),
+    age INT,
+    height FLOAT,
+    weight FLOAT,
+    bmi FLOAT,
+    fitnessGoal VARCHAR(255),
+    exerciseType VARCHAR(255)
+);
