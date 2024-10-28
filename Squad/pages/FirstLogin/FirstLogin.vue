@@ -105,7 +105,7 @@
       <view class="spacing"></view>
       <view class="button-group">
         <button class="button secret" @click="nextStep">保密</button>
-        <button class="button confirm" @click="nextStep">确定</button>
+        <button class="button confirm" @click="submitFitnessGoal">确定</button>
       </view>
       <view class="spacing"></view>
       <view class="skip-container">
@@ -141,7 +141,7 @@
       <view class="spacing"></view>
       <view class="button-group">
         <button class="button secret" @click="submitForm">保密</button>
-        <button class="button confirm" @click="submitForm">确定</button>
+        <button class="button confirm" @click="submitExerciseType">确定</button>
       </view>
       <view class="spacing"></view>
       <view class="skip-container">
@@ -169,19 +169,19 @@ const form = ref({
 });
 
 const goalOptions = [
-  { value: "weight_loss", name: "减脂", checked: false },
-  { value: "muscle_gain", name: "增肌", checked: false },
-  { value: "endurance", name: "耐力", checked: false },
-  { value: "flexibility", name: "柔韧性", checked: false },
-  { value: "general_fitness", name: "综合健身", checked: false },
+  { value: "减脂", name: "减脂", checked: false },
+  { value: "增肌", name: "增肌", checked: false },
+  { value: "耐力", name: "耐力", checked: false },
+  { value: "柔韧性", name: "柔韧性", checked: false },
+  { value: "综合健身", name: "综合健身", checked: false },
 ];
 
 const sportTypeOptions = [
-  { value: "running", text: "跑步", checked: false },
-  { value: "swimming", text: "游泳", checked: false },
-  { value: "weightlifting", text: "举重", checked: false },
-  { value: "yoga", text: "瑜伽", checked: false },
-  { value: "basketball", text: "篮球", checked: false },
+  { value: "跑步", text: "跑步", checked: false },
+  { value: "游泳", text: "游泳", checked: false },
+  { value: "撸铁", text: "撸铁", checked: false },
+  { value: "瑜伽", text: "瑜伽", checked: false },
+  { value: "篮球", text: "篮球", checked: false },
 ];
 
 const nextStep = () => {
@@ -302,22 +302,21 @@ const submitFitnessGoal = () => {
     return;
   }
 
-  console.log("提交运动目标", selectedGoals);
+  console.log("提交运动目标", selectedGoals.join(','));
 
   uni.request({
-    url: 'http://192.168.56.1:3000/updateFitnessGoal', // 后端 API 地址
+    url: 'http://192.168.56.1:3000/updateFitnessGoal', 
     method: 'POST',
     data: {
-      fitnessGoal: selectedGoals,
+      fitnessGoal: selectedGoals.join(','),// 将数组转换为字符串，使用逗号分隔
     },
     header: {
-      'Content-Type': 'application/json', // 设置请求头
-      // 可以添加JWT或其他认证信息
-      // 'Authorization': `Bearer ${yourToken}`
+      'Content-Type': 'application/json',
+      // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
     },
     success: (res) => {
       console.log('运动目标更新成功', res);
-      if (res.statusCode === 200) { // 修改为 200
+      if (res.statusCode === 200) {
         uni.showToast({
           title: "更新成功",
           icon: "success",
@@ -337,6 +336,9 @@ const submitFitnessGoal = () => {
       });
     }
   });
+  if (step.value < 4) {
+    step.value++;
+  }
 };
 // 更新运动方式
 const submitExerciseType = () => {
@@ -350,17 +352,21 @@ const submitExerciseType = () => {
     return;
   }
 
-  console.log("提交运动方式", selectedTypes);
+  console.log("提交运动方式", selectedTypes.join(','));
 
   uni.request({
     url: 'http://192.168.56.1:3000/updateExerciseType',
     method: 'POST',
     data: {
-      exerciseType: selectedTypes,
+      exerciseType: selectedTypes.join(','),
     },
+	header: {
+	  'Content-Type': 'application/json',
+	  // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
+	},
     success: (res) => {
       console.log('运动方式更新成功', res);
-      if (res.statusCode === 201) {
+      if (res.statusCode === 200) {
         uni.showToast({
           title: "更新成功",
           icon: "success",
@@ -380,6 +386,9 @@ const submitExerciseType = () => {
       });
     }
   });
+  if (step.value < 4) {
+    step.value++;
+  }
 };
 
 </script>

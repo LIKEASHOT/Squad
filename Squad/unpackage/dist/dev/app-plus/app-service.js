@@ -3026,18 +3026,18 @@ if (uni.restoreGlobal) {
         sportTypes: []
       });
       const goalOptions = [
-        { value: "weight_loss", name: "减脂", checked: false },
-        { value: "muscle_gain", name: "增肌", checked: false },
-        { value: "endurance", name: "耐力", checked: false },
-        { value: "flexibility", name: "柔韧性", checked: false },
-        { value: "general_fitness", name: "综合健身", checked: false }
+        { value: "减脂", name: "减脂", checked: false },
+        { value: "增肌", name: "增肌", checked: false },
+        { value: "耐力", name: "耐力", checked: false },
+        { value: "柔韧性", name: "柔韧性", checked: false },
+        { value: "综合健身", name: "综合健身", checked: false }
       ];
       const sportTypeOptions = [
-        { value: "running", text: "跑步", checked: false },
-        { value: "swimming", text: "游泳", checked: false },
-        { value: "weightlifting", text: "举重", checked: false },
-        { value: "yoga", text: "瑜伽", checked: false },
-        { value: "basketball", text: "篮球", checked: false }
+        { value: "跑步", text: "跑步", checked: false },
+        { value: "游泳", text: "游泳", checked: false },
+        { value: "撸铁", text: "撸铁", checked: false },
+        { value: "瑜伽", text: "瑜伽", checked: false },
+        { value: "篮球", text: "篮球", checked: false }
       ];
       const nextStep = () => {
         if (step.value < 4) {
@@ -3150,22 +3150,20 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:305", "提交运动目标", selectedGoals);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:305", "提交运动目标", selectedGoals.join(","));
         uni.request({
           url: "http://192.168.56.1:3000/updateFitnessGoal",
-          // 后端 API 地址
           method: "POST",
           data: {
-            fitnessGoal: selectedGoals
+            fitnessGoal: selectedGoals.join(",")
+            // 将数组转换为字符串，使用逗号分隔
           },
           header: {
             "Content-Type": "application/json"
-            // 设置请求头
-            // 可以添加JWT或其他认证信息
-            // 'Authorization': `Bearer ${yourToken}`
+            // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:319", "运动目标更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:318", "运动目标更新成功", res);
             if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
@@ -3179,13 +3177,16 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:333", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:332", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
+        if (step.value < 4) {
+          step.value++;
+        }
       };
       const submitExerciseType = () => {
         const selectedTypes = sportTypeOptions.filter((option) => option.checked).map((option) => option.value);
@@ -3196,16 +3197,20 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:353", "提交运动方式", selectedTypes);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:355", "提交运动方式", selectedTypes.join(","));
         uni.request({
           url: "http://192.168.56.1:3000/updateExerciseType",
           method: "POST",
           data: {
-            exerciseType: selectedTypes
+            exerciseType: selectedTypes.join(",")
+          },
+          header: {
+            "Content-Type": "application/json"
+            // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:362", "运动方式更新成功", res);
-            if (res.statusCode === 201) {
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:368", "运动方式更新成功", res);
+            if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
                 icon: "success"
@@ -3218,13 +3223,16 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:376", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:382", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
+        if (step.value < 4) {
+          step.value++;
+        }
       };
       const __returned__ = { logo, step, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -3424,7 +3432,7 @@ if (uni.restoreGlobal) {
           }, "保密"),
           vue.createElementVNode("button", {
             class: "button confirm",
-            onClick: $setup.nextStep
+            onClick: $setup.submitFitnessGoal
           }, "确定")
         ]),
         vue.createElementVNode("view", { class: "spacing" }),
@@ -3513,7 +3521,7 @@ if (uni.restoreGlobal) {
           }, "保密"),
           vue.createElementVNode("button", {
             class: "button confirm",
-            onClick: _cache[10] || (_cache[10] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
+            onClick: $setup.submitExerciseType
           }, "确定")
         ]),
         vue.createElementVNode("view", { class: "spacing" }),
@@ -3521,7 +3529,7 @@ if (uni.restoreGlobal) {
           vue.createElementVNode("button", {
             plain: "true",
             class: "skip-button",
-            onClick: _cache[11] || (_cache[11] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
+            onClick: _cache[10] || (_cache[10] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
           }, " 我有十分丰富的运动经验，可以直接使用→ ")
         ])
       ])) : vue.createCommentVNode("v-if", true)
