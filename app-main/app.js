@@ -154,11 +154,11 @@ app.post('/updateHealthInfo', (req, res) => {
 });
 
 // 输入运动目标 API
-app.post('/updateFitnessGoal', authenticateToken, (req, res) => {
+app.post('/updateFitnessGoal', (req, res) => {
   const { fitnessGoal } = req.body;
 
   // 从 JWT 中获取用户名
-  const username = req.user.username; // 假设在登录时已将用户名存储在 JWT 中
+  const username = req.session.username;
 
   // 更新用户的运动目标
   const updateQuery = 'UPDATE users SET fitnessGoal = ? WHERE name = ?';
@@ -172,11 +172,11 @@ app.post('/updateFitnessGoal', authenticateToken, (req, res) => {
 });
 
 // 输入运动方式 API
-app.post('/updateExerciseType', authenticateToken, (req, res) => {
+app.post('/updateExerciseType', (req, res) => {
   const { exerciseType } = req.body;
 
   // 从 JWT 中获取用户名
-  const username = req.user.username; // 假设在登录时已将用户名存储在 JWT 中
+  const username = req.session.username;
 
   // 更新用户的运动方式
   const updateQuery = 'UPDATE users SET exerciseType = ? WHERE name = ?';
@@ -189,7 +189,7 @@ app.post('/updateExerciseType', authenticateToken, (req, res) => {
 });
 
 // 查询上一次登录时间 API
-app.get('/last-login', authenticateToken, (req, res) => {
+app.get('/last-login',  (req, res) => {
   // 从 JWT 中获取用户名
   const username = req.user.username;
 
