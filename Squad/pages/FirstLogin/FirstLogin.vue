@@ -37,7 +37,7 @@
       <view class="spacing"></view>
       <view class="button-group">
         <button class="button secret" @click="nextStep">保密</button>
-        <button class="button confirm" @click="nextStep">确定</button>
+        <button class="button confirm" @click="submitHealthInfo">确定</button>
         <view class="spacing"></view>
         <view class="skip-container">
           <button plain="true" class="skip-button" @click="submitForm">
@@ -169,7 +169,7 @@ const form = ref({
 });
 
 const goalOptions = [
-  { value: "weight_loss", name: "减肥", checked: false },
+  { value: "weight_loss", name: "减脂", checked: false },
   { value: "muscle_gain", name: "增肌", checked: false },
   { value: "endurance", name: "耐力", checked: false },
   { value: "flexibility", name: "柔韧性", checked: false },
@@ -194,9 +194,180 @@ const prevStep = () => {
     step.value--;
   }
 };
-const submitForm = () => {
-  console.log("表单提交", form.value);
+//更新身高体重
+const submitHealthInfo = () => {
+  if (!form.value.height || !form.value.weight) {
+    uni.showToast({
+      title: "请输入身高和体重",
+      icon: "none",
+    });
+    return;
+  }
+
+  console.log("提交身高和体重", form.value);
+
+  uni.request({
+    url: 'http://192.168.56.1:3000/updateHealthInfo', // 后端 API 地址
+    method: 'POST',
+    data: {
+      height: form.value.height,
+      weight: form.value.weight,
+    },
+    success: (res) => {
+      console.log('身高体重更新成功', res);
+      if (res.statusCode === 200) {
+        uni.showToast({
+          title: `更新成功，BMI: ${res.data.bmi}`,
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: res.data.error || '更新失败',
+          icon: 'none',
+        });
+      }
+    },
+    fail: (err) => {
+      console.error('请求失败：', err);
+      uni.showToast({
+        title: '网络请求失败',
+        icon: 'none',
+      });
+    }
+  });
+  if (step.value < 4) {
+    step.value++;
+  }
 };
+//更新性别年龄
+const submitGenderAge = () => {
+  if (!form.value.gender || !form.value.age) {
+    uni.showToast({
+      title: "请输入性别和年龄",
+      icon: "none",
+    });
+    return;
+  }
+  
+  console.log("提交性别和年龄", form.value);
+
+  uni.request({
+    url: 'http://192.168.56.1:3000/updateGenderAge', // 后端 API 地址
+    method: 'POST',
+    data: {
+      gender: form.value.gender,
+      age: form.value.age,
+    },
+    success: (res) => {
+      console.log('性别和年龄更新成功', res);
+      if (res.statusCode === 201) {
+        uni.showToast({
+          title: "更新成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: res.data.error || '更新失败',
+          icon: 'none',
+        });
+      }
+    },
+    fail: (err) => {
+      console.error('请求失败：', err);
+      uni.showToast({
+        title: '网络请求失败',
+        icon: 'none',
+      });
+    }
+  });
+};
+//更新运动目标
+const submitFitnessGoal = () => {
+  const selectedGoals = goalOptions.filter(option => option.checked).map(option => option.value);
+
+  if (selectedGoals.length === 0) {
+    uni.showToast({
+      title: "请选择至少一个运动目标",
+      icon: "none",
+    });
+    return;
+  }
+
+  console.log("提交运动目标", selectedGoals);
+
+  uni.request({
+    url: 'http://192.168.56.1:3000/updateFitnessGoal',
+    method: 'POST',
+    data: {
+      fitnessGoal: selectedGoals,
+    },
+    success: (res) => {
+      console.log('运动目标更新成功', res);
+      if (res.statusCode === 201) {
+        uni.showToast({
+          title: "更新成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: res.data.error || '更新失败',
+          icon: 'none',
+        });
+      }
+    },
+    fail: (err) => {
+      console.error('请求失败：', err);
+      uni.showToast({
+        title: '网络请求失败',
+        icon: 'none',
+      });
+    }
+  });
+};
+// 更新运动方式
+const submitExerciseType = () => {
+  const selectedTypes = sportTypeOptions.filter(option => option.checked).map(option => option.value);
+
+  if (selectedTypes.length === 0) {
+    uni.showToast({
+      title: "请选择至少一种运动方式",
+      icon: "none",
+    });
+    return;
+  }
+
+  console.log("提交运动方式", selectedTypes);
+
+  uni.request({
+    url: 'http://192.168.56.1:3000/updateExerciseType',
+    method: 'POST',
+    data: {
+      exerciseType: selectedTypes,
+    },
+    success: (res) => {
+      console.log('运动方式更新成功', res);
+      if (res.statusCode === 201) {
+        uni.showToast({
+          title: "更新成功",
+          icon: "success",
+        });
+      } else {
+        uni.showToast({
+          title: res.data.error || '更新失败',
+          icon: 'none',
+        });
+      }
+    },
+    fail: (err) => {
+      console.error('请求失败：', err);
+      uni.showToast({
+        title: '网络请求失败',
+        icon: 'none',
+      });
+    }
+  });
+};
+
 </script>
 
 <style lang="scss" scoped>
