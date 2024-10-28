@@ -3067,7 +3067,7 @@ if (uni.restoreGlobal) {
             weight: form.value.weight
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:217", "身高体重更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:218", "身高体重更新成功", res);
             if (res.statusCode === 200) {
               uni.showToast({
                 title: `更新成功，BMI: ${res.data.bmi}`,
@@ -3081,7 +3081,7 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:231", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:232", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
@@ -3100,7 +3100,7 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:252", "提交性别和年龄", form.value);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:253", "提交性别和年龄", form.value);
         uni.request({
           url: "http://192.168.56.1:3000/updateGenderAge",
           // 后端 API 地址
@@ -3109,9 +3109,15 @@ if (uni.restoreGlobal) {
             gender: form.value.gender,
             age: form.value.age
           },
+          header: {
+            "Content-Type": "application/json"
+            // 设置请求头
+            // 这里可以添加认证信息，例如 JWT
+            // 'Authorization': `Bearer ${yourToken}`
+          },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:262", "性别和年龄更新成功", res);
-            if (res.statusCode === 201) {
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:268", "性别和年龄更新成功", res);
+            if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
                 icon: "success"
@@ -3124,13 +3130,16 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:276", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:282", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
+        if (step.value < 4) {
+          step.value++;
+        }
       };
       const submitFitnessGoal = () => {
         const selectedGoals = goalOptions.filter((option) => option.checked).map((option) => option.value);
@@ -3141,16 +3150,23 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:296", "提交运动目标", selectedGoals);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:305", "提交运动目标", selectedGoals);
         uni.request({
           url: "http://192.168.56.1:3000/updateFitnessGoal",
+          // 后端 API 地址
           method: "POST",
           data: {
             fitnessGoal: selectedGoals
           },
+          header: {
+            "Content-Type": "application/json"
+            // 设置请求头
+            // 可以添加JWT或其他认证信息
+            // 'Authorization': `Bearer ${yourToken}`
+          },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:305", "运动目标更新成功", res);
-            if (res.statusCode === 201) {
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:319", "运动目标更新成功", res);
+            if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
                 icon: "success"
@@ -3163,7 +3179,7 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:319", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:333", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
@@ -3180,7 +3196,7 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:339", "提交运动方式", selectedTypes);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:353", "提交运动方式", selectedTypes);
         uni.request({
           url: "http://192.168.56.1:3000/updateExerciseType",
           method: "POST",
@@ -3188,7 +3204,7 @@ if (uni.restoreGlobal) {
             exerciseType: selectedTypes
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:348", "运动方式更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:362", "运动方式更新成功", res);
             if (res.statusCode === 201) {
               uni.showToast({
                 title: "更新成功",
@@ -3202,7 +3218,7 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:362", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:376", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
@@ -3253,7 +3269,7 @@ if (uni.restoreGlobal) {
         vue.createVNode(_component_uni_easyinput, {
           modelValue: $setup.form.height,
           "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.height = $event),
-          placeholder: "请输入身高",
+          placeholder: "请输入身高/cm",
           class: "input-field",
           clearable: ""
         }, null, 8, ["modelValue"]),
@@ -3261,7 +3277,7 @@ if (uni.restoreGlobal) {
         vue.createVNode(_component_uni_easyinput, {
           modelValue: $setup.form.weight,
           "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.weight = $event),
-          placeholder: "请输入体重",
+          placeholder: "请输入体重/kg",
           class: "input-field",
           clearable: ""
         }, null, 8, ["modelValue"]),
@@ -3299,7 +3315,7 @@ if (uni.restoreGlobal) {
         vue.createVNode(_component_uni_easyinput, {
           modelValue: $setup.form.gender,
           "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.form.gender = $event),
-          placeholder: "请输入性别",
+          placeholder: "请输入性别(男/女)",
           class: "input-field",
           clearable: ""
         }, null, 8, ["modelValue"]),
@@ -3319,7 +3335,7 @@ if (uni.restoreGlobal) {
           }, "保密"),
           vue.createElementVNode("button", {
             class: "button confirm",
-            onClick: $setup.nextStep
+            onClick: $setup.submitGenderAge
           }, "确定"),
           vue.createElementVNode("view", { class: "spacing" }),
           vue.createElementVNode("view", { class: "skip-container" }, [

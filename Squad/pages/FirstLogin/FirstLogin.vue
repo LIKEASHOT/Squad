@@ -23,14 +23,14 @@
       <view class="spacing"></view>
       <uni-easyinput
         v-model="form.height"
-        placeholder="请输入身高"
+        placeholder="请输入身高/cm"
         class="input-field"
         clearable
       ></uni-easyinput>
       <view class="spacing"></view>
       <uni-easyinput
         v-model="form.weight"
-        placeholder="请输入体重"
+        placeholder="请输入体重/kg"
         class="input-field"
         clearable
       ></uni-easyinput>
@@ -55,7 +55,7 @@
       <view class="spacing"></view>
       <uni-easyinput
         v-model="form.gender"
-        placeholder="请输入性别"
+        placeholder="请输入性别(男/女)"
         class="input-field"
         clearable
       ></uni-easyinput>
@@ -69,7 +69,7 @@
       <view class="spacing"></view>
       <view class="button-group">
         <button class="button secret" @click="nextStep">保密</button>
-        <button class="button confirm" @click="nextStep">确定</button>
+        <button class="button confirm" @click="submitGenderAge">确定</button>
         <view class="spacing"></view>
         <view class="skip-container">
           <button plain="true" class="skip-button" @click="submitForm">
@@ -209,6 +209,7 @@ const submitHealthInfo = () => {
   uni.request({
     url: 'http://192.168.56.1:3000/updateHealthInfo', // 后端 API 地址
     method: 'POST',
+	
     data: {
       height: form.value.height,
       weight: form.value.weight,
@@ -239,7 +240,7 @@ const submitHealthInfo = () => {
     step.value++;
   }
 };
-//更新性别年龄
+// 更新性别年龄
 const submitGenderAge = () => {
   if (!form.value.gender || !form.value.age) {
     uni.showToast({
@@ -248,7 +249,7 @@ const submitGenderAge = () => {
     });
     return;
   }
-  
+
   console.log("提交性别和年龄", form.value);
 
   uni.request({
@@ -258,9 +259,14 @@ const submitGenderAge = () => {
       gender: form.value.gender,
       age: form.value.age,
     },
+    header: {
+      'Content-Type': 'application/json', // 设置请求头
+      // 这里可以添加认证信息，例如 JWT
+      // 'Authorization': `Bearer ${yourToken}`
+    },
     success: (res) => {
       console.log('性别和年龄更新成功', res);
-      if (res.statusCode === 201) {
+      if (res.statusCode === 200) { // 修改为 200
         uni.showToast({
           title: "更新成功",
           icon: "success",
@@ -280,8 +286,11 @@ const submitGenderAge = () => {
       });
     }
   });
+  if (step.value < 4) {
+    step.value++;
+  }
 };
-//更新运动目标
+// 更新运动目标
 const submitFitnessGoal = () => {
   const selectedGoals = goalOptions.filter(option => option.checked).map(option => option.value);
 
@@ -296,14 +305,19 @@ const submitFitnessGoal = () => {
   console.log("提交运动目标", selectedGoals);
 
   uni.request({
-    url: 'http://192.168.56.1:3000/updateFitnessGoal',
+    url: 'http://192.168.56.1:3000/updateFitnessGoal', // 后端 API 地址
     method: 'POST',
     data: {
       fitnessGoal: selectedGoals,
     },
+    header: {
+      'Content-Type': 'application/json', // 设置请求头
+      // 可以添加JWT或其他认证信息
+      // 'Authorization': `Bearer ${yourToken}`
+    },
     success: (res) => {
       console.log('运动目标更新成功', res);
-      if (res.statusCode === 201) {
+      if (res.statusCode === 200) { // 修改为 200
         uni.showToast({
           title: "更新成功",
           icon: "success",
