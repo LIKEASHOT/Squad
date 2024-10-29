@@ -86,7 +86,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
     a: common_vendor.f($data.checkboxItems, (item, index, i0) => {
       return {
-        a: "96d89212-3-" + i0 + "," + ("96d89212-2-" + i0),
+        a: "7fc77965-3-" + i0 + "," + ("7fc77965-2-" + i0),
         b: common_vendor.p({
           checked: item.checked,
           value: item.value,
@@ -95,9 +95,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           borderRadius: "8rpx"
         }),
         c: common_vendor.t(item.name),
-        d: "96d89212-2-" + i0 + "," + ("96d89212-1-" + i0),
+        d: "7fc77965-2-" + i0 + "," + ("7fc77965-1-" + i0),
         e: index,
-        f: "96d89212-1-" + i0 + ",96d89212-0"
+        f: "7fc77965-1-" + i0 + ",7fc77965-0"
       };
     }),
     b: common_vendor.f($data.items, (item, k0, i0) => {

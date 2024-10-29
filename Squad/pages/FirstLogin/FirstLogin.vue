@@ -1,19 +1,31 @@
 <template>
   <view class="container">
     <!-- 返回按钮 -->
-    <img
+    <!-- <img
       v-if="step > 1"
-      src="/static/back/返回 (2).png"
+      src="@/static/back/返回 (2).png"
       alt="返回"
       class="back-icon"
       @click="prevStep"
-    />
-    <!-- 上半部分: 浅灰背景 -->
-    <view class="upper-section">
+    /> -->
+        <view class="upper-section">
+      <image
+        v-if="step > 1"
+        src="../../static/back/返回 (2).png"
+        class="return-button"
+        @click="prevStep"
+      ></image>
       <image :src="logo" class="logo"></image>
       <text class="welcome-title">欢迎来到</text>
       <text class="app-name">Squad</text>
     </view>
+	<!-- <image v-if="step>1" src="../../static/back/返回 (2).png" class="back-icon" @click="prevStep"></image>
+    上半部分: 浅灰背景 -->
+    <!-- <view class="upper-section">
+      <image :src="logo" class="logo"></image>
+      <text class="welcome-title">欢迎来到</text>
+      <text class="app-name">Squad</text>
+    </view> -->
 
     <!-- Step 1: 输入身高与体重 -->
     <view class="lower-section" v-if="step === 1">
@@ -39,11 +51,6 @@
         <button class="button secret" @click="nextStep">保密</button>
         <button class="button confirm" @click="submitHealthInfo">确定</button>
         <view class="spacing"></view>
-        <view class="skip-container">
-          <button plain="true" class="skip-button" @click="submitForm">
-            我有十分丰富的运动经验，可以直接使用→
-          </button>
-        </view>
       </view>
     </view>
 
@@ -71,11 +78,6 @@
         <button class="button secret" @click="nextStep">保密</button>
         <button class="button confirm" @click="submitGenderAge">确定</button>
         <view class="spacing"></view>
-        <view class="skip-container">
-          <button plain="true" class="skip-button" @click="submitForm">
-            我有十分丰富的运动经验，可以直接使用→
-          </button>
-        </view>
       </view>
     </view>
 
@@ -108,11 +110,6 @@
         <button class="button confirm" @click="submitFitnessGoal">确定</button>
       </view>
       <view class="spacing"></view>
-      <view class="skip-container">
-        <button plain="true" class="skip-button" @click="submitForm">
-          我有十分丰富的运动经验，可以直接使用→
-        </button>
-      </view>
     </view>
 
     <!-- Step 4: 选择运动类型 -->
@@ -144,21 +141,21 @@
         <button class="button confirm" @click="submitExerciseType">确定</button>
       </view>
       <view class="spacing"></view>
-      <view class="skip-container">
-        <button plain="true" class="skip-button" @click="submitForm">
-          我有十分丰富的运动经验，可以直接使用→
-        </button>
-      </view>
+    </view>
+    <view class="skip-container">
+      <button plain="true" class="skip-button" @click="submitForm">
+        我有十分丰富的运动经验，可以直接使用→
+      </button>
     </view>
   </view>
 </template>
 
 <script setup>
 import { ref } from "vue";
-
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const logo = "/static/Squad1.png";
 const step = ref(1);
-
+const username = uni.getStorageSync("username");
 const form = ref({
   height: "",
   weight: "",
@@ -204,18 +201,20 @@ const submitHealthInfo = () => {
     return;
   }
 
+  console.log("用户名", username);
   console.log("提交身高和体重", form.value);
-
   uni.request({
-    url: 'http://192.168.56.1:3000/updateHealthInfo', // 后端 API 地址
-    method: 'POST',
-	
+    url: serverUrl + "/updateHealthInfo",
+    method: "POST",
+
     data: {
       height: form.value.height,
       weight: form.value.weight,
+      username: username,
     },
+
     success: (res) => {
-      console.log('身高体重更新成功', res);
+      console.log("身高体重更新成功", res);
       if (res.statusCode === 200) {
         uni.showToast({
           title: `更新成功，BMI: ${res.data.bmi}`,
@@ -223,22 +222,22 @@ const submitHealthInfo = () => {
         });
       } else {
         uni.showToast({
-          title: res.data.error || '更新失败',
-          icon: 'none',
+          title: res.data.error || "更新失败",
+          icon: "none",
         });
+      }
+      if (step.value < 4) {
+        step.value++;
       }
     },
     fail: (err) => {
-      console.error('请求失败：', err);
+      console.error("请求失败：", err);
       uni.showToast({
-        title: '网络请求失败',
-        icon: 'none',
+        title: "网络请求失败",
+        icon: "none",
       });
-    }
+    },
   });
-  if (step.value < 4) {
-    step.value++;
-  }
 };
 // 更新性别年龄
 const submitGenderAge = () => {
@@ -253,46 +252,48 @@ const submitGenderAge = () => {
   console.log("提交性别和年龄", form.value);
 
   uni.request({
-    url: 'http://192.168.56.1:3000/updateGenderAge', // 后端 API 地址
-    method: 'POST',
+    url: serverUrl + "/updateGenderAge",
+    method: "POST",
     data: {
       gender: form.value.gender,
       age: form.value.age,
+      username: username,
     },
     header: {
-      'Content-Type': 'application/json', // 设置请求头
+      "Content-Type": "application/json", // 设置请求头
       // 这里可以添加认证信息，例如 JWT
       // 'Authorization': `Bearer ${yourToken}`
     },
     success: (res) => {
-      console.log('性别和年龄更新成功', res);
-      if (res.statusCode === 200) { // 修改为 200
+      console.log("性别和年龄更新成功", res);
+      if (res.statusCode === 200) {
+        // 修改为 200
         uni.showToast({
           title: "更新成功",
           icon: "success",
         });
       } else {
         uni.showToast({
-          title: res.data.error || '更新失败',
-          icon: 'none',
+          title: res.data.error || "更新失败",
+          icon: "none",
         });
+      }
+      if (step.value < 4) {
+        step.value++;
       }
     },
     fail: (err) => {
-      console.error('请求失败：', err);
+      console.error("请求失败：", err);
       uni.showToast({
-        title: '网络请求失败',
-        icon: 'none',
+        title: "网络请求失败",
+        icon: "none",
       });
-    }
+    },
   });
-  if (step.value < 4) {
-    step.value++;
-  }
 };
 // 更新运动目标
 const submitFitnessGoal = () => {
-  const selectedGoals = goalOptions.filter(option => option.checked).map(option => option.value);
+  const selectedGoals = form.value.goals;
 
   if (selectedGoals.length === 0) {
     uni.showToast({
@@ -302,20 +303,21 @@ const submitFitnessGoal = () => {
     return;
   }
 
-  console.log("提交运动目标", selectedGoals.join(','));
+  console.log("提交运动目标", selectedGoals.join(","));
 
   uni.request({
-    url: 'http://192.168.56.1:3000/updateFitnessGoal', 
-    method: 'POST',
+    url: serverUrl + "/updateFitnessGoal",
+    method: "POST",
     data: {
-      fitnessGoal: selectedGoals.join(','),// 将数组转换为字符串，使用逗号分隔
+      fitnessGoal: selectedGoals.join(","), // 将数组转换为字符串，使用逗号分隔
+      username: username,
     },
     header: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
     },
     success: (res) => {
-      console.log('运动目标更新成功', res);
+      console.log("运动目标更新成功", res);
       if (res.statusCode === 200) {
         uni.showToast({
           title: "更新成功",
@@ -323,26 +325,26 @@ const submitFitnessGoal = () => {
         });
       } else {
         uni.showToast({
-          title: res.data.error || '更新失败',
-          icon: 'none',
+          title: res.data.error || "更新失败",
+          icon: "none",
         });
+      }
+      if (step.value < 4) {
+        step.value++;
       }
     },
     fail: (err) => {
-      console.error('请求失败：', err);
+      console.error("请求失败：", err);
       uni.showToast({
-        title: '网络请求失败',
-        icon: 'none',
+        title: "网络请求失败",
+        icon: "none",
       });
-    }
+    },
   });
-  if (step.value < 4) {
-    step.value++;
-  }
 };
 // 更新运动方式
 const submitExerciseType = () => {
-  const selectedTypes = sportTypeOptions.filter(option => option.checked).map(option => option.value);
+  const selectedTypes = form.value.sportTypes;
 
   if (selectedTypes.length === 0) {
     uni.showToast({
@@ -352,20 +354,21 @@ const submitExerciseType = () => {
     return;
   }
 
-  console.log("提交运动方式", selectedTypes.join(','));
+  console.log("提交运动方式", selectedTypes.join(","));
 
   uni.request({
-    url: 'http://192.168.56.1:3000/updateExerciseType',
-    method: 'POST',
+    url: serverUrl + "/updateExerciseType",
+    method: "POST",
     data: {
-      exerciseType: selectedTypes.join(','),
+      exerciseType: selectedTypes.join(","),
+      username: username,
     },
-	header: {
-	  'Content-Type': 'application/json',
-	  // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
-	},
+    header: {
+      "Content-Type": "application/json",
+      // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
+    },
     success: (res) => {
-      console.log('运动方式更新成功', res);
+      console.log("运动方式更新成功", res);
       if (res.statusCode === 200) {
         uni.showToast({
           title: "更新成功",
@@ -373,31 +376,40 @@ const submitExerciseType = () => {
         });
       } else {
         uni.showToast({
-          title: res.data.error || '更新失败',
-          icon: 'none',
+          title: res.data.error || "更新失败",
+          icon: "none",
         });
+      }
+      if (step.value < 4) {
+        step.value++;
       }
     },
     fail: (err) => {
-      console.error('请求失败：', err);
+      console.error("请求失败：", err);
       uni.showToast({
-        title: '网络请求失败',
-        icon: 'none',
+        title: "网络请求失败",
+        icon: "none",
       });
-    }
+    },
   });
-  if (step.value < 4) {
-    step.value++;
-  }
 };
-
+const submitForm = () => {
+  uni
+    .navigateTo({ url: "/pages/Home/Home" })
+    .then(() => {
+      console.log("跳转成功");
+    })
+    .catch((err) => {
+      console.error("跳转失败：", err);
+    });
+};
 </script>
 
 <style lang="scss" scoped>
 .container {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 /* 上半部分: 浅灰背景 */
@@ -407,13 +419,24 @@ const submitExerciseType = () => {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  justify-content: flex-start; /* 内容靠上对齐 */
+  position: relative; /* Allow positioning of child elements */
+  width: 100%; /* Make the width 100% for full positioning control */
+  justify-content: flex-start;
+}
+
+.return-button {
+  position: absolute;
+  top: 10px;
+  left: 35px;
+  width: 24px;
+  height: 24px;
 }
 
 .logo {
   width: 120px;
   height: 120px;
   border-radius: 50%;
+  margin-top: 20px; /* Space below the button */
 }
 
 .welcome-title {
@@ -432,6 +455,7 @@ const submitExerciseType = () => {
   background-color: white;
   flex: 1;
   padding: 20px;
+  width: 90%;
 }
 
 .instructions {
@@ -454,7 +478,10 @@ const submitExerciseType = () => {
 /* 按钮样式 */
 .button-group {
   display: flex;
+  align-items: center;
+  position: relative;
   justify-content: space-between;
+  width: 100%;
 }
 
 .button {
@@ -477,9 +504,7 @@ const submitExerciseType = () => {
 
 .spacing {
   height: 20px;
-}
-.spacing {
-  height: 20px;
+  background-color: white;
 }
 .uni-list {
   margin: 20px 0;
@@ -504,18 +529,20 @@ const submitExerciseType = () => {
   margin-left: 10px; /* 调整文本与复选框之间的间距 */
 }
 .skip-container {
-  background-color: white; /* 下半部分背景颜色 */
-  position: fixed;
-  bottom: 0;
-  height: 50px;
+  background-color: white; /* 设置为下半部分背景色 */
+  width: 100%; /* 宽度保持一致 */
+  display: flex;
+  justify-content: center;
 }
 
 .skip-button {
-  background-color: transparent;
+  background-color: white;
   color: #999;
   border: none;
-  text-align: center;
   font-size: 14px;
+  padding: 10px 0; /* 垂直内边距 */
+  width: 100%; /* 使按钮占满容器宽度 */
+  text-align: center;
 }
 .fui-section__title {
   margin-left: 32rpx;

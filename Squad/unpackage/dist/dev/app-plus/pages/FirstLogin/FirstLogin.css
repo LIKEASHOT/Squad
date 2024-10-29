@@ -788,9 +788,9 @@
 /* 水平间距 */
 /* 水平间距 */
 .container[data-v-e8fa868b] {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 /* 上半部分: 浅灰背景 */
@@ -800,13 +800,25 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  position: relative;
+  /* Allow positioning of child elements */
+  width: 100%;
+  /* Make the width 100% for full positioning control */
   justify-content: flex-start;
-  /* 内容靠上对齐 */
+}
+.return-button[data-v-e8fa868b] {
+  position: absolute;
+  top: 10px;
+  left: 35px;
+  width: 24px;
+  height: 24px;
 }
 .logo[data-v-e8fa868b] {
   width: 120px;
   height: 120px;
   border-radius: 50%;
+  margin-top: 20px;
+  /* Space below the button */
 }
 .welcome-title[data-v-e8fa868b] {
   font-size: 18px;
@@ -823,6 +835,7 @@
   background-color: white;
   flex: 1;
   padding: 20px;
+  width: 90%;
 }
 .instructions[data-v-e8fa868b] {
   font-size: 16px;
@@ -843,7 +856,10 @@
 /* 按钮样式 */
 .button-group[data-v-e8fa868b] {
   display: flex;
+  align-items: center;
+  position: relative;
   justify-content: space-between;
+  width: 100%;
 }
 .button[data-v-e8fa868b] {
   flex: 1;
@@ -862,9 +878,7 @@
 }
 .spacing[data-v-e8fa868b] {
   height: 20px;
-}
-.spacing[data-v-e8fa868b] {
-  height: 20px;
+  background-color: white;
 }
 .uni-list[data-v-e8fa868b] {
   margin: 20px 0;
@@ -888,17 +902,22 @@
 }
 .skip-container[data-v-e8fa868b] {
   background-color: white;
-  /* 下半部分背景颜色 */
-  position: fixed;
-  bottom: 0;
-  height: 50px;
+  /* 设置为下半部分背景色 */
+  width: 100%;
+  /* 宽度保持一致 */
+  display: flex;
+  justify-content: center;
 }
 .skip-button[data-v-e8fa868b] {
-  background-color: transparent;
+  background-color: white;
   color: #999;
   border: none;
-  text-align: center;
   font-size: 14px;
+  padding: 10px 0;
+  /* 垂直内边距 */
+  width: 100%;
+  /* 使按钮占满容器宽度 */
+  text-align: center;
 }
 .fui-section__title[data-v-e8fa868b] {
   margin-left: 1rem;

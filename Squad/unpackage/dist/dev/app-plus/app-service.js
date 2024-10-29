@@ -560,7 +560,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-a23503dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-a23503dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
   const icons = {
     "addressbook": "",
     "addfriends-fill": "",
@@ -818,7 +818,7 @@ if (uni.restoreGlobal) {
       /* TEXT, CLASS, STYLE */
     );
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
   const _sfc_main$a = {
     __name: "Login",
@@ -875,7 +875,7 @@ if (uni.restoreGlobal) {
       ]),
       vue.createCommentVNode(" 登录表单 "),
       vue.createElementVNode("view", { class: "form-container" }, [
-        vue.createCommentVNode(' <uni-easyinput\n        v-model="form.account"\n        placeholder="请输入账号"\n        clearable\n        class="input-field rounded-input"\n      ></uni-easyinput> '),
+        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.account"\r\n        placeholder="请输入账号"\r\n        clearable\r\n        class="input-field rounded-input"\r\n      ></uni-easyinput> '),
         vue.createVNode(_component_fui_input, {
           placeholder: "请输入账号",
           borderTop: "",
@@ -887,7 +887,7 @@ if (uni.restoreGlobal) {
         }, null, 8, ["modelValue"]),
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createCommentVNode(" 账号和密码之间的间距 "),
-        vue.createCommentVNode(' <uni-easyinput\n        v-model="form.password"\n        placeholder="请输入密码"\n        type="password"\n        clearable\n        class="input-field rounded-input"\n      ></uni-easyinput> '),
+        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.password"\r\n        placeholder="请输入密码"\r\n        type="password"\r\n        clearable\r\n        class="input-field rounded-input"\r\n      ></uni-easyinput> '),
         vue.createVNode(_component_fui_input, {
           borderTop: "",
           padding: ["20rpx", "32rpx"],
@@ -910,7 +910,7 @@ if (uni.restoreGlobal) {
           _: 1
           /* STABLE */
         }, 8, ["password", "modelValue"]),
-        vue.createCommentVNode(' <fui-input\n        placeholder="请输入密码"\n        v-model="form.password"\n        :isFillet="true"\n        type="password"\n        clearable\n      ></fui-input> '),
+        vue.createCommentVNode(' <fui-input\r\n        placeholder="请输入密码"\r\n        v-model="form.password"\r\n        :isFillet="true"\r\n        type="password"\r\n        clearable\r\n      ></fui-input> '),
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createCommentVNode(" 登录按钮 "),
         vue.createElementVNode(
@@ -941,7 +941,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-461d1d79"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Login/Login.vue"]]);
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-461d1d79"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Login/Login.vue"]]);
   const _sfc_main$9 = {
     name: "fui-checkbox",
     emits: ["change"],
@@ -1116,7 +1116,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-bc643473"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-bc643473"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
   const _sfc_main$8 = {
     name: "fui-list-cell",
     emits: ["click"],
@@ -1288,7 +1288,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-c16a41c6"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-c16a41c6"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
   const _sfc_main$7 = {
     name: "fui-label",
     props: {
@@ -1343,7 +1343,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-186dfc0c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-186dfc0c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
   const _sfc_main$6 = {
     name: "fui-checkbox-group",
     emits: ["change", "input", "update:modelValue"],
@@ -1409,7 +1409,7 @@ if (uni.restoreGlobal) {
       vue.renderSlot(_ctx.$slots, "default")
     ], 8, ["name"]);
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
   const _sfc_main$5 = {
     data() {
       return {
@@ -1625,8 +1625,9 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
+  const serverUrl$1 = "http://10.133.80.141:3000";
   const _sfc_main$4 = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1667,7 +1668,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Register/Register.vue:130", "提交注册表单", form.value);
         uni.request({
-          url: "http://192.168.56.1:3000/register",
+          url: serverUrl$1 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1681,10 +1682,17 @@ if (uni.restoreGlobal) {
                 title: "注册成功",
                 icon: "success"
               });
+              uni.setStorage({
+                key: "username",
+                data: form.value.username,
+                success: function() {
+                  formatAppLog("log", "at pages/Register/Register.vue:152", "success");
+                }
+              });
               uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" }).then(() => {
-                formatAppLog("log", "at pages/Register/Register.vue:149", "跳转成功");
+                formatAppLog("log", "at pages/Register/Register.vue:157", "跳转成功");
               }).catch((err) => {
-                formatAppLog("error", "at pages/Register/Register.vue:152", "跳转失败：", err);
+                formatAppLog("error", "at pages/Register/Register.vue:160", "跳转失败：", err);
               });
             } else {
               uni.showToast({
@@ -1698,11 +1706,11 @@ if (uni.restoreGlobal) {
               title: "网络请求失败",
               icon: "none"
             });
-            formatAppLog("error", "at pages/Register/Register.vue:166", "注册请求失败：", err);
+            formatAppLog("error", "at pages/Register/Register.vue:174", "注册请求失败：", err);
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$1, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -1732,7 +1740,7 @@ if (uni.restoreGlobal) {
         }, null, 8, ["modelValue"]),
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createCommentVNode(" 输入密码 "),
-        vue.createCommentVNode(' <uni-easyinput\n        v-model="form.password"\n        type="password"\n        placeholder="请输入密码"\n        clearable\n        class="input-field"\n      ></uni-easyinput> '),
+        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.password"\r\n        type="password"\r\n        placeholder="请输入密码"\r\n        clearable\r\n        class="input-field"\r\n      ></uni-easyinput> '),
         vue.createVNode(_component_fui_input, {
           borderTop: "",
           padding: ["20rpx", "32rpx"],
@@ -1757,7 +1765,7 @@ if (uni.restoreGlobal) {
         }, 8, ["password", "modelValue"]),
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createCommentVNode(" 再次输入密码 "),
-        vue.createCommentVNode(' <uni-easyinput\n        v-model="form.confirmPassword"\n        type="password"\n        placeholder="请再次输入密码"\n        clearable\n        class="input-field"\n      ></uni-easyinput> '),
+        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.confirmPassword"\r\n        type="password"\r\n        placeholder="请再次输入密码"\r\n        clearable\r\n        class="input-field"\r\n      ></uni-easyinput> '),
         vue.createVNode(_component_fui_input, {
           borderTop: "",
           padding: ["20rpx", "32rpx"],
@@ -1796,7 +1804,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-6b0433d4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Register/Register.vue"]]);
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-6b0433d4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Register/Register.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -2516,7 +2524,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -3009,14 +3017,16 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   const _imports_0 = "/static/back/返回 (2).png";
+  const serverUrl = "http://10.133.80.141:3000";
   const logo = "/static/Squad1.png";
   const _sfc_main$1 = {
     __name: "FirstLogin",
     setup(__props, { expose: __expose }) {
       __expose();
       const step = vue.ref(1);
+      const username = uni.getStorageSync("username");
       const form = vue.ref({
         height: "",
         weight: "",
@@ -3057,17 +3067,18 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:207", "提交身高和体重", form.value);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:204", "用户名", username);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:205", "提交身高和体重", form.value);
         uni.request({
-          url: "http://192.168.56.1:3000/updateHealthInfo",
-          // 后端 API 地址
+          url: serverUrl + "/updateHealthInfo",
           method: "POST",
           data: {
             height: form.value.height,
-            weight: form.value.weight
+            weight: form.value.weight,
+            username
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:218", "身高体重更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:217", "身高体重更新成功", res);
             if (res.statusCode === 200) {
               uni.showToast({
                 title: `更新成功，BMI: ${res.data.bmi}`,
@@ -3079,18 +3090,18 @@ if (uni.restoreGlobal) {
                 icon: "none"
               });
             }
+            if (step.value < 4) {
+              step.value++;
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:232", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:234", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
-        if (step.value < 4) {
-          step.value++;
-        }
       };
       const submitGenderAge = () => {
         if (!form.value.gender || !form.value.age) {
@@ -3100,14 +3111,14 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:253", "提交性别和年龄", form.value);
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:252", "提交性别和年龄", form.value);
         uni.request({
-          url: "http://192.168.56.1:3000/updateGenderAge",
-          // 后端 API 地址
+          url: serverUrl + "/updateGenderAge",
           method: "POST",
           data: {
             gender: form.value.gender,
-            age: form.value.age
+            age: form.value.age,
+            username
           },
           header: {
             "Content-Type": "application/json"
@@ -3128,21 +3139,21 @@ if (uni.restoreGlobal) {
                 icon: "none"
               });
             }
+            if (step.value < 4) {
+              step.value++;
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:282", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:286", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
-        if (step.value < 4) {
-          step.value++;
-        }
       };
       const submitFitnessGoal = () => {
-        const selectedGoals = goalOptions.filter((option) => option.checked).map((option) => option.value);
+        const selectedGoals = form.value.goals;
         if (selectedGoals.length === 0) {
           uni.showToast({
             title: "请选择至少一个运动目标",
@@ -3150,20 +3161,21 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:305", "提交运动目标", selectedGoals.join(","));
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:306", "提交运动目标", selectedGoals.join(","));
         uni.request({
-          url: "http://192.168.56.1:3000/updateFitnessGoal",
+          url: serverUrl + "/updateFitnessGoal",
           method: "POST",
           data: {
-            fitnessGoal: selectedGoals.join(",")
+            fitnessGoal: selectedGoals.join(","),
             // 将数组转换为字符串，使用逗号分隔
+            username
           },
           header: {
             "Content-Type": "application/json"
             // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:318", "运动目标更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:320", "运动目标更新成功", res);
             if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
@@ -3175,21 +3187,21 @@ if (uni.restoreGlobal) {
                 icon: "none"
               });
             }
+            if (step.value < 4) {
+              step.value++;
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:332", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:337", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
-        if (step.value < 4) {
-          step.value++;
-        }
       };
       const submitExerciseType = () => {
-        const selectedTypes = sportTypeOptions.filter((option) => option.checked).map((option) => option.value);
+        const selectedTypes = form.value.sportTypes;
         if (selectedTypes.length === 0) {
           uni.showToast({
             title: "请选择至少一种运动方式",
@@ -3197,19 +3209,20 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:355", "提交运动方式", selectedTypes.join(","));
+        formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:357", "提交运动方式", selectedTypes.join(","));
         uni.request({
-          url: "http://192.168.56.1:3000/updateExerciseType",
+          url: serverUrl + "/updateExerciseType",
           method: "POST",
           data: {
-            exerciseType: selectedTypes.join(",")
+            exerciseType: selectedTypes.join(","),
+            username
           },
           header: {
             "Content-Type": "application/json"
             // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
           },
           success: (res) => {
-            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:368", "运动方式更新成功", res);
+            formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:371", "运动方式更新成功", res);
             if (res.statusCode === 200) {
               uni.showToast({
                 title: "更新成功",
@@ -3221,20 +3234,27 @@ if (uni.restoreGlobal) {
                 icon: "none"
               });
             }
+            if (step.value < 4) {
+              step.value++;
+            }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:382", "请求失败：", err);
+            formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:388", "请求失败：", err);
             uni.showToast({
               title: "网络请求失败",
               icon: "none"
             });
           }
         });
-        if (step.value < 4) {
-          step.value++;
-        }
       };
-      const __returned__ = { logo, step, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, ref: vue.ref };
+      const submitForm = () => {
+        uni.navigateTo({ url: "/pages/Home/Home" }).then(() => {
+          formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:400", "跳转成功");
+        }).catch((err) => {
+          formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:403", "跳转失败：", err);
+        });
+      };
+      const __returned__ = { serverUrl, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -3247,15 +3267,14 @@ if (uni.restoreGlobal) {
     const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 返回按钮 "),
-      $setup.step > 1 ? (vue.openBlock(), vue.createElementBlock("img", {
-        key: 0,
-        src: _imports_0,
-        alt: "返回",
-        class: "back-icon",
-        onClick: $setup.prevStep
-      })) : vue.createCommentVNode("v-if", true),
-      vue.createCommentVNode(" 上半部分: 浅灰背景 "),
+      vue.createCommentVNode(' <img\r\n      v-if="step > 1"\r\n      src="@/static/back/返回 (2).png"\r\n      alt="返回"\r\n      class="back-icon"\r\n      @click="prevStep"\r\n    /> '),
       vue.createElementVNode("view", { class: "upper-section" }, [
+        $setup.step > 1 ? (vue.openBlock(), vue.createElementBlock("image", {
+          key: 0,
+          src: _imports_0,
+          class: "return-button",
+          onClick: $setup.prevStep
+        })) : vue.createCommentVNode("v-if", true),
         vue.createElementVNode("image", {
           src: $setup.logo,
           class: "logo"
@@ -3263,9 +3282,11 @@ if (uni.restoreGlobal) {
         vue.createElementVNode("text", { class: "welcome-title" }, "欢迎来到"),
         vue.createElementVNode("text", { class: "app-name" }, "Squad")
       ]),
+      vue.createCommentVNode(' <image v-if="step>1" src="../../static/back/返回 (2).png" class="back-icon" @click="prevStep"></image>\r\n    上半部分: 浅灰背景 '),
+      vue.createCommentVNode(' <view class="upper-section">\r\n      <image :src="logo" class="logo"></image>\r\n      <text class="welcome-title">欢迎来到</text>\r\n      <text class="app-name">Squad</text>\r\n    </view> '),
       vue.createCommentVNode(" Step 1: 输入身高与体重 "),
       $setup.step === 1 ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 1,
+        key: 0,
         class: "lower-section"
       }, [
         vue.createElementVNode("text", { class: "instructions" }, "输入身高与体重，获取更准确的热量消耗"),
@@ -3299,19 +3320,12 @@ if (uni.restoreGlobal) {
             class: "button confirm",
             onClick: $setup.submitHealthInfo
           }, "确定"),
-          vue.createElementVNode("view", { class: "spacing" }),
-          vue.createElementVNode("view", { class: "skip-container" }, [
-            vue.createElementVNode("button", {
-              plain: "true",
-              class: "skip-button",
-              onClick: _cache[2] || (_cache[2] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
-            }, " 我有十分丰富的运动经验，可以直接使用→ ")
-          ])
+          vue.createElementVNode("view", { class: "spacing" })
         ])
       ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" Step 2: 输入性别与年龄 "),
       $setup.step === 2 ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 2,
+        key: 1,
         class: "lower-section"
       }, [
         vue.createElementVNode("text", { class: "instructions" }, "输入性别与年龄"),
@@ -3322,7 +3336,7 @@ if (uni.restoreGlobal) {
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createVNode(_component_uni_easyinput, {
           modelValue: $setup.form.gender,
-          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.form.gender = $event),
+          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.gender = $event),
           placeholder: "请输入性别(男/女)",
           class: "input-field",
           clearable: ""
@@ -3330,7 +3344,7 @@ if (uni.restoreGlobal) {
         vue.createElementVNode("view", { class: "spacing" }),
         vue.createVNode(_component_uni_easyinput, {
           modelValue: $setup.form.age,
-          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.form.age = $event),
+          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.form.age = $event),
           placeholder: "请输入年龄",
           class: "input-field",
           clearable: ""
@@ -3345,19 +3359,12 @@ if (uni.restoreGlobal) {
             class: "button confirm",
             onClick: $setup.submitGenderAge
           }, "确定"),
-          vue.createElementVNode("view", { class: "spacing" }),
-          vue.createElementVNode("view", { class: "skip-container" }, [
-            vue.createElementVNode("button", {
-              plain: "true",
-              class: "skip-button",
-              onClick: _cache[5] || (_cache[5] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
-            }, " 我有十分丰富的运动经验，可以直接使用→ ")
-          ])
+          vue.createElementVNode("view", { class: "spacing" })
         ])
       ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" Step 3: 选择运动目标 "),
       $setup.step === 3 ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 3,
+        key: 2,
         class: "lower-section"
       }, [
         vue.createElementVNode("text", { class: "instructions" }, "您的运动目标是？"),
@@ -3369,7 +3376,7 @@ if (uni.restoreGlobal) {
         vue.createCommentVNode(" 使用fui-checkbox-group替换运动目标的多选框 "),
         vue.createVNode(_component_fui_checkbox_group, {
           modelValue: $setup.form.goals,
-          "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.form.goals = $event)
+          "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.form.goals = $event)
         }, {
           default: vue.withCtx(() => [
             (vue.openBlock(), vue.createElementBlock(
@@ -3435,18 +3442,11 @@ if (uni.restoreGlobal) {
             onClick: $setup.submitFitnessGoal
           }, "确定")
         ]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createElementVNode("view", { class: "skip-container" }, [
-          vue.createElementVNode("button", {
-            plain: "true",
-            class: "skip-button",
-            onClick: _cache[7] || (_cache[7] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
-          }, " 我有十分丰富的运动经验，可以直接使用→ ")
-        ])
+        vue.createElementVNode("view", { class: "spacing" })
       ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" Step 4: 选择运动类型 "),
       $setup.step === 4 ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 4,
+        key: 3,
         class: "lower-section"
       }, [
         vue.createElementVNode("text", { class: "instructions" }, "您喜欢的运动类型是？"),
@@ -3458,7 +3458,7 @@ if (uni.restoreGlobal) {
         vue.createCommentVNode(" 使用fui-checkbox-group替换运动类型的多选框 "),
         vue.createVNode(_component_fui_checkbox_group, {
           modelValue: $setup.form.sportTypes,
-          "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.form.sportTypes = $event)
+          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.form.sportTypes = $event)
         }, {
           default: vue.withCtx(() => [
             (vue.openBlock(), vue.createElementBlock(
@@ -3517,25 +3517,25 @@ if (uni.restoreGlobal) {
         vue.createElementVNode("view", { class: "button-group" }, [
           vue.createElementVNode("button", {
             class: "button secret",
-            onClick: _cache[9] || (_cache[9] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
+            onClick: $setup.submitForm
           }, "保密"),
           vue.createElementVNode("button", {
             class: "button confirm",
             onClick: $setup.submitExerciseType
           }, "确定")
         ]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createElementVNode("view", { class: "skip-container" }, [
-          vue.createElementVNode("button", {
-            plain: "true",
-            class: "skip-button",
-            onClick: _cache[10] || (_cache[10] = (...args) => _ctx.submitForm && _ctx.submitForm(...args))
-          }, " 我有十分丰富的运动经验，可以直接使用→ ")
-        ])
-      ])) : vue.createCommentVNode("v-if", true)
+        vue.createElementVNode("view", { class: "spacing" })
+      ])) : vue.createCommentVNode("v-if", true),
+      vue.createElementVNode("view", { class: "skip-container" }, [
+        vue.createElementVNode("button", {
+          plain: "true",
+          class: "skip-button",
+          onClick: $setup.submitForm
+        }, " 我有十分丰富的运动经验，可以直接使用→ ")
+      ])
     ]);
   }
-  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-e8fa868b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/FirstLogin/FirstLogin.vue"]]);
+  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-e8fa868b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/FirstLogin/FirstLogin.vue"]]);
   __definePage("pages/Login/Login", PagesLoginLogin);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/Register/Register", PagesRegisterRegister);
@@ -3552,7 +3552,7 @@ if (uni.restoreGlobal) {
       formatAppLog("log", "at App.vue:11", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/coding/sf_enginering/Squad/Squad/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     return {

@@ -29,12 +29,12 @@ const _sfc_main = {
       password_confirm.value = !password_confirm.value;
     };
     const form = common_vendor.ref({
-      account: "",
+      username: "",
       password: "",
       confirmPassword: ""
     });
     const submitRegister = () => {
-      if (!form.value.account || !form.value.password || !form.value.confirmPassword) {
+      if (!form.value.username || !form.value.password || !form.value.confirmPassword) {
         common_vendor.index.showToast({
           title: "请填写完整信息",
           icon: "none"
@@ -49,19 +49,60 @@ const _sfc_main = {
         return;
       }
       console.log("提交注册表单", form.value);
-      common_vendor.index.navigateTo({ url: "/pages/FirstLogin/FirstLogin" });
+      common_vendor.index.request({
+        url: "http://localhost:3000/register",
+        method: "POST",
+        data: {
+          username: form.value.username,
+          password: form.value.password,
+          confirmPassword: form.value.confirmPassword
+        },
+        success: (res) => {
+          console.log("注册请求返回：", res);
+          if (res.statusCode === 201 && res.data.success) {
+            common_vendor.index.showToast({
+              title: "注册成功",
+              icon: "success"
+            });
+            common_vendor.index.setStorage({
+              key: "username",
+              data: form.value.username,
+              success: function() {
+                console.log("success");
+              }
+            });
+            common_vendor.index.navigateTo({ url: "/pages/FirstLogin/FirstLogin" }).then(() => {
+              console.log("跳转成功");
+            }).catch((err) => {
+              console.error("跳转失败：", err);
+            });
+          } else {
+            common_vendor.index.showToast({
+              title: res.data.message || "注册失败",
+              icon: "none"
+            });
+          }
+        },
+        fail: (err) => {
+          common_vendor.index.showToast({
+            title: "网络请求失败",
+            icon: "none"
+          });
+          console.error("注册请求失败：", err);
+        }
+      });
     };
     return (_ctx, _cache) => {
       return {
         a: logo,
-        b: common_vendor.o(($event) => form.value.account = $event),
+        b: common_vendor.o(($event) => form.value.username = $event),
         c: common_vendor.p({
           placeholder: "请输入账号",
           borderTop: true,
           padding: ["20rpx", "32rpx"],
           isFillet: true,
           clearable: true,
-          modelValue: form.value.account
+          modelValue: form.value.username
         }),
         d: common_vendor.o(changepwd_vis),
         e: common_vendor.p({

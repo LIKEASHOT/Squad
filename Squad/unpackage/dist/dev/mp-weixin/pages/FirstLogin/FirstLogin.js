@@ -22,6 +22,7 @@ const _sfc_main = {
   __name: "FirstLogin",
   setup(__props) {
     const step = common_vendor.ref(1);
+    const username = common_vendor.index.getStorageSync("username");
     const form = common_vendor.ref({
       height: "",
       weight: "",
@@ -31,18 +32,18 @@ const _sfc_main = {
       sportTypes: []
     });
     const goalOptions = [
-      { value: "weight_loss", name: "减肥", checked: false },
-      { value: "muscle_gain", name: "增肌", checked: false },
-      { value: "endurance", name: "耐力", checked: false },
-      { value: "flexibility", name: "柔韧性", checked: false },
-      { value: "general_fitness", name: "综合健身", checked: false }
+      { value: "减脂", name: "减脂", checked: false },
+      { value: "增肌", name: "增肌", checked: false },
+      { value: "耐力", name: "耐力", checked: false },
+      { value: "柔韧性", name: "柔韧性", checked: false },
+      { value: "综合健身", name: "综合健身", checked: false }
     ];
     const sportTypeOptions = [
-      { value: "running", text: "跑步", checked: false },
-      { value: "swimming", text: "游泳", checked: false },
-      { value: "weightlifting", text: "举重", checked: false },
-      { value: "yoga", text: "瑜伽", checked: false },
-      { value: "basketball", text: "篮球", checked: false }
+      { value: "跑步", text: "跑步", checked: false },
+      { value: "游泳", text: "游泳", checked: false },
+      { value: "撸铁", text: "撸铁", checked: false },
+      { value: "瑜伽", text: "瑜伽", checked: false },
+      { value: "篮球", text: "篮球", checked: false }
     ];
     const nextStep = () => {
       if (step.value < 4) {
@@ -54,8 +55,202 @@ const _sfc_main = {
         step.value--;
       }
     };
+    const submitHealthInfo = () => {
+      if (!form.value.height || !form.value.weight) {
+        common_vendor.index.showToast({
+          title: "请输入身高和体重",
+          icon: "none"
+        });
+        return;
+      }
+      console.log("用户名", username);
+      console.log("提交身高和体重", form.value);
+      common_vendor.index.request({
+        url: "http://localhost:3000/updateHealthInfo",
+        // 后端 API 地址
+        method: "POST",
+        data: {
+          height: form.value.height,
+          weight: form.value.weight,
+          username
+        },
+        success: (res) => {
+          console.log("身高体重更新成功", res);
+          if (res.statusCode === 200) {
+            common_vendor.index.showToast({
+              title: `更新成功，BMI: ${res.data.bmi}`,
+              icon: "success"
+            });
+          } else {
+            common_vendor.index.showToast({
+              title: res.data.error || "更新失败",
+              icon: "none"
+            });
+          }
+          if (step.value < 4) {
+            step.value++;
+          }
+        },
+        fail: (err) => {
+          console.error("请求失败：", err);
+          common_vendor.index.showToast({
+            title: "网络请求失败",
+            icon: "none"
+          });
+        }
+      });
+    };
+    const submitGenderAge = () => {
+      if (!form.value.gender || !form.value.age) {
+        common_vendor.index.showToast({
+          title: "请输入性别和年龄",
+          icon: "none"
+        });
+        return;
+      }
+      console.log("提交性别和年龄", form.value);
+      common_vendor.index.request({
+        url: "http://localhost:3000/updateGenderAge",
+        // 后端 API 地址
+        method: "POST",
+        data: {
+          gender: form.value.gender,
+          age: form.value.age,
+          username
+        },
+        header: {
+          "Content-Type": "application/json"
+          // 设置请求头
+          // 这里可以添加认证信息，例如 JWT
+          // 'Authorization': `Bearer ${yourToken}`
+        },
+        success: (res) => {
+          console.log("性别和年龄更新成功", res);
+          if (res.statusCode === 200) {
+            common_vendor.index.showToast({
+              title: "更新成功",
+              icon: "success"
+            });
+          } else {
+            common_vendor.index.showToast({
+              title: res.data.error || "更新失败",
+              icon: "none"
+            });
+          }
+          if (step.value < 4) {
+            step.value++;
+          }
+        },
+        fail: (err) => {
+          console.error("请求失败：", err);
+          common_vendor.index.showToast({
+            title: "网络请求失败",
+            icon: "none"
+          });
+        }
+      });
+    };
+    const submitFitnessGoal = () => {
+      const selectedGoals = form.value.goals;
+      if (selectedGoals.length === 0) {
+        common_vendor.index.showToast({
+          title: "请选择至少一个运动目标",
+          icon: "none"
+        });
+        return;
+      }
+      console.log("提交运动目标", selectedGoals.join(","));
+      common_vendor.index.request({
+        url: "http://localhost:3000/updateFitnessGoal",
+        method: "POST",
+        data: {
+          fitnessGoal: selectedGoals.join(","),
+          // 将数组转换为字符串，使用逗号分隔
+          username
+        },
+        header: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
+        },
+        success: (res) => {
+          console.log("运动目标更新成功", res);
+          if (res.statusCode === 200) {
+            common_vendor.index.showToast({
+              title: "更新成功",
+              icon: "success"
+            });
+          } else {
+            common_vendor.index.showToast({
+              title: res.data.error || "更新失败",
+              icon: "none"
+            });
+          }
+          if (step.value < 4) {
+            step.value++;
+          }
+        },
+        fail: (err) => {
+          console.error("请求失败：", err);
+          common_vendor.index.showToast({
+            title: "网络请求失败",
+            icon: "none"
+          });
+        }
+      });
+    };
+    const submitExerciseType = () => {
+      const selectedTypes = form.value.sportTypes;
+      if (selectedTypes.length === 0) {
+        common_vendor.index.showToast({
+          title: "请选择至少一种运动方式",
+          icon: "none"
+        });
+        return;
+      }
+      console.log("提交运动方式", selectedTypes.join(","));
+      common_vendor.index.request({
+        url: "http://localhost:3000/updateExerciseType",
+        method: "POST",
+        data: {
+          exerciseType: selectedTypes.join(","),
+          username
+        },
+        header: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${yourToken}` // 需要设置实际 token
+        },
+        success: (res) => {
+          console.log("运动方式更新成功", res);
+          if (res.statusCode === 200) {
+            common_vendor.index.showToast({
+              title: "更新成功",
+              icon: "success"
+            });
+          } else {
+            common_vendor.index.showToast({
+              title: res.data.error || "更新失败",
+              icon: "none"
+            });
+          }
+          if (step.value < 4) {
+            step.value++;
+          }
+        },
+        fail: (err) => {
+          console.error("请求失败：", err);
+          common_vendor.index.showToast({
+            title: "网络请求失败",
+            icon: "none"
+          });
+        }
+      });
+    };
     const submitForm = () => {
-      console.log("表单提交", form.value);
+      common_vendor.index.navigateTo({ url: "/pages/Home/Home" }).then(() => {
+        console.log("跳转成功");
+      }).catch((err) => {
+        console.error("跳转失败：", err);
+      });
     };
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -69,25 +264,25 @@ const _sfc_main = {
       }, step.value === 1 ? {
         f: common_vendor.o(($event) => form.value.height = $event),
         g: common_vendor.p({
-          placeholder: "请输入身高",
+          placeholder: "请输入身高/cm",
           clearable: true,
           modelValue: form.value.height
         }),
         h: common_vendor.o(($event) => form.value.weight = $event),
         i: common_vendor.p({
-          placeholder: "请输入体重",
+          placeholder: "请输入体重/kg",
           clearable: true,
           modelValue: form.value.weight
         }),
         j: common_vendor.o(nextStep),
-        k: common_vendor.o(nextStep),
+        k: common_vendor.o(submitHealthInfo),
         l: common_vendor.o(submitForm)
       } : {}, {
         m: step.value === 2
       }, step.value === 2 ? {
         n: common_vendor.o(($event) => form.value.gender = $event),
         o: common_vendor.p({
-          placeholder: "请输入性别",
+          placeholder: "请输入性别(男/女)",
           clearable: true,
           modelValue: form.value.gender
         }),
@@ -98,7 +293,7 @@ const _sfc_main = {
           modelValue: form.value.age
         }),
         r: common_vendor.o(nextStep),
-        s: common_vendor.o(nextStep),
+        s: common_vendor.o(submitGenderAge),
         t: common_vendor.o(submitForm)
       } : {}, {
         v: step.value === 3
@@ -124,7 +319,7 @@ const _sfc_main = {
           modelValue: form.value.goals
         }),
         z: common_vendor.o(nextStep),
-        A: common_vendor.o(nextStep),
+        A: common_vendor.o(submitFitnessGoal),
         B: common_vendor.o(submitForm)
       } : {}, {
         C: step.value === 4
@@ -150,7 +345,7 @@ const _sfc_main = {
           modelValue: form.value.sportTypes
         }),
         G: common_vendor.o(submitForm),
-        H: common_vendor.o(submitForm),
+        H: common_vendor.o(submitExerciseType),
         I: common_vendor.o(submitForm)
       } : {});
     };

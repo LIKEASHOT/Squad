@@ -107,6 +107,7 @@
   height: 50px;
 }
 .skip-button.data-v-e8fa868b {
+  position: relative;
   background-color: transparent;
   color: #999;
   border: none;

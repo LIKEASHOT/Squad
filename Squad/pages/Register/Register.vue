@@ -101,7 +101,7 @@ const changepwd_vis_confirm = () => {
   password_confirm.value = !password_confirm.value;
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const form = ref({
   username: "",
   password: "",
@@ -130,7 +130,7 @@ const submitRegister = () => {
   console.log("提交注册表单", form.value);
   // 注册逻辑处理
 	uni.request({
-		url: 'http://192.168.56.1:3000/register', 
+		url: serverUrl + '/register',
 		method: 'POST',
 		data: {
 		  username: form.value.username,
@@ -142,8 +142,16 @@ const submitRegister = () => {
 		  if (res.statusCode === 201 && res.data.success) {
 		    uni.showToast({
 		      title: '注册成功',
-		      icon: 'success',
-		    });
+          icon: 'success',
+        });
+        // 保存当前用户信息到本地存储
+        uni.setStorage({
+          key: 'username',
+          data: form.value.username,
+          success: function () {
+            console.log('success');
+          }
+        });
 		    uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" })
 		      .then(() => {
 		        console.log('跳转成功');
