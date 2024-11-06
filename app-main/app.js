@@ -54,6 +54,8 @@ app.use(
     cookie: { secure: false },
   })
 );
+
+
 // 注册 API
 app.post("/register", (req, res) => {
   const { username, password, confirmPassword } = req.body;
@@ -98,8 +100,10 @@ app.post("/register", (req, res) => {
     });
   });
 });
+//
 
-// 登录 API
+
+// 用户登录 API
 app.post("/login", (req, res) => {
   const { username, password } = req.body; // 从请求体中获取用户名和密码
   const query = "SELECT * FROM users WHERE name = ? AND password = ?";
@@ -125,6 +129,7 @@ app.post("/login", (req, res) => {
     }
   });
 });
+
 
 // 输入性别和年龄 API
 app.post("/updateGenderAge", (req, res) => {
@@ -173,6 +178,8 @@ app.post("/updateHealthInfo", (req, res) => {
   });
 });
 
+
+
 // 输入运动目标 API
 app.post("/updateFitnessGoal", (req, res) => {
   const { fitnessGoal, username } = req.body;
@@ -190,6 +197,8 @@ app.post("/updateFitnessGoal", (req, res) => {
   });
 });
 
+
+
 // 输入运动方式 API
 app.post("/updateExerciseType", (req, res) => {
   const { exerciseType, username } = req.body;
@@ -206,6 +215,8 @@ app.post("/updateExerciseType", (req, res) => {
     res.status(200).json({ message: "Exercise type updated successfully" });
   });
 });
+
+
 
 // 查询上一次登录时间 API
 app.get("/last-login", (req, res) => {
@@ -227,6 +238,203 @@ app.get("/last-login", (req, res) => {
     }
   });
 });
+
+
+// 模糊查询API
+app.post("/searchGoals", (req, res) => {
+  const { name, target, type, difficulty } = req.body;
+  const conditions = [];
+  const params = [];
+  
+  if (name) {
+    conditions.push("名称 LIKE ?");
+    params.push(`%${name}%`);
+  }
+  if (target) {
+    conditions.push("目标 LIKE ?");
+    params.push(`%${target}%`);
+  }
+  if (type) {
+    conditions.push("运动类型 LIKE ?");
+    params.push(`%${type}%`);
+  }
+  if (difficulty) {
+    conditions.push("难度 LIKE ?");
+    params.push(`%${difficulty}%`);
+  }
+
+  let query = "SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal";
+  if (conditions.length > 0) {
+    query += " WHERE " + conditions.join(" AND ");
+  }
+
+  connection.query(query, params, (err, results) => {
+    if (err) {
+      console.error("查询目标时出错:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length > 0) {
+      res.status(200).json({ goals: results });
+    } else {
+      res.status(404).json({ message: "No goals found" });
+    }
+  });
+});
+
+
+
+// 获取用户的健身目标信息 API
+app.post('/get-user-goals', (req, res) => {
+  const { username } = req.body; // 从请求体中获取 username
+
+  if (!username) {
+    return res.status(400).json({ error: "Username is required" });
+  }
+
+  // 查询用户的 goalid
+  db.query('SELECT goalid FROM users WHERE name = ?', [username], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const goalidString = results[0].goalid; // 获取 goalid 字符串
+    const goalidArray = JSON.parse(goalidString); // 解析为数组
+
+    // 使用 goalid 查询 goal 表
+    const query = 'SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal WHERE id IN (?)';
+    db.query(query, [goalidArray], (err, goals) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error while fetching goals" });
+      }
+
+      res.status(200).json({ goals });
+    });
+  });
+});
+
+
+// 添加用户目标 API
+app.post('/add-user-goals', (req, res) => {
+  const { username, goalNames } = req.body; 
+  if (!username || !goalNames || !Array.isArray(goalNames) || goalNames.length === 0) {
+    return res.status(400).json({ error: "Username and goal names are required" });
+  }
+
+  // 查询目标名称对应的 id
+  const placeholders = goalNames.map(() => '?').join(',');
+  const query = `SELECT id FROM goal WHERE 名称 IN (${placeholders})`;
+
+  db.query(query, goalNames, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error while fetching goals" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No goals found for the provided names" });
+    }
+
+    // 获取目标 ID 列表
+    const goalIds = results.map(result => result.id);
+
+    // 更新用户的 goalid
+    db.query('UPDATE users SET goalid = ? WHERE name = ?', [JSON.stringify(goalIds), username], (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Database error while updating user goals" });
+      }
+      res.status(200).json({ message: "User goals updated successfully" });
+    });
+  });
+});
+
+
+//返回卡片对应的信息（返回 SELECT 时间, 运动次数, 难度, 卡路里, video_url, image_url）API
+//需要传入目标名称
+app.post('/api/goals', (req, res) => {
+  const { 名称 } = req.body;
+
+  // SQL 查询
+  const sql = 'SELECT 时间, `运动次数`, `难度`, `卡路里`, `video_url`, `image_url` FROM goal WHERE `名称` = ?';
+  
+  db.query(sql, [名称], (error, results) => {
+      if (error) {
+          return res.status(500).json({ message: '查询失败', error });
+      }
+      if (results.length > 0) {
+          return res.json(results);
+      } else {
+          return res.json({ message: '未找到相关数据' });
+      }
+  });
+});
+
+
+// API: 添加健身封面（需要 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, 图片文件）
+app.post('/addGoal', upload.single('image'), (req, res) => {
+  // 获取前端发送的数据
+  const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
+
+  // 确保图片文件存在
+  if (!req.file) {
+    return res.status(400).json({ error: "请上传一张图片" });
+  }
+
+  // 获取上传的文件路径和文件名
+  const imagePath = path.join(__dirname, 'uploads', req.file.filename);
+  const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`; // 假设你的服务器在这个 URL 下提供文件
+
+  // 将数据插入数据库
+  const insertQuery = `
+    INSERT INTO goal (名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, image_url, video_url) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json({ message: "Goal added successfully", imageUrl });
+  });
+});
+
+
+//API：修改封面对应的信息（需要  名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url)
+app.put('/api/goals', (req, res) => {
+  const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
+
+  // SQL 更新语句
+  const sql = `
+      UPDATE goal 
+      SET 
+          运动次数 = ?, 
+          难度 = ?, 
+          卡路里 = ?, 
+          B站连接 = ?, 
+          目标 = ?, 
+          运动类型 = ?, 
+          时间 = ?, 
+          video_url = ? 
+      WHERE 
+          名称 = ?`;
+
+  // 执行更新
+  db.query(sql, [运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url, 名称], (error, results) => {
+      if (error) {
+          return res.status(500).json({ message: '更新失败', error });
+      }
+      if (results.affectedRows > 0) {
+          return res.json({ message: '更新成功' });
+      } else {
+          return res.json({ message: '未找到相关数据' });
+      }
+  });
+});
+
+
+
 
 // 启动服务器
 app.listen(port, () => {
