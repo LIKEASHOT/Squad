@@ -1,0 +1,167 @@
+import {gradientColors} from './color';
+const PI : number = Math.PI / 180;
+
+export type CircleOptions = {
+	percent?: number
+	size: number
+	lineCap: string
+	strokeWidth: number
+	strokeColor: any
+	trailWidth: number
+	trailColor: string
+	dashboard: boolean
+	clockwise?: boolean
+	duration?: number
+	max: number
+	beforeAnimate?: boolean
+	animate?: boolean
+	formatter?: string
+	fontSize?: string
+	showText?: boolean
+	gapDegree?: number
+	gapPosition?: string
+}
+
+export class Circle {
+	ctx : DrawableContext
+	_attrs : CircleOptions = {
+		percent: 0,
+		size: 120,
+		lineCap: 'round',
+		strokeWidth: 6,
+		strokeColor: '#2db7f5',
+		trailWidth: 6,
+		trailColor: '#ddd',
+		dashboard: false,
+		clockwise: false,
+		duration: 300,
+		max: 100,
+		beforeAnimate: true,
+		animate: true,
+		formatter: '{d}{d}.{d}{d}%',
+		fontSize: '16px',
+		showText: false,
+		gapDegree: 90
+	} as CircleOptions
+	target : number = 0
+	current : number = 0
+	_gradientColors: string[] = []
+	_colors: string[] = []
+	constructor(ctx : DrawableContext) {
+		this.ctx = ctx
+	}
+	setOption(attrs : CircleOptions) {
+		for (let key in attrs) {
+			if(attrs[key] != null){
+				this._attrs[key] = attrs[key]
+			}
+		}
+	}
+	createConicGradient(){
+		const {strokeColor : color } = this._attrs
+		if(typeof color === 'string' || this._colors == color) return
+		if(Array.isArray(color)){
+			const [startDeg, endDeg] = this.getDeg()
+			this._colors = color as string[]
+			this._gradientColors = []
+			let perimeter = endDeg - startDeg
+			let length = color.length - 1
+			let step = Math.floor(perimeter / length)
+			for (let i = 0; i < length; i++) {
+				perimeter -= step 
+				const start = color[i]
+				const end = color[i + 1]
+				const stepColor = gradientColors(start, end, i + 1 == length ? step + perimeter : step, 1)
+				this._gradientColors = this._gradientColors.concat(stepColor)
+			}
+		}
+	}
+	play(target : number) {
+		this.target = Math.max(Math.min(target, this._attrs.max), 0)
+		this.createConicGradient()
+		this.render(target)
+	}
+	render(v : number) {
+		this.ctx.reset();
+		this.drawTrail()
+		this.drawStroke(v)
+		this.ctx.update()
+	}
+	drawStroke(percent : number) {
+		const {strokeWidth, strokeColor, max, lineCap, size, dashboard} = this._attrs
+		const [startDeg, endDeg] = this.getDeg()
+		const center = size / 2;
+		const radius = center - strokeWidth / 2;
+		const step = Math.round((endDeg - startDeg) / max * percent)
+		if(typeof strokeColor == 'string'){
+			this.drawArc(
+				center, 
+				radius, 
+				strokeColor as string, 
+				strokeWidth, 
+				startDeg * PI , 
+				(step + startDeg) * PI, 
+				lineCap)
+		} else if(Array.isArray(strokeColor) && this._gradientColors.length > 0){
+			for (var i = 0; i < step; i++) {
+				this.drawArc(
+				center, 
+				radius, 
+				this._gradientColors[i], 
+				strokeWidth, 
+				(i + startDeg) * PI, 
+				(i + 1 + startDeg) * PI, 
+				!dashboard && endDeg == step + startDeg ? 'butt': lineCap)
+			}
+		}
+	}
+	drawTrail() {
+		const {size, trailWidth, trailColor, lineCap} = this._attrs
+		const center = size / 2;
+		const radius = center - trailWidth / 2
+		const [startDeg, endDeg] = this.getDeg() 
+		this.drawArc(center, radius, trailColor, trailWidth, startDeg * PI, endDeg * PI, lineCap)
+	}
+	drawArc(center : number, radius : number, color : string, lineWidth : number, beginAngle : number, endAngle : number, lineCap : string, clockwise = false) {
+		const ctx = this.ctx;
+
+		ctx.beginPath();
+		ctx.lineCap = lineCap
+		ctx.strokeStyle = color
+		ctx.lineWidth = lineWidth
+
+		ctx.arc(center, center, radius, beginAngle, endAngle)
+		ctx.stroke()
+	}
+	getDeg(): number[] {
+		let {gapDegree, gapPosition, dashboard} = this._attrs
+		if(!dashboard || gapDegree == null) {
+			gapDegree = 0;
+		}
+		let positionDeg = 0
+		if(gapDegree != 0) {
+			switch(gapPosition) {
+				// case 'bottom':
+				// 	positionDeg = 0;
+				// 	break
+				case 'top':
+					positionDeg = 180;
+					break
+				case 'left':
+					positionDeg = 90;
+					break
+				case 'right':
+					positionDeg = -90;
+					break
+				default:
+					positionDeg = 0;
+			}
+		}
+		const rotateDeg = gapDegree > 0 ? 90 + gapDegree / 2 : -90;
+		const offsetDeg = 0
+		const perimeter = (360 - gapDegree) / 360
+		const startDeg = positionDeg + rotateDeg + offsetDeg
+		const endDeg = startDeg + perimeter * 360
+		return [startDeg, endDeg]
+	}
+}

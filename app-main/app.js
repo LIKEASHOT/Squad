@@ -121,11 +121,12 @@ app.post("/login", (req, res) => {
           return res.status(500).json({ error: "Database error" });
         }
         // 生成 JWT
-        const token = jwt.sign({ username: username }, JWT_SECRET);
-        res.json({ message: "Login successful", token }); // 登录成功，返回 token
+        // const token = jwt.sign({ username: username }, JWT_SECRET);
+        // res.json({ message: "Login successful", token }); // 登录成功，返回 token
+        return res.status(200).json({success: "Login success!"})
       });
     } else {
-      res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
   });
 });
@@ -374,31 +375,31 @@ app.post('/api/goals', (req, res) => {
 
 
 // API: 添加健身封面（需要 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, 图片文件）
-app.post('/addGoal', upload.single('image'), (req, res) => {
-  // 获取前端发送的数据
-  const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
+// app.post('/addGoal', upload.single('image'), (req, res) => {
+//   // 获取前端发送的数据
+//   const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
 
-  // 确保图片文件存在
-  if (!req.file) {
-    return res.status(400).json({ error: "请上传一张图片" });
-  }
+//   // 确保图片文件存在
+//   if (!req.file) {
+//     return res.status(400).json({ error: "请上传一张图片" });
+//   }
 
-  // 获取上传的文件路径和文件名
-  const imagePath = path.join(__dirname, 'uploads', req.file.filename);
-  const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`; // 假设你的服务器在这个 URL 下提供文件
+//   // 获取上传的文件路径和文件名
+//   const imagePath = path.join(__dirname, 'uploads', req.file.filename);
+//   const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`; // 假设你的服务器在这个 URL 下提供文件
 
-  // 将数据插入数据库
-  const insertQuery = `
-    INSERT INTO goal (名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, image_url, video_url) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+//   // 将数据插入数据库
+//   const insertQuery = `
+//     INSERT INTO goal (名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, image_url, video_url) 
+//     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
-    res.status(200).json({ message: "Goal added successfully", imageUrl });
-  });
-});
+//   connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
+//     if (err) {
+//       return res.status(500).json({ error: "Database error" });
+//     }
+//     res.status(200).json({ message: "Goal added successfully", imageUrl });
+//   });
+// });
 
 
 //API：修改封面对应的信息（需要  名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url)

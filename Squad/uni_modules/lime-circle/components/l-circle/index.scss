@@ -1,0 +1,128 @@
+/* #ifndef APP-NVUE */
+// @import '@/uni_modules/lime-ui/style/index.scss';
+@supports(background: conic-gradient(#000, #fff)) {
+	.check {
+		height: 1rpx;
+		position: absolute;
+	}
+}
+// @property --l-circle-percent {
+//   syntax: '<percentage>';
+//   // syntax: '<number>';
+//   initial-value: 25%;
+//   // initial-value: 0;
+//   inherits: true;
+// }
+// @property --l-circle-percent2 {
+//   syntax: '<number>';
+//   initial-value: 0;
+//   inherits: true;
+// }
+/* #ifdef VUE3 */
+$size: 12rpx;
+/*  #endif */
+/* #ifndef VUE3 */
+$size: 6px;
+/*  #endif */
+$fill-2: var(--l-fill-2, rgba(0, 0, 0, 0.06));
+$circle-trail-cap-size: var(--l-circle-trail-cap-size, $size);
+$circle-trail-cap-color: currentColor;//var(--l-circle-trail-cap-color, currentColor);
+$circle-stroke-cap-size: var(--l-circle-stroke-cap-size, $size);
+$circle-stroke-cap-start-color: var(--l-circle-stroke-cap-start-color, $fill-2);
+$circle-stroke-cap-end-color: var(--l-circle-stroke-cap-end-color, $fill-2);
+:root {
+	display: inline-block;
+	--l-circle-percent: 0%;
+	--l-circle-percent2: 0;
+}
+/*  #endif */
+
+
+
+.l-circle {
+	--l-circle-percent: 0%;
+	transition-property: --l-circle-percent2,--l-circle-percent;
+	transition-duration: 300ms;
+	
+	position: relative;
+	display: inline-block;
+	/* #ifndef APP-NVUE */
+	&__canvas {
+		width: 100%;
+		height: 100%;
+	}
+	/*  #endif */
+	&__inner{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		align-items: center;
+		justify-content: center;
+		/* #ifndef APP-NVUE */
+		display: flex;
+		/*  #endif */
+	}
+	/* #ifdef APP-NVUE */
+	&__view {
+		flex: 1;
+	}
+	/*  #endif */
+	/* #ifndef APP-NVUE */
+	&__trail,&__stroke,&__stroke-line {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+	}
+	&__trail{
+		background: var(--l-background);
+	}
+	&__stroke-line {
+		z-index: 2;
+		background: var(--l-background);
+	}
+	/*  #endif */
+}
+
+/* #ifndef APP-NVUE */
+.is-round {
+	.l-circle {
+		
+		&__trail {
+			--l-circle-percent: 100%;
+			--l-circle-percent2: 1;
+			.cap {
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle var(--l-circle-trail-cap-size) at 50% var(--l-circle-trail-cap-size), currentColor, currentColor var(--l-circle-trail-cap-size), transparent);
+				transform: rotate(var(--l-circle-trail-cap-start));
+				&.end {
+					transform: rotate(var(--l-circle-trail-cap-end))
+				}
+			}
+		}
+		&__stroke .cap{
+			position: absolute;
+			display: block;
+			width: 100%;
+			height: 100%;
+			background: radial-gradient(circle var(--l-circle-stroke-cap-size) at 50% var(--l-circle-stroke-cap-size), var(--l-circle-stroke-cap-color, currentColor), var(--l-circle-stroke-cap-color, currentColor) var(--l-circle-stroke-cap-size), transparent);
+			transform: rotate(var(--l-circle-stroke-cap-start));
+			&.end {
+				transform: rotate(var(--l-circle-stroke-cap-end));
+				color: var(--l-circle-stroke-cap-color-end, currentColor);
+			}
+		}
+	}
+}
+.clockwise {
+	transform: translateY(var(--l-circle-offset-top, 0)) scale(-1,1);
+}
+.clockwise .l-circle__inner{
+	transform: scale(-1,1);
+}
+/*  #endif */

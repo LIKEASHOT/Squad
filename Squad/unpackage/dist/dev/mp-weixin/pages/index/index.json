@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "uni-app",
-  "usingComponents": {
-    "fui-checkbox": "../../node-modules/firstui-uni/firstui/fui-checkbox/fui-checkbox",
-    "fui-list-cell": "../../node-modules/firstui-uni/firstui/fui-list-cell/fui-list-cell",
-    "fui-label": "../../node-modules/firstui-uni/firstui/fui-label/fui-label",
-    "fui-checkbox-group": "../../node-modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group"
-  }
-}

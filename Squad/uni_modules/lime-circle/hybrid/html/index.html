@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>lime-circle</title>
+		<style>
+			html,
+			body {
+				padding: 0;
+				margin: 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				/* background-color: rebeccapurple; */
+			}
+
+			.l-circle {
+				overflow: hidden;
+				--l-circle-percent: 0;
+				transition-property: --l-circle-percent2,--l-circle-percent;
+				transition-duration: 300ms;
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+
+			.l-circle__trail,
+			.l-circle__stroke,.l-circle__stroke-line {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+			}
+			.l-circle__trail{
+				background: var(--l-background);
+			}
+			.l-circle__stroke-line {
+				z-index: 2;
+				background: var(--l-background);
+			}
+			.l-circle__inner {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				align-items: center;
+				justify-content: center;
+				display: flex;
+			}
+			.is-round .l-circle__trail{
+				--l-circle-percent: 100%;
+				--l-circle-percent2: 1;
+			}
+			.is-round .l-circle__trail .cap {
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle var(--l-circle-trail-cap-size) at 50% var(--l-circle-trail-cap-size), currentColor, currentColor var(--l-circle-trail-cap-size), transparent);
+				transform: rotate(var(--l-circle-trail-cap-start));
+			}
+			.is-round .l-circle__trail .cap.end {
+				transform: rotate(var(--l-circle-trail-cap-end))
+			}
+
+			.is-round .l-circle__stroke .cap {
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle var(--l-circle-stroke-cap-size) at 50% var(--l-circle-stroke-cap-size), var(--l-circle-stroke-cap-color, currentColor), var(--l-circle-stroke-cap-color, currentColor) var(--l-circle-stroke-cap-size), transparent);
+				transform: rotate(var(--l-circle-stroke-cap-start));
+			}
+
+			.is-round .l-circle__stroke .cap.end {
+				transform: rotate(var(--l-circle-stroke-cap-end));
+				color: var(--l-circle-stroke-cap-color-end, currentColor);
+			}
+
+			.clockwise .l-circle__inner {
+				transform: scale(-1, 1);
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="limeCanvas" class="l-circle"></canvas>
+		<div id="limeCss" class="l-circle">
+			<div class="l-circle__trail">
+				<i class="cap start"></i>
+				<i class="cap end"></i>
+			</div>
+			<div class="l-circle__stroke">
+				<div class="l-circle__stroke-line"></div>
+				<i class="cap start"></i>
+				<i class="cap end"></i>
+			</div>
+		</div>
+		<script type="text/javascript" src="./uni.webview.1.5.5.js"></script>
+		<script type="text/javascript" src="./circle.min.js"></script>
+		<script>
+			let useCanvas = !CSS.supports('background', 'conic-gradient(#000, #fff)');
+			const canvas = document.querySelector('#limeCanvas');
+			const css = document.querySelector('#limeCss');
+			let circle = null
+			// function toStyle(obj) {
+			// 	let str = ''
+			// 	for (const key in obj) {
+			// 		str += `${key}:${obj[key]};`
+			// 	}
+			// 	return str
+			// }
+
+			function setStyle(type, style) {
+				let el = null
+				if (!type) {
+					el = document.querySelector('.l-circle__trail')
+					// trail.style = toStyle(style)
+				} else {
+					el = document.querySelector('.l-circle__stroke')
+					// stroke.style = toStyle(style)
+				}
+				for (let key in style) {
+					el.style.setProperty(key, style[key])
+				}
+			}
+			// type 0删除 1增加
+			function setClass(target, className, type) {
+				const box = document.querySelector(target);
+				if (!type) {
+					box.classList.remove(className)
+				} else {
+					box.classList.add(className)
+				}
+			}
+
+			function postMessage(data) {
+				uni.postMessage({
+					data
+				});
+			};
+
+			function emit(event, data) {
+				postMessage({
+					event,
+					data
+				});
+			};
+
+			function setOption(data) {
+				if (circle) circle.setOption(data)
+			}
+
+			function clear() {
+				if (circle) circle.clear()
+			}
+
+			function play(v) {
+				if (circle) {
+					circle.play(v)
+				}
+			}
+
+			function stop() {
+				if (circle) circle.stop()
+			}
+
+			function dispose() {
+				if (circle) circle.dispose()
+			}
+
+			function init(type){
+				useCanvas = type;
+				if (useCanvas) {
+					css.remove()
+					const size = canvas.clientWidth
+					canvas.style.setProperty('width', size-1+'px')
+					canvas.style.setProperty('height', size-1+'px')
+					circle = new lime.Circle(canvas, {
+						pixelRatio: window.devicePixelRatio,
+						size,
+						run: (current) => {
+							emit('progress', current);
+						}
+					})
+					
+				} else {
+					canvas.remove()
+				}
+			}
+
+			emit('init', {
+				useCanvas
+			})
+		</script>
+	</body>
+</html>

@@ -18,11 +18,10 @@
         placeholder="请输入账号"
         borderTop
         :padding="['20rpx', '32rpx']"
-        v-model="form.account"
+        v-model="form.username"
         :isFillet="true"
         clearable
       ></fui-input>
-
       <view class="spacing"></view>
       <!-- 账号和密码之间的间距 -->
       <!-- <uni-easyinput
@@ -99,22 +98,47 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-
+const serverUrl = 'http://10.133.80.141:3000'
 const form = ref({
-  account: "",
+  username: "",
   password: "",
 });
-
 const submitLogin = () => {
-  if (!form.value.account || !form.value.password) {
+  if (!form.value.username || !form.value.password) {
     uni.showToast({
       title: "请输入账号和密码",
       icon: "none",
     });
     return;
   }
+
   console.log("提交登录表单", form.value);
-  // 处理登录逻辑
+  uni.request({
+    url: serverUrl + '/login',
+    method: 'POST',
+    data: {
+      username: form.value.username,
+      password: form.value.password
+    },
+    success: (res) => {
+      if(res.statusCode === 200) {
+        uni.showToast({
+          title: '登录成功',
+          icon: 'success'
+        })
+        uni.setStorageSync('token', res.data.token)
+        uni.setStorageSync('username', form.value.username)
+        uni.switchTab({
+          url: '/pages/Home/Home'
+        })
+      } else {
+        uni.showToast({
+          title: '登录失败',
+          icon: 'none'
+        })
+      }
+    },
+  })
 };
 
 const goRegister = () => {

@@ -26,6 +26,41 @@
         "navigationBarTitleText": "个人属性设置",
         "enablePullDownRefresh": false
       }
+    },
+    {
+      "path": "pages/Home/Home",
+      "style": {
+        "navigationBarTitleText": "主页",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/Friends/Friends",
+      "style": {
+        "navigationBarTitleText": "好友",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/Sports/Sports",
+      "style": {
+        "navigationBarTitleText": "运动",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/My_info/My_info",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/Search/Search",
+      "style": {
+        "navigationBarTitleText": "搜索",
+        "enablePullDownRefresh": false
+      }
     }
   ],
   "globalStyle": {
@@ -40,8 +75,40 @@
   "easycom": {
     "autoscan": true,
     "custom": {
-      "fui-(.*)": "firstui-uni/firstui/fui-$1/fui-$1.vue", 
-      "^uni-(.*)": "@/components/uni-$1.vue" 
+      "fui-(.*)": "firstui-uni/firstui/fui-$1/fui-$1.vue",
+      "^uni-(.*)": "@/components/uni-$1.vue"
     }
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#333333",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/Home/Home",
+        "text": "首页",
+        "iconPath": "static/icon/home.png",
+        "selectedIconPath": "static/icon/home.png"
+      },
+      {
+        "pagePath": "pages/Friends/Friends",
+        "text": "好友",
+        "iconPath": "static/icon/friend.png",
+        "selectedIconPath": "static/icon/friend.png"
+      },
+      {
+        "pagePath": "pages/Sports/Sports",
+        "text": "运动",
+        "iconPath": "static/icon/sport.png",
+        "selectedIconPath": "static/icon/sport.png"
+      },
+      {
+        "pagePath": "pages/My_info/My_info",
+        "text": "我的",
+        "iconPath": "static/icon/my_info.png",
+        "selectedIconPath": "static/icon/my_info.png"
+      }
+    ]
   }
 }

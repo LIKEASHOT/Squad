@@ -1,0 +1,142 @@
+<template>
+	
+	<view class="demo-block">
+		<text class="demo-block__title-text ultra">进度环</text>
+		<text class="demo-block__desc-text">圆环形的进度条组件，支持进度渐变动画</text>	
+		<view class="demo-block__body">
+			<view class="demo-block card">
+				<text class="demo-block__title-text large">基础2</text>
+				<view class="demo-block__body">
+					<view style="flex-direction: row; justify-content: space-between;">
+						<l-circle v-model:current="modelValue1" :percent="target1" size="200rpx">
+							{{modelValue1}}%
+						</l-circle>
+						<!-- <l-circle v-model:current="modelValue1" :percent="target1" :dashboard="false"  :clockwise="false" stroke-color="#ffa500" size="200rpx">
+							<text>{{modelValue1}}%</text>
+						</l-circle>
+						<l-circle v-model:current="modelValue1" :percent="target1" :dashboard="true"  :stroke-color="['#0000ff', '#ff0000', '#ffa500']" size="200rpx">
+							<text>{{modelValue1}}%</text>
+						</l-circle> -->
+					</view>
+					<view class="buttons">
+						<button class="btn" @click="onClick(20)">增加</button>
+						<button class="btn" @click="onClick(-20)">减少</button>
+					</view>
+					
+				</view>	
+			</view>	
+			
+			<view class="demo-block card">
+				<text class="demo-block__title-text large">倒计时</text>
+				<view class="demo-block__body">
+					<view style="flex-direction: row; justify-content: center">
+						<!-- <l-circle size="400rpx" v-model:current="modelValue2" :percent="target4" :max="60" :dashborad="false" :clockwise="true" stroke-width="20rpx" trail-width="20rpx">
+							<text style="font-size: 50rpx;">{{modelValue2}}</text>
+						</l-circle> -->
+					</view>
+					<button class="btn" type="primary" style="margin-top: 30rpx;"  @tap="onPlay">播放</button>
+					<button class="btn" style="margin-top: 10rpx;" @tap="onStop">暂停</button>
+					
+					
+				</view>	
+			</view>	
+		</view>	
+	</view>
+
+</template>
+<script lang="uts">
+	let isPlay = false
+	let timer = -1
+	export default {
+		data() {
+			return {
+				modelValue1: 0,
+				target1: 50,
+				modelValue2: 0,
+				target4: 60,
+			}
+		},
+		methods: {
+			onClick(number: number) {
+				this.target1 = Math.max(Math.min(100, this.target1 + number), 0)
+			},
+			countDown (){
+				this.target4 -= 1
+				if(this.target4 > 0) {
+					timer = setTimeout(this.countDown,1000)
+				}
+			},
+			onStop(){
+				isPlay = false
+				clearTimeout(timer)
+			},
+			onPlay(){
+				if(isPlay) return
+					isPlay = true
+					timer = setTimeout(this.countDown, 1000)
+				
+			}
+		}
+	}
+	
+</script>
+
+<style lang="scss">
+	.buttons {
+		margin-top: 10rpx;
+		flex-direction: row;
+		// bottom: 50rpx;
+		.btn {
+			flex: 1;
+			margin: 20rpx 10rpx;
+			background-color: white;
+			// flex-basis: 45%;
+		}
+	}
+	.demo-block {
+		margin: 32px 10px 0;
+		overflow: visible;
+		&.card{
+			background-color: white;
+			padding: 30rpx;
+			margin-bottom: 20rpx;
+		}
+		&__title {
+			margin: 0;
+			margin-top: 8px;
+			&-text {
+				color: rgba(0, 0, 0, 0.6);
+				font-weight: 400;
+				font-size: 14px;
+				line-height: 16px;
+				
+				&.large {
+					color: rgba(0, 0, 0, 0.9);
+					font-size: 18px;
+					font-weight: 700;
+					line-height: 26px;
+				}
+				&.ultra {
+					color: rgba(0, 0, 0, 0.9);
+					font-size: 24px;
+					font-weight: 700;
+					line-height: 32px;
+				}
+			}
+		}
+		&__desc-text {
+			color: rgba(0, 0, 0, 0.6);
+			margin: 8px 16px 0 0;
+			font-size: 14px;
+			line-height: 22px;
+		}
+		&__body {
+			margin: 16px 0;
+			overflow: visible;
+			.demo-block {
+				// margin-top: 0px;
+				margin: 0;
+			}
+		}
+	}
+</style>

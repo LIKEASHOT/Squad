@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "注册页面",
-  "enablePullDownRefresh": false,
-  "usingComponents": {
-    "fui-input": "../../node-modules/firstui-uni/firstui/fui-input/fui-input",
-    "fui-icon": "../../node-modules/firstui-uni/firstui/fui-icon/fui-icon"
-  }
-}
