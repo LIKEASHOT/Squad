@@ -1,9 +1,13 @@
 {
   "dependencies": {
+    "axios": "^1.7.7",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "start": "cross-env API_KEY=70e21317d91374161ec57346a5b44b39.nDWuV1ntp8Fm3ETA node app.js"
   }
 }

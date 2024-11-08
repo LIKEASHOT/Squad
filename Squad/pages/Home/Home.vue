@@ -103,7 +103,7 @@
         </div>
       </view>
       <view v-if="activeButton === 'custom'">
-        <!-- 智能定制内容 -->
+        <!-- 智能定制内容 --> 
         <div class="ai-customization">
           <textarea
             v-model="aiInput"
@@ -113,7 +113,7 @@
           <button @click="getCustomPlan" class="ai-button">获取定制计划</button>
           <div v-if="customPlan" class="custom-plan">
             <h3>定制计划</h3>
-            <p>{{ customPlan }}</p>
+            <div v-html="customPlan"></div>  <!-- 渲染 HTML 内容 -->
           </div>
         </div>
       </view>
@@ -276,9 +276,10 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from "vue";
+import MarkdownIt from 'markdown-it';
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 const target = ref(50);
-const modelVale = ref(0);
+const modelVale = ref(0); 
 const target_eat_percent = ref(50);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
@@ -292,27 +293,58 @@ const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
 const column_bar = "/static/icon/columnbar.png";
 const goals = ref([
+  { value: "全部", text: "全部" },
   { value: "减脂", text: "减脂" },
   { value: "增肌", text: "增肌" },
-  { value: "塑形", text: "塑形" },
+  { value: "耐力", text: "耐力" },
+  { value: "柔韧性", text: "柔韧性" },
+  { value: "综合健身", text: "综合健身" },
 ]);
 const types = ref([
-  { value: "有氧", text: "有氧" },
-  { value: "力量", text: "力量" },
+  { value: "全部", text: "全部" },
+  { value: "跑步", text: "跑步" },
   { value: "徒手", text: "徒手" },
+  { value: "撸铁", text: "撸铁" },
+  { value: "瑜伽", text: "瑜伽" },
+  { value: "篮球", text: "篮球" },
 ]);
 const difficulties = ref([
-  { value: "初级", text: "初级" },
-  { value: "中级", text: "中级" },
-  { value: "高级", text: "高级" },
+  { value: "全部", text: "全部" },
+  { value: "较难", text: "较难" },
+  { value: "简单", text: "简单" },
+  { value: "适中", text: "适中" },
 ]);
 const plans = ref([
   {
     title: "训练计划1",
     duration: "15min",
     imageUrl: "/static/face1.png",
-    times: "3次/周",
-    difficulties: "初级",
+    times: "3次",
+    difficulties: "简单",
+    calorie: "100",
+  },
+  {
+    title: "训练计划1",
+    duration: "15min",
+    imageUrl: "/static/face1.png",
+    times: "3次",
+    difficulties: "简单",
+    calorie: "100",
+  },
+  {
+    title: "训练计划1",
+    duration: "15min",
+    imageUrl: "/static/face1.png",
+    times: "3次",
+    difficulties: "简单",
+    calorie: "100",
+  },
+  {
+    title: "训练计划1",
+    duration: "15min",
+    imageUrl: "/static/face1.png",
+    times: "3次",
+    difficulties: "简单",
     calorie: "100",
   },
   // 其他计划数据...
@@ -367,7 +399,53 @@ const goToSearchPage = () => {
 const getCustomPlan = () => {
   // 模拟与 AI 交互获取定制计划
   // 这里可以替换为实际的 AI 接口调用
-  customPlan.value = `根据您的需求 "${aiInput.value}"，我们为您定制了以下运动计划：...`;
+      // 检查用户是否输入了需求
+        if (!aiInput.value.trim()) {
+          uni.showToast({
+            title: '请输入您的需求',
+            icon: 'none'
+          });
+          return;
+        }
+      
+		const username = uni.getStorageSync('username');  // 获取已登录用户的用户名
+        // 发送请求到后端获取定制的运动计划
+        uni.request({
+          url: 'http://192.168.56.1:3000/generateFitnessPlan', // 请根据实际情况调整 IP 地址和端口
+          method: 'POST',
+          data: {
+            aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
+			username: username  // 传递用户名
+          },
+          header: {
+            'Content-Type': 'application/json'
+          },
+          success: (res) => {
+            console.log('服务器响应:', res);
+            if (res.statusCode === 200 && res.data.fitnessPlan) {
+              // 计划生成成功，将其显示在页面上
+			  const md = new MarkdownIt();
+              customPlan.value = md.render(res.data.fitnessPlan);  
+              uni.showToast({
+                title: '计划生成成功',
+                icon: 'success'
+              });
+            } else {
+              uni.showToast({
+                title: res.data.error || '生成计划失败',
+                icon: 'none'
+              });
+            }
+          },
+          fail: (err) => {
+            console.error('请求失败:', err);
+            uni.showToast({
+              title: '网络请求失败，请稍后重试',
+              icon: 'none'
+            });
+          }
+        });
+  // customPlan.value = `根据您的需求 "${aiInput.value}"，我们为您定制了以下运动计划：...`;
 };
 
 const openDaySchedule = (day) => {

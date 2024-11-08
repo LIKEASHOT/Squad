@@ -5,6 +5,9 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken"); // 引入 JWT 库
 const session = require("express-session");
 const cors = require("cors");
+const axios = require('axios');
+require('dotenv').config();
+
 // 创建应用实例
 const app = express();
 const port = 3000;
@@ -23,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请�
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "123456",
+  password: "123123",
   database: "my_database",
 });
 
@@ -121,12 +124,11 @@ app.post("/login", (req, res) => {
           return res.status(500).json({ error: "Database error" });
         }
         // 生成 JWT
-        // const token = jwt.sign({ username: username }, JWT_SECRET);
-        // res.json({ message: "Login successful", token }); // 登录成功，返回 token
-        return res.status(200).json({success: "Login success!"})
+        const token = jwt.sign({ username: username }, JWT_SECRET);
+        res.json({ message: "Login successful", token }); // 登录成功，返回 token
       });
     } else {
-      return res.status(401).json({ error: "Invalid credentials" });
+      res.status(401).json({ error: "Invalid credentials" });
     }
   });
 });
@@ -217,8 +219,6 @@ app.post("/updateExerciseType", (req, res) => {
   });
 });
 
-
-
 // 查询上一次登录时间 API
 app.get("/last-login", (req, res) => {
   // 从 JWT 中获取用户名
@@ -240,6 +240,96 @@ app.get("/last-login", (req, res) => {
   });
 });
 
+//AI生成健身计划
+app.post('/generateFitnessPlan', async (req, res) => {
+  const { aiInput, username } = req.body;
+  // 验证输入
+  if (typeof aiInput !== 'string' || aiInput.trim() === '') {
+    return res.status(400).json({ error: '无效的输入' });
+  }
+
+  // 从数据库获取用户的其他数据
+  connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
+    if (err) {
+      console.error('数据库查询失败:', err);
+      return res.status(500).json({ error: '数据库查询失败' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: '用户未找到' });
+    }
+
+    const user = results[0];
+
+    // 获取用户的其他数据
+    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } = user;
+
+    const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    const API_KEY = process.env.API_KEY;
+
+    if (!API_KEY) {
+      console.error('API 密钥未设置');
+      return res.status(500).json({ error: '缺少 API 密钥' });
+    }
+
+    const model = 'GLM-4-Flash'; // 替换为实际模型ID
+
+    try {
+      console.log('请求数据:', {
+        messages: [
+          {
+            role: 'user',
+            content: `用户需求：${aiInput}。根据以下信息生成一个健身计划：
+              性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
+              BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`
+          }
+        ]
+      });
+
+      // 发送请求到 AI API
+      const response = await axios.post(
+        API_URL,
+        {
+          model,  // 模型ID
+          messages: [
+            {
+              role: 'user',
+              content: `用户需求：${aiInput}。根据以下信息生成一个健身计划：
+                性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
+                BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`
+            }
+          ]
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // 检查响应
+      if (response.status === 200 && response.data.choices && response.data.choices.length > 0) {
+        const fitnessPlan = response.data.choices[0].message.content;
+        res.status(200).json({
+          message: '健身计划生成成功',
+          fitnessPlan
+        });
+      } else {
+        console.error('AI 返回数据无效:', response.data);
+        res.status(500).json({ error: 'AI 返回数据无效' });
+      }
+    } catch (error) {
+      console.error('生成健身计划出错:', error.message || error);
+      // 增加请求返回的错误详情
+      if (error.response) {
+        console.error('AI API 错误响应:', error.response.data);
+        console.error('AI API 错误状态:', error.response.status);
+      }
+      res.status(500).json({ error: '生成健身计划失败' });
+    }
+  });
+});
 
 // 模糊查询API
 app.post("/searchGoals", (req, res) => {
