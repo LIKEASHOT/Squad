@@ -98,7 +98,7 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = 'http://192.168.56.1:3000'
+const serverUrl = "http://10.133.80.141:3000";
 const form = ref({
   username: "",
   password: "",
@@ -114,31 +114,31 @@ const submitLogin = () => {
 
   console.log("提交登录表单", form.value);
   uni.request({
-    url: serverUrl + '/login',
-    method: 'POST',
+    url: serverUrl + "/login",
+    method: "POST",
     data: {
       username: form.value.username,
-      password: form.value.password
+      password: form.value.password,
     },
     success: (res) => {
-      if(res.statusCode === 200) {
+      if (res.statusCode === 200) {
         uni.showToast({
-          title: '登录成功',
-          icon: 'success'
-        })
-        uni.setStorageSync('token', res.data.token)
-        uni.setStorageSync('username', form.value.username)
+          title: "登录成功",
+          icon: "success",
+        });
+        uni.setStorageSync("token", res.data.token);
+        uni.setStorageSync("username", form.value.username);
         uni.switchTab({
-          url: '/pages/Home/Home'
-        })
+          url: "/pages/Home/Home",
+        });
       } else {
         uni.showToast({
-          title: '登录失败',
-          icon: 'none'
-        })
+          title: "登录失败",
+          icon: "none",
+        });
       }
     },
-  })
+  });
 };
 
 const goRegister = () => {

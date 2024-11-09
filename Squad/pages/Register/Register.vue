@@ -8,8 +8,7 @@
 
     <!-- 注册表单 -->
     <view class="form-container">
-    
-	  <fui-input
+      <fui-input
         placeholder="请输入账号"
         borderTop
         :padding="['20rpx', '32rpx']"
@@ -27,7 +26,7 @@
         clearable
         class="input-field"
       ></uni-easyinput> -->
-	  <fui-input
+      <fui-input
         borderTop
         :padding="['20rpx', '32rpx']"
         placeholder="请输入密码"
@@ -53,7 +52,7 @@
         clearable
         class="input-field"
       ></uni-easyinput> -->
-	  <fui-input
+      <fui-input
         borderTop
         :padding="['20rpx', '32rpx']"
         placeholder="请再次输入密码"
@@ -101,7 +100,7 @@ const changepwd_vis_confirm = () => {
   password_confirm.value = !password_confirm.value;
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const form = ref({
   username: "",
   password: "",
@@ -129,51 +128,52 @@ const submitRegister = () => {
   }
   console.log("提交注册表单", form.value);
   // 注册逻辑处理
-	uni.request({
-		url: serverUrl + '/register',
-		method: 'POST',
-		data: {
-		  username: form.value.username,
-		  password: form.value.password,
-		  confirmPassword: form.value.confirmPassword, 
-		},
-		success: (res) => {
-		  console.log('注册请求返回：', res); // 打印出响应
-		  if (res.statusCode === 201 && res.data.success) {
-		    uni.showToast({
-		      title: '注册成功',
-          icon: 'success',
+  uni.request({
+    url: serverUrl + "/register",
+    method: "POST",
+    data: {
+      username: form.value.username,
+      password: form.value.password,
+      confirmPassword: form.value.confirmPassword,
+    },
+    success: (res) => {
+      console.log("注册请求返回：", res); // 打印出响应
+      if (res.statusCode === 201 && res.data.success) {
+        uni.showToast({
+          title: "注册成功",
+          icon: "success",
         });
         // 保存当前用户信息到本地存储
         uni.setStorage({
-          key: 'username',
+          key: "username",
           data: form.value.username,
           success: function () {
-            console.log('success');
-          }
+            console.log("success");
+          },
         });
-		    uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" })
-		      .then(() => {
-		        console.log('跳转成功');
-		      })
-		      .catch(err => {
-		        console.error('跳转失败：', err);
-		      });
-		  } else {
-		    uni.showToast({
-		      title: res.data.message || '注册失败',
-		      icon: 'none',
-		    });
-		  }
-		},
-		fail: (err) => {
-		  uni.showToast({
-			title: '网络请求失败',
-			icon: 'none',
-		  });
-		  console.error('注册请求失败：', err);
-		}
-	  });
+        uni
+          .navigateTo({ url: "/pages/FirstLogin/FirstLogin" })
+          .then(() => {
+            console.log("跳转成功");
+          })
+          .catch((err) => {
+            console.error("跳转失败：", err);
+          });
+      } else {
+        uni.showToast({
+          title: res.data.message || "注册失败",
+          icon: "none",
+        });
+      }
+    },
+    fail: (err) => {
+      uni.showToast({
+        title: "网络请求失败",
+        icon: "none",
+      });
+      console.error("注册请求失败：", err);
+    },
+  });
 };
 </script>
 

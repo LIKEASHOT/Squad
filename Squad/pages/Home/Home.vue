@@ -34,60 +34,96 @@
         </button>
       </div>
 
-        <view v-if="activeButton === 'all'">
-           <div class="filter-bar">
-             <div class="filter">
-               <label>目标</label>
-               <select v-model="selectedGoal">
-                 <option v-for="goal in goals" :key="goal.value" :value="goal.value">
-                   {{ goal.text }}
-                 </option>
-               </select>
-             </div>
-             <div class="filter">
-               <label>类型</label>
-               <select v-model="selectedType">
-                 <option v-for="type in types" :key="type.value" :value="type.value">
-                   {{ type.text }}
-                 </option>
-               </select>
-             </div>
-             <div class="filter">
-               <label for="difficulty">难度</label>
-               <select id="difficulty" v-model="selectedDifficulty">
-                 <option v-for="difficulty in difficulties" :key="difficulty.value" :value="difficulty.value">
-                   {{ difficulty.text }}
-                 </option>
-               </select>
-             </div>
-           </div>
-       
-           <!-- 滚动计划列表 -->
-           <div class="plan-list">
-             <div
-               v-for="(item, index) in filteredPlans"
-               :key="index"
-               class="plan-item"
-               @click="openPlanDetail(item)"
-             >
-               <image :src="item.imageUrl" class="plan-image" />
-               <div class="plan-info">
-                 <span class="plan-title">{{ item.title }}</span>
-                 <span class="plan-times">运动次数：{{ item.times }}</span>
-                 <span class="plan-duration">时间：{{ item.duration }}</span>
-                 <span class="plan-difficulties">难度：{{ item.difficulties }}</span>
-                 <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
-               </div>
-               <div class="vertical-line"></div>
-               <view class="op_bar">
-                 <image :src="add_icon" class="add_icon" />
-                 <image :src="delete_icon" class="delete_icon" />
-               </view>
-             </div>
-           </div>
-         </view>
+      <view v-if="activeButton === 'all'">
+        <div class="filter-bar">
+          <div class="filter">
+            <!-- <select v-model="selectedGoal" @change="filterPlans">
+              <option
+                v-for="goal in goals"
+                :key="goal.value"
+                :value="goal.value"
+              >
+                {{ goal.text }}
+              </option>
+            </select> -->
+            <uni-section title="目标" type="line" style="background-color:azure;">
+              <uni-data-select
+                v-model="selectedGoal"
+                :localdata="goals"
+                @change="filterPlans"
+              ></uni-data-select>
+            </uni-section>
+          </div>
+          <div class="filter">
+            <!-- <select v-model="selectedType" @change="filterPlans">
+              <option
+                v-for="type in types"
+                :key="type.value"
+                :value="type.value"
+              >
+                {{ type.text }}
+              </option>
+            </select> -->
+            <uni-section title="类型" type="line" style="background-color:beige;">
+              <uni-data-select
+                v-model="selectedType"
+                :localdata="types"
+                @change="filterPlans"
+              ></uni-data-select>
+            </uni-section>
+          </div>
+          <div class="filter">
+            <!-- <select
+              id="difficulty"
+              v-model="selectedDifficulty"
+              @change="filterPlans"
+            >
+              <option
+                v-for="difficulty in difficulties"
+                :key="difficulty.value"
+                :value="difficulty.value"
+              >
+                {{ difficulty.text }}
+              </option>
+            </select> -->
+            <uni-section title="难度" type="line" style="background-color:#f5f5f5;">
+              <uni-data-select
+                v-model="selectedDifficulty"
+                :localdata="difficulties"
+                @change="filterPlans"
+              ></uni-data-select>
+            </uni-section>
+          </div>
+        </div>
+
+        <!-- 滚动计划列表 -->
+        <div class="plan-list">
+          <div
+            v-for="(item, index) in filteredPlans"
+            :key="index"
+            class="plan-item"
+            @click="openPlanDetail(item)"
+          >
+            <image :src="item.imageUrl" class="plan-image" />
+            <div class="plan-info">
+              <span class="plan-title">{{ item.title }}</span>
+              <span class="plan-times">运动次数：{{ item.times }}</span>
+              <span class="plan-duration">时间：{{ item.duration }}</span>
+              <span class="plan-difficulties"
+                >难度：{{ item.difficulties }}</span
+              >
+              <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
+            </div>
+            <div class="vertical-line"></div>
+            <view class="op_bar">
+              <image :src="add_icon" class="add_icon" />
+              <image :src="delete_icon" class="delete_icon" />
+            </view>
+          </div>
+        </div>
+      </view>
       <view v-if="activeButton === 'custom'">
-        <!-- 智能定制内容 --> 
+        <!-- 智能定制内容 -->
         <div class="ai-customization">
           <textarea
             v-model="aiInput"
@@ -97,7 +133,8 @@
           <button @click="getCustomPlan" class="ai-button">获取定制计划</button>
           <div v-if="customPlan" class="custom-plan">
             <h3>定制计划</h3>
-            <div v-html="customPlan"></div>  <!-- 渲染 HTML 内容 -->
+            <div v-html="customPlan"></div>
+            <!-- 渲染 HTML 内容 -->
           </div>
         </div>
       </view>
@@ -259,11 +296,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick,watch } from "vue";
-import MarkdownIt from 'markdown-it';
+import { ref, computed, onMounted, nextTick, watch } from "vue";
+import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 const target = ref(50);
-const modelVale = ref(0); 
+const modelVale = ref(0);
 const target_eat_percent = ref(50);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
@@ -306,8 +343,8 @@ const plans = ref([
     times: "3次",
     difficulties: "简单",
     calorie: "100",
-	goal: "减脂",
-	type: "跑步",
+    goal: "减脂",
+    type: "跑步",
   },
   {
     title: "训练计划2",
@@ -316,8 +353,8 @@ const plans = ref([
     times: "3次",
     difficulties: "困难",
     calorie: "100",
-	goal: "增肌",
-	type: "撸铁",
+    goal: "增肌",
+    type: "撸铁",
   },
   {
     title: "训练计划3",
@@ -326,8 +363,8 @@ const plans = ref([
     times: "3次",
     difficulties: "适中",
     calorie: "100",
-	goal: "耐力",
-	type: "篮球",
+    goal: "耐力",
+    type: "篮球",
   },
   {
     title: "训练计划4",
@@ -336,8 +373,8 @@ const plans = ref([
     times: "3次",
     difficulties: "简单",
     calorie: "100",
-	goal: "柔韧性",
-	type: "瑜伽",
+    goal: "柔韧性",
+    type: "瑜伽",
   },
   // 其他计划数据...
 ]);
@@ -372,18 +409,35 @@ const selectGoal = (value) => {
 const selectType = (value) => {
   selectedType.value = selectedType.value === value ? "" : value;
 };
-
+const filteredPlans = ref([...plans.value]);
 // 过滤计划的逻辑
-const filteredPlans = computed(() => {
-  return plans.value.filter((plan) => {
-    const matchesGoal = selectedGoal.value === "全部" || plan.goal === selectedGoal.value;
-    const matchesType = selectedType.value === "全部" || plan.type === selectedType.value;
+const filterPlans = () => {
+  logSelectedFilters();
+  filteredPlans.value = plans.value.filter((plan) => {
+    const matchesGoal =
+      selectedGoal.value === "全部" || plan.goal === selectedGoal.value;
+    const matchesType =
+      selectedType.value === "全部" || plan.type === selectedType.value;
     const matchesDifficulty =
-      selectedDifficulty.value === "全部" || plan.difficulties === selectedDifficulty.value;
-
+      selectedDifficulty.value === "全部" ||
+      plan.difficulties === selectedDifficulty.value;
     return matchesGoal && matchesType && matchesDifficulty;
   });
-});
+};
+
+// const filteredPlans = computed(() => {
+//   logSelectedFilters();
+//   return plans.value.filter((plan) => {
+//     const matchesGoal =
+//       selectedGoal.value === "全部" || plan.goal === selectedGoal.value;
+//     const matchesType =
+//       selectedType.value === "全部" || plan.type === selectedType.value;
+//     const matchesDifficulty =
+//       selectedDifficulty.value === "全部" ||
+//       plan.difficulties === selectedDifficulty.value;
+//     return matchesGoal && matchesType && matchesDifficulty;
+//   });
+// });
 
 // 调试筛选条件变化
 const logSelectedFilters = () => {
@@ -408,52 +462,52 @@ const goToSearchPage = () => {
 const getCustomPlan = () => {
   // 模拟与 AI 交互获取定制计划
   // 这里可以替换为实际的 AI 接口调用
-      // 检查用户是否输入了需求
-        if (!aiInput.value.trim()) {
-          uni.showToast({
-            title: '请输入您的需求',
-            icon: 'none'
-          });
-          return;
-        }
-      
-		const username = uni.getStorageSync('username');  // 获取已登录用户的用户名
-        // 发送请求到后端获取定制的运动计划
-        uni.request({
-          url: 'http://192.168.56.1:3000/generateFitnessPlan', // 请根据实际情况调整 IP 地址和端口
-          method: 'POST',
-          data: {
-            aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
-			username: username  // 传递用户名
-          },
-          header: {
-            'Content-Type': 'application/json'
-          },
-          success: (res) => {
-            console.log('服务器响应:', res);
-            if (res.statusCode === 200 && res.data.fitnessPlan) {
-              // 计划生成成功，将其显示在页面上
-			  const md = new MarkdownIt();
-              customPlan.value = md.render(res.data.fitnessPlan);  
-              uni.showToast({
-                title: '计划生成成功',
-                icon: 'success'
-              });
-            } else {
-              uni.showToast({
-                title: res.data.error || '生成计划失败',
-                icon: 'none'
-              });
-            }
-          },
-          fail: (err) => {
-            console.error('请求失败:', err);
-            uni.showToast({
-              title: '网络请求失败，请稍后重试',
-              icon: 'none'
-            });
-          }
+  // 检查用户是否输入了需求
+  if (!aiInput.value.trim()) {
+    uni.showToast({
+      title: "请输入您的需求",
+      icon: "none",
+    });
+    return;
+  }
+
+  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+  // 发送请求到后端获取定制的运动计划
+  uni.request({
+    url: "http://192.168.56.1:3000/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
+    method: "POST",
+    data: {
+      aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
+      username: username, // 传递用户名
+    },
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      console.log("服务器响应:", res);
+      if (res.statusCode === 200 && res.data.fitnessPlan) {
+        // 计划生成成功，将其显示在页面上
+        const md = new MarkdownIt();
+        customPlan.value = md.render(res.data.fitnessPlan);
+        uni.showToast({
+          title: "计划生成成功",
+          icon: "success",
         });
+      } else {
+        uni.showToast({
+          title: res.data.error || "生成计划失败",
+          icon: "none",
+        });
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败:", err);
+      uni.showToast({
+        title: "网络请求失败，请稍后重试",
+        icon: "none",
+      });
+    },
+  });
   // customPlan.value = `根据您的需求 "${aiInput.value}"，我们为您定制了以下运动计划：...`;
 };
 
@@ -550,6 +604,7 @@ const refreshCalendar = () => {
 };
 // 异步请求模拟数据
 onMounted(() => {
+  filterPlans();
   showCalendar.value = true;
   setTimeout(() => {
     info.value.date = getDate(new Date(), -30).fullDate;
@@ -649,6 +704,14 @@ uni-button {
 .filter {
   display: flex;
   flex-direction: column;
+  width:23%;
+
+}
+.filter .uni-section {
+  background-color: #f5f5f5;
+  border: 1px solid #49a3ec;
+  border-radius: 5px;
+
 }
 
 .plan-list {

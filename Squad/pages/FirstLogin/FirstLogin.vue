@@ -11,7 +11,7 @@
         <view class="upper-section">
       <image
         v-if="step > 1"
-        src="../../static/back/返回 (2).png"
+        src="../../static/back/back2.png"
         class="return-button"
         @click="prevStep"
       ></image>
@@ -152,7 +152,7 @@
 
 <script setup>
 import { ref } from "vue";
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const logo = "/static/Squad1.png";
 const step = ref(1);
 const username = uni.getStorageSync("username");
@@ -395,7 +395,7 @@ const submitExerciseType = () => {
 };
 const submitForm = () => {
   uni
-    .navigateTo({ url: "/pages/Home/Home" })
+    .switchTab({ url: "/pages/Home/Home" })
     .then(() => {
       console.log("跳转成功");
     })
