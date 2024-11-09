@@ -34,74 +34,58 @@
         </button>
       </div>
 
-      <!-- Vue的下拉筛选菜单 -->
-      <view v-if="activeButton === 'all'">
-        <div class="filter-bar">
-          <div class="filter">
-            <label>目标</label>
-            <select v-model="selectedGoal">
-              <option
-                v-for="goal in goals"
-                :key="goal.value"
-                :value="goal.value"
-              >
-                {{ goal.text }}
-              </option>
-            </select>
-          </div>
-          <div class="filter">
-            <label>类型</label>
-            <select v-model="selectedType">
-              <option
-                v-for="type in types"
-                :key="type.value"
-                :value="type.value"
-              >
-                {{ type.text }}
-              </option>
-            </select>
-          </div>
-          <div class="filter">
-            <label>难度</label>
-            <select v-model="selectedDifficulty">
-              <option
-                v-for="difficulty in difficulties"
-                :key="difficulty.value"
-                :value="difficulty.value"
-              >
-                {{ difficulty.text }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <!-- 滚动计划列表 -->
-        <div class="plan-list">
-          <div
-            v-for="(item, index) in plans"
-            :key="index"
-            class="plan-item"
-            @click="openPlanDetail(item)"
-          >
-            <image :src="item.imageUrl" class="plan-image" />
-            <div class="plan-info">
-              <span class="plan-title">{{ item.title }}</span>
-              <span class="plan-times">运动次数：{{ item.times }}</span>
-              <span class="plan-duration">时间：{{ item.duration }}</span>
-              <span class="plan-difficulties"
-                >难度：{{ item.difficulties }}</span
-              >
-              <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
-            </div>
-            <!-- 竖线分割 -->
-            <div class="vertical-line"></div>
-            <view class="op_bar">
-              <image :src="add_icon" class="add_icon" />
-              <image :src="delete_icon" class="delete_icon" />
-            </view>
-          </div>
-        </div>
-      </view>
+        <view v-if="activeButton === 'all'">
+           <div class="filter-bar">
+             <div class="filter">
+               <label>目标</label>
+               <select v-model="selectedGoal">
+                 <option v-for="goal in goals" :key="goal.value" :value="goal.value">
+                   {{ goal.text }}
+                 </option>
+               </select>
+             </div>
+             <div class="filter">
+               <label>类型</label>
+               <select v-model="selectedType">
+                 <option v-for="type in types" :key="type.value" :value="type.value">
+                   {{ type.text }}
+                 </option>
+               </select>
+             </div>
+             <div class="filter">
+               <label for="difficulty">难度</label>
+               <select id="difficulty" v-model="selectedDifficulty">
+                 <option v-for="difficulty in difficulties" :key="difficulty.value" :value="difficulty.value">
+                   {{ difficulty.text }}
+                 </option>
+               </select>
+             </div>
+           </div>
+       
+           <!-- 滚动计划列表 -->
+           <div class="plan-list">
+             <div
+               v-for="(item, index) in filteredPlans"
+               :key="index"
+               class="plan-item"
+               @click="openPlanDetail(item)"
+             >
+               <image :src="item.imageUrl" class="plan-image" />
+               <div class="plan-info">
+                 <span class="plan-title">{{ item.title }}</span>
+                 <span class="plan-times">运动次数：{{ item.times }}</span>
+                 <span class="plan-duration">时间：{{ item.duration }}</span>
+                 <span class="plan-difficulties">难度：{{ item.difficulties }}</span>
+                 <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
+               </div>
+               <div class="vertical-line"></div>
+               <view class="op_bar">
+                 <image :src="add_icon" class="add_icon" />
+                 <image :src="delete_icon" class="delete_icon" />
+               </view>
+             </div>
+           </div>
+         </view>
       <view v-if="activeButton === 'custom'">
         <!-- 智能定制内容 --> 
         <div class="ai-customization">
@@ -275,7 +259,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick,watch } from "vue";
 import MarkdownIt from 'markdown-it';
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 const target = ref(50);
@@ -283,9 +267,9 @@ const modelVale = ref(0);
 const target_eat_percent = ref(50);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
-const selectedGoal = ref(""); // 选中的目标筛选项
-const selectedType = ref(""); // 选中的类型筛选项
-const selectedDifficulty = ref(""); // 选中的难度筛选项
+const selectedGoal = ref("全部"); // 选中的目标筛选项
+const selectedType = ref("全部"); // 选中的类型筛选项
+const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const showMyplan = ref(true);
 const showMyeat = ref(false);
 const today_left_eat = ref(2000);
@@ -310,7 +294,7 @@ const types = ref([
 ]);
 const difficulties = ref([
   { value: "全部", text: "全部" },
-  { value: "较难", text: "较难" },
+  { value: "困难", text: "困难" },
   { value: "简单", text: "简单" },
   { value: "适中", text: "适中" },
 ]);
@@ -322,30 +306,38 @@ const plans = ref([
     times: "3次",
     difficulties: "简单",
     calorie: "100",
+	goal: "减脂",
+	type: "跑步",
   },
   {
-    title: "训练计划1",
+    title: "训练计划2",
+    duration: "15min",
+    imageUrl: "/static/face1.png",
+    times: "3次",
+    difficulties: "困难",
+    calorie: "100",
+	goal: "增肌",
+	type: "撸铁",
+  },
+  {
+    title: "训练计划3",
+    duration: "15min",
+    imageUrl: "/static/face1.png",
+    times: "3次",
+    difficulties: "适中",
+    calorie: "100",
+	goal: "耐力",
+	type: "篮球",
+  },
+  {
+    title: "训练计划4",
     duration: "15min",
     imageUrl: "/static/face1.png",
     times: "3次",
     difficulties: "简单",
     calorie: "100",
-  },
-  {
-    title: "训练计划1",
-    duration: "15min",
-    imageUrl: "/static/face1.png",
-    times: "3次",
-    difficulties: "简单",
-    calorie: "100",
-  },
-  {
-    title: "训练计划1",
-    duration: "15min",
-    imageUrl: "/static/face1.png",
-    times: "3次",
-    difficulties: "简单",
-    calorie: "100",
+	goal: "柔韧性",
+	type: "瑜伽",
   },
   // 其他计划数据...
 ]);
@@ -381,8 +373,25 @@ const selectType = (value) => {
   selectedType.value = selectedType.value === value ? "" : value;
 };
 
-const selectDifficulty = (value) => {
-  selectedDifficulty.value = selectedDifficulty.value === value ? "" : value;
+// 过滤计划的逻辑
+const filteredPlans = computed(() => {
+  return plans.value.filter((plan) => {
+    const matchesGoal = selectedGoal.value === "全部" || plan.goal === selectedGoal.value;
+    const matchesType = selectedType.value === "全部" || plan.type === selectedType.value;
+    const matchesDifficulty =
+      selectedDifficulty.value === "全部" || plan.difficulties === selectedDifficulty.value;
+
+    return matchesGoal && matchesType && matchesDifficulty;
+  });
+});
+
+// 调试筛选条件变化
+const logSelectedFilters = () => {
+  console.log("当前选中的筛选条件:", {
+    goal: selectedGoal.value,
+    type: selectedType.value,
+    difficulty: selectedDifficulty.value,
+  });
 };
 
 const openPlanDetail = (plan) => {

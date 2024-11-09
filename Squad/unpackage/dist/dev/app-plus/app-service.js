@@ -11791,9 +11791,9 @@ if (uni.restoreGlobal) {
       const target_eat_percent = vue.ref(50);
       const tab = vue.ref("plan");
       const activeButton = vue.ref("all");
-      const selectedGoal = vue.ref("");
-      const selectedType = vue.ref("");
-      const selectedDifficulty = vue.ref("");
+      const selectedGoal = vue.ref("全部");
+      const selectedType = vue.ref("全部");
+      const selectedDifficulty = vue.ref("全部");
       const showMyplan = vue.ref(true);
       const showMyeat = vue.ref(false);
       const today_left_eat = vue.ref(2e3);
@@ -11815,7 +11815,7 @@ if (uni.restoreGlobal) {
       ]);
       const difficulties = vue.ref([
         { value: "全部", text: "全部" },
-        { value: "较难", text: "较难" },
+        { value: "困难", text: "困难" },
         { value: "简单", text: "简单" },
         { value: "适中", text: "适中" }
       ]);
@@ -11826,31 +11826,39 @@ if (uni.restoreGlobal) {
           imageUrl: "/static/face1.png",
           times: "3次",
           difficulties: "简单",
-          calorie: "100"
+          calorie: "100",
+          goal: "减脂",
+          type: "跑步"
         },
         {
-          title: "训练计划1",
+          title: "训练计划2",
+          duration: "15min",
+          imageUrl: "/static/face1.png",
+          times: "3次",
+          difficulties: "困难",
+          calorie: "100",
+          goal: "增肌",
+          type: "撸铁"
+        },
+        {
+          title: "训练计划3",
+          duration: "15min",
+          imageUrl: "/static/face1.png",
+          times: "3次",
+          difficulties: "适中",
+          calorie: "100",
+          goal: "耐力",
+          type: "篮球"
+        },
+        {
+          title: "训练计划4",
           duration: "15min",
           imageUrl: "/static/face1.png",
           times: "3次",
           difficulties: "简单",
-          calorie: "100"
-        },
-        {
-          title: "训练计划1",
-          duration: "15min",
-          imageUrl: "/static/face1.png",
-          times: "3次",
-          difficulties: "简单",
-          calorie: "100"
-        },
-        {
-          title: "训练计划1",
-          duration: "15min",
-          imageUrl: "/static/face1.png",
-          times: "3次",
-          difficulties: "简单",
-          calorie: "100"
+          calorie: "100",
+          goal: "柔韧性",
+          type: "瑜伽"
         }
         // 其他计划数据...
       ]);
@@ -11881,8 +11889,20 @@ if (uni.restoreGlobal) {
       const selectType = (value) => {
         selectedType.value = selectedType.value === value ? "" : value;
       };
-      const selectDifficulty = (value) => {
-        selectedDifficulty.value = selectedDifficulty.value === value ? "" : value;
+      const filteredPlans = vue.computed(() => {
+        return plans.value.filter((plan) => {
+          const matchesGoal = selectedGoal.value === "全部" || plan.goal === selectedGoal.value;
+          const matchesType = selectedType.value === "全部" || plan.type === selectedType.value;
+          const matchesDifficulty = selectedDifficulty.value === "全部" || plan.difficulties === selectedDifficulty.value;
+          return matchesGoal && matchesType && matchesDifficulty;
+        });
+      });
+      const logSelectedFilters = () => {
+        formatAppLog("log", "at pages/Home/Home.vue:390", "当前选中的筛选条件:", {
+          goal: selectedGoal.value,
+          type: selectedType.value,
+          difficulty: selectedDifficulty.value
+        });
       };
       const openPlanDetail = (plan) => {
       };
@@ -11914,7 +11934,7 @@ if (uni.restoreGlobal) {
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:424", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:433", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -11930,7 +11950,7 @@ if (uni.restoreGlobal) {
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:441", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:450", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -11939,7 +11959,7 @@ if (uni.restoreGlobal) {
         });
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:454", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:463", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -11981,9 +12001,9 @@ if (uni.restoreGlobal) {
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:505", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:514", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:508", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:517", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -12037,7 +12057,7 @@ if (uni.restoreGlobal) {
           ];
         }, 2e3);
       });
-      const __returned__ = { target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, showMyplan, showMyeat, today_left_eat, add_icon, delete_icon, column_bar, goals, types, difficulties, plans, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, selectDifficulty, openPlanDetail, goToSearchPage, getCustomPlan, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, get MarkdownIt() {
+      const __returned__ = { target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, showMyplan, showMyeat, today_left_eat, add_icon, delete_icon, column_bar, goals, types, difficulties, plans, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -12106,7 +12126,6 @@ if (uni.restoreGlobal) {
             /* CLASS */
           )
         ]),
-        vue.createCommentVNode(" Vue的下拉筛选菜单 "),
         $setup.activeButton === "all" ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
           vue.createElementVNode("div", { class: "filter-bar" }, [
             vue.createElementVNode("div", { class: "filter" }, [
@@ -12164,10 +12183,11 @@ if (uni.restoreGlobal) {
               ])
             ]),
             vue.createElementVNode("div", { class: "filter" }, [
-              vue.createElementVNode("label", null, "难度"),
+              vue.createElementVNode("label", { for: "difficulty" }, "难度"),
               vue.withDirectives(vue.createElementVNode(
                 "select",
                 {
+                  id: "difficulty",
                   "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => $setup.selectedDifficulty = $event)
                 },
                 [
@@ -12196,7 +12216,7 @@ if (uni.restoreGlobal) {
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
               null,
-              vue.renderList($setup.plans, (item, index) => {
+              vue.renderList($setup.filteredPlans, (item, index) => {
                 return vue.openBlock(), vue.createElementBlock("div", {
                   key: index,
                   class: "plan-item",
@@ -12243,7 +12263,6 @@ if (uni.restoreGlobal) {
                       /* TEXT */
                     )
                   ]),
-                  vue.createCommentVNode(" 竖线分割 "),
                   vue.createElementVNode("div", { class: "vertical-line" }),
                   vue.createElementVNode("view", { class: "op_bar" }, [
                     vue.createElementVNode("image", {
