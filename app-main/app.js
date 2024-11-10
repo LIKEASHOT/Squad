@@ -6,6 +6,10 @@ const jwt = require("jsonwebtoken"); // 引入 JWT 库
 const session = require("express-session");
 const cors = require("cors");
 const axios = require('axios');
+const multer = require('multer');
+const tf = require('@tensorflow/tfjs');
+const mobilenet = require('@tensorflow-models/mobilenet');
+const path = require('path');
 require('dotenv').config();
 
 // 创建应用实例
@@ -330,6 +334,88 @@ app.post('/generateFitnessPlan', async (req, res) => {
     }
   });
 });
+
+//图片识别食物热量
+const upload = multer({
+  dest: 'uploads/', 
+  limits: { fileSize: 10 * 1024 * 1024 },  
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('只允许上传图片文件'));    // 设置上传文件存放的目录 // 设置文件最大大小为 10MB// 验证上传的文件是图片类型
+    }
+    cb(null, true);  // 如果文件类型正确，继续上传
+  },
+});
+
+// 配置智谱AI API 请求
+const GLM_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';  // 替换为实际API接口
+const API_KEY1 = process.env.API_KEY;   // 替换为你的API密钥
+
+// 通过智谱AI查询食物的平均热量（每份）
+async function getFoodAverageCaloriesFromGLM(foodName) {
+  try {
+    const response = await axios.post(GLM_API_URL, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY1}`,
+      },
+      data: {
+        input: `请提供食物“${foodName}”的平均每份热量是多少？`,
+      },
+    });
+
+    const answer = response.data.result;  // 获取模型返回的热量数据
+    console.log(`查询到的食物：${foodName}，平均热量：${answer}`);
+
+    // 假设返回的结果是每份热量
+    const averageCaloriesPerPortion = parseFloat(answer);  // 提取热量值
+    return averageCaloriesPerPortion;
+  } catch (error) {
+    console.error("查询热量时出错:", error);
+    throw error;
+  }
+}
+
+// 加载并使用 MobileNet 进行图片识别
+async function loadModel() {
+  const model = await mobilenet.load();
+  console.log('MobileNet 模型加载成功');
+  return model;
+}
+
+async function predictFood(imagePath, model) {
+  const image = tf.node.decodeImage(imagePath);
+  const predictions = await model.classify(image);
+  return predictions;
+}
+
+// 处理上传的图片并识别食物热量
+app.post('/predict', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('未上传文件');
+    }
+
+    // 使用食物识别模型预测食物名称
+    const model = await loadModel();  // 加载食物识别模型
+    const predictions = await predictFood(req.file.path, model);
+    const foodName = predictions[0].className;  // 假设识别结果为第一项
+
+    console.log(`识别出的食物：${foodName}`);
+
+    // 使用智谱AI获取食物的平均热量信息
+    const averageCaloriesPerPortion = await getFoodAverageCaloriesFromGLM(foodName);
+
+    // 返回响应数据
+    res.json({
+      食物名称: foodName,
+      平均每份热量: averageCaloriesPerPortion,
+    });
+  } catch (error) {
+    console.error('处理时出错:', error);
+    res.status(500).send('处理图片时出错');
+  }
+});
+
 
 // 模糊查询API
 app.post("/searchGoals", (req, res) => {
