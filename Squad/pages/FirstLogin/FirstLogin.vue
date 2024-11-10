@@ -152,7 +152,7 @@
 
 <script setup>
 import { ref } from "vue";
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 const logo = "/static/Squad1.png";
 const step = ref(1);
 const username = uni.getStorageSync("username");
@@ -374,6 +374,7 @@ const submitExerciseType = () => {
           title: "更新成功",
           icon: "success",
         });
+		uni.switchTab({ url: "/pages/Home/Home" })
       } else {
         uni.showToast({
           title: res.data.error || "更新失败",

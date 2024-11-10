@@ -15,7 +15,7 @@
         class="input-field rounded-input"
       ></uni-easyinput> -->
       <fui-input
-        placeholder="请输入账号"
+        placeholder="请输入账号名"
         borderTop
         :padding="['20rpx', '32rpx']"
         v-model="form.username"
@@ -98,7 +98,7 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = "http://192.168.56.1:3000";
 const form = ref({
   username: "",
   password: "",
@@ -106,7 +106,7 @@ const form = ref({
 const submitLogin = () => {
   if (!form.value.username || !form.value.password) {
     uni.showToast({
-      title: "请输入账号和密码",
+      title: "请输入账号名和密码",
       icon: "none",
     });
     return;
