@@ -4,6 +4,7 @@ USE my_database;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    Permission INT,
     name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     lastLogin DATETIME,
@@ -16,6 +17,10 @@ CREATE TABLE users (
     exerciseType VARCHAR(255),
     goalid VARCHAR(255)  
 );
+
+//根管理员的账号密码
+INSERT INTO users (id, Permission, name, password) 
+VALUES (1, 0, 'admin', '123');
 
 CREATE TABLE goal (
     id INT AUTO_INCREMENT PRIMARY KEY,
