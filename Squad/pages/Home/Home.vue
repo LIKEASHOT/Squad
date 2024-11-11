@@ -519,20 +519,31 @@ onMounted(() => {
 });
 // 添加计划到“我的计划”
 const handleAdd = (plan) => {
-   // 先加载现有的计划
-    let currentPlans = uni.getStorageSync(`myPlans_${username
-	}`);
-    currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
-  
-    // 添加新计划
-    currentPlans.push(plan);
-  
-    // 存储回本地
-    uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-    console.log('计划已添加:', plan.title);
-  
-    // 重新加载计划
-    loadMyPlans();
+  // 先加载现有的计划
+  let currentPlans = uni.getStorageSync(`myPlans_${username}`);
+  currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
+
+  // 检查该计划是否已经存在
+  const isPlanExists = currentPlans.some((item) => item.title === plan.title);
+
+  if (isPlanExists) {
+    console.log('该计划已经添加过:', plan.title);
+    uni.showToast({
+      title: '计划已存在',
+      icon: 'none',
+    });
+    return; // 如果已存在，直接返回
+  }
+
+  // 如果计划不存在，则添加新计划
+  currentPlans.push(plan);
+
+  // 存储回本地
+  uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
+  console.log('计划已添加:', plan.title);
+
+  // 重新加载计划
+  loadMyPlans();
 };
 
 // 从“我的计划”中删除

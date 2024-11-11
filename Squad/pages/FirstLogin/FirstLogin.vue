@@ -175,7 +175,7 @@ const goalOptions = [
 
 const sportTypeOptions = [
   { value: "跑步", text: "跑步", checked: false },
-  { value: "游泳", text: "游泳", checked: false },
+  { value: "徒手", text: "徒手", checked: false },
   { value: "撸铁", text: "撸铁", checked: false },
   { value: "瑜伽", text: "瑜伽", checked: false },
   { value: "篮球", text: "篮球", checked: false },

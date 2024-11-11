@@ -3071,7 +3071,7 @@ if (uni.restoreGlobal) {
       ];
       const sportTypeOptions = [
         { value: "跑步", text: "跑步", checked: false },
-        { value: "游泳", text: "游泳", checked: false },
+        { value: "徒手", text: "徒手", checked: false },
         { value: "撸铁", text: "撸铁", checked: false },
         { value: "瑜伽", text: "瑜伽", checked: false },
         { value: "篮球", text: "篮球", checked: false }
@@ -15241,9 +15241,18 @@ ${i3}
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
+        const isPlanExists = currentPlans.some((item) => item.title === plan.title);
+        if (isPlanExists) {
+          formatAppLog("log", "at pages/Home/Home.vue:530", "该计划已经添加过:", plan.title);
+          uni.showToast({
+            title: "计划已存在",
+            icon: "none"
+          });
+          return;
+        }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:532", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:543", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -15251,11 +15260,11 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:549", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:560", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:557", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:568", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -15297,9 +15306,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:608", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:619", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:611", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:622", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
