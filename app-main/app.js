@@ -88,7 +88,8 @@ app.post("/register", (req, res) => {
         .json({ message: "Username already exists", success: false });
     }
 
-    const insertQuery = "INSERT INTO users (name, password) VALUES (?, ?)";
+    // 插入用户并设置 permission 为 2
+    const insertQuery = "INSERT INTO users (name, password, permission) VALUES (?, ?, 2)";
     connection.query(insertQuery, [username, password], (err) => {
       if (err) {
         console.error("插入用户时出错:", err);
@@ -98,8 +99,8 @@ app.post("/register", (req, res) => {
       }
 
       // 设置 session
-      req.session.username = username; // 确保这里设置了 username
-      console.log("Session set for user:", req.session); // 调试信息
+      req.session.username = username;
+      console.log("Session set for user:", req.session);
 
       res
         .status(201)
@@ -107,17 +108,58 @@ app.post("/register", (req, res) => {
     });
   });
 });
-//
 
 
-// 用户登录 API
+// 次级管理员 注册 API（有根级管理员注册）
+app.post("/register-admin", (req, res) => {
+  const { username, password, confirmPassword } = req.body;
+
+  if (password !== confirmPassword) {
+    return res
+      .status(400)
+      .json({ message: "Passwords do not match", success: false });
+  }
+
+  const checkQuery = "SELECT * FROM users WHERE name = ?";
+  connection.query(checkQuery, [username], (err, results) => {
+    if (err) {
+      console.error("查询用户名时出错:", err);
+      return res
+        .status(500)
+        .json({ message: "Database error", success: false });
+    }
+
+    if (results.length > 0) {
+      return res
+        .status(400)
+        .json({ message: "Username already exists", success: false });
+    }
+
+    // 插入用户并设置 permission 为 1
+    const insertQuery = "INSERT INTO users (name, password, permission) VALUES (?, ?, 1)";
+    connection.query(insertQuery, [username, password], (err) => {
+      if (err) {
+        console.error("插入用户时出错:", err);
+        return res
+          .status(500)
+          .json({ message: "Database error", success: false });
+      }
+
+      // 设置 session
+      req.session.username = username;
+      console.log("Session set for user:", req.session);
+
+      res
+        .status(201)
+        .json({ message: "User registered successfully", success: true });
+    });
+  });
+});
+
+
+//登录API，输入值：账号密码，返回值有（登陆成功信号和对应用户的权限）
 app.post("/login", (req, res) => {
   const { username, password } = req.body; // 从请求体中获取用户名和密码
-  
-  // 检查是否为管理员账号
-  if (username === "admin" && password === "123") {
-    return res.json({ message: "管理员运行中" });
-  }
   
   const query = "SELECT * FROM users WHERE name = ? AND password = ?";
 
@@ -126,16 +168,24 @@ app.post("/login", (req, res) => {
       return res.status(500).json({ error: "Database error" });
     }
     if (results.length > 0) {
+      const user = results[0];
+      
       // 登录成功，更新 lastLogin
-      const updateLoginTimeQuery =
-        "UPDATE users SET lastLogin = NOW() WHERE name = ?";
+      const updateLoginTimeQuery = "UPDATE users SET lastLogin = NOW() WHERE name = ?";
       connection.query(updateLoginTimeQuery, [username], (updateErr) => {
         if (updateErr) {
           return res.status(500).json({ error: "Database error" });
         }
+
         // 生成 JWT
         const token = jwt.sign({ username: username }, JWT_SECRET);
-        res.json({ message: "Login successful", token }); // 登录成功，返回 token
+        
+        // 返回登录成功消息、token 和用户的权限
+        res.json({ 
+          message: "Login successful", 
+          token, 
+          permission: user.Permission 
+        });
       });
     } else {
       res.status(401).json({ error: "Invalid credentials" });
