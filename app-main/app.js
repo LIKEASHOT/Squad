@@ -113,6 +113,12 @@ app.post("/register", (req, res) => {
 // 用户登录 API
 app.post("/login", (req, res) => {
   const { username, password } = req.body; // 从请求体中获取用户名和密码
+  
+  // 检查是否为管理员账号
+  if (username === "admin" && password === "123") {
+    return res.json({ message: "管理员运行中" });
+  }
+  
   const query = "SELECT * FROM users WHERE name = ? AND password = ?";
 
   connection.query(query, [username, password], (err, results) => {

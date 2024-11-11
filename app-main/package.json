@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@tensorflow-models/mobilenet": "^2.1.1",
+    "multer": "^1.4.5-lts.1",
+    "@tensorflow/tfjs": "^4.22.0",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
