@@ -14,6 +14,12 @@
         @click="switchTab('schedule')"
         >日程</span
       >
+      <span
+        :class="{ active: tab === 'plan-board' }"
+        @click="switchTab('plan-board')"
+        v-if="IsManager === true"
+        >计划管理</span
+      >
     </div>
 
     <!-- 计划内容 -->
@@ -37,35 +43,47 @@
       <view v-if="activeButton === 'all'">
         <div class="filter-bar">
           <div class="filter">
-            <uni-section title="目标" type="line" style="background-color:#f5f5f5;">
+            <uni-section
+              title="目标"
+              type="line"
+              style="background-color: #f5f5f5"
+            >
               <uni-data-select
                 v-model="selectedGoal"
                 :localdata="goals"
                 @change="filterPlans"
-				:clear="false"
-				style="height: 10px; padding:1px 1px; font-size: 1px;"
+                :clear="false"
+                style="height: 10px; padding: 1px 1px; font-size: 1px"
               ></uni-data-select>
             </uni-section>
           </div>
           <div class="filter">
-            <uni-section title="类型" type="line" style="background-color:#f5f5f5;">
+            <uni-section
+              title="类型"
+              type="line"
+              style="background-color: #f5f5f5"
+            >
               <uni-data-select
                 v-model="selectedType"
                 :localdata="types"
                 @change="filterPlans"
-				:clear="false"
-				style="height: 10px; padding:1px 1px; font-size: 1px;"
+                :clear="false"
+                style="height: 10px; padding: 1px 1px; font-size: 1px"
               ></uni-data-select>
             </uni-section>
           </div>
           <div class="filter">
-            <uni-section title="难度" type="line" style="background-color:#f5f5f5;">
+            <uni-section
+              title="难度"
+              type="line"
+              style="background-color: #f5f5f5"
+            >
               <uni-data-select
                 v-model="selectedDifficulty"
                 :localdata="difficulties"
                 @change="filterPlans"
-				:clear="false"
-				style="height: 10px; padding:1px 1px; font-size: 1px;"
+                :clear="false"
+                style="height: 10px; padding: 1px 1px; font-size: 1px"
               ></uni-data-select>
             </uni-section>
           </div>
@@ -90,10 +108,18 @@
               <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
             </div>
             <div class="vertical-line"></div>
-			<!-- 添加 & 删除按钮 -->
+            <!-- 添加 & 删除按钮 -->
             <view class="op_bar">
-              <image :src="add_icon" class="add_icon" @click.stop="handleAdd(item)"/>
-              <image :src="delete_icon" class="delete_icon" @click.stop="handleRemove(item)"/>
+              <image
+                :src="add_icon"
+                class="add_icon"
+                @click.stop="handleAdd(item)"
+              />
+              <image
+                :src="delete_icon"
+                class="delete_icon"
+                @click.stop="handleRemove(item)"
+              />
             </view>
           </div>
         </div>
@@ -194,34 +220,42 @@
               </button>
             </view>
           </view>
-		  <!-- 我的计划展示 -->
+          <!-- 我的计划展示 -->
           <view v-if="showMyplan === true">
             <div class="plan-list">
-                <div
-                  v-for="(item, index) in myPlans"
-                  :key="index"
-                  class="plan-item"
-                  @click="openPlanDetail(item)"
-                >
-                  <image :src="item.imageUrl" class="plan-image" />
-                  <div class="plan-info">
-                    <span class="plan-title">{{ item.title }}</span>
-                    <span class="plan-times">运动次数：{{ item.times }}</span>
-                    <span class="plan-duration">时间：{{ item.duration }}</span>
-                    <span class="plan-difficulties"
-                      >难度：{{ item.difficulties }}</span
-                    >
-                    <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
-                  </div>
-                  <div class="vertical-line"></div>
-            			<!-- 添加 & 删除按钮 -->
-                  <view class="op_bar">
-                    <image :src="add_icon" class="add_icon" @click.stop="handleAdd(item)"/>
-                    <image :src="delete_icon" class="delete_icon" @click.stop="handleRemove(item)"/>
-                  </view>
+              <div
+                v-for="(item, index) in myPlans"
+                :key="index"
+                class="plan-item"
+                @click="openPlanDetail(item)"
+              >
+                <image :src="item.imageUrl" class="plan-image" />
+                <div class="plan-info">
+                  <span class="plan-title">{{ item.title }}</span>
+                  <span class="plan-times">运动次数：{{ item.times }}</span>
+                  <span class="plan-duration">时间：{{ item.duration }}</span>
+                  <span class="plan-difficulties"
+                    >难度：{{ item.difficulties }}</span
+                  >
+                  <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
                 </div>
+                <div class="vertical-line"></div>
+                <!-- 添加 & 删除按钮 -->
+                <view class="op_bar">
+                  <image
+                    :src="add_icon"
+                    class="add_icon"
+                    @click.stop="handleAdd(item)"
+                  />
+                  <image
+                    :src="delete_icon"
+                    class="delete_icon"
+                    @click.stop="handleRemove(item)"
+                  />
+                </view>
               </div>
-            </view>
+            </div>
+          </view>
           <view v-if="showMyeat === true" class="eat_page">
             <view>
               <l-circle
@@ -291,6 +325,177 @@
         </view>
       </view>
     </view>
+    <view class="plan-manage-board" v-if="tab === 'plan-board'">
+      <div class="plan-manage-header">
+        <div class="filter-section">
+          <!-- 筛选器部分 -->
+          <div class="filter-bar-planboard">
+            <div class="filter">
+              <uni-section
+                title="目标"
+                type="line"
+                style="background-color: #f5f5f5"
+              >
+                <uni-data-select
+                  v-model="selectedGoal"
+                  :localdata="goals"
+                  @change="filterPlans"
+                  :clear="false"
+                >
+                </uni-data-select>
+              </uni-section>
+            </div>
+            <div class="filter">
+              <uni-section
+                title="类型"
+                type="line"
+                style="background-color: #f5f5f5"
+              >
+                <uni-data-select
+                  v-model="selectedType"
+                  :localdata="types"
+                  @change="filterPlans"
+                  :clear="false"
+                >
+                </uni-data-select>
+              </uni-section>
+            </div>
+            <div class="filter">
+              <uni-section
+                title="难度"
+                type="line"
+                style="background-color: #f5f5f5"
+              >
+                <uni-data-select
+                  v-model="selectedDifficulty"
+                  :localdata="difficulties"
+                  @change="filterPlans"
+                  :clear="false"
+                >
+                </uni-data-select>
+              </uni-section>
+            </div>
+            <!-- 添加计划按钮 -->
+            <button type="primary" @click="handleAddPlan_board" class="add-plan-btn">
+              添加计划
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- 计划列表 -->
+      <div class="plan-list">
+        <div
+          v-for="(item, index) in filteredPlans"
+          :key="index"
+          class="plan-item"
+        >
+          <image :src="item.imageUrl" class="plan-image" />
+          <div class="plan-info">
+            <span class="plan-title">{{ item.title }}</span>
+            <span class="plan-times">运动次数：{{ item.times }}</span>
+            <span class="plan-duration">时间：{{ item.duration }}</span>
+            <span class="plan-difficulties">难度：{{ item.difficulties }}</span>
+            <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
+          </div>
+          <div class="vertical-line"></div>
+          <!-- 修改按钮 -->
+          <div class="op_bar">
+            <button
+              class="modify-button"
+              type="primary"
+              @click="handleEdit(item, index)"
+            >
+              修改
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- 添加/编辑计划的弹窗 -->
+      <uni-popup
+        ref="popup"
+        type="center"
+        background-color="white"
+        borderRadius="5px 5px 5px 5px"
+      >
+        <view class="popup-content">
+          <view class="popup-title">{{ dialogTitle }}</view>
+          <uni-forms :model="planForm" labelWidth="80px">
+            <uni-forms-item label="名称">
+              <uni-easyinput
+                v-model="planForm.title"
+                placeholder="请输入名称"
+              />
+            </uni-forms-item>
+
+            <uni-forms-item label="运动次数">
+              <uni-easyinput
+                v-model="planForm.times"
+                type="string"
+                placeholder="请输入运动次数"
+              />
+            </uni-forms-item>
+
+            <uni-forms-item label="时间">
+              <uni-easyinput
+                v-model="planForm.duration"
+                placeholder="请输入时间"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="卡路里">
+              <uni-easyinput
+                v-model="planForm.calorie"
+                type="number"
+                placeholder="请输入卡路里"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="运动类型">
+              <uni-data-select
+                v-model="planForm.type"
+                :localdata="types"
+                placeholder="请选择运动类型"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="运动目标">
+              <uni-data-checkbox
+                placeholder="请选择运动目标"
+                v-model="planForm.goal"
+                :localdata="goals"
+                multiple
+                :map="{ text: 'text', value: 'value' }"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="难度">
+              <uni-data-select
+                v-model="planForm.difficulties"
+                :localdata="difficulties"
+                placeholder="请选择难度"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="封面">
+              <uni-easyinput
+                v-model="planForm.imageUrl"
+                type="string"
+                placeholder="请输入封面url"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="视频链接">
+              <uni-easyinput
+                v-model="planForm.videoUrl"
+                type="string"
+                placeholder="请输入演示视频url"
+              />
+            </uni-forms-item>
+          </uni-forms>
+
+          <view class="popup-buttons">
+            <button class="btn-cancel" @click="closePopup">取消</button>
+            <button class="btn-confirm" type="primary" @click="savePlan()">
+              确定
+            </button>
+          </view>
+        </view>
+      </uni-popup>
+    </view>
   </div>
 </template>
 
@@ -298,6 +503,7 @@
 import { ref, computed, onMounted, nextTick, watch } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
+import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
@@ -310,9 +516,12 @@ const username = uni.getStorageSync("username"); // 获取已登录用户的用�
 const showMyplan = ref(true);
 const showMyeat = ref(false);
 const today_left_eat = ref(2000);
+const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
 const column_bar = "/static/icon/columnbar.png";
+const popup = ref(null);
+const dialogTitle = ref("添加计划");
 const goals = ref([
   { value: "全部", text: "全部" },
   { value: "减脂", text: "减脂" },
@@ -335,6 +544,17 @@ const difficulties = ref([
   { value: "简单", text: "简单" },
   { value: "适中", text: "适中" },
 ]);
+const planForm = ref({
+  title: "",
+  duration: "",
+  imageUrl: "",
+  times: "",
+  difficulties: "",
+  calorie: "",
+  goal: "",
+  type: "",
+  videoUrl: "",
+});
 const plans = ref([
   {
     title: "有氧拳击HIIT",
@@ -343,8 +563,9 @@ const plans = ref([
     times: "两天一次",
     difficulties: "适中",
     calorie: "145",
-    goal: ["减脂","耐力","综合健身"],
+    goal: ["减脂", "耐力", "综合健身"],
     type: "徒手",
+    videoUrl: "",
   },
   {
     title: "强化核心力量",
@@ -353,7 +574,7 @@ const plans = ref([
     times: "两天一次",
     difficulties: "困难",
     calorie: "87",
-    goal: ["减脂", "增肌", "耐力","柔韧性"],
+    goal: ["减脂", "增肌", "耐力", "柔韧性"],
     type: "徒手",
   },
   {
@@ -363,7 +584,7 @@ const plans = ref([
     times: "3次",
     difficulties: "适中",
     calorie: "100",
-    goal: "耐力",
+    goal: ["耐力"],
     type: "篮球",
   },
   {
@@ -373,7 +594,7 @@ const plans = ref([
     times: "3次",
     difficulties: "简单",
     calorie: "100",
-    goal: "柔韧性",
+    goal: ["柔韧性"],
     type: "瑜伽",
   },
   // 其他计划数据...
@@ -383,6 +604,7 @@ const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
 const currentExercise = ref(30); // 当前运动时长
 const planExercise = ref(60); // 计划运动时长
+
 const weekDays = ref([
   { date: "周一", progress: 70 },
   { date: "周二", progress: 50 },
@@ -503,7 +725,8 @@ const getCustomPlan = () => {
 
 // 存储我的计划
 const myPlans = ref([]);
-
+// 添加一个变量存储当前编辑的索引
+const currentEditIndex = ref(-1);
 // 加载当前用户的计划
 const loadMyPlans = () => {
   const storedPlans = uni.getStorageSync(`myPlans_${username}`);
@@ -513,8 +736,17 @@ const loadMyPlans = () => {
     myPlans.value = [];
   }
 };
+const judgeManager = () => {
+  // 判断是否为管理员
+  // const Level = uni.getStorageSync("Level");
+  const Level = "1";
+  if (Level === "1") {
+    IsManager.value = true;
+  }
+};
 // 页面加载时调用
 onMounted(() => {
+  judgeManager();
   loadMyPlans();
 });
 // 添加计划到“我的计划”
@@ -527,10 +759,10 @@ const handleAdd = (plan) => {
   const isPlanExists = currentPlans.some((item) => item.title === plan.title);
 
   if (isPlanExists) {
-    console.log('该计划已经添加过:', plan.title);
+    console.log("该计划已经添加过:", plan.title);
     uni.showToast({
-      title: '计划已存在',
-      icon: 'none',
+      title: "计划已存在",
+      icon: "none",
     });
     return; // 如果已存在，直接返回
   }
@@ -540,7 +772,7 @@ const handleAdd = (plan) => {
 
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-  console.log('计划已添加:', plan.title);
+  console.log("计划已添加:", plan.title);
 
   // 重新加载计划
   loadMyPlans();
@@ -548,19 +780,111 @@ const handleAdd = (plan) => {
 
 // 从“我的计划”中删除
 const handleRemove = (plan) => {
-   // 先加载现有的计划
-    let currentPlans = uni.getStorageSync(`myPlans_${username}`);
-    currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
-  
-    // 过滤掉要删除的计划
-    const updatedPlans = currentPlans.filter(item => item.title !== plan.title);
-  
-    // 存储回本地
-    uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-    console.log('计划已删除:', plan.title);
-  
-    // 重新加载计划
-    loadMyPlans();
+  // 先加载现有的计划
+  let currentPlans = uni.getStorageSync(`myPlans_${username}`);
+  currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
+
+  // 过滤掉要删除的计划
+  const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
+
+  // 存储回本地
+  uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
+  console.log("计划已删除:", plan.title);
+
+  // 重新加载计划
+  loadMyPlans();
+};
+// 打开弹窗
+const openPopup = () => {
+  popup.value.open();
+};
+
+// 关闭弹窗
+const closePopup = () => {
+  popup.value.close();
+};
+const handleAddPlan_board = () => {
+  // 添加计划逻辑
+  openPopup();
+}
+// 保存计划
+const savePlan = () => {
+  if (currentEditIndex.value !== -1) {
+    // 创建新对象以确保响应式更新
+    const updatedPlan = {
+      ...plans.value[currentEditIndex.value],
+      title: planForm.value.title,
+      duration: planForm.value.duration,
+      times: planForm.value.times,
+      difficulties: planForm.value.difficulties,
+      calorie: planForm.value.calorie,
+      goal: planForm.value.goal,
+      type: planForm.value.type,
+      imageUrl: planForm.value.imageUrl,
+      videoUrl: planForm.value.videoUrl,
+    };
+
+    // 使用数组方法触发响应式更新
+    plans.value.splice(currentEditIndex.value, 1, updatedPlan);
+    // 显示更新后的计划plan
+    console.log("更新后的计划:", plans.value[currentEditIndex.value]);
+    // 重置编辑索引
+    currentEditIndex.value = -1;
+    filterPlans();
+    // 可选：显示成功提示
+    uni.showToast({
+      title: "保存成功",
+      icon: "success",
+    });
+  }
+  else {
+    // 创建新对象以确保响应式更新
+    const newPlan = {
+      title: planForm.value.title,
+      duration: planForm.value.duration,
+      times: planForm.value.times,
+      difficulties: planForm.value.difficulties,
+      calorie: planForm.value.calorie,
+      goal: planForm.value.goal,
+      type: planForm.value.type,
+      imageUrl: planForm.value.imageUrl,
+      videoUrl: planForm.value.videoUrl,
+    };
+    // 使用数组方法触发响应式更新
+    plans.value.push(newPlan);
+    filterPlans();
+    // 可选：显示成功提示
+    uni.showToast({
+      title: "添加成功",
+      icon: "success",
+    });
+  }
+  closePopup();
+};
+const handleEdit = (item, index) => {
+  // 编辑计划逻辑
+  currentEditIndex.value = index;
+  console.log("编辑计划:", item.title);
+  console.log("编辑索引:", index);
+  dialogTitle.value = "编辑计划";
+  // 将字符串数组转换为多选所需的格式
+  const selectedGoals = item.goal.map((goalText) => {
+    // 在goals数组中找到对应的value
+    const goalItem = goals.value.find((g) => g.text === goalText);
+    return goalItem ? goalItem.value : goalText;
+  });
+  planForm.value = {
+    title: item.title,
+    times: item.times,
+    duration: item.duration,
+    difficulties: item.difficulties,
+    calorie: item.calorie,
+    type: item.type,
+    goal: selectedGoals, // 使用转换后的数组
+    imageUrl: item.imageUrl,
+    videoUrl: item.videoUrl,
+  };
+  openPopup();
 };
 const openDaySchedule = (day) => {
   // 打开当天的日程页面逻辑
@@ -708,7 +1032,13 @@ onMounted(() => {
   margin-top: 10px;
   border-bottom: 1px solid #ccc;
 }
-
+.plan-manage-board {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-top: 10px;
+  border-bottom: 1px solid #ccc;
+}
 .tab-container span {
   padding: 10px;
 }
@@ -752,17 +1082,34 @@ uni-button {
   margin-top: 1px;
 }
 
+.filter-bar-planboard {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-top: 1px;
+}
+.add-plan-btn {
+  margin-left: 12rpx;
+  margin-top: 80rpx;
+  border-radius: 5px;
+  height: 60rpx;
+  color: white;
+  background-color: black;
+  // 阴影效果
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.603); /* 添加边界阴影 */
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 .filter {
   display: flex;
   flex-direction: column;
-  width:25%;
-
+  width: 25%;
 }
 .filter .uni-section {
   background-color: #ffffff;
   border: 0px solid #000000;
   border-radius: 5px;
-
 }
 
 .plan-list {
@@ -779,12 +1126,14 @@ uni-button {
 
 .plan-image {
   margin-top: 4px;
+
   width: 350rpx;
   height: 200rpx;
 }
 
 .plan-info {
   margin-left: 10px;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
 }
@@ -1035,6 +1384,7 @@ uni-button {
   justify-content: center;
 }
 .op_bar {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1050,8 +1400,57 @@ uni-button {
   margin-top: 10rpx;
 }
 .vertical-line {
-  margin-left: 20px;
+  position: relative;
+  // margin-left: 80px;
   width: 2px;
   background-color: #ccc;
+}
+.modify-button {
+  /* 保持原有属性 */
+  border: none;
+  border-radius: 5px;
+  background-color: #641013;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 5px;
+  margin-right: 5px;
+  /* 新增垂直排列相关样式 */
+  writing-mode: vertical-lr; /* 使文字垂直排列，从左到右 */
+  text-orientation: upright; /* 保持文字正向 */
+  padding: 15px 8px; /* 调整内边距：上下15px，左右8px */
+  height: 80px; /* 设置按钮高度 */
+  width: 30px; /* 设置按钮宽度 */
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 水平居中 */
+  justify-content: center; /* 垂直居中 */
+  letter-spacing: 2px; /* 文字间距 */
+}
+.popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  width: 45%;
+}
+
+.btn-confirm {
+  width: 45%;
 }
 </style>

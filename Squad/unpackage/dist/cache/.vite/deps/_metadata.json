@@ -2,7 +2,14 @@
   "hash": "a81992d1",
   "configHash": "43d2a32c",
   "lockfileHash": "849d1f69",
-  "browserHash": "af07e915",
-  "optimized": {},
+  "browserHash": "1ded9194",
+  "optimized": {
+    "markdown-it": {
+      "src": "../../../../../node_modules/markdown-it/index.mjs",
+      "file": "markdown-it.js",
+      "fileHash": "0dd88d46",
+      "needsInterop": false
+    }
+  },
   "chunks": {}
 }

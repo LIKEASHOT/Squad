@@ -98,7 +98,7 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://192.168.56.1:3000";
+const serverUrl = "http://10.133.80.141:3000";
 const form = ref({
   username: "",
   password: "",
@@ -131,13 +131,22 @@ const submitLogin = () => {
         uni.switchTab({
           url: "/pages/Home/Home",
         });
+        uni.setStorage({
+          key: "Level",
+          data: form.value.Level,
+          success: function () {
+            console.log("success");
+          },
+        });
       } else {
         uni.showToast({
           title: "登录失败",
           icon: "none",
         });
       }
+
     },
+    
   });
 };
 

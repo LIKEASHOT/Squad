@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请�
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "123123",
+  password: "123456",
   database: "my_database",
 });
 
