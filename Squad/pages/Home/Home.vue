@@ -376,7 +376,11 @@
               </uni-section>
             </div>
             <!-- 添加计划按钮 -->
-            <button type="primary" @click="handleAddPlan_board" class="add-plan-btn">
+            <button
+              type="primary"
+              @click="handleAddPlan_board"
+              class="add-plan-btn"
+            >
               添加计划
             </button>
           </div>
@@ -411,81 +415,83 @@
         </div>
       </div>
       <!-- 添加/编辑计划的弹窗 -->
-      <uni-popup
-        ref="popup"
-        type="center"
-        background-color="white"
-        borderRadius="5px 5px 5px 5px"
-      >
-        <view class="popup-content">
+    </view>
+    <view v-if="tab==='add_change_plan'" class="modboard">
+      <view class="popup-content">
+          <scroll-view 
+      scroll-y="true"
+      class="scroll-area"
+    >
           <view class="popup-title">{{ dialogTitle }}</view>
-          <uni-forms :model="planForm" labelWidth="80px">
-            <uni-forms-item label="名称">
-              <uni-easyinput
-                v-model="planForm.title"
-                placeholder="请输入名称"
-              />
-            </uni-forms-item>
+          <!-- 表单内容使用scroll-view -->
 
-            <uni-forms-item label="运动次数">
-              <uni-easyinput
-                v-model="planForm.times"
-                type="string"
-                placeholder="请输入运动次数"
-              />
-            </uni-forms-item>
+            <uni-forms :model="planForm" labelWidth="80px">
+              <uni-forms-item label="名称">
+                <uni-easyinput
+                  v-model="planForm.title"
+                  placeholder="请输入名称"
+                />
+              </uni-forms-item>
 
-            <uni-forms-item label="时间">
-              <uni-easyinput
-                v-model="planForm.duration"
-                placeholder="请输入时间"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="卡路里">
-              <uni-easyinput
-                v-model="planForm.calorie"
-                type="number"
-                placeholder="请输入卡路里"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="运动类型">
-              <uni-data-select
-                v-model="planForm.type"
-                :localdata="types"
-                placeholder="请选择运动类型"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="运动目标">
-              <uni-data-checkbox
-                placeholder="请选择运动目标"
-                v-model="planForm.goal"
-                :localdata="goals"
-                multiple
-                :map="{ text: 'text', value: 'value' }"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="难度">
-              <uni-data-select
-                v-model="planForm.difficulties"
-                :localdata="difficulties"
-                placeholder="请选择难度"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="封面">
-              <uni-easyinput
-                v-model="planForm.imageUrl"
-                type="string"
-                placeholder="请输入封面url"
-              />
-            </uni-forms-item>
-            <uni-forms-item label="视频链接">
-              <uni-easyinput
-                v-model="planForm.videoUrl"
-                type="string"
-                placeholder="请输入演示视频url"
-              />
-            </uni-forms-item>
-          </uni-forms>
+              <uni-forms-item label="运动次数">
+                <uni-easyinput
+                  v-model="planForm.times"
+                  type="string"
+                  placeholder="请输入运动次数"
+                />
+              </uni-forms-item>
+
+              <uni-forms-item label="时间">
+                <uni-easyinput
+                  v-model="planForm.duration"
+                  placeholder="请输入时间"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="卡路里">
+                <uni-easyinput
+                  v-model="planForm.calorie"
+                  type="number"
+                  placeholder="请输入卡路里"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="运动类型">
+                <uni-data-select
+                  v-model="planForm.type"
+                  :localdata="types"
+                  placeholder="请选择运动类型"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="运动目标">
+                <uni-data-checkbox
+                  placeholder="请选择运动目标"
+                  v-model="planForm.goal"
+                  :localdata="goals"
+                  multiple
+                  :map="{ text: 'text', value: 'value' }"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="难度">
+                <uni-data-select
+                  v-model="planForm.difficulties"
+                  :localdata="difficulties"
+                  placeholder="请选择难度"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="封面">
+                <uni-easyinput
+                  v-model="planForm.imageUrl"
+                  type="string"
+                  placeholder="请输入封面url"
+                />
+              </uni-forms-item>
+              <uni-forms-item label="视频链接">
+                <uni-easyinput
+                  v-model="planForm.videoUrl"
+                  type="string"
+                  placeholder="请输入演示视频url"
+                />
+              </uni-forms-item>
+            </uni-forms>
 
           <view class="popup-buttons">
             <button class="btn-cancel" @click="closePopup">取消</button>
@@ -493,18 +499,18 @@
               确定
             </button>
           </view>
+        </scroll-view>
         </view>
-      </uni-popup>
     </view>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch,provide } from "vue";
+import { ref, computed, onMounted, nextTick, watch, provide } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
@@ -601,34 +607,34 @@ const planForm = ref({
 //   // 其他计划数据...
 // ]);
 const plans = ref([]);
- // 从后端获取计划数据
+// 从后端获取计划数据
 const fetchPlansFromBackend = () => {
   uni.request({
     url: serverUrl + "/goals", // 替换为你的实际后端地址
-    method: 'GET',
+    method: "GET",
     success: (res) => {
-      console.log('返回的所有计划数据:', res.data);
+      console.log("返回的所有计划数据:", res.data);
       if (Array.isArray(res.data) && res.data.length > 0) {
         // 处理返回的数据
-        plans.value = res.data.map(item => ({
+        plans.value = res.data.map((item) => ({
           title: item.title,
           duration: `${item.duration}min`, // 注意单位格式
           imageUrl: item.image_url,
           times: item.times,
           difficulties: item.difficulties,
           calorie: item.calorie,
-          goal: item.goal ? item.goal.split(',').map(g => g.trim()) : [], // 将 goal 字符串按逗号拆分并去除空格
+          goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按逗号拆分并去除空格
           type: item.type,
         }));
-		// 在获取数据后，根据筛选条件过滤数据
-		      filterPlans();
+        // 在获取数据后，根据筛选条件过滤数据
+        filterPlans();
       } else {
-        console.log('未找到相关计划数据');
+        console.log("未找到相关计划数据");
       }
     },
     fail: (err) => {
-      console.error('请求失败:', err);
-    }
+      console.error("请求失败:", err);
+    },
   });
 };
 const aiInput = ref(""); // AI 输入内容
@@ -829,17 +835,20 @@ const handleRemove = (plan) => {
 };
 // 打开弹窗
 const openPopup = () => {
-  popup.value.open();
+  // popup.value.open();
+  tab.value = "add_change_plan";
 };
 
 // 关闭弹窗
 const closePopup = () => {
-  popup.value.close();
+  // popup.value.close();
+  tab.value = "plan-board";
+
 };
 const handleAddPlan_board = () => {
   // 添加计划逻辑
   openPopup();
-}
+};
 // 保存计划
 const savePlan = () => {
   if (currentEditIndex.value !== -1) {
@@ -869,8 +878,7 @@ const savePlan = () => {
       title: "保存成功",
       icon: "success",
     });
-  }
-  else {
+  } else {
     // 创建新对象以确保响应式更新
     const newPlan = {
       title: planForm.value.title,
@@ -1464,6 +1472,8 @@ uni-button {
   padding: 20px;
   border-radius: 10px;
   width: 80%;
+  height: 760rpx;
+  overflow-x: hidden;
 }
 
 .popup-title {
@@ -1472,7 +1482,10 @@ uni-button {
   margin-bottom: 20px;
   text-align: center;
 }
+.scroll-area {
 
+  height: 100%;
+}
 .popup-buttons {
   display: flex;
   justify-content: space-between;
@@ -1485,5 +1498,16 @@ uni-button {
 
 .btn-confirm {
   width: 45%;
+}
+.modboard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
