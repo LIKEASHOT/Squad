@@ -128,6 +128,7 @@ const submitLogin = () => {
         });
         uni.setStorageSync("token", res.data.token);
         uni.setStorageSync("username", form.value.username);
+        uni.setStorageSync("Level", res.data.Level);
         uni.switchTab({
           url: "/pages/Home/Home",
         });
