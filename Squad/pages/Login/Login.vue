@@ -83,6 +83,7 @@
 import { ref } from "vue";
 const isPressed = ref(false); // 响应式变量，记录按钮是否被按下
 const password = ref(true); // 密码是否可见
+
 const inputpwd = (e) => {
   console.log(e);
 };
@@ -98,7 +99,7 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = "http://192.168.56.1:3000";
 const form = ref({
   username: "",
   password: "",
@@ -111,7 +112,6 @@ const submitLogin = () => {
     });
     return;
   }
-
   console.log("提交登录表单", form.value);
   uni.request({
     url: serverUrl + "/login",
@@ -131,22 +131,13 @@ const submitLogin = () => {
         uni.switchTab({
           url: "/pages/Home/Home",
         });
-        uni.setStorage({
-          key: "Level",
-          data: form.value.Level,
-          success: function () {
-            console.log("success");
-          },
-        });
       } else {
         uni.showToast({
           title: "登录失败",
           icon: "none",
         });
       }
-
     },
-    
   });
 };
 
@@ -154,6 +145,7 @@ const goRegister = () => {
   console.log("前往注册页面");
   // 跳转到注册页面逻辑
   uni.navigateTo({ url: "/pages/Register/Register" });
+  
 };
 </script>
 

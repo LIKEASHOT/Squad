@@ -820,7 +820,7 @@ if (uni.restoreGlobal) {
   }
   const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$2 = "http://192.168.56.1:3000";
+  const serverUrl$3 = "http://192.168.56.1:3000";
   const _sfc_main$k = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
@@ -828,7 +828,7 @@ if (uni.restoreGlobal) {
       const isPressed = vue.ref(false);
       const password = vue.ref(true);
       const inputpwd = (e2) => {
-        formatAppLog("log", "at pages/Login/Login.vue:87", e2);
+        formatAppLog("log", "at pages/Login/Login.vue:88", e2);
       };
       const changepwd_vis = () => {
         password.value = !password.value;
@@ -853,7 +853,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Login/Login.vue:115", "提交登录表单", form.value);
         uni.request({
-          url: serverUrl$2 + "/login",
+          url: serverUrl$3 + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -883,7 +883,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/Login/Login.vue:145", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$2, form, submitLogin, goRegister, ref: vue.ref };
+      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$3, form, submitLogin, goRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -1654,7 +1654,7 @@ if (uni.restoreGlobal) {
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$1 = "http://192.168.56.1:3000";
+  const serverUrl$2 = "http://192.168.56.1:3000";
   const _sfc_main$e = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1695,7 +1695,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Register/Register.vue:129", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$1 + "/register",
+          url: serverUrl$2 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1737,7 +1737,7 @@ if (uni.restoreGlobal) {
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$1, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$2, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -3046,7 +3046,7 @@ if (uni.restoreGlobal) {
   }
   const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   const _imports_0$1 = "/static/back/back2.png";
-  const serverUrl = "http://192.168.56.1:3000";
+  const serverUrl$1 = "http://192.168.56.1:3000";
   const logo = "/static/Squad1.png";
   const _sfc_main$b = {
     __name: "FirstLogin",
@@ -3097,7 +3097,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:204", "用户名", username);
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:205", "提交身高和体重", form.value);
         uni.request({
-          url: serverUrl + "/updateHealthInfo",
+          url: serverUrl$1 + "/updateHealthInfo",
           method: "POST",
           data: {
             height: form.value.height,
@@ -3140,7 +3140,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:252", "提交性别和年龄", form.value);
         uni.request({
-          url: serverUrl + "/updateGenderAge",
+          url: serverUrl$1 + "/updateGenderAge",
           method: "POST",
           data: {
             gender: form.value.gender,
@@ -3190,7 +3190,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:306", "提交运动目标", selectedGoals.join(","));
         uni.request({
-          url: serverUrl + "/updateFitnessGoal",
+          url: serverUrl$1 + "/updateFitnessGoal",
           method: "POST",
           data: {
             fitnessGoal: selectedGoals.join(","),
@@ -3238,7 +3238,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:357", "提交运动方式", selectedTypes.join(","));
         uni.request({
-          url: serverUrl + "/updateExerciseType",
+          url: serverUrl$1 + "/updateExerciseType",
           method: "POST",
           data: {
             exerciseType: selectedTypes.join(","),
@@ -3282,7 +3282,7 @@ if (uni.restoreGlobal) {
           formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:404", "跳转失败：", err);
         });
       };
-      const __returned__ = { serverUrl, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
+      const __returned__ = { serverUrl: serverUrl$1, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -15047,6 +15047,7 @@ ${i3}
   const add_icon = "/static/icon/add.png";
   const delete_icon = "/static/icon/delete.png";
   const column_bar = "/static/icon/columnbar.png";
+  const serverUrl = "http://192.168.56.1:3000";
   const _sfc_main$5 = {
     __name: "Home",
     setup(__props, { expose: __expose }) {
@@ -15085,49 +15086,43 @@ ${i3}
         { value: "简单", text: "简单" },
         { value: "适中", text: "适中" }
       ]);
-      const plans = vue.ref([
-        {
-          title: "有氧拳击HIIT",
-          duration: "15min",
-          imageUrl: "/static/face1.png",
-          times: "两天一次",
-          difficulties: "适中",
-          calorie: "145",
-          goal: ["减脂", "耐力", "综合健身"],
-          type: "徒手"
-        },
-        {
-          title: "强化核心力量",
-          duration: "8.5min",
-          imageUrl: "/static/face1.png",
-          times: "两天一次",
-          difficulties: "困难",
-          calorie: "87",
-          goal: ["减脂", "增肌", "耐力", "柔韧性"],
-          type: "徒手"
-        },
-        {
-          title: "训练计划3",
-          duration: "15min",
-          imageUrl: "/static/face1.png",
-          times: "3次",
-          difficulties: "适中",
-          calorie: "100",
-          goal: "耐力",
-          type: "篮球"
-        },
-        {
-          title: "训练计划4",
-          duration: "15min",
-          imageUrl: "/static/face1.png",
-          times: "3次",
-          difficulties: "简单",
-          calorie: "100",
-          goal: "柔韧性",
-          type: "瑜伽"
-        }
-        // 其他计划数据...
-      ]);
+      vue.onMounted(() => {
+        fetchPlansFromBackend();
+      });
+      vue.onMounted(() => {
+        loadMyPlans();
+      });
+      const plans = vue.ref([]);
+      const fetchPlansFromBackend = () => {
+        uni.request({
+          url: serverUrl + "/goals",
+          // 替换为你的实际后端地址
+          method: "GET",
+          success: (res) => {
+            formatAppLog("log", "at pages/Home/Home.vue:353", "返回的所有计划数据:", res.data);
+            if (Array.isArray(res.data) && res.data.length > 0) {
+              plans.value = res.data.map((item) => ({
+                title: item.title,
+                duration: `${item.duration}min`,
+                // 注意单位格式
+                imageUrl: item.image_url,
+                times: item.times,
+                difficulties: item.difficulties,
+                calorie: item.calorie,
+                goal: item.goal ? item.goal.split(",").map((g2) => g2.trim()) : [],
+                // 将 goal 字符串按逗号拆分并去除空格
+                type: item.type
+              }));
+              filterPlans();
+            } else {
+              formatAppLog("log", "at pages/Home/Home.vue:369", "未找到相关计划数据");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Home/Home.vue:373", "请求失败:", err);
+          }
+        });
+      };
       const aiInput = vue.ref("");
       const customPlan = vue.ref("");
       const exerciseProgress = vue.ref(50);
@@ -15166,7 +15161,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:434", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:432", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -15202,7 +15197,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:477", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:475", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -15218,7 +15213,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:494", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:492", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -15235,15 +15230,12 @@ ${i3}
           myPlans.value = [];
         }
       };
-      vue.onMounted(() => {
-        loadMyPlans();
-      });
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:530", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:526", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -15252,7 +15244,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:543", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:539", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -15260,11 +15252,11 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:560", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:556", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:568", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:564", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -15306,9 +15298,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:619", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:615", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:622", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:618", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -15363,7 +15355,7 @@ ${i3}
           ];
         }, 2e3);
       });
-      const __returned__ = { target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, add_icon, delete_icon, column_bar, goals, types, difficulties, plans, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, loadMyPlans, handleAdd, handleRemove, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, get MarkdownIt() {
+      const __returned__ = { target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, add_icon, delete_icon, column_bar, serverUrl, goals, types, difficulties, plans, fetchPlansFromBackend, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, loadMyPlans, handleAdd, handleRemove, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -15576,7 +15568,7 @@ ${i3}
               "textarea",
               {
                 "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $setup.aiInput = $event),
-                placeholder: "请输入您的需求...",
+                placeholder: "请输入您的需求...\r\nAI返回计划速度较慢,请耐心等待",
                 class: "ai-input"
               },
               null,
@@ -15936,9 +15928,9 @@ ${i3}
     methods: {
       loadRecommendations() {
         this.recommendations = [
-          "推荐内容1",
-          "推荐内容2",
-          "推荐内容3"
+          "燃脂HIIT",
+          "强化增肌",
+          "瑜伽"
           // 可以通过脚本增加更多内容
         ];
       },
@@ -15948,7 +15940,7 @@ ${i3}
         this.searchQuery = item;
       },
       cancelSearch() {
-        this.$router.back();
+        uni.switchTab({ url: "/pages/Home/Home" });
       }
     }
   };

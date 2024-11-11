@@ -49,9 +49,9 @@ export default {
     loadRecommendations() {
       // 模拟获取推荐内容，可以通过脚本动态增加或修改
       this.recommendations = [
-        "推荐内容1",
-        "推荐内容2",
-        "推荐内容3",
+        "燃脂HIIT",
+        "强化增肌",
+        "瑜伽",
         // 可以通过脚本增加更多内容
       ];
     },
@@ -64,7 +64,7 @@ export default {
       // 触发搜索
     },
     cancelSearch() {
-      this.$router.back();
+      uni.switchTab({ url: "/pages/Home/Home" });
     },
   },
 };
