@@ -500,10 +500,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch } from "vue";
+import { ref, computed, onMounted, nextTick, watch,provide } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
@@ -555,50 +556,81 @@ const planForm = ref({
   type: "",
   videoUrl: "",
 });
-const plans = ref([
-  {
-    title: "有氧拳击HIIT",
-    duration: "15min",
-    imageUrl: "/static/face1.png",
-    times: "两天一次",
-    difficulties: "适中",
-    calorie: "145",
-    goal: ["减脂", "耐力", "综合健身"],
-    type: "徒手",
-    videoUrl: "",
-  },
-  {
-    title: "强化核心力量",
-    duration: "8.5min",
-    imageUrl: "/static/face1.png",
-    times: "两天一次",
-    difficulties: "困难",
-    calorie: "87",
-    goal: ["减脂", "增肌", "耐力", "柔韧性"],
-    type: "徒手",
-  },
-  {
-    title: "训练计划3",
-    duration: "15min",
-    imageUrl: "/static/face1.png",
-    times: "3次",
-    difficulties: "适中",
-    calorie: "100",
-    goal: ["耐力"],
-    type: "篮球",
-  },
-  {
-    title: "训练计划4",
-    duration: "15min",
-    imageUrl: "/static/face1.png",
-    times: "3次",
-    difficulties: "简单",
-    calorie: "100",
-    goal: ["柔韧性"],
-    type: "瑜伽",
-  },
-  // 其他计划数据...
-]);
+// const plans = ref([
+//   {
+//     title: "有氧拳击HIIT",
+//     duration: "15min",
+//     imageUrl: "/static/face1.png",
+//     times: "两天一次",
+//     difficulties: "适中",
+//     calorie: "145",
+//     goal: ["减脂", "耐力", "综合健身"],
+//     type: "徒手",
+//     videoUrl: "",
+//   },
+//   {
+//     title: "强化核心力量",
+//     duration: "8.5min",
+//     imageUrl: "/static/face1.png",
+//     times: "两天一次",
+//     difficulties: "困难",
+//     calorie: "87",
+//     goal: ["减脂", "增肌", "耐力", "柔韧性"],
+//     type: "徒手",
+//   },
+//   {
+//     title: "训练计划3",
+//     duration: "15min",
+//     imageUrl: "/static/face1.png",
+//     times: "3次",
+//     difficulties: "适中",
+//     calorie: "100",
+//     goal: ["耐力"],
+//     type: "篮球",
+//   },
+//   {
+//     title: "训练计划4",
+//     duration: "15min",
+//     imageUrl: "/static/face1.png",
+//     times: "3次",
+//     difficulties: "简单",
+//     calorie: "100",
+//     goal: ["柔韧性"],
+//     type: "瑜伽",
+//   },
+//   // 其他计划数据...
+// ]);
+const plans = ref([]);
+ // 从后端获取计划数据
+const fetchPlansFromBackend = () => {
+  uni.request({
+    url: serverUrl + "/goals", // 替换为你的实际后端地址
+    method: 'GET',
+    success: (res) => {
+      console.log('返回的所有计划数据:', res.data);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        // 处理返回的数据
+        plans.value = res.data.map(item => ({
+          title: item.title,
+          duration: `${item.duration}min`, // 注意单位格式
+          imageUrl: item.image_url,
+          times: item.times,
+          difficulties: item.difficulties,
+          calorie: item.calorie,
+          goal: item.goal ? item.goal.split(',').map(g => g.trim()) : [], // 将 goal 字符串按逗号拆分并去除空格
+          type: item.type,
+        }));
+		// 在获取数据后，根据筛选条件过滤数据
+		      filterPlans();
+      } else {
+        console.log('未找到相关计划数据');
+      }
+    },
+    fail: (err) => {
+      console.error('请求失败:', err);
+    }
+  });
+};
 const aiInput = ref(""); // AI 输入内容
 const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
@@ -746,6 +778,7 @@ const judgeManager = () => {
 };
 // 页面加载时调用
 onMounted(() => {
+  fetchPlansFromBackend();
   judgeManager();
   loadMyPlans();
 });
