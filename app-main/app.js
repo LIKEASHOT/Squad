@@ -10,6 +10,7 @@ const multer = require('multer');
 const tf = require('@tensorflow/tfjs');
 const mobilenet = require('@tensorflow-models/mobilenet');
 const path = require('path');
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 require('dotenv').config();
 
 // 创建应用实例
@@ -26,11 +27,13 @@ app.use(
 // 解析 JSON 请求体
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请求体
+// 提供静态文件访问
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 创建数据库连接
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "123456",
+  password: "123123",
   database: "my_database",
 });
 
@@ -594,7 +597,7 @@ app.get('/goals', (req, res) => {
       运动次数 AS times, 
       难度 AS difficulties, 
       卡路里 AS calorie, 
-      image_url, 
+      CONCAT('http://192.168.56.1:3000/', image_url) AS image_url, 
       目标 AS goal, 
       运动类型 AS type 
     FROM goal
