@@ -8,6 +8,7 @@ VALUES (1, 0, 'admin', '123');
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    perssion int NOT NULL,
     name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     lastLogin DATETIME,
