@@ -510,7 +510,7 @@ import { ref, computed, onMounted, nextTick, watch, provide } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
@@ -562,50 +562,6 @@ const planForm = ref({
   type: "",
   videoUrl: "",
 });
-// const plans = ref([
-//   {
-//     title: "有氧拳击HIIT",
-//     duration: "15min",
-//     imageUrl: "/static/face1.png",
-//     times: "两天一次",
-//     difficulties: "适中",
-//     calorie: "145",
-//     goal: ["减脂", "耐力", "综合健身"],
-//     type: "徒手",
-//     videoUrl: "",
-//   },
-//   {
-//     title: "强化核心力量",
-//     duration: "8.5min",
-//     imageUrl: "/static/face1.png",
-//     times: "两天一次",
-//     difficulties: "困难",
-//     calorie: "87",
-//     goal: ["减脂", "增肌", "耐力", "柔韧性"],
-//     type: "徒手",
-//   },
-//   {
-//     title: "训练计划3",
-//     duration: "15min",
-//     imageUrl: "/static/face1.png",
-//     times: "3次",
-//     difficulties: "适中",
-//     calorie: "100",
-//     goal: ["耐力"],
-//     type: "篮球",
-//   },
-//   {
-//     title: "训练计划4",
-//     duration: "15min",
-//     imageUrl: "/static/face1.png",
-//     times: "3次",
-//     difficulties: "简单",
-//     calorie: "100",
-//     goal: ["柔韧性"],
-//     type: "瑜伽",
-//   },
-//   // 其他计划数据...
-// ]);
 const plans = ref([]);
 // 从后端获取计划数据
 const fetchPlansFromBackend = () => {
@@ -773,6 +729,7 @@ const loadMyPlans = () => {
   } else {
     myPlans.value = [];
   }
+ 
 };
 const judgeManager = () => {
   // 判断是否为管理员
@@ -787,6 +744,7 @@ onMounted(() => {
   fetchPlansFromBackend();
   judgeManager();
   loadMyPlans();
+
 });
 // 添加计划到“我的计划”
 const handleAdd = (plan) => {
@@ -1166,10 +1124,11 @@ uni-button {
 }
 
 .plan-image {
-  margin-top: 4px;
-
+  margin-top: 2.5px;
+  margin-left: 2.5px;
   width: 350rpx;
   height: 200rpx;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4); /* 添加边界阴影 */
 }
 
 .plan-info {

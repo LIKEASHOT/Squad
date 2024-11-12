@@ -1771,9 +1771,12 @@ uni-button[data-v-7ffebbf4] {
   /* 添加边界阴影 */
 }
 .plan-image[data-v-7ffebbf4] {
-  margin-top: 4px;
+  margin-top: 2.5px;
+  margin-left: 2.5px;
   width: 10.9375rem;
   height: 6.25rem;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4);
+  /* 添加边界阴影 */
 }
 .plan-info[data-v-7ffebbf4] {
   margin-left: 10px;

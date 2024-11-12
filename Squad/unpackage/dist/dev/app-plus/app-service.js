@@ -560,7 +560,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-a23503dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-a23503dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
   const icons = {
     "addressbook": "",
     "addfriends-fill": "",
@@ -818,9 +818,9 @@ if (uni.restoreGlobal) {
       /* TEXT, CLASS, STYLE */
     );
   }
-  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
+  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$3 = "http://10.133.80.141:3000";
+  const serverUrl$4 = "http://192.168.56.1:3000";
   const _sfc_main$o = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
@@ -853,7 +853,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Login/Login.vue:115", "提交登录表单", form.value);
         uni.request({
-          url: serverUrl$3 + "/login",
+          url: serverUrl$4 + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -884,7 +884,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/Login/Login.vue:146", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$3, form, submitLogin, goRegister, ref: vue.ref };
+      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$4, form, submitLogin, goRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -969,7 +969,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-461d1d79"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Login/Login.vue"]]);
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-461d1d79"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Login/Login.vue"]]);
   const _sfc_main$n = {
     name: "fui-checkbox",
     emits: ["change"],
@@ -1144,7 +1144,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-bc643473"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-bc643473"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
   const _sfc_main$m = {
     name: "fui-list-cell",
     emits: ["click"],
@@ -1316,7 +1316,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-c16a41c6"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
+  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-c16a41c6"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
   const _sfc_main$l = {
     name: "fui-label",
     props: {
@@ -1371,7 +1371,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-186dfc0c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-186dfc0c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
   const _sfc_main$k = {
     name: "fui-checkbox-group",
     emits: ["change", "input", "update:modelValue"],
@@ -1437,7 +1437,7 @@ if (uni.restoreGlobal) {
       vue.renderSlot(_ctx.$slots, "default")
     ], 8, ["name"]);
   }
-  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
   const _sfc_main$j = {
     data() {
       return {
@@ -1653,9 +1653,9 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$2 = "http://192.168.56.1:3000";
+  const serverUrl$3 = "http://192.168.56.1:3000";
   const _sfc_main$i = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1696,7 +1696,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Register/Register.vue:129", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$2 + "/register",
+          url: serverUrl$3 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1738,7 +1738,7 @@ if (uni.restoreGlobal) {
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$2, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$3, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -1832,7 +1832,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-6b0433d4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Register/Register.vue"]]);
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-6b0433d4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Register/Register.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -2552,7 +2552,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -3045,9 +3045,9 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   const _imports_0$1 = "/static/back/back2.png";
-  const serverUrl$1 = "http://192.168.56.1:3000";
+  const serverUrl$2 = "http://192.168.56.1:3000";
   const logo = "/static/Squad1.png";
   const _sfc_main$f = {
     __name: "FirstLogin",
@@ -3098,7 +3098,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:204", "用户名", username);
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:205", "提交身高和体重", form.value);
         uni.request({
-          url: serverUrl$1 + "/updateHealthInfo",
+          url: serverUrl$2 + "/updateHealthInfo",
           method: "POST",
           data: {
             height: form.value.height,
@@ -3141,7 +3141,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:252", "提交性别和年龄", form.value);
         uni.request({
-          url: serverUrl$1 + "/updateGenderAge",
+          url: serverUrl$2 + "/updateGenderAge",
           method: "POST",
           data: {
             gender: form.value.gender,
@@ -3191,7 +3191,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:306", "提交运动目标", selectedGoals.join(","));
         uni.request({
-          url: serverUrl$1 + "/updateFitnessGoal",
+          url: serverUrl$2 + "/updateFitnessGoal",
           method: "POST",
           data: {
             fitnessGoal: selectedGoals.join(","),
@@ -3239,7 +3239,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:357", "提交运动方式", selectedTypes.join(","));
         uni.request({
-          url: serverUrl$1 + "/updateExerciseType",
+          url: serverUrl$2 + "/updateExerciseType",
           method: "POST",
           data: {
             exerciseType: selectedTypes.join(","),
@@ -3283,7 +3283,7 @@ if (uni.restoreGlobal) {
           formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:404", "跳转失败：", err);
         });
       };
-      const __returned__ = { serverUrl: serverUrl$1, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
+      const __returned__ = { serverUrl: serverUrl$2, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -3564,7 +3564,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-e8fa868b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/FirstLogin/FirstLogin.vue"]]);
+  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-e8fa868b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/FirstLogin/FirstLogin.vue"]]);
   const pages = [
     {
       path: "pages/Login/Login",
@@ -6828,7 +6828,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   const _sfc_main$d = {
     name: "UniSection",
     emits: ["click"],
@@ -6945,7 +6945,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-637fd36b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
   var calendar = {
     /**
         * 农历1900-2100的润大小信息表
@@ -8562,7 +8562,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-65626c58"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
+  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-65626c58"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
   const { t: t$2 } = initVueI18n(i18nMessages);
   const _sfc_main$b = {
     components: {
@@ -9040,7 +9040,7 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
   const _sfc_main$a = {
     name: "uniFormsItem",
     options: {
@@ -9429,7 +9429,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-462874dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
   const en = {
     "uni-load-more.contentdown": "Pull up to show more",
     "uni-load-more.contentrefresh": "loading...",
@@ -9614,7 +9614,7 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-9245e42c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const _sfc_main$8 = {
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
@@ -10171,7 +10171,7 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-2f788efd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -11049,7 +11049,7 @@ ${i3}
       ])
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-9a1e3c32"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const decodeCache = {};
   function getDecodeCache(exclude) {
     let cache = decodeCache[exclude];
@@ -17051,12 +17051,12 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-a96e7be9"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
+  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-a96e7be9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
   const _imports_0 = "/static/icon/shot_sport.png";
   const _imports_1 = "/static/icon/dropdown.png";
-  const serverUrl = "http://10.133.80.141:3000";
-  const add_icon = "/static/icon/add.png";
-  const delete_icon = "/static/icon/delete.png";
+  const serverUrl$1 = "http://192.168.56.1:3000";
+  const add_icon$1 = "/static/icon/add.png";
+  const delete_icon$1 = "/static/icon/delete.png";
   const column_bar = "/static/icon/columnbar.png";
   const _sfc_main$5 = {
     __name: "Home",
@@ -17113,11 +17113,11 @@ ${i3}
       const plans = vue.ref([]);
       const fetchPlansFromBackend = () => {
         uni.request({
-          url: serverUrl + "/goals",
+          url: serverUrl$1 + "/goals",
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:616", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:572", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -17133,11 +17133,11 @@ ${i3}
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:632", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:588", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:636", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:592", "请求失败:", err);
           }
         });
       };
@@ -17179,7 +17179,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:694", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:650", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -17215,7 +17215,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:737", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:693", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -17231,7 +17231,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:754", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:710", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -17264,7 +17264,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:801", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:759", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -17273,7 +17273,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:814", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:772", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -17281,7 +17281,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:831", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:789", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -17308,7 +17308,7 @@ ${i3}
             videoUrl: planForm.value.videoUrl
           };
           plans.value.splice(currentEditIndex.value, 1, updatedPlan);
-          formatAppLog("log", "at pages/Home/Home.vue:872", "更新后的计划:", plans.value[currentEditIndex.value]);
+          formatAppLog("log", "at pages/Home/Home.vue:830", "更新后的计划:", plans.value[currentEditIndex.value]);
           currentEditIndex.value = -1;
           filterPlans();
           uni.showToast({
@@ -17338,8 +17338,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:908", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:909", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:866", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:867", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -17360,7 +17360,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:933", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:891", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -17402,9 +17402,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:984", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:942", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:987", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:945", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -17459,7 +17459,7 @@ ${i3}
           ];
         }, 2e3);
       });
-      const __returned__ = { serverUrl, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon, delete_icon, column_bar, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, fetchPlansFromBackend, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$1, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, fetchPlansFromBackend, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -18305,12 +18305,12 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-7ffebbf4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Home/Home.vue"]]);
+  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-7ffebbf4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Home/Home.vue"]]);
   const _sfc_main$4 = {};
   function _sfc_render$3(_ctx, _cache) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Friends/Friends.vue"]]);
+  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
   const _sfc_main$3 = {
     data() {
       return {};
@@ -18320,39 +18320,114 @@ ${i3}
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Sports/Sports.vue"]]);
+  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Sports/Sports.vue"]]);
   const _sfc_main$2 = {};
   function _sfc_render$1(_ctx, _cache) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/My_info/My_info.vue"]]);
+  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/My_info/My_info.vue"]]);
+  const add_icon = "/static/icon/add.png";
+  const delete_icon = "/static/icon/delete.png";
+  const serverUrl = "http://192.168.56.1:3000";
   const _sfc_main$1 = {
-    data() {
-      return {
-        searchQuery: "",
-        recommendations: []
+    __name: "Search",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const searchQuery = vue.ref("");
+      const recommendations = vue.ref([]);
+      const plans = vue.ref([]);
+      const myPlans = vue.ref([]);
+      const username = uni.getStorageSync("username");
+      const filteredPlans = vue.computed(() => {
+        if (!searchQuery.value)
+          return [];
+        return plans.value.filter(
+          (item) => item.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+        );
+      });
+      vue.onMounted(() => {
+        loadMyPlans();
+        loadRecommendations();
+        fetchPlansFromBackend();
+      });
+      const loadMyPlans = () => {
+        const storedPlans = uni.getStorageSync(`myPlans_${username}`);
+        if (storedPlans) {
+          myPlans.value = JSON.parse(storedPlans);
+        } else {
+          myPlans.value = [];
+        }
       };
-    },
-    created() {
-      this.loadRecommendations();
-    },
-    methods: {
-      loadRecommendations() {
-        this.recommendations = [
-          "燃脂HIIT",
-          "强化增肌",
-          "瑜伽"
-          // 可以通过脚本增加更多内容
-        ];
-      },
-      onSearchInput() {
-      },
-      selectRecommendation(item) {
-        this.searchQuery = item;
-      },
-      cancelSearch() {
+      const handleAdd = (plan) => {
+        let currentPlans = uni.getStorageSync(`myPlans_${username}`);
+        currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
+        const isPlanExists = currentPlans.some((item) => item.title === plan.title);
+        if (isPlanExists) {
+          formatAppLog("log", "at pages/Search/Search.vue:112", "该计划已经添加过:", plan.title);
+          uni.showToast({
+            title: "计划已存在",
+            icon: "none"
+          });
+          return;
+        }
+        currentPlans.push(plan);
+        uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
+        formatAppLog("log", "at pages/Search/Search.vue:125", "计划已添加:", plan.title);
+        loadMyPlans();
+      };
+      const handleRemove = (plan) => {
+        let currentPlans = uni.getStorageSync(`myPlans_${username}`);
+        currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
+        const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
+        uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
+        formatAppLog("log", "at pages/Search/Search.vue:142", "计划已删除:", plan.title);
+        loadMyPlans();
+      };
+      const loadRecommendations = () => {
+        recommendations.value = ["燃脂HIIT", "强化增肌", "瑜伽", "核心力量训练"];
+      };
+      const fetchPlansFromBackend = () => {
+        uni.request({
+          url: serverUrl + "/goals",
+          // 替换为你的实际后端地址
+          method: "GET",
+          success: (res) => {
+            formatAppLog("log", "at pages/Search/Search.vue:159", "返回的所有计划数据:", res.data);
+            if (Array.isArray(res.data) && res.data.length > 0) {
+              plans.value = res.data.map((item) => ({
+                title: item.title,
+                duration: `${item.duration}min`,
+                // 注意单位格式
+                imageUrl: item.image_url,
+                times: item.times,
+                difficulties: item.difficulties,
+                calorie: item.calorie,
+                goal: item.goal ? item.goal.split(",").map((g2) => g2.trim()) : [],
+                // 将 goal 字符串按逗号拆分并去除空格
+                type: item.type
+              }));
+            } else {
+              formatAppLog("log", "at pages/Search/Search.vue:174", "未找到相关计划数据");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Search/Search.vue:178", "请求失败:", err);
+          }
+        });
+      };
+      const onSearchInput = () => {
+        formatAppLog("log", "at pages/Search/Search.vue:185", "当前搜索关键词:", searchQuery.value);
+      };
+      const selectRecommendation = (item) => {
+        searchQuery.value = item;
+      };
+      const cancelSearch = () => {
+        searchQuery.value = "";
         uni.switchTab({ url: "/pages/Home/Home" });
-      }
+      };
+      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -18363,24 +18438,24 @@ ${i3}
           "input",
           {
             type: "text",
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $data.searchQuery = $event),
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchQuery = $event),
             placeholder: "搜索",
             class: "search-input",
-            onInput: _cache[1] || (_cache[1] = (...args) => $options.onSearchInput && $options.onSearchInput(...args))
+            onInput: $setup.onSearchInput
           },
           null,
           544
           /* NEED_HYDRATION, NEED_PATCH */
         ), [
-          [vue.vModelText, $data.searchQuery]
+          [vue.vModelText, $setup.searchQuery]
         ]),
         vue.createElementVNode("button", {
           class: "cancel-button",
-          onClick: _cache[2] || (_cache[2] = (...args) => $options.cancelSearch && $options.cancelSearch(...args))
+          onClick: $setup.cancelSearch
         }, "取消")
       ]),
       vue.createCommentVNode(" 推荐内容 "),
-      !$data.searchQuery ? (vue.openBlock(), vue.createElementBlock("div", {
+      !$setup.searchQuery ? (vue.openBlock(), vue.createElementBlock("div", {
         key: 0,
         class: "recommendations"
       }, [
@@ -18389,32 +18464,104 @@ ${i3}
           (vue.openBlock(true), vue.createElementBlock(
             vue.Fragment,
             null,
-            vue.renderList($data.recommendations, (item, index) => {
+            vue.renderList($setup.recommendations, (item, index) => {
               return vue.openBlock(), vue.createElementBlock("li", {
                 key: index,
-                onClick: ($event) => $options.selectRecommendation(item)
+                onClick: ($event) => $setup.selectRecommendation(item)
               }, vue.toDisplayString(item), 9, ["onClick"]);
             }),
             128
             /* KEYED_FRAGMENT */
           ))
         ])
-      ])) : (vue.openBlock(), vue.createElementBlock(
+      ])) : vue.createCommentVNode("v-if", true),
+      vue.createCommentVNode(" 搜索结果 "),
+      $setup.filteredPlans.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", {
+        key: 1,
+        class: "plan-list"
+      }, [
+        vue.createElementVNode("h3", null, "搜索结果"),
+        (vue.openBlock(true), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($setup.filteredPlans, (item, index) => {
+            return vue.openBlock(), vue.createElementBlock("div", {
+              key: index,
+              class: "plan-item"
+            }, [
+              vue.createElementVNode("image", {
+                src: item.imageUrl,
+                class: "plan-image"
+              }, null, 8, ["src"]),
+              vue.createElementVNode("div", { class: "plan-info" }, [
+                vue.createElementVNode(
+                  "span",
+                  { class: "plan-title" },
+                  vue.toDisplayString(item.title),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "span",
+                  { class: "plan-times" },
+                  "运动次数：" + vue.toDisplayString(item.times),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "span",
+                  { class: "plan-duration" },
+                  "时间：" + vue.toDisplayString(item.duration),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "span",
+                  { class: "plan-difficulties" },
+                  "难度：" + vue.toDisplayString(item.difficulties),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "span",
+                  { class: "plan-calorie" },
+                  "卡路里：" + vue.toDisplayString(item.calorie),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              vue.createElementVNode("div", { class: "vertical-line" }),
+              vue.createCommentVNode(" 添加 & 删除按钮 "),
+              vue.createElementVNode("view", { class: "op_bar" }, [
+                vue.createElementVNode("image", {
+                  src: $setup.add_icon,
+                  class: "add_icon",
+                  onClick: vue.withModifiers(($event) => $setup.handleAdd(item), ["stop"])
+                }, null, 8, ["onClick"]),
+                vue.createElementVNode("image", {
+                  src: $setup.delete_icon,
+                  class: "delete_icon",
+                  onClick: vue.withModifiers(($event) => $setup.handleRemove(item), ["stop"])
+                }, null, 8, ["onClick"])
+              ])
+            ]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ])) : $setup.searchQuery ? (vue.openBlock(), vue.createElementBlock(
         vue.Fragment,
-        { key: 1 },
+        { key: 2 },
         [
-          vue.createCommentVNode(" 搜索结果 "),
-          vue.createElementVNode("div", { class: "search-results" }, [
-            vue.createElementVNode("h3", null, "搜索结果"),
-            vue.createCommentVNode(" 在这里显示搜索结果 ")
-          ])
+          vue.createCommentVNode(" 无搜索结果 "),
+          vue.createElementVNode("div", { class: "no-results" }, " 未找到匹配的计划 ")
         ],
         2112
         /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-      ))
+      )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-a9e5e983"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Search/Search.vue"]]);
+  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-a9e5e983"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Search/Search.vue"]]);
   __definePage("pages/Login/Login", PagesLoginLogin);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/Register/Register", PagesRegisterRegister);
@@ -18436,7 +18583,7 @@ ${i3}
       formatAppLog("log", "at App.vue:11", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/coding/sf_enginering/Squad/Squad/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     return {
