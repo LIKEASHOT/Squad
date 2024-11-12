@@ -18,7 +18,10 @@ CREATE TABLE users (
     bmi FLOAT,
     fitnessGoal VARCHAR(255),
     exerciseType VARCHAR(255),
-    goalid VARCHAR(255)  
+    goalid VARCHAR(255), 
+    calories_goal int,
+    sport_time int,
+    head_url varchar(255)
 );
 
 CREATE TABLE goal (
@@ -33,6 +36,27 @@ CREATE TABLE goal (
     `时间` INT,
     `image_url` varchar(255) NOT NULL,
     `video_url` varchar(255) NOT NULL
+);
+
+CREATE TABLE friends (
+    id INT AUTO_INCREMENT PRIMARY KEY,         
+    user_id INT NOT NULL,                   
+    friend_id INT NOT NULL,
+    Group_friend_id INT,        
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending', 
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+    `head_url` varchar(255) NOT NULL,
+    goal_start_time DATETIME  
+);
+
+CREATE TABLE friend_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 
