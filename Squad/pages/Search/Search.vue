@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import {  inject,ref, computed, onMounted } from 'vue';
 
 // 响应式数据定义
 const searchQuery = ref('');
@@ -123,9 +123,10 @@ const handleAdd = (plan) => {
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
   console.log("计划已添加:", plan.title);
-
   // 重新加载计划
   loadMyPlans();
+  // 通知 Home 页面计划已更新
+    uni.$emit('plansUpdated');
   
 };
 // 从“我的计划”中删除
@@ -143,11 +144,13 @@ const handleRemove = (plan) => {
 
   // 重新加载计划
   loadMyPlans();
+  // 通知 Home 页面计划已更新
+    uni.$emit('plansUpdated');
 };
 
 // 加载推荐内容
 const loadRecommendations = () => {
-  recommendations.value = ['燃脂HIIT', '强化增肌', '瑜伽', '核心力量训练'];
+  recommendations.value = ['燃脂', '增肌', '瑜伽', '训练'];
 };
 
 // 从后端获取计划数据

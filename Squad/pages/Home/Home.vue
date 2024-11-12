@@ -506,7 +506,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch, provide } from "vue";
+import { ref, computed, onMounted, nextTick, watch, provide,reactive } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
@@ -744,7 +744,8 @@ onMounted(() => {
   fetchPlansFromBackend();
   judgeManager();
   loadMyPlans();
-
+ // 监听来自 Search 页面更新计划的通知
+  uni.$on('plansUpdated', loadMyPlans);
 });
 // 添加计划到“我的计划”
 const handleAdd = (plan) => {

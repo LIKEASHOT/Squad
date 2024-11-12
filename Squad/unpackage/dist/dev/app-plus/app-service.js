@@ -17258,13 +17258,14 @@ ${i3}
         fetchPlansFromBackend();
         judgeManager();
         loadMyPlans();
+        uni.$on("plansUpdated", loadMyPlans);
       });
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:759", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:760", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -17273,7 +17274,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:772", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:773", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -17281,7 +17282,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:789", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:790", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -17308,7 +17309,7 @@ ${i3}
             videoUrl: planForm.value.videoUrl
           };
           plans.value.splice(currentEditIndex.value, 1, updatedPlan);
-          formatAppLog("log", "at pages/Home/Home.vue:830", "更新后的计划:", plans.value[currentEditIndex.value]);
+          formatAppLog("log", "at pages/Home/Home.vue:831", "更新后的计划:", plans.value[currentEditIndex.value]);
           currentEditIndex.value = -1;
           filterPlans();
           uni.showToast({
@@ -17338,8 +17339,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:866", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:867", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:867", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:868", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -17360,7 +17361,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:891", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:892", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -17402,9 +17403,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:942", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:943", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:945", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:946", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -17459,7 +17460,7 @@ ${i3}
           ];
         }, 2e3);
       });
-      const __returned__ = { serverUrl: serverUrl$1, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, fetchPlansFromBackend, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$1, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, fetchPlansFromBackend, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -18374,17 +18375,19 @@ ${i3}
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
         formatAppLog("log", "at pages/Search/Search.vue:125", "计划已添加:", plan.title);
         loadMyPlans();
+        uni.$emit("plansUpdated");
       };
       const handleRemove = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Search/Search.vue:142", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Search/Search.vue:143", "计划已删除:", plan.title);
         loadMyPlans();
+        uni.$emit("plansUpdated");
       };
       const loadRecommendations = () => {
-        recommendations.value = ["燃脂HIIT", "强化增肌", "瑜伽", "核心力量训练"];
+        recommendations.value = ["燃脂", "增肌", "瑜伽", "训练"];
       };
       const fetchPlansFromBackend = () => {
         uni.request({
@@ -18392,7 +18395,7 @@ ${i3}
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Search/Search.vue:159", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Search/Search.vue:162", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -18407,16 +18410,16 @@ ${i3}
                 type: item.type
               }));
             } else {
-              formatAppLog("log", "at pages/Search/Search.vue:174", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Search/Search.vue:177", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Search/Search.vue:178", "请求失败:", err);
+            formatAppLog("error", "at pages/Search/Search.vue:181", "请求失败:", err);
           }
         });
       };
       const onSearchInput = () => {
-        formatAppLog("log", "at pages/Search/Search.vue:185", "当前搜索关键词:", searchQuery.value);
+        formatAppLog("log", "at pages/Search/Search.vue:188", "当前搜索关键词:", searchQuery.value);
       };
       const selectRecommendation = (item) => {
         searchQuery.value = item;
@@ -18425,7 +18428,7 @@ ${i3}
         searchQuery.value = "";
         uni.switchTab({ url: "/pages/Home/Home" });
       };
-      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, inject: vue.inject, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
