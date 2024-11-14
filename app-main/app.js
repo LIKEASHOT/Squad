@@ -480,39 +480,42 @@ app.post('/predict', upload.single('file'), async (req, res) => {
 
 //每日摄入热量api
 // 配置智谱AI API
-const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
-const API_KEY2 = process.env.API_KEY; 
+const API_KEY2 = process.env.API_KEY;  // 请确保环境变量中配置了正确的 API_KEY
 
-// 构造问题并向智谱AI发送请求
+// 智谱AI调用函数
 async function getDailyCalories(height, weight, age, activityType, goal) {
   const question = `
     请根据以下信息计算每日所需热量摄取量：
     身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType}，运动目标：${goal}。
     请返回每日热量摄取量。
   `;
-  
+
   console.log('AI 请求内容:', question);  // 打印请求内容
 
   try {
-    const response = await axios.post(ZHIPU_API_URL, {
-      prompt: question,
-      max_tokens: 100,
-      temperature: 0.7,
+    // 使用智谱AI API发送异步请求
+    const response = await axios.post('https://open.bigmodel.cn/api/paas/v4/async/chat/completions', {
+      model: "glm-4-flash",  // 使用合适的模型
+      messages: [
+        {
+          role: "user",
+          content: question,
+        }
+      ]
     }, {
       headers: {
         'Authorization': `Bearer ${API_KEY2}`,
         'Content-Type': 'application/json',
-      },
+      }
     });
 
-    console.log('AI 响应:', response.data);  // 打印 AI 响应内容
-    return response.data.text.trim();
+    console.log('AI 响应:', response.data);  // 打印响应
+    return response.data.data.text.trim();  // 提取并返回文本结果
   } catch (error) {
     console.error('调用智谱AI失败:', error);
     throw new Error('AI 调用失败');
   }
 }
-
 
 // API 路由，处理前端请求
 app.post('/api/calculateCalories', async (req, res) => {
@@ -550,7 +553,6 @@ app.post('/api/calculateCalories', async (req, res) => {
     }
   });
 });
-
 
 // 模糊查询API
 app.post("/searchGoals", (req, res) => {
