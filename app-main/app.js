@@ -11,8 +11,9 @@ const tf = require('@tensorflow/tfjs');
 const mobilenet = require('@tensorflow-models/mobilenet');
 const path = require('path');
 const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+//这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
+
 require('dotenv').config();
-app.use(express.json());
 
 // 创建应用实例
 const app = express();
@@ -25,6 +26,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"], // 允许的请求头
   })
 );
+app.use(express.json());
 // 解析 JSON 请求体
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请求体
@@ -476,56 +478,77 @@ app.post('/predict', upload.single('file'), async (req, res) => {
   }
 });
 
-
-
 //每日摄入热量api
 // 配置智谱AI API
 const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
-const API_KEY2 = 'process.env.API_KEY'; 
+const API_KEY2 = process.env.API_KEY; 
 
 // 构造问题并向智谱AI发送请求
 async function getDailyCalories(height, weight, age, activityType, goal) {
-  // 构建提问的内容
   const question = `
     请根据以下信息计算每日所需热量摄取量：
     身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType}，运动目标：${goal}。
     请返回每日热量摄取量。
   `;
+  
+  console.log('AI 请求内容:', question);  // 打印请求内容
 
-  // 向智谱AI的模型发送请求
   try {
     const response = await axios.post(ZHIPU_API_URL, {
-      prompt: question,  // 发送的问题
-      max_tokens: 100,   // 可调整生成的最大字符数
-      temperature: 0.7,  // 控制生成的多样性，值越低越精确
+      prompt: question,
+      max_tokens: 100,
+      temperature: 0.7,
     }, {
       headers: {
         'Authorization': `Bearer ${API_KEY2}`,
         'Content-Type': 'application/json',
-      }
+      },
     });
 
-    // 返回模型的回答
+    console.log('AI 响应:', response.data);  // 打印 AI 响应内容
     return response.data.text.trim();
   } catch (error) {
-    console.error('Error calling Zhipu AI:', error);
-    throw new Error('Failed to get response from Zhipu AI');
+    console.error('调用智谱AI失败:', error);
+    throw new Error('AI 调用失败');
   }
 }
 
+
 // API 路由，处理前端请求
 app.post('/api/calculateCalories', async (req, res) => {
-  const { height, weight, age, activityType, goal } = req.body;
+  const { username } = req.body;
 
-  try {
-    // 调用智谱AI模型计算每日热量摄取量
-    const dailyCalories = await getDailyCalories(height, weight, age, activityType, goal);
-
-    // 返回计算结果
-    res.json({ dailyCalories: dailyCalories });
-  } catch (error) {
-    res.status(500).json({ error: 'Error calculating daily calories' });
+  // 验证用户名
+  if (typeof username !== 'string' || username.trim() === '') {
+    return res.status(400).json({ error: '无效的用户名' });
   }
+
+  // 从数据库获取用户信息
+  connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
+    if (err) {
+      console.error('数据库查询失败:', err);
+      return res.status(500).json({ error: '数据库查询失败' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: '用户未找到' });
+    }
+    console.log('数据库查询结果:', results);  // 打印查询到的结果
+    const user = results[0];
+    const { height, weight, age, exerciseType, fitnessGoal } = user;
+
+    try {
+      // 调用 AI 模型计算每日热量摄取量
+      const dailyCalories = await getDailyCalories(height, weight, age, exerciseType, fitnessGoal);
+      console.log('Daily Calories:', dailyCalories);  // 打印计算出的热量
+
+      // 返回计算结果并指定状态码 200
+      res.status(200).json({ dailyCalories: dailyCalories });
+    } catch (error) {
+      console.error('计算每日热量摄取量失败:', error);
+      res.status(500).json({ error: '计算每日摄入热量失败' });
+    }
+  });
 });
 
 
@@ -662,7 +685,7 @@ app.get('/goals', (req, res) => {
       return res.status(500).json({ message: '查询失败', error });
     }
     
-    console.log("查询结果:", results);  // 添加调试输出
+    // console.log("查询结果:", results);  // 添加调试输出
     return res.json(results.length > 0 ? results : []);
   });
 });
