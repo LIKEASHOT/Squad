@@ -228,7 +228,7 @@
                 :key="index"
                 class="plan-item"
                 @click="openPlanDetail(item)"
-              >
+              > 
                 <image :src="item.imageUrl" class="plan-image" />
                 <div class="plan-info">
                   <span class="plan-title">{{ item.title }}</span>
@@ -276,11 +276,12 @@
 
                 <!-- <text>{{ modelVale }}%</text> -->
               </l-circle>
-              <button class="take_picture">
-                <text>拍照识别</text>
-              </button>
-              <view class="picture_return">
-                <text>识别结果</text>
+              <button class="take_picture" @click="takePicture">
+                   <text>拍照识别</text>
+                 </button>
+                 <view class="picture_return">
+                   <text>{{ foodName }}</text>
+                   <text>{{ calories }} 卡路里</text>
               </view>
             </view>
           </view>
@@ -510,6 +511,7 @@ import { ref, computed, onMounted, nextTick, watch, provide,reactive } from "vue
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
+import axios from 'axios';
 const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
@@ -522,11 +524,13 @@ const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const showMyplan = ref(true);
 const showMyeat = ref(false);
-const today_left_eat = ref(2000);
+const today_left_eat = ref(0);
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
 const column_bar = "/static/icon/columnbar.png";
+const foodName = ref('');
+const calories = ref('');
 const popup = ref(null);
 const dialogTitle = ref("添加计划");
 const goals = ref([
@@ -563,6 +567,52 @@ const planForm = ref({
   videoUrl: "",
 });
 const plans = ref([]);
+// 拍照并上传图片
+const takePicture = async () => {
+  try {
+    const res = await uni.chooseImage();
+     
+    // 如果用户取消选择图片，errMsg 会提示
+    if (res.errMsg === 'chooseImage:fail User cancelled') {
+      errorMessage.value = '用户取消了选择图片操作，请重新选择。';
+      return;
+    }
+
+    const filePath = res.tempFilePaths[0];
+
+    // 使用 uni.uploadFile 上传图片
+    uni.uploadFile({
+      url: serverUrl + "/predict", // 后端接口地址
+      filePath: filePath,
+      name: 'file',
+      success: (uploadRes) => {
+        console.log('上传响应数据:', uploadRes.data); // 打印出响应数据
+        try {
+          const response = JSON.parse(uploadRes.data); // 解析响应数据
+          if (uploadRes.statusCode === 200) {
+            foodName.value = response.食物名称;
+            calories.value = response.平均每份热量;
+            errorMessage.value = '';  // 清空错误信息
+          } else {
+            console.error('识别失败');
+            errorMessage.value = '识别失败，请稍后重试。';
+          }
+        } catch (err) {
+          console.error('解析 JSON 错误:', err);
+          errorMessage.value = '响应数据格式错误，请稍后重试。';
+        }
+      },
+      fail: (err) => {
+        console.error('上传失败', err);
+        errorMessage.value = '上传失败，请检查网络连接。';
+      }
+    }); 
+
+  } catch (error) {
+    console.error('请求失败', error);
+    errorMessage.value = '请求失败，请检查网络连接。';
+  }
+};
 // 从后端获取计划数据
 const fetchPlansFromBackend = () => {
   uni.request({
@@ -589,10 +639,59 @@ const fetchPlansFromBackend = () => {
       }
     },
     fail: (err) => {
-      console.error("请求失败:", err);
+      console.error("请求失败:", err); 
     },
   });
 };
+
+// 修正后的代码
+async function fetchDailyCalories(username) {
+  username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+  try {
+     // 发送请求到后端获取每日热量数据
+     const response = await uni.request({
+       url: serverUrl + "/api/calculateCalories",
+       method: 'POST',
+       data: {
+          username: username,  // 传递用户名到后端
+       },
+     }); 
+  
+     console.log('服务器响应:', response);  // 打印返回的完整响应数据
+ 
+      // 确保返回的数据格式正确 
+         if (response.statusCode === 200) {
+           const { dailyCalories, error } = response.data;
+      
+           if (dailyCalories) {
+             today_left_eat.value = dailyCalories;  // 设置可摄入的热量
+             target_eat_percent.value = 100;  // 设置进度条的百分比
+             uni.showToast({
+               title: "获取热量成功",
+               icon: "success",
+             });
+           } else if (error) {
+             uni.showToast({
+               title: error || "获取热量失败",
+               icon: "none",
+             });
+           }
+         } else {
+           uni.showToast({ 
+             title: "获取热量失败，请稍后重试",
+             icon: "none",
+           });
+         }
+       } catch (error) {
+         console.error('请求失败:', error);
+         uni.showToast({
+           title: "网络请求失败，请稍后重试",
+           icon: "none",
+         });
+       }
+}
+  
+ 
 const aiInput = ref(""); // AI 输入内容
 const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
@@ -744,6 +843,7 @@ onMounted(() => {
   fetchPlansFromBackend();
   judgeManager();
   loadMyPlans();
+  fetchDailyCalories(username.value);
  // 监听来自 Search 页面更新计划的通知
   uni.$on('plansUpdated', loadMyPlans);
 });
