@@ -480,7 +480,7 @@ app.post('/predict', upload.single('file'), async (req, res) => {
 
 //每日摄入热量api
 // 配置智谱AI API
-const API_KEY2 = process.env.API_KEY;  // 请确保环境变量中配置了正确的 API_KEY
+  // 请确保环境变量中配置了正确的 API_KEY
 
 // 智谱AI调用函数
 async function getDailyCalories(height, weight, age, activityType, goal) {
@@ -504,7 +504,7 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
       ]
     }, {
       headers: {
-        'Authorization': `Bearer ${API_KEY2}`,
+        'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json',
       }
     });
