@@ -509,6 +509,58 @@ app.post('/predict', upload.single('file'), async (req, res) => {
 });
 
 // //每日摄入热量api
+const API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
+const API_KEY = process.env.API_KEY;  // 获取API密钥
+
+// API 路由，处理前端请求
+app.post('/api/calculateCalories', async (req, res) => {
+  const { height, weight, age, activityType, goal } = req.body;
+
+  // 验证输入数据是否完整
+  if (!height || !weight || !age || !activityType || !goal) {
+    return res.status(400).json({ error: '输入数据不完整' });
+  }
+
+  const question = `
+    请根据以下信息计算每日所需热量摄取量：
+    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType}，运动目标：${goal}。
+    请返回每日热量摄取量。
+  `;
+
+  console.log('请求内容:', question);  // 打印请求内容
+
+  try {
+    // 发送请求到智谱AI API
+    const response = await axios.post(API_URL, {
+      model: "glm-4-flash",  // 使用合适的模型ID
+      messages: [
+        {
+          role: 'user',
+          content: question,
+        }
+      ]
+    }, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    console.log('AI 响应:', response.data);  // 打印响应内容
+    const dailyCalories = response.data.data.text.trim();  // 提取并返回文本结果
+
+    // 返回计算结果
+    res.status(200).json({ dailyCalories: dailyCalories });
+  } catch (error) {
+    console.error('调用智谱AI失败:', error);
+    // 如果有响应错误，打印详细错误
+    if (error.response) {
+      console.error('AI API 错误响应:', error.response.data);
+      console.error('AI API 错误状态:', error.response.status);
+    }
+    res.status(500).json({ error: '计算每日热量摄取量失败' });
+  }
+});
 // // 配置智谱AI API
 // const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
 // const API_KEY2 = process.env.API_KEY; 
