@@ -402,14 +402,8 @@ app.post('/generateFitnessPlan', async (req, res) => {
 
 //图片识别食物热量
 const upload = multer({
-  dest: 'uploads/',  // 图片上传目录
-  limits: { fileSize: 10 * 1024 * 1024 },  // 设置文件大小限制为10MB
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('只允许上传图片文件'));
-    }
-    cb(null, true); // 文件验证通过
-  }
+  dest: 'uploads/', // 保存到 uploads 文件夹
+  limits: { fileSize: 5 * 1024 * 1024 } // 限制上传大小，最大5MB
 });
 
 // 配置智谱AI API 请求
@@ -508,59 +502,98 @@ app.post('/predict', upload.single('file'), async (req, res) => {
   }
 });
 
-// //每日摄入热量api
-const API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
-const API_KEY = process.env.API_KEY;  // 获取API密钥
+// // //每日摄入热量api
+// const API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
+// const RESULT_URL = 'https://open.bigmodel.cn/api/paas/v4/async/get_result';
+// const API_KEY = process.env.API_KEY;  // 获取API密钥
 
-// API 路由，处理前端请求
-app.post('/api/calculateCalories', async (req, res) => {
-  const { height, weight, age, activityType, goal } = req.body;
+// // API 路由，处理前端请求
+// app.post('/api/calculateCalories', async (req, res) => {
+//   const { username } = req.body;
 
-  // 验证输入数据是否完整
-  if (!height || !weight || !age || !activityType || !goal) {
-    return res.status(400).json({ error: '输入数据不完整' });
-  }
+//   // 验证用户名是否提供
+//   if (!username) {
+//     return res.status(400).json({ error: '用户名未提供' });
+//   }
 
-  const question = `
-    请根据以下信息计算每日所需热量摄取量：
-    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType}，运动目标：${goal}。
-    请返回每日热量摄取量。
-  `;
+//   // 从数据库获取用户信息
+//   connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
+//     if (err) {
+//       console.error('数据库查询失败:', err);
+//       return res.status(500).json({ error: '数据库查询失败' });
+//     }
 
-  console.log('请求内容:', question);  // 打印请求内容
+//     if (results.length === 0) {
+//       return res.status(404).json({ error: '用户未找到' });
+//     }
 
-  try {
-    // 发送请求到智谱AI API
-    const response = await axios.post(API_URL, {
-      model: "glm-4-flash",  // 使用合适的模型ID
-      messages: [
-        {
-          role: 'user',
-          content: question,
-        }
-      ]
-    }, {
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      }
-    });
+//     const user = results[0];
+//     const { height, weight, age, exerciseType, fitnessGoal } = user;
 
-    console.log('AI 响应:', response.data);  // 打印响应内容
-    const dailyCalories = response.data.data.text.trim();  // 提取并返回文本结果
+//     if (!height || !weight || !age || !exerciseType || !fitnessGoal) {
+//       return res.status(400).json({ error: '用户健康信息不完整' });
+//     }
 
-    // 返回计算结果
-    res.status(200).json({ dailyCalories: dailyCalories });
-  } catch (error) {
-    console.error('调用智谱AI失败:', error);
-    // 如果有响应错误，打印详细错误
-    if (error.response) {
-      console.error('AI API 错误响应:', error.response.data);
-      console.error('AI API 错误状态:', error.response.status);
-    }
-    res.status(500).json({ error: '计算每日热量摄取量失败' });
-  }
-});
+//     const question = `
+//       请根据以下信息计算每日所需热量摄取量：
+//       身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${exerciseType}，运动目标：${fitnessGoal}。
+//       请返回每日热量摄取量。
+//     `;
+
+//     try {
+//       // 调用智谱 AI 接口获取任务 ID
+//       const aiResponse = await axios.post(
+//         API_URL,
+//         {
+//           model: 'glm-4-flash',
+//           messages: [{ role: 'user', content: question }],
+//         },
+//         {
+//           headers: {
+//             'Authorization': `Bearer ${API_KEY}`,
+//             'Content-Type': 'application/json',
+//           },
+//         }
+//       );
+
+//       const taskId = aiResponse.data.id;
+//       console.log('AI 请求成功, 任务ID:', taskId);
+
+//       // 轮询获取 AI 结果
+//       const getAIResult = async (taskId) => {
+//         const maxRetries = 5;
+//         const delay = 2000; // 2秒
+
+//         for (let i = 0; i < maxRetries; i++) {
+//           const resultResponse = await axios.get(`${RESULT_URL}/${taskId}`, {
+//             headers: {
+//               'Authorization': `Bearer ${API_KEY}`,
+//             },
+//           });
+
+//           if (resultResponse.data.task_status === 'SUCCEEDED') {
+//             return resultResponse.data.data.text.trim();
+//           } else if (resultResponse.data.task_status === 'FAILED') {
+//             throw new Error('AI 任务失败');
+//           }
+//           await new Promise(resolve => setTimeout(resolve, delay)); // 等待一段时间再重试
+//         }
+//         throw new Error('AI 任务超时');
+//       };
+
+//       // 获取最终 AI 结果
+//       const dailyCalories = await getAIResult(taskId);
+//       console.log('AI 计算结果:', dailyCalories);
+
+//       // 返回计算结果
+//       return res.status(200).json({ dailyCalories });
+
+//     } catch (error) {
+//       console.error('调用智谱 AI 失败:', error);
+//       return res.status(500).json({ error: '计算每日热量摄取量失败' });
+//     }
+//   });
+// });
 // // 配置智谱AI API
 // const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
 // const API_KEY2 = process.env.API_KEY; 
@@ -605,19 +638,19 @@ app.post('/api/calculateCalories', async (req, res) => {
 //   //   return res.status(400).json({ error: '无效的用户名' });
 //   // }
 
-//   // 从数据库获取用户信息
-//   connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
-//     if (err) {
-//       console.error('数据库查询失败:', err);
-//       return res.status(500).json({ error: '数据库查询失败' });
-//     }
+  // // 从数据库获取用户信息
+  // connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
+  //   if (err) {
+  //     console.error('数据库查询失败:', err);
+  //     return res.status(500).json({ error: '数据库查询失败' });
+  //   }
 
-//     if (results.length === 0) {
-//       return res.status(404).json({ error: '用户未找到' });
-//     }
-//     console.log('数据库查询结果:', results);  // 打印查询到的结果
-//     const user = results[0];
-//     const { height, weight, age, exerciseType, fitnessGoal } = user;
+  //   if (results.length === 0) {
+  //     return res.status(404).json({ error: '用户未找到' });
+  //   }
+  //   console.log('数据库查询结果:', results);  // 打印查询到的结果
+  //   const user = results[0];
+  //   const { height, weight, age, exerciseType, fitnessGoal } = user;
 
 //     try {
 //       // 调用 AI 模型计算每日热量摄取量
@@ -687,7 +720,7 @@ app.post('/get-user-goals', (req, res) => {
   }
 
   // 查询用户的 goalid
-  db.query('SELECT goalid FROM users WHERE name = ?', [username], (err, results) => {
+  connection.query('SELECT goalid FROM users WHERE name = ?', [username], (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Database error" });
     }
@@ -701,7 +734,7 @@ app.post('/get-user-goals', (req, res) => {
 
     // 使用 goalid 查询 goal 表
     const query = 'SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal WHERE id IN (?)';
-    db.query(query, [goalidArray], (err, goals) => {
+    connection.query(query, [goalidArray], (err, goals) => {
       if (err) {
         return res.status(500).json({ error: "Database error while fetching goals" });
       }
@@ -723,7 +756,7 @@ app.post('/add-user-goals', (req, res) => {
   const placeholders = goalNames.map(() => '?').join(',');
   const query = `SELECT id FROM goal WHERE 名称 IN (${placeholders})`;
 
-  db.query(query, goalNames, (err, results) => {
+  connection.query(query, goalNames, (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Database error while fetching goals" });
     }
@@ -736,7 +769,7 @@ app.post('/add-user-goals', (req, res) => {
     const goalIds = results.map(result => result.id);
 
     // 更新用户的 goalid
-    db.query('UPDATE users SET goalid = ? WHERE name = ?', [JSON.stringify(goalIds), username], (err) => {
+    connection.query('UPDATE users SET goalid = ? WHERE name = ?', [JSON.stringify(goalIds), username], (err) => {
       if (err) {
         return res.status(500).json({ error: "Database error while updating user goals" });
       }
@@ -795,46 +828,103 @@ app.get('/goals', (req, res) => {
 //   connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
 //     if (err) {
 //       return res.status(500).json({ error: "Database error" });
-//     }
+//     } 
 //     res.status(200).json({ message: "Goal added successfully", imageUrl });
 //   });
 // });
 
+// 处理文件上传接口
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send({ success: false, message: '未上传文件' });
+  }
 
-//API：修改封面对应的信息（需要  名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url)
-app.put('/api/goals', (req, res) => {
-  const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
+  const fileExtension = path.extname(req.file.originalname);
+  const newFilename = `${Date.now()}${fileExtension}`; // 生成唯一的文件名
+  const newFilePath = path.join(__dirname, 'uploads', newFilename);
 
-  // SQL 更新语句
-  const sql = `
-      UPDATE goal 
-      SET 
-          运动次数 = ?, 
-          难度 = ?, 
-          卡路里 = ?, 
-          B站连接 = ?, 
-          目标 = ?, 
-          运动类型 = ?, 
-          时间 = ?, 
-          video_url = ? 
-      WHERE 
-          名称 = ?`;
+  // 重命名文件
+  const fs = require('fs');
+  fs.renameSync(req.file.path, newFilePath);
 
-  // 执行更新
-  db.query(sql, [运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url, 名称], (error, results) => {
-      if (error) {
-          return res.status(500).json({ message: '更新失败', error });
-      }
-      if (results.affectedRows > 0) {
-          return res.json({ message: '更新成功' });
-      } else {
-          return res.json({ message: '未找到相关数据' });
-      }
+  res.send({
+    success: true,
+    filename: newFilename // 返回文件名
   });
 });
 
+app.put('/goals', (req, res) => {
+  let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
 
+  console.log('接收到的更新数据:', req.body);
+   // 修改时间字段的提取逻辑
+  if (typeof 时间 === 'string') {
+    const timeMatch = 时间.match(/\d+/); // 提取字符串中的数字部分
+    时间 = timeMatch ? parseInt(timeMatch[0], 10) : 0; // 只保留数字部分，转换为整数
+  } else {
+    时间 = parseInt(时间, 10) || 0; // 如果时间本身是数字，直接使用
+  }
+  // 只保留 `uploads` 之后的部分
+  if (image_url && image_url.includes('uploads/')) {
+    image_url = image_url.substring(image_url.indexOf('uploads'));
+  }
+  const sql = `
+    UPDATE goal 
+    SET 
+      运动次数 = ?, 
+      时间 = ?, 
+      卡路里 = ?, 
+      运动类型 = ?, 
+      目标 = ?, 
+      难度 = ?, 
+      image_url = ?, 
+      video_url = ? 
+    WHERE 名称 = ?`;
 
+  const params = [运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url, 名称];
+
+  console.log('执行的SQL:', sql);
+  console.log('传入的参数:', params); 
+
+  connection.query(sql, params, (error, results) => {
+    if (error) {
+      console.error('数据库更新失败:', error);
+      return res.status(500).json({ message: '更新失败', error });
+    }
+    if (results.affectedRows > 0) {
+      return res.json({ message: '更新成功' });
+    } else {
+      return res.json({ message: '未找到相关数据' });
+    }
+  });
+});
+
+app.post('/goals/add', (req, res) => {
+  const {
+    名称,
+    运动次数,
+    难度,
+    卡路里,
+    目标,
+    运动类型,
+    时间,
+    image_url,
+    video_url,
+    B站连接
+  } = req.body;
+
+  if (!名称) return res.status(400).json({ message: '计划名称不能为空' });
+
+  const sql = `
+    INSERT INTO goal 
+    (名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, video_url, B站连接) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  connection.query(sql, [名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, video_url, B站连接], (error, results) => {
+    if (error) return res.status(500).json({ message: '添加失败', error });
+    res.json({ message: '添加成功' });
+  });
+});
 
 // 启动服务器
 app.listen(port, () => {
