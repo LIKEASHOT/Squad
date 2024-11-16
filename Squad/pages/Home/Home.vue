@@ -380,10 +380,67 @@
             <button
               type="primary"
               @click="handleAddPlan_board"
-              class="add-plan-btn"
-            >
+              class="add-plan-btn">
               添加计划
             </button>
+			<!-- 添加计划表单 -->
+			  <div v-if="isAddingPlan">
+			    <scroll-view>
+			      <uni-forms :model="planForm" labelWidth="80px">
+			        <uni-forms-item label="名称">
+			          <uni-easyinput v-model="planForm.title" placeholder="请输入名称" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="运动次数">
+			          <uni-easyinput v-model="planForm.times" type="string" placeholder="请输入运动次数" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="时间">
+			          <uni-easyinput v-model="planForm.duration" placeholder="请输入时间" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="卡路里">
+			          <uni-easyinput v-model="planForm.calorie" type="number" placeholder="请输入卡路里" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="运动类型">
+			          <uni-data-select v-model="planForm.type" :localdata="types" placeholder="请选择运动类型" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="运动目标">
+			          <uni-data-checkbox
+			            placeholder="请选择运动目标"
+			            v-model="planForm.goal"
+			            :localdata="goals"
+			            multiple
+			            :map="{ text: 'text', value: 'value' }"
+			          />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="难度">
+			          <uni-data-select v-model="planForm.difficulties" :localdata="difficulties" placeholder="请选择难度" />
+			        </uni-forms-item>
+			
+			        <uni-forms-item label="封面">
+			          <uni-easyinput
+			            v-model="planForm.imageUrl"
+			            type="string"
+			            placeholder="请输入封面url"
+			          />
+			        </uni-forms-item>
+					
+			        <uni-forms-item label="视频链接">
+			          <uni-easyinput v-model="planForm.videoUrl" type="string" placeholder="请输入演示视频url" />
+			        </uni-forms-item>
+			      </uni-forms> 
+			 
+			      <!-- 保存和取消按钮 -->
+			      <view class="popup-buttons">
+			        <button class="btn-cancel" @click="closePopup">取消</button>
+			        <button class="btn-confirm" type="primary" @click="savePlan">确定</button>
+			      </view>
+			    </scroll-view>
+			  </div>
           </div>
         </div>
       </div>
@@ -545,8 +602,8 @@ const types = ref([
   { value: "全部", text: "全部" },
   { value: "跑步", text: "跑步" },
   { value: "徒手", text: "徒手" },
-  { value: "撸铁", text: "撸铁" },
-  { value: "瑜伽", text: "瑜伽" },
+  { value: "撸铁", text: "撸铁" }, 
+  { value: "瑜伽", text: "瑜伽" }, 
   { value: "篮球", text: "篮球" },
 ]);
 const difficulties = ref([
@@ -652,6 +709,9 @@ async function fetchDailyCalories(username) {
      const response = await uni.request({
        url: serverUrl + "/api/calculateCalories",
        method: 'POST',
+	   header: {
+	           'Content-Type': 'application/json',
+	         },
        data: {
           username: username,  // 传递用户名到后端
        },
@@ -659,13 +719,13 @@ async function fetchDailyCalories(username) {
   
      console.log('服务器响应:', response);  // 打印返回的完整响应数据
  
-      // 确保返回的数据格式正确 
+      // 确保返回的数据格式正确
          if (response.statusCode === 200) {
            const { dailyCalories, error } = response.data;
-      
+     
            if (dailyCalories) {
-             today_left_eat.value = dailyCalories;  // 设置可摄入的热量
-             target_eat_percent.value = 100;  // 设置进度条的百分比
+             today_left_eat.value = dailyCalories; // 设置可摄入的热量
+             target_eat_percent.value = 100; // 设置进度条的百分比
              uni.showToast({
                title: "获取热量成功",
                icon: "success",
@@ -779,7 +839,7 @@ const getCustomPlan = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   // 发送请求到后端获取定制的运动计划
   uni.request({
-    url: "http://192.168.56.1:3000/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
+    url: serverUrl +"/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
     method: "POST",
     data: {
       aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
@@ -908,59 +968,105 @@ const handleAddPlan_board = () => {
   // 添加计划逻辑
   openPopup();
 };
+//添加封面逻辑
+const uploadImage = () => {
+  uni.chooseImage({
+    count: 1, // 选择一张图片
+    success: (res) => {
+      const tempFilePath = res.tempFilePaths[0];
+      
+      // 上传图片到后端
+      uni.uploadFile({
+        url: `${serverUrl}/upload`, // 假设后端的上传接口
+        filePath: tempFilePath,
+        name: 'file', // 传给后端的文件字段名
+        success: (uploadRes) => {
+          const data = JSON.parse(uploadRes.data);
+          if (data.success) {
+            // 图片上传成功后设置 imageUrl
+            planForm.value.imageUrl = `/uploads/${data.filename}`; // 后端返回的文件名
+            uni.showToast({ title: '封面上传成功', icon: 'success' });
+          } else {
+            uni.showToast({ title: '封面上传失败', icon: 'none' });
+          }
+        },
+        fail: (err) => {
+          console.error('上传失败:', err);
+          uni.showToast({ title: '封面上传失败', icon: 'none' });
+        }
+      });
+    }
+  });
+};
 // 保存计划
-const savePlan = () => {
-  if (currentEditIndex.value !== -1) {
-    // 创建新对象以确保响应式更新
-    const updatedPlan = {
-      ...plans.value[currentEditIndex.value],
-      title: planForm.value.title,
-      duration: planForm.value.duration,
-      times: planForm.value.times,
-      difficulties: planForm.value.difficulties,
-      calorie: planForm.value.calorie,
-      goal: planForm.value.goal,
-      type: planForm.value.type,
-      imageUrl: planForm.value.imageUrl,
-      videoUrl: planForm.value.videoUrl,
-    };
+const savePlan = () => { 
+  const isEditing = currentEditIndex.value !== -1;
 
-    // 使用数组方法触发响应式更新
-    plans.value.splice(currentEditIndex.value, 1, updatedPlan);
-    // 显示更新后的计划plan
-    console.log("更新后的计划:", plans.value[currentEditIndex.value]);
-    // 重置编辑索引
-    currentEditIndex.value = -1;
-    filterPlans();
-    // 可选：显示成功提示
-    uni.showToast({
-      title: "保存成功",
-      icon: "success",
+  // 准备提交到后端的数据（只保留必要的字段）
+  const planData = {
+    名称: planForm.value.title || '', 
+    运动次数: planForm.value.times || '',
+    时间: planForm.value.duration || '',
+    卡路里: planForm.value.calorie || 0,
+    运动类型: planForm.value.type || '',
+    目标: planForm.value.goal.join(',') || '', // 如果 `goal` 是数组，转换为字符串
+    难度: planForm.value.difficulties || '',
+    image_url: planForm.value.imageUrl || '',
+    video_url: planForm.value.videoUrl || ''
+  };
+
+  // 检查传入的数据
+  console.log("前端提交的计划数据:", planData);
+
+  // 如果是编辑模式
+  if (isEditing) {
+    // 调用后端API更新已有计划
+    uni.request({
+      url: `${serverUrl}/goals`, // 假设后端PUT API地址
+      method: 'PUT',
+      data: planData, 
+      success: (res) => {
+        if (res.data.message === '更新成功') { 
+          // 更新前端的 plans 数组
+          plans.value.splice(currentEditIndex.value, 1, { ...planData });
+          uni.showToast({ title: '修改成功', icon: 'success' });
+        } else {
+          uni.showToast({ title: res.data.message || '修改失败', icon: 'none' });
+        }
+      },
+      fail: (err) => {
+        console.error('请求失败:', err);
+        uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' });
+      }
     });
   } else {
-    // 创建新对象以确保响应式更新
-    const newPlan = {
-      title: planForm.value.title,
-      duration: planForm.value.duration,
-      times: planForm.value.times,
-      difficulties: planForm.value.difficulties,
-      calorie: planForm.value.calorie,
-      goal: planForm.value.goal,
-      type: planForm.value.type,
-      imageUrl: planForm.value.imageUrl,
-      videoUrl: planForm.value.videoUrl,
-    };
-    // 使用数组方法触发响应式更新
-    plans.value.push(newPlan);
-    filterPlans();
-    // 可选：显示成功提示
-    uni.showToast({
-      title: "添加成功",
-      icon: "success",
+    // 添加新的计划
+    uni.request({
+      url: `${serverUrl}/goals/add`, // 假设后端POST API地址
+      method: 'POST',
+      data: planData,
+      success: (res) => {
+        if (res.data.message === '添加成功') {
+          plans.value.push(planData);
+          uni.showToast({ title: '添加成功', icon: 'success' });
+        } else {
+          uni.showToast({ title: res.data.message || '添加失败', icon: 'none' });
+        }
+      },
+      fail: (err) => {
+        console.error('请求失败:', err);
+        uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' });
+      }
     });
   }
+
+  // 重置编辑索引并关闭弹窗
+  currentEditIndex.value = -1;
   closePopup();
+  filterPlans();
 };
+
+
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
   currentEditIndex.value = index;

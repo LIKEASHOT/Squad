@@ -19528,7 +19528,7 @@ ${i3}
             filePath,
             name: "file",
             success: (uploadRes) => {
-              formatAppLog("log", "at pages/Home/Home.vue:589", "上传响应数据:", uploadRes.data);
+              formatAppLog("log", "at pages/Home/Home.vue:646", "上传响应数据:", uploadRes.data);
               try {
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200) {
@@ -19536,21 +19536,21 @@ ${i3}
                   calories.value = response.平均每份热量;
                   errorMessage.value = "";
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:597", "识别失败");
+                  formatAppLog("error", "at pages/Home/Home.vue:654", "识别失败");
                   errorMessage.value = "识别失败，请稍后重试。";
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:601", "解析 JSON 错误:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:658", "解析 JSON 错误:", err);
                 errorMessage.value = "响应数据格式错误，请稍后重试。";
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:606", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:663", "上传失败", err);
               errorMessage.value = "上传失败，请检查网络连接。";
             }
           });
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:612", "请求失败", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:669", "请求失败", error2);
           errorMessage.value = "请求失败，请检查网络连接。";
         }
       };
@@ -19560,7 +19560,7 @@ ${i3}
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:622", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:679", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -19576,11 +19576,11 @@ ${i3}
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:638", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:695", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:642", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:699", "请求失败:", err);
           }
         });
       };
@@ -19590,12 +19590,15 @@ ${i3}
           const response = await uni.request({
             url: serverUrl$1 + "/api/calculateCalories",
             method: "POST",
+            header: {
+              "Content-Type": "application/json"
+            },
             data: {
               username: username2
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:660", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:720", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -19618,7 +19621,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:686", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:746", "请求失败:", error2);
           uni.showToast({
             title: "网络请求失败，请稍后重试",
             icon: "none"
@@ -19663,7 +19666,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:749", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:809", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -19686,7 +19689,7 @@ ${i3}
         }
         const username2 = uni.getStorageSync("username");
         uni.request({
-          url: "http://192.168.56.1:3000/generateFitnessPlan",
+          url: serverUrl$1 + "/generateFitnessPlan",
           // 请根据实际情况调整 IP 地址和端口
           method: "POST",
           data: {
@@ -19699,7 +19702,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:792", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:852", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -19715,7 +19718,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:809", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:869", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -19750,7 +19753,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:860", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:920", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -19759,7 +19762,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:873", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:933", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -19767,7 +19770,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:890", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:950", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -19779,53 +19782,97 @@ ${i3}
       const handleAddPlan_board = () => {
         openPopup();
       };
+      const uploadImage = () => {
+        uni.chooseImage({
+          count: 1,
+          // 选择一张图片
+          success: (res) => {
+            const tempFilePath = res.tempFilePaths[0];
+            uni.uploadFile({
+              url: `${serverUrl$1}/upload`,
+              // 假设后端的上传接口
+              filePath: tempFilePath,
+              name: "file",
+              // 传给后端的文件字段名
+              success: (uploadRes) => {
+                const data = JSON.parse(uploadRes.data);
+                if (data.success) {
+                  planForm.value.imageUrl = `/uploads/${data.filename}`;
+                  uni.showToast({ title: "封面上传成功", icon: "success" });
+                } else {
+                  uni.showToast({ title: "封面上传失败", icon: "none" });
+                }
+              },
+              fail: (err) => {
+                formatAppLog("error", "at pages/Home/Home.vue:994", "上传失败:", err);
+                uni.showToast({ title: "封面上传失败", icon: "none" });
+              }
+            });
+          }
+        });
+      };
       const savePlan = () => {
-        if (currentEditIndex.value !== -1) {
-          const updatedPlan = {
-            ...plans.value[currentEditIndex.value],
-            title: planForm.value.title,
-            duration: planForm.value.duration,
-            times: planForm.value.times,
-            difficulties: planForm.value.difficulties,
-            calorie: planForm.value.calorie,
-            goal: planForm.value.goal,
-            type: planForm.value.type,
-            imageUrl: planForm.value.imageUrl,
-            videoUrl: planForm.value.videoUrl
-          };
-          plans.value.splice(currentEditIndex.value, 1, updatedPlan);
-          formatAppLog("log", "at pages/Home/Home.vue:931", "更新后的计划:", plans.value[currentEditIndex.value]);
-          currentEditIndex.value = -1;
-          filterPlans();
-          uni.showToast({
-            title: "保存成功",
-            icon: "success"
+        const isEditing = currentEditIndex.value !== -1;
+        const planData = {
+          名称: planForm.value.title || "",
+          运动次数: planForm.value.times || "",
+          时间: planForm.value.duration || "",
+          卡路里: planForm.value.calorie || 0,
+          运动类型: planForm.value.type || "",
+          目标: planForm.value.goal.join(",") || "",
+          // 如果 `goal` 是数组，转换为字符串
+          难度: planForm.value.difficulties || "",
+          image_url: planForm.value.imageUrl || "",
+          video_url: planForm.value.videoUrl || ""
+        };
+        formatAppLog("log", "at pages/Home/Home.vue:1019", "前端提交的计划数据:", planData);
+        if (isEditing) {
+          uni.request({
+            url: `${serverUrl$1}/goals`,
+            // 假设后端PUT API地址
+            method: "PUT",
+            data: planData,
+            success: (res) => {
+              if (res.data.message === "更新成功") {
+                plans.value.splice(currentEditIndex.value, 1, { ...planData });
+                uni.showToast({ title: "修改成功", icon: "success" });
+              } else {
+                uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
+              }
+            },
+            fail: (err) => {
+              formatAppLog("error", "at pages/Home/Home.vue:1038", "请求失败:", err);
+              uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+            }
           });
         } else {
-          const newPlan = {
-            title: planForm.value.title,
-            duration: planForm.value.duration,
-            times: planForm.value.times,
-            difficulties: planForm.value.difficulties,
-            calorie: planForm.value.calorie,
-            goal: planForm.value.goal,
-            type: planForm.value.type,
-            imageUrl: planForm.value.imageUrl,
-            videoUrl: planForm.value.videoUrl
-          };
-          plans.value.push(newPlan);
-          filterPlans();
-          uni.showToast({
-            title: "添加成功",
-            icon: "success"
+          uni.request({
+            url: `${serverUrl$1}/goals/add`,
+            // 假设后端POST API地址
+            method: "POST",
+            data: planData,
+            success: (res) => {
+              if (res.data.message === "添加成功") {
+                plans.value.push(planData);
+                uni.showToast({ title: "添加成功", icon: "success" });
+              } else {
+                uni.showToast({ title: res.data.message || "添加失败", icon: "none" });
+              }
+            },
+            fail: (err) => {
+              formatAppLog("error", "at pages/Home/Home.vue:1057", "请求失败:", err);
+              uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+            }
           });
         }
+        currentEditIndex.value = -1;
         closePopup();
+        filterPlans();
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:967", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:968", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1073", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1074", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -19846,7 +19893,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:992", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1098", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -19888,9 +19935,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1043", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1149", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1046", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1152", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -19945,7 +19992,7 @@ ${i3}
           ];
         }, 2e3);
       });
-      const __returned__ = { serverUrl: serverUrl$1, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$1, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, uploadImage, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -20587,7 +20634,141 @@ ${i3}
                 type: "primary",
                 onClick: $setup.handleAddPlan_board,
                 class: "add-plan-btn"
-              }, " 添加计划 ")
+              }, " 添加计划 "),
+              vue.createCommentVNode(" 添加计划表单 "),
+              _ctx.isAddingPlan ? (vue.openBlock(), vue.createElementBlock("div", { key: 0 }, [
+                vue.createElementVNode("scroll-view", null, [
+                  vue.createVNode(_component_uni_forms, {
+                    model: $setup.planForm,
+                    labelWidth: "80px"
+                  }, {
+                    default: vue.withCtx(() => [
+                      vue.createVNode(_component_uni_forms_item, { label: "名称" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.title,
+                            "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $setup.planForm.title = $event),
+                            placeholder: "请输入名称"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "运动次数" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.times,
+                            "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.planForm.times = $event),
+                            type: "string",
+                            placeholder: "请输入运动次数"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "时间" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.duration,
+                            "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => $setup.planForm.duration = $event),
+                            placeholder: "请输入时间"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "卡路里" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.calorie,
+                            "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => $setup.planForm.calorie = $event),
+                            type: "number",
+                            placeholder: "请输入卡路里"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "运动类型" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_data_select, {
+                            modelValue: $setup.planForm.type,
+                            "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => $setup.planForm.type = $event),
+                            localdata: $setup.types,
+                            placeholder: "请选择运动类型"
+                          }, null, 8, ["modelValue", "localdata"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "运动目标" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_data_checkbox, {
+                            placeholder: "请选择运动目标",
+                            modelValue: $setup.planForm.goal,
+                            "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.planForm.goal = $event),
+                            localdata: $setup.goals,
+                            multiple: "",
+                            map: { text: "text", value: "value" }
+                          }, null, 8, ["modelValue", "localdata"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "难度" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_data_select, {
+                            modelValue: $setup.planForm.difficulties,
+                            "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.planForm.difficulties = $event),
+                            localdata: $setup.difficulties,
+                            placeholder: "请选择难度"
+                          }, null, 8, ["modelValue", "localdata"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "封面" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.imageUrl,
+                            "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.planForm.imageUrl = $event),
+                            type: "string",
+                            placeholder: "请输入封面url"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }),
+                      vue.createVNode(_component_uni_forms_item, { label: "视频链接" }, {
+                        default: vue.withCtx(() => [
+                          vue.createVNode(_component_uni_easyinput, {
+                            modelValue: $setup.planForm.videoUrl,
+                            "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.planForm.videoUrl = $event),
+                            type: "string",
+                            placeholder: "请输入演示视频url"
+                          }, null, 8, ["modelValue"])
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      })
+                    ]),
+                    _: 1
+                    /* STABLE */
+                  }, 8, ["model"]),
+                  vue.createCommentVNode(" 保存和取消按钮 "),
+                  vue.createElementVNode("view", { class: "popup-buttons" }, [
+                    vue.createElementVNode("button", {
+                      class: "btn-cancel",
+                      onClick: $setup.closePopup
+                    }, "取消"),
+                    vue.createElementVNode("button", {
+                      class: "btn-confirm",
+                      type: "primary",
+                      onClick: $setup.savePlan
+                    }, "确定")
+                  ])
+                ])
+              ])) : vue.createCommentVNode("v-if", true)
             ])
           ])
         ]),
@@ -20685,7 +20866,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.title,
-                      "onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => $setup.planForm.title = $event),
+                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => $setup.planForm.title = $event),
                       placeholder: "请输入名称"
                     }, null, 8, ["modelValue"])
                   ]),
@@ -20696,7 +20877,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.times,
-                      "onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => $setup.planForm.times = $event),
+                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => $setup.planForm.times = $event),
                       type: "string",
                       placeholder: "请输入运动次数"
                     }, null, 8, ["modelValue"])
@@ -20708,7 +20889,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.duration,
-                      "onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => $setup.planForm.duration = $event),
+                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.planForm.duration = $event),
                       placeholder: "请输入时间"
                     }, null, 8, ["modelValue"])
                   ]),
@@ -20719,7 +20900,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.calorie,
-                      "onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => $setup.planForm.calorie = $event),
+                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => $setup.planForm.calorie = $event),
                       type: "number",
                       placeholder: "请输入卡路里"
                     }, null, 8, ["modelValue"])
@@ -20731,7 +20912,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_data_select, {
                       modelValue: $setup.planForm.type,
-                      "onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => $setup.planForm.type = $event),
+                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => $setup.planForm.type = $event),
                       localdata: $setup.types,
                       placeholder: "请选择运动类型"
                     }, null, 8, ["modelValue", "localdata"])
@@ -20744,7 +20925,7 @@ ${i3}
                     vue.createVNode(_component_uni_data_checkbox, {
                       placeholder: "请选择运动目标",
                       modelValue: $setup.planForm.goal,
-                      "onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => $setup.planForm.goal = $event),
+                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.planForm.goal = $event),
                       localdata: $setup.goals,
                       multiple: "",
                       map: { text: "text", value: "value" }
@@ -20757,7 +20938,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_data_select, {
                       modelValue: $setup.planForm.difficulties,
-                      "onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => $setup.planForm.difficulties = $event),
+                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => $setup.planForm.difficulties = $event),
                       localdata: $setup.difficulties,
                       placeholder: "请选择难度"
                     }, null, 8, ["modelValue", "localdata"])
@@ -20769,7 +20950,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.imageUrl,
-                      "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.planForm.imageUrl = $event),
+                      "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => $setup.planForm.imageUrl = $event),
                       type: "string",
                       placeholder: "请输入封面url"
                     }, null, 8, ["modelValue"])
@@ -20781,7 +20962,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.videoUrl,
-                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.planForm.videoUrl = $event),
+                      "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.planForm.videoUrl = $event),
                       type: "string",
                       placeholder: "请输入演示视频url"
                     }, null, 8, ["modelValue"])
@@ -20801,7 +20982,7 @@ ${i3}
               vue.createElementVNode("button", {
                 class: "btn-confirm",
                 type: "primary",
-                onClick: _cache[24] || (_cache[24] = ($event) => $setup.savePlan())
+                onClick: _cache[33] || (_cache[33] = ($event) => $setup.savePlan())
               }, " 确定 ")
             ])
           ])
