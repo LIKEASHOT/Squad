@@ -39,7 +39,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "123123",
+  password: "123456",
   database: "my_database",
 });
 
@@ -788,7 +788,7 @@ app.get('/goals', (req, res) => {
       运动次数 AS times, 
       难度 AS difficulties, 
       卡路里 AS calorie, 
-      CONCAT('http://192.168.56.1:3000/', image_url) AS image_url, 
+      CONCAT('http://10.133.80.141:3000/', image_url) AS image_url, 
       目标 AS goal, 
       运动类型 AS type 
     FROM goal
