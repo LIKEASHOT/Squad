@@ -61,7 +61,21 @@
         "navigationBarTitleText": "搜索",
         "enablePullDownRefresh": false
       }
-    }
+    },
+    {
+    	"path" : "pages/InviteFriends/InviteFriends",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : "邀请好友"
+    	}
+    },
+	{
+	  "path": "pages/Chat/Chat",
+	  "style": {
+	    "navigationBarTitleText": "聊天",
+	    "enablePullDownRefresh": false
+	  }
+	},
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

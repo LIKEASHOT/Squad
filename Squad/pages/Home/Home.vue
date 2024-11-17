@@ -228,7 +228,7 @@
                 :key="index"
                 class="plan-item"
                 @click="openPlanDetail(item)"
-              > 
+              >
                 <image :src="item.imageUrl" class="plan-image" />
                 <div class="plan-info">
                   <span class="plan-title">{{ item.title }}</span>
@@ -257,12 +257,11 @@
             </div>
           </view>
           <view v-if="showMyeat === true" class="eat_page">
-            <view>
+            <view class="circle_process_eat">
               <l-circle
                 v-model:current="modelVale"
                 :percent="target_eat_percent"
                 :size="120"
-                class="circle_process_eat"
                 trailWidth="20"
                 strokeWidth="20"
                 lineCap="butt"
@@ -276,12 +275,92 @@
 
                 <!-- <text>{{ modelVale }}%</text> -->
               </l-circle>
-              <button class="take_picture" @click="takePicture">
-                   <text>拍照识别</text>
-                 </button>
-                 <view class="picture_return">
-                   <text>{{ foodName }}</text>
-                   <text>{{ calories }} 卡路里</text>
+              <button
+                class="take_picture"
+                @click="takePicture"
+                :disabled="isRecognizing"
+              >
+                <text v-if="!isRecognizing">拍照识别</text>
+                <text v-else>识别中...</text>
+              </button>
+
+              <!-- 修改识别结果表格部分 -->
+              <view
+                v-if="foodList.length > 0 || manualFoodList.length > 0"
+                class="food-table"
+              >
+                <view class="table-header">
+                  <text class="th">食物名称</text>
+                  <text class="th">食用量(g)</text>
+                  <text class="th">热量(kcal)</text>
+                  <text class="th">操作</text>
+                </view>
+
+                <!-- 识别的食物列表 -->
+                <scroll-view>
+                  <view
+                    v-for="(food, index) in foodList"
+                    :key="'auto-' + index"
+                    class="table-row"
+                  >
+                    <text class="td food-name">{{ food.食物名称 }}</text>
+                    <view class="td amount-input">
+                      <input
+                        type="number"
+                        v-model="food.amount"
+                        placeholder="请输入"
+                        @input="calculateFoodCalories(food)"
+                      />
+                    </view>
+                    <text class="td">{{ food.currentCalories || 0 }}</text>
+                    <view class="td op-buttons">
+                      <button
+                        class="delete-btn"
+                        @click="removeFood(index, 'auto')"
+                      >
+                        删除
+                      </button>
+                    </view>
+                  </view>
+
+                  <!-- 手动添加的食物列表 -->
+                  <view
+                    v-for="(food, index) in manualFoodList"
+                    :key="'manual-' + index"
+                    class="table-row"
+                  >
+                    <text class="td food-name">{{ food.食物名称 }}</text>
+                    <view class="td amount-input">
+                      <input
+                        type="number"
+                        v-model="food.amount"
+                        @input="calculateManualFoodCalories(food)"
+                      />
+                    </view>
+                    <text class="td">{{ food.currentCalories }}</text>
+                    <view class="td op-buttons">
+                      <button
+                        class="delete-btn"
+                        @click="removeFood(index, 'manual')"
+                      >
+                        删除
+                      </button>
+                    </view>
+                  </view>
+                </scroll-view>
+
+                <!-- 底部操作栏 -->
+                <view class="table-footer">
+                  <button class="add-btn" @click="showAddFoodPopup">
+                    <text class="add-icon">+</text>添加食物
+                  </button>
+                  <view class="total-info">
+                    <text>总热量: {{ totalCalories }}kcal</text>
+                    <button class="submit-btn" @click="submitFoodList">
+                      提交
+                    </button>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
@@ -380,67 +459,96 @@
             <button
               type="primary"
               @click="handleAddPlan_board"
-              class="add-plan-btn">
+              class="add-plan-btn"
+            >
               添加计划
             </button>
-			<!-- 添加计划表单 -->
-			  <div v-if="isAddingPlan">
-			    <scroll-view>
-			      <uni-forms :model="planForm" labelWidth="80px">
-			        <uni-forms-item label="名称">
-			          <uni-easyinput v-model="planForm.title" placeholder="请输入名称" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="运动次数">
-			          <uni-easyinput v-model="planForm.times" type="string" placeholder="请输入运动次数" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="时间">
-			          <uni-easyinput v-model="planForm.duration" placeholder="请输入时间" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="卡路里">
-			          <uni-easyinput v-model="planForm.calorie" type="number" placeholder="请输入卡路里" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="运动类型">
-			          <uni-data-select v-model="planForm.type" :localdata="types" placeholder="请选择运动类型" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="运动目标">
-			          <uni-data-checkbox
-			            placeholder="请选择运动目标"
-			            v-model="planForm.goal"
-			            :localdata="goals"
-			            multiple
-			            :map="{ text: 'text', value: 'value' }"
-			          />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="难度">
-			          <uni-data-select v-model="planForm.difficulties" :localdata="difficulties" placeholder="请选择难度" />
-			        </uni-forms-item>
-			
-			        <uni-forms-item label="封面">
-			          <uni-easyinput
-			            v-model="planForm.imageUrl"
-			            type="string"
-			            placeholder="请输入封面url"
-			          />
-			        </uni-forms-item>
-					
-			        <uni-forms-item label="视频链接">
-			          <uni-easyinput v-model="planForm.videoUrl" type="string" placeholder="请输入演示视频url" />
-			        </uni-forms-item>
-			      </uni-forms> 
-			 
-			      <!-- 保存和取消按钮 -->
-			      <view class="popup-buttons">
-			        <button class="btn-cancel" @click="closePopup">取消</button>
-			        <button class="btn-confirm" type="primary" @click="savePlan">确定</button>
-			      </view>
-			    </scroll-view>
-			  </div>
+            <!-- 添加计划表单 -->
+            <div v-if="isAddingPlan">
+              <scroll-view>
+                <uni-forms :model="planForm" labelWidth="80px">
+                  <uni-forms-item label="名称">
+                    <uni-easyinput
+                      v-model="planForm.title"
+                      placeholder="请输入名称"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="运动次数">
+                    <uni-easyinput
+                      v-model="planForm.times"
+                      type="string"
+                      placeholder="请输入运动次数"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="时间">
+                    <uni-easyinput
+                      v-model="planForm.duration"
+                      placeholder="请输入时间"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="卡路里">
+                    <uni-easyinput
+                      v-model="planForm.calorie"
+                      type="number"
+                      placeholder="请输入卡路里"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="运动类型">
+                    <uni-data-select
+                      v-model="planForm.type"
+                      :localdata="types"
+                      placeholder="请选择运动类型"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="运动目标">
+                    <uni-data-checkbox
+                      placeholder="请选择运动目标"
+                      v-model="planForm.goal"
+                      :localdata="goals"
+                      multiple
+                      :map="{ text: 'text', value: 'value' }"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="难度">
+                    <uni-data-select
+                      v-model="planForm.difficulties"
+                      :localdata="difficulties"
+                      placeholder="请选择难度"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="封面">
+                    <uni-easyinput
+                      v-model="planForm.imageUrl"
+                      type="string"
+                      placeholder="请输入封面url"
+                    />
+                  </uni-forms-item>
+
+                  <uni-forms-item label="视频链接">
+                    <uni-easyinput
+                      v-model="planForm.videoUrl"
+                      type="string"
+                      placeholder="请输入演示视频url"
+                    />
+                  </uni-forms-item>
+                </uni-forms>
+
+                <!-- 保存和取消按钮 -->
+                <view class="popup-buttons">
+                  <button class="btn-cancel" @click="closePopup">取消</button>
+                  <button class="btn-confirm" type="primary" @click="savePlan">
+                    确定
+                  </button>
+                </view>
+              </scroll-view>
+            </div>
           </div>
         </div>
       </div>
@@ -474,82 +582,79 @@
       </div>
       <!-- 添加/编辑计划的弹窗 -->
     </view>
-    <view v-if="tab==='add_change_plan'" class="modboard">
+    <view v-if="tab === 'add_change_plan'" class="modboard">
       <view class="popup-content">
-          <scroll-view 
-      scroll-y="true"
-      class="scroll-area"
-    >
+        <scroll-view scroll-y="true" class="scroll-area">
           <view class="popup-title">{{ dialogTitle }}</view>
           <!-- 表单内容使用scroll-view -->
 
-            <uni-forms :model="planForm" labelWidth="80px">
-              <uni-forms-item label="名称">
-                <uni-easyinput
-                  v-model="planForm.title"
-                  placeholder="请输入名称"
-                />
-              </uni-forms-item>
+          <uni-forms :model="planForm" labelWidth="80px">
+            <uni-forms-item label="名称">
+              <uni-easyinput
+                v-model="planForm.title"
+                placeholder="请输入名称"
+              />
+            </uni-forms-item>
 
-              <uni-forms-item label="运动次数">
-                <uni-easyinput
-                  v-model="planForm.times"
-                  type="string"
-                  placeholder="请输入运动次数"
-                />
-              </uni-forms-item>
+            <uni-forms-item label="运动次数">
+              <uni-easyinput
+                v-model="planForm.times"
+                type="string"
+                placeholder="请输入运动次数"
+              />
+            </uni-forms-item>
 
-              <uni-forms-item label="时间">
-                <uni-easyinput
-                  v-model="planForm.duration"
-                  placeholder="请输入时间"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="卡路里">
-                <uni-easyinput
-                  v-model="planForm.calorie"
-                  type="number"
-                  placeholder="请输入卡路里"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="运动类型">
-                <uni-data-select
-                  v-model="planForm.type"
-                  :localdata="types"
-                  placeholder="请选择运动类型"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="运动目标">
-                <uni-data-checkbox
-                  placeholder="请选择运动目标"
-                  v-model="planForm.goal"
-                  :localdata="goals"
-                  multiple
-                  :map="{ text: 'text', value: 'value' }"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="难度">
-                <uni-data-select
-                  v-model="planForm.difficulties"
-                  :localdata="difficulties"
-                  placeholder="请选择难度"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="封面">
-                <uni-easyinput
-                  v-model="planForm.imageUrl"
-                  type="string"
-                  placeholder="请输入封面url"
-                />
-              </uni-forms-item>
-              <uni-forms-item label="视频链接">
-                <uni-easyinput
-                  v-model="planForm.videoUrl"
-                  type="string"
-                  placeholder="请输入演示视频url"
-                />
-              </uni-forms-item>
-            </uni-forms>
+            <uni-forms-item label="时间">
+              <uni-easyinput
+                v-model="planForm.duration"
+                placeholder="请输入时间"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="卡路里">
+              <uni-easyinput
+                v-model="planForm.calorie"
+                type="number"
+                placeholder="请输入卡路里"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="运动类型">
+              <uni-data-select
+                v-model="planForm.type"
+                :localdata="types"
+                placeholder="请选择运动类型"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="运动目标">
+              <uni-data-checkbox
+                placeholder="请选择运动目标"
+                v-model="planForm.goal"
+                :localdata="goals"
+                multiple
+                :map="{ text: 'text', value: 'value' }"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="难度">
+              <uni-data-select
+                v-model="planForm.difficulties"
+                :localdata="difficulties"
+                placeholder="请选择难度"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="封面">
+              <uni-easyinput
+                v-model="planForm.imageUrl"
+                type="string"
+                placeholder="请输入封面url"
+              />
+            </uni-forms-item>
+            <uni-forms-item label="视频链接">
+              <uni-easyinput
+                v-model="planForm.videoUrl"
+                type="string"
+                placeholder="请输入演示视频url"
+              />
+            </uni-forms-item>
+          </uni-forms>
 
           <view class="popup-buttons">
             <button class="btn-cancel" @click="closePopup">取消</button>
@@ -558,18 +663,65 @@
             </button>
           </view>
         </scroll-view>
+      </view>
+    </view>
+    <!-- 添加食物弹窗 -->
+    <view v-if="showAddFood" class="popup-mask">
+      <view class="popup-content">
+        <view class="popup-header">
+          <text class="popup-title">添加食物</text>
+          <text class="close-btn" @click="closeAddFoodPopup">×</text>
         </view>
+        <view class="popup-body">
+          <view class="form-item">
+            <text class="label">食物名称</text>
+            <input
+              type="text"
+              v-model="newFood.食物名称"
+              placeholder="请输入食物名称"
+            />
+          </view>
+          <view class="form-item">
+            <text class="label">食用量(g)</text>
+            <input
+              type="number"
+              v-model="newFood.amount"
+              placeholder="请输入食用量"
+            />
+          </view>
+          <view class="form-item">
+            <text class="label">热量(kcal/100g)</text>
+            <input
+              type="number"
+              v-model="newFood.baseCalories"
+              placeholder="请输入每100g热量"
+            />
+          </view>
+        </view>
+        <view class="popup-footer">
+          <button class="cancel-btn" @click="closeAddFoodPopup">取消</button>
+          <button class="confirm-btn" @click="confirmAddFood">确定</button>
+        </view>
+      </view>
     </view>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch, provide,reactive } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  nextTick,
+  watch,
+  provide,
+  reactive,
+} from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
-import axios from 'axios';
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+import axios from "axios";
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
@@ -586,8 +738,8 @@ const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
 const column_bar = "/static/icon/columnbar.png";
-const foodName = ref('');
-const calories = ref('');
+const foodName = ref("");
+const calories = ref("");
 const popup = ref(null);
 const dialogTitle = ref("添加计划");
 const goals = ref([
@@ -602,8 +754,8 @@ const types = ref([
   { value: "全部", text: "全部" },
   { value: "跑步", text: "跑步" },
   { value: "徒手", text: "徒手" },
-  { value: "撸铁", text: "撸铁" }, 
-  { value: "瑜伽", text: "瑜伽" }, 
+  { value: "撸铁", text: "撸铁" },
+  { value: "瑜伽", text: "瑜伽" },
   { value: "篮球", text: "篮球" },
 ]);
 const difficulties = ref([
@@ -625,49 +777,234 @@ const planForm = ref({
 });
 const plans = ref([]);
 // 拍照并上传图片
+const foodList = ref([]);
+const manualFoodList = ref([]);
+const errorMessage = ref("");
+const totalCalories = computed(() => {
+  const autoCalories = foodList.value.reduce(
+    (sum, food) => sum + (food.currentCalories || 0),
+    0
+  );
+  const manualCalories = manualFoodList.value.reduce(
+    (sum, food) => sum + (food.currentCalories || 0),
+    0
+  );
+  return Math.round(autoCalories + manualCalories);
+});
+
+// 处理识别结果
+const processRecognitionResult = (resultData) => {
+  try {
+    let foodItems;
+    if (Array.isArray(resultData)) {
+      foodItems = resultData;
+    } else if (typeof resultData === "object") {
+      foodItems = [resultData];
+    } else {
+      throw new Error("Invalid data format");
+    }
+
+    // 将新识别的食物添加到现有列表中，而不是覆盖
+    const newFoodItems = foodItems.map((item) => ({
+      食物名称: item.食物名称,
+      baseCalories: parseFloat(item.热量.match(/\d+/)[0]), // 提取数字
+      amount: 100, // 默认100g
+      currentCalories: parseFloat(item.热量.match(/\d+/)[0]), // 初始热量等于基础热量
+    }));
+
+    // 将新食物追加到现有列表
+    foodList.value = [...foodList.value, ...newFoodItems];
+
+    // 显示添加成功提示
+    uni.showToast({
+      title: `成功添加${newFoodItems.length}个食物`,
+      icon: "success",
+    });
+  } catch (err) {
+    console.error("处理识别结果错误:", err);
+    uni.showToast({
+      title: "数据格式错误",
+      icon: "none",
+    });
+  }
+};
+
+// 计算单个食物的热量
+const calculateFoodCalories = (food) => {
+  if (food.amount && food.baseCalories) {
+    food.currentCalories = Math.round((food.baseCalories * food.amount) / 100);
+  }
+};
+
+// 计算手动添加食物的热量
+const calculateManualFoodCalories = (food) => {
+  if (food.amount && food.baseCalories) {
+    food.currentCalories = Math.round((food.baseCalories * food.amount) / 100);
+  }
+};
+
+// 添加手动食物
+const addManualFood = () => {
+  manualFoodList.value.push({
+    食物名称: "",
+    baseCalories: 0,
+    amount: 100,
+    currentCalories: 0,
+  });
+};
+
+// 删除食物
+const removeFood = (index, type) => {
+  if (type === "auto") {
+    foodList.value.splice(index, 1);
+  } else {
+    manualFoodList.value.splice(index, 1);
+  }
+};
+
+// 提交食物列表
+const submitFoodList = () => {
+  if (foodList.value.length === 0) {
+    uni.showToast({
+      title: "请先添加食物",
+      icon: "none",
+    });
+    return;
+  }
+
+  // 计算总热量并更新剩余可摄入热量
+  const totalCalories = foodList.value.reduce((sum, food) => {
+    const calories = parseInt(food.热量);
+    return sum + (isNaN(calories) ? 0 : calories);
+  }, 0);
+
+  today_left_eat.value = Math.max(0, today_left_eat.value - totalCalories);
+  target_eat_percent.value = ((2000 - today_left_eat.value) / 2000) * 100;
+
+  // 提交到服务器
+  uni.request({
+    url: serverUrl + "/submitFoodList",
+    method: "POST",
+    data: {
+      foodList: foodList.value,
+      username: username,
+      totalCalories: totalCalories,
+    },
+    success: (res) => {
+      if (res.statusCode === 200) {
+        uni.showToast({
+          title: "提交成功",
+          icon: "success",
+        });
+        foodList.value = []; // 清空列表
+      } else {
+        uni.showToast({
+          title: "提交失败",
+          icon: "none",
+        });
+      }
+    },
+    fail: () => {
+      uni.showToast({
+        title: "提交失败，请检查网络",
+        icon: "none",
+      });
+    },
+  });
+};
 const takePicture = async () => {
   try {
     const res = await uni.chooseImage();
-     
-    // 如果用户取消选择图片，errMsg 会提示
-    if (res.errMsg === 'chooseImage:fail User cancelled') {
-      errorMessage.value = '用户取消了选择图片操作，请重新选择。';
+    if (res.errMsg === "chooseImage:fail User cancelled") {
+      errorMessage.value = "用户取消了选择图片操作，请重新选择。";
       return;
     }
 
     const filePath = res.tempFilePaths[0];
 
-    // 使用 uni.uploadFile 上传图片
+    // 开始识别，显示加载状态
+    isRecognizing.value = true;
+    uni.showLoading({
+      title: "正在识别中...",
+      mask: true,
+    });
+
     uni.uploadFile({
-      url: serverUrl + "/predict", // 后端接口地址
+      url: serverUrl + "/foodCalorie",
       filePath: filePath,
-      name: 'file',
+      name: "file",
       success: (uploadRes) => {
-        console.log('上传响应数据:', uploadRes.data); // 打印出响应数据
         try {
-          const response = JSON.parse(uploadRes.data); // 解析响应数据
+          const response = JSON.parse(uploadRes.data);
           if (uploadRes.statusCode === 200) {
-            foodName.value = response.食物名称;
-            calories.value = response.平均每份热量;
-            errorMessage.value = '';  // 清空错误信息
+            let resultData = response.result;
+            resultData = resultData
+              .replace(/^```json\s*/, "")
+              .replace(/\s*```$/, "");
+            const foodItems = JSON.parse(resultData);
+            processRecognitionResult(foodItems);
+            errorMessage.value = "";
+
+            // 识别成功提示
+            uni.showToast({
+              title: "识别成功",
+              icon: "success",
+              duration: 2000,
+            });
           } else {
-            console.error('识别失败');
-            errorMessage.value = '识别失败，请稍后重试。';
+            console.error("识别失败");
+            errorMessage.value = "识别失败，请稍后重试。";
+
+            // 识别失败提示
+            uni.showToast({
+              title: "识别失败",
+              icon: "error",
+              duration: 2000,
+            });
           }
         } catch (err) {
-          console.error('解析 JSON 错误:', err);
-          errorMessage.value = '响应数据格式错误，请稍后重试。';
+          console.error("解析 JSON 错误:", err);
+          errorMessage.value = "响应数据格式错误，请稍后重试。";
+
+          // 数据解析错误提示
+          uni.showToast({
+            title: "数据格式错误",
+            icon: "error",
+            duration: 2000,
+          });
         }
       },
       fail: (err) => {
-        console.error('上传失败', err);
-        errorMessage.value = '上传失败，请检查网络连接。';
-      }
-    }); 
+        console.error("上传失败", err);
+        errorMessage.value = "上传失败，请检查网络连接。";
 
+        // 上传失败提示
+        uni.showToast({
+          title: "上传失败",
+          icon: "error",
+          duration: 2000,
+        });
+      },
+      complete: () => {
+        // 无论成功失败，都关闭加载提示
+        isRecognizing.value = false;
+        uni.hideLoading();
+      },
+    });
   } catch (error) {
-    console.error('请求失败', error);
-    errorMessage.value = '请求失败，请检查网络连接。';
+    console.error("请求失败", error);
+    errorMessage.value = "请求失败，请检查网络连接。";
+
+    // 请求失败提示
+    uni.showToast({
+      title: "请求失败",
+      icon: "error",
+      duration: 2000,
+    });
+
+    // 关闭加载状态
+    isRecognizing.value = false;
+    uni.hideLoading();
   }
 };
 // 从后端获取计划数据
@@ -686,7 +1023,7 @@ const fetchPlansFromBackend = () => {
           times: item.times,
           difficulties: item.difficulties,
           calorie: item.calorie,
-          goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按逗号拆分并去除空格
+          goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按号拆分并去除空格
           type: item.type,
         }));
         // 在获取数据后，根据筛选条件过滤数据
@@ -696,7 +1033,7 @@ const fetchPlansFromBackend = () => {
       }
     },
     fail: (err) => {
-      console.error("请求失败:", err); 
+      console.error("请求失败:", err);
     },
   });
 };
@@ -705,53 +1042,52 @@ const fetchPlansFromBackend = () => {
 async function fetchDailyCalories(username) {
   username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   try {
-     // 发送请求到后端获取每日热量数据
-     const response = await uni.request({
-       url: serverUrl + "/api/calculateCalories",
-       method: 'POST',
-	   header: {
-	           'Content-Type': 'application/json',
-	         },
-       data: {
-          username: username,  // 传递用户名到后端
-       },
-     }); 
-  
-     console.log('服务器响应:', response);  // 打印返回的完整响应数据
- 
-      // 确保返回的数据格式正确
-         if (response.statusCode === 200) {
-           const { dailyCalories, error } = response.data;
-     
-           if (dailyCalories) {
-             today_left_eat.value = dailyCalories; // 设置可摄入的热量
-             target_eat_percent.value = 100; // 设置进度条的百分比
-             uni.showToast({
-               title: "获取热量成功",
-               icon: "success",
-             });
-           } else if (error) {
-             uni.showToast({
-               title: error || "获取热量失败",
-               icon: "none",
-             });
-           }
-         } else {
-           uni.showToast({ 
-             title: "获取热量失败，请稍后重试",
-             icon: "none",
-           });
-         }
-       } catch (error) {
-         console.error('请求失败:', error);
-         uni.showToast({
-           title: "网络请求失败，请稍后重试",
-           icon: "none",
-         });
-       }
+    // 发送请求到后端获取每日热量数据
+    const response = await uni.request({
+      url: serverUrl + "/api/calculateCalories",
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        username: username, // 传递用户名到后端
+      },
+    });
+
+    console.log("服务器响应:", response); // 打印返回的完整响应数据
+
+    // 确保返回的数据格式正确
+    if (response.statusCode === 200) {
+      const { dailyCalories, error } = response.data;
+
+      if (dailyCalories) {
+        today_left_eat.value = dailyCalories; // 设置可摄入的热量
+        target_eat_percent.value = 100; // 设置进度条的百分比
+        uni.showToast({
+          title: "获取热量成功",
+          icon: "success",
+        });
+      } else if (error) {
+        uni.showToast({
+          title: error || "获取热量失败",
+          icon: "none",
+        });
+      }
+    } else {
+      uni.showToast({
+        title: "获取热量失败，请稍后重试",
+        icon: "none",
+      });
+    }
+  } catch (error) {
+    console.error("请求失败:", error);
+    uni.showToast({
+      title: "网络请求失败，请稍后重试",
+      icon: "none",
+    });
+  }
 }
-  
- 
+
 const aiInput = ref(""); // AI 输入内容
 const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
@@ -839,7 +1175,7 @@ const getCustomPlan = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   // 发送请求到后端获取定制的运动计划
   uni.request({
-    url: serverUrl +"/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
+    url: serverUrl + "/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
     method: "POST",
     data: {
       aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
@@ -888,7 +1224,6 @@ const loadMyPlans = () => {
   } else {
     myPlans.value = [];
   }
- 
 };
 const judgeManager = () => {
   // 判断是否为管理员
@@ -904,8 +1239,8 @@ onMounted(() => {
   judgeManager();
   loadMyPlans();
   fetchDailyCalories(username.value);
- // 监听来自 Search 页面更新计划的通知
-  uni.$on('plansUpdated', loadMyPlans);
+  // 监听来自 Search 页面更新计划的通知
+  uni.$on("plansUpdated", loadMyPlans);
 });
 // 添加计划到“我的计划”
 const handleAdd = (plan) => {
@@ -936,7 +1271,7 @@ const handleAdd = (plan) => {
   loadMyPlans();
 };
 
-// 从“我的计划”中删除
+// 从“我的计划”中删
 const handleRemove = (plan) => {
   // 先加载现有的计划
   let currentPlans = uni.getStorageSync(`myPlans_${username}`);
@@ -962,7 +1297,6 @@ const openPopup = () => {
 const closePopup = () => {
   // popup.value.close();
   tab.value = "plan-board";
-
 };
 const handleAddPlan_board = () => {
   // 添加计划逻辑
@@ -974,45 +1308,45 @@ const uploadImage = () => {
     count: 1, // 选择一张图片
     success: (res) => {
       const tempFilePath = res.tempFilePaths[0];
-      
+
       // 上传图片到后端
       uni.uploadFile({
         url: `${serverUrl}/upload`, // 假设后端的上传接口
         filePath: tempFilePath,
-        name: 'file', // 传给后端的文件字段名
+        name: "file", // 传给后端的文件字段名
         success: (uploadRes) => {
           const data = JSON.parse(uploadRes.data);
           if (data.success) {
             // 图片上传成功后设置 imageUrl
             planForm.value.imageUrl = `/uploads/${data.filename}`; // 后端返回的文件名
-            uni.showToast({ title: '封面上传成功', icon: 'success' });
+            uni.showToast({ title: "封面上传成功", icon: "success" });
           } else {
-            uni.showToast({ title: '封面上传失败', icon: 'none' });
+            uni.showToast({ title: "封面上传失败", icon: "none" });
           }
         },
         fail: (err) => {
-          console.error('上传失败:', err);
-          uni.showToast({ title: '封面上传失败', icon: 'none' });
-        }
+          console.error("上传失败:", err);
+          uni.showToast({ title: "封面上传失败", icon: "none" });
+        },
       });
-    }
+    },
   });
 };
 // 保存计划
-const savePlan = () => { 
+const savePlan = () => {
   const isEditing = currentEditIndex.value !== -1;
 
   // 准备提交到后端的数据（只保留必要的字段）
   const planData = {
-    名称: planForm.value.title || '', 
-    运动次数: planForm.value.times || '',
-    时间: planForm.value.duration || '',
+    名称: planForm.value.title || "",
+    运动次数: planForm.value.times || "",
+    时间: planForm.value.duration || "",
     卡路里: planForm.value.calorie || 0,
-    运动类型: planForm.value.type || '',
-    目标: planForm.value.goal.join(',') || '', // 如果 `goal` 是数组，转换为字符串
-    难度: planForm.value.difficulties || '',
-    image_url: planForm.value.imageUrl || '',
-    video_url: planForm.value.videoUrl || ''
+    运动类型: planForm.value.type || "",
+    目标: planForm.value.goal.join(",") || "", // 如果 `goal` 是数组，转换为字符串
+    难度: planForm.value.difficulties || "",
+    image_url: planForm.value.imageUrl || "",
+    video_url: planForm.value.videoUrl || "",
   };
 
   // 检查传入的数据
@@ -1023,40 +1357,46 @@ const savePlan = () => {
     // 调用后端API更新已有计划
     uni.request({
       url: `${serverUrl}/goals`, // 假设后端PUT API地址
-      method: 'PUT',
-      data: planData, 
+      method: "PUT",
+      data: planData,
       success: (res) => {
-        if (res.data.message === '更新成功') { 
+        if (res.data.message === "更新成功") {
           // 更新前端的 plans 数组
           plans.value.splice(currentEditIndex.value, 1, { ...planData });
-          uni.showToast({ title: '修改成功', icon: 'success' });
+          uni.showToast({ title: "修改成功", icon: "success" });
         } else {
-          uni.showToast({ title: res.data.message || '修改失败', icon: 'none' });
+          uni.showToast({
+            title: res.data.message || "修改失败",
+            icon: "none",
+          });
         }
       },
       fail: (err) => {
-        console.error('请求失败:', err);
-        uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' });
-      }
+        console.error("请求失败:", err);
+        uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+      },
     });
   } else {
     // 添加新的计划
     uni.request({
       url: `${serverUrl}/goals/add`, // 假设后端POST API地址
-      method: 'POST',
+      method: "POST",
       data: planData,
       success: (res) => {
-        if (res.data.message === '添加成功') {
+        if (res.data.message === "添加成功") {
           plans.value.push(planData);
-          uni.showToast({ title: '添加成功', icon: 'success' });
+          uni.showToast({ title: "添加成功", icon: "success" });
         } else {
-          uni.showToast({ title: res.data.message || '添加失败', icon: 'none' });
+          uni.showToast({
+            title: res.data.message || "添加失败",
+            icon: "none",
+          });
         }
       },
       fail: (err) => {
-        console.error('请求失败:', err);
-        uni.showToast({ title: '网络错误，请稍后重试', icon: 'none' });
-      }
+        console.error("请求失败:", err);
+        uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+      },
     });
   }
 
@@ -1065,7 +1405,6 @@ const savePlan = () => {
   closePopup();
   filterPlans();
 };
-
 
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
@@ -1211,6 +1550,66 @@ onMounted(() => {
     ];
   }, 2000);
 });
+
+// 添加新的响应式变量
+const showAddFood = ref(false);
+const newFood = ref({
+  食物名称: "",
+  amount: 100,
+  baseCalories: 0,
+  currentCalories: 0,
+});
+
+// 显示添加食物弹窗
+const showAddFoodPopup = () => {
+  showAddFood.value = true;
+  // 重置表单
+  newFood.value = {
+    食物名称: "",
+    amount: 100,
+    baseCalories: 0,
+    currentCalories: 0,
+  };
+};
+
+// 关闭添加食物弹窗
+const closeAddFoodPopup = () => {
+  showAddFood.value = false;
+};
+
+// 确认添加食物
+const confirmAddFood = () => {
+  if (
+    !newFood.value.食物名称 ||
+    !newFood.value.amount ||
+    !newFood.value.baseCalories
+  ) {
+    uni.showToast({
+      title: "请填写完整信息",
+      icon: "none",
+    });
+    return;
+  }
+
+  // 计算当前热量
+  newFood.value.currentCalories = Math.round(
+    (newFood.value.baseCalories * newFood.value.amount) / 100
+  );
+
+  // 添加到手动食物列表
+  manualFoodList.value.push({ ...newFood.value });
+
+  // 关闭弹窗
+  closeAddFoodPopup();
+
+  uni.showToast({
+    title: "添加成功",
+    icon: "success",
+  });
+};
+
+// 添加加载状态变量
+const isRecognizing = ref(false);
 </script>
 
 <style scoped lang="scss">
@@ -1542,6 +1941,10 @@ uni-button {
 }
 .circle_process_eat {
   margin-top: 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .eat_left {
   display: flex;
@@ -1565,18 +1968,25 @@ uni-button {
 }
 .take_picture {
   font-size: 30rpx;
-  margin-top: 20rpx;
+  margin-top: 50rpx;
   border-radius: 20rpx;
   border: 1px solid black;
   background-color: white;
   color: black;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-.take_picture:hover {
-  background-color: rgb(177, 181, 187);
-  color: white;
-  align-items: center;
+  transition: all 0.3s;
+
+  &:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    border-color: #ddd;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background-color: rgb(177, 181, 187);
+    color: white;
+  }
 }
 .picture_return {
   font-size: 30rpx;
@@ -1628,7 +2038,7 @@ uni-button {
   padding: 15px 8px; /* 调整内边距：上下15px，左右8px */
   height: 80px; /* 设置按钮高度 */
   width: 30px; /* 设置按钮宽度 */
-  display: flex; /* 使用flex布局 */
+  display: flex; /* 使用flex布 */
   align-items: center; /* 水平居中 */
   justify-content: center; /* 垂直居中 */
   letter-spacing: 2px; /* 文字间距 */
@@ -1649,7 +2059,6 @@ uni-button {
   text-align: center;
 }
 .scroll-area {
-
   height: 100%;
 }
 .popup-buttons {
@@ -1675,5 +2084,228 @@ uni-button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.food-list {
+  margin-top: 50px;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.food-name,
+.food-calorie {
+  flex: 1;
+}
+
+button {
+  margin-left: 10px;
+}
+
+.food-table {
+  margin: 20rpx;
+  background: white;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+  display: flex;
+  padding: 20rpx 10rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx 16rpx 0 0;
+}
+
+.table-body {
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+
+.table-row {
+  display: flex;
+  padding: 20rpx 10rpx;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.th,
+.td {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+
+  &.food-name {
+    flex: 1.5;
+    text-align: left;
+    padding-left: 20rpx;
+  }
+}
+
+.amount-cell,
+.op-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+
+  input {
+    width: 100rpx;
+    padding: 6rpx 10rpx;
+    border: 1px solid #ddd;
+    border-radius: 6rpx;
+    text-align: center;
+  }
+
+  .unit {
+    color: #666;
+    font-size: 24rpx;
+  }
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  border-top: 1px solid #eee;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  border: none;
+  background: #4caf50;
+  color: white;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+
+  .add-icon {
+    margin-right: 10rpx;
+    font-size: 32rpx;
+  }
+}
+
+.total-info {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-left: 25rpx;
+  text {
+    font-size: 28rpx;
+    font-weight: bold;
+  }
+}
+
+.submit-btn {
+  padding: 12rpx 24rpx;
+  border: none;
+  background: #007aff;
+  color: white;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+}
+
+.delete-btn {
+  padding: 6rpx 16rpx;
+  border: none;
+  background: #ff4d4d;
+  color: white;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+// 弹窗样式
+.popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup-content {
+  width: 80%;
+  background: white;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  border-bottom: 1px solid #eee;
+
+  .popup-title {
+    font-size: 32rpx;
+    font-weight: bold;
+  }
+
+  .close-btn {
+    font-size: 40rpx;
+    color: #999;
+    padding: 10rpx;
+  }
+}
+
+.popup-body {
+  padding: 30rpx 20rpx;
+
+  .form-item {
+    margin-bottom: 20rpx;
+
+    .label {
+      display: block;
+      margin-bottom: 10rpx;
+      font-size: 28rpx;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      height: 80rpx;
+      padding: 0 20rpx;
+      border: 1px solid #ddd;
+      border-radius: 8rpx;
+      font-size: 28rpx;
+    }
+  }
+}
+
+.popup-footer {
+  display: flex;
+  padding: 20rpx;
+  border-top: 1px solid #eee;
+  gap: 20rpx;
+
+  button {
+    flex: 1;
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    border-radius: 8rpx;
+    font-size: 28rpx;
+  }
+
+  .cancel-btn {
+    background: #f5f5f5;
+    color: #666;
+  }
+
+  .confirm-btn {
+    background: #007aff;
+    color: white;
+  }
 }
 </style>

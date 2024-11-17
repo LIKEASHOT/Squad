@@ -7,13 +7,9 @@ const session = require("express-session");
 const cors = require("cors");
 const axios = require('axios');
 const multer = require('multer');
-const tf = require('@tensorflow/tfjs');
-const sharp = require('sharp');  // 用来处理图片
-const fs = require('fs');  // 文件操作
-const mobilenet = require('@tensorflow-models/mobilenet');
 const path = require('path');
-const { createCanvas, loadImage } = require('canvas');
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const fs = require('fs');
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 
 require('dotenv').config();
@@ -400,272 +396,117 @@ app.post('/generateFitnessPlan', async (req, res) => {
   });
 });
 
-//图片识别食物热量
-const upload = multer({
-  dest: 'uploads/', // 保存到 uploads 文件夹
-  limits: { fileSize: 5 * 1024 * 1024 } // 限制上传大小，最大5MB
-});
 
-// 配置智谱AI API 请求
-const GLM_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';  // 替换为实际API接口
-const API_KEY1 = process.env.API_KEY;   // 替换为你的API密钥
-
-// 通过智谱AI查询食物的平均热量（每份）
-async function getFoodAverageCaloriesFromGLM(foodName) {
-  try {
-    const response = await axios.post(GLM_API_URL, {
-      headers: {
-        'Authorization': `Bearer ${API_KEY1}`,
-      },
-      data: {
-        input: `请提供食物“${foodName}”的平均每份热量是多少？`,
-      },
-    });
-
-    // 这里假设模型返回的是热量数据，确保正确解析
-    const answer = response.data.result;  
-    const averageCaloriesPerPortion = parseFloat(answer); // 假设返回的是数字
-
-    if (isNaN(averageCaloriesPerPortion)) {
-      throw new Error('无法解析热量数据');
+// 配置 multer 存储
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = 'uploadimages';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
     }
-
-    console.log(`查询到的食物：${foodName}，平均热量：${averageCaloriesPerPortion}`);
-    return averageCaloriesPerPortion;
-  } catch (error) {
-    console.error("查询热量时出错:", error);
-    throw error;
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   }
-}
-
-
-// 加载并使用 MobileNet 进行图片识别
-async function loadModel() {
-  const model = await mobilenet.load();
-  console.log('MobileNet 模型加载成功');
-  return model;
-}
-// 预测图像
-async function predictFood(imagePath) {
-  const image = await loadImage(imagePath); // 使用 canvas 加载图像
-  const canvas = createCanvas(image.width, image.height);
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(image, 0, 0);
-
-  const model = await loadModel();
-
-  // 将 canvas 直接转换为 Tensor
-  const imageTensor = tf.browser.fromPixels(canvas);
-
-  // 进行预测
-  const predictions = await model.classify(imageTensor);
-  console.log('预测结果:', predictions);
-  res.json({
-    食物名称: foodName,
-    平均每份热量: averageCaloriesPerPortion,
-  });
-  console.log("返回的数据:", {
-  食物名称: foodName,
-  平均每份热量: averageCaloriesPerPortion,
 });
-  return predictions;
-}
 
-// 处理上传的图片并识别食物热量
-app.post('/predict', upload.single('file'), async (req, res) => {
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('只允许上传图片文件'));
+    }
+  }
+});
+
+// 修改食物热量识别路由
+app.post('/foodCalorie', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send('未上传文件');
+      return res.status(400).json({ error: '请上传图片' });
     }
-    console.log('Uploaded file:', req.file); // 检查是否正确上传
-    // 使用食物识别模型预测食物名称
-    const model = await loadModel();  // 加载食物识别模型
-    const predictions = await predictFood(req.file.path, model);
-    const foodName = predictions[0].className;  // 假设识别结果为第一项
 
-    console.log(`识别出的食物：${foodName}`);
-    console.log('响应数据:', {
-      食物名称: foodName,
-      平均每份热量: averageCaloriesPerPortion,
-    });
-    // 使用智谱AI获取食物的平均热量信息
-    const averageCaloriesPerPortion = await getFoodAverageCaloriesFromGLM(foodName);
+    const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    const API_KEY = process.env.API_KEY;
 
-    // 返回响应数据
-    res.json({
-      食物名称: foodName,
-      平均每份热量: averageCaloriesPerPortion,
-    });
+    if (!API_KEY) {
+      console.error('API 密钥未设置');
+      return res.status(500).json({ error: '缺少 API 密钥' });
+    }
+
+    // 读取图片并转换为 base64
+    const imageBuffer = fs.readFileSync(req.file.path);
+    const base64Image = imageBuffer.toString('base64');
+
+    // 发送请求到智谱 AI
+    const response = await axios.post(
+      API_URL,
+      {
+        model: 'GLM-4v-plus',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image_url',
+                image_url: {
+                  url: base64Image,
+                },
+              },
+              {
+                type: 'text',
+                text: '请识别这个食物的热量，热量要用准确数值表示，取一个你认为恰当的值即可，前面不需要加上大约等字样，并且严格按照以下JSON格式输出,如果有多种食物，一定要依次输出，仅输出JSON，不要添加其他内容：\n' +
+                     '{\n' +
+                     '  "食物名称": "xxx",\n' +
+                     '  "热量": "yyy kcal/100g"\n' +
+                     '}',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // 删除临时文件
+    fs.unlinkSync(req.file.path);
+
+    // 处理响应
+    if (response.status === 200 && response.data.choices && response.data.choices.length > 0) {
+      const aiResponse = response.data.choices[0].message.content;
+      res.status(200).json({
+        message: '食物识别成功',
+        result: aiResponse
+      });
+      console.log('AI 返回数据:', aiResponse);
+    } else {
+      console.error('AI 返回数据无效:', response.data);
+      res.status(500).json({ error: 'AI 返回数据无效' });
+    }
+
   } catch (error) {
-    console.error('处理时出错:', error);
-    res.status(500).send('处理图片时出错');
+    console.error('食物识别出错:', error.message || error);
+    // 清理临时文件
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    if (error.response) {
+      console.error('AI API 错误响应:', error.response.data);
+      console.error('AI API 错误状态:', error.response.status);
+    }
+    res.status(500).json({ error: '食物识别失败' });
   }
 });
-
-// // //每日摄入热量api
-// const API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
-// const RESULT_URL = 'https://open.bigmodel.cn/api/paas/v4/async/get_result';
-// const API_KEY = process.env.API_KEY;  // 获取API密钥
-
-// // API 路由，处理前端请求
-// app.post('/api/calculateCalories', async (req, res) => {
-//   const { username } = req.body;
-
-//   // 验证用户名是否提供
-//   if (!username) {
-//     return res.status(400).json({ error: '用户名未提供' });
-//   }
-
-//   // 从数据库获取用户信息
-//   connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
-//     if (err) {
-//       console.error('数据库查询失败:', err);
-//       return res.status(500).json({ error: '数据库查询失败' });
-//     }
-
-//     if (results.length === 0) {
-//       return res.status(404).json({ error: '用户未找到' });
-//     }
-
-//     const user = results[0];
-//     const { height, weight, age, exerciseType, fitnessGoal } = user;
-
-//     if (!height || !weight || !age || !exerciseType || !fitnessGoal) {
-//       return res.status(400).json({ error: '用户健康信息不完整' });
-//     }
-
-//     const question = `
-//       请根据以下信息计算每日所需热量摄取量：
-//       身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${exerciseType}，运动目标：${fitnessGoal}。
-//       请返回每日热量摄取量。
-//     `;
-
-//     try {
-//       // 调用智谱 AI 接口获取任务 ID
-//       const aiResponse = await axios.post(
-//         API_URL,
-//         {
-//           model: 'glm-4-flash',
-//           messages: [{ role: 'user', content: question }],
-//         },
-//         {
-//           headers: {
-//             'Authorization': `Bearer ${API_KEY}`,
-//             'Content-Type': 'application/json',
-//           },
-//         }
-//       );
-
-//       const taskId = aiResponse.data.id;
-//       console.log('AI 请求成功, 任务ID:', taskId);
-
-//       // 轮询获取 AI 结果
-//       const getAIResult = async (taskId) => {
-//         const maxRetries = 5;
-//         const delay = 2000; // 2秒
-
-//         for (let i = 0; i < maxRetries; i++) {
-//           const resultResponse = await axios.get(`${RESULT_URL}/${taskId}`, {
-//             headers: {
-//               'Authorization': `Bearer ${API_KEY}`,
-//             },
-//           });
-
-//           if (resultResponse.data.task_status === 'SUCCEEDED') {
-//             return resultResponse.data.data.text.trim();
-//           } else if (resultResponse.data.task_status === 'FAILED') {
-//             throw new Error('AI 任务失败');
-//           }
-//           await new Promise(resolve => setTimeout(resolve, delay)); // 等待一段时间再重试
-//         }
-//         throw new Error('AI 任务超时');
-//       };
-
-//       // 获取最终 AI 结果
-//       const dailyCalories = await getAIResult(taskId);
-//       console.log('AI 计算结果:', dailyCalories);
-
-//       // 返回计算结果
-//       return res.status(200).json({ dailyCalories });
-
-//     } catch (error) {
-//       console.error('调用智谱 AI 失败:', error);
-//       return res.status(500).json({ error: '计算每日热量摄取量失败' });
-//     }
-//   });
-// });
-// // 配置智谱AI API
-// const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions'; 
-// const API_KEY2 = process.env.API_KEY; 
-
-// // 构造问题并向智谱AI发送请求
-// async function getDailyCalories(height, weight, age, activityType, goal) {
-//   const question = `
-//     请根据以下信息计算每日所需热量摄取量：
-//     身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(',', ' ')}，运动目标：${goal.replace(',', ' ')}。
-//     请返回每日热量摄取量。
-//   `;
-  
-//   console.log('AI 请求内容:', question);  // 打印请求内容
-
-//   try {
-//     const response = await axios.post(ZHIPU_API_URL, {
-//       prompt: question,
-//       max_tokens: 100,
-//       temperature: 0.7,
-//     }, {
-//       headers: {
-//         'Authorization': `Bearer ${API_KEY2}`,
-//         'Content-Type': 'application/json',
-//       },
-//     });
-
-//     console.log('AI 响应:', response.data);  // 打印 AI 响应内容
-//     return response.data.text.trim();
-//   } catch (error) {
-//     console.error('调用智谱AI失败:', error);
-//     throw new Error('AI 调用失败');
-//   }
-// }
-
-
-// // API 路由，处理前端请求
-// app.post('/api/calculateCalories', async (req, res) => {
-//   const { username } = req.body;
-
-//   // // 验证用户名
-//   // if (typeof username !== 'string' || username.trim() === '') {
-//   //   return res.status(400).json({ error: '无效的用户名' });
-//   // }
-
-  // // 从数据库获取用户信息
-  // connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
-  //   if (err) {
-  //     console.error('数据库查询失败:', err);
-  //     return res.status(500).json({ error: '数据库查询失败' });
-  //   }
-
-  //   if (results.length === 0) {
-  //     return res.status(404).json({ error: '用户未找到' });
-  //   }
-  //   console.log('数据库查询结果:', results);  // 打印查询到的结果
-  //   const user = results[0];
-  //   const { height, weight, age, exerciseType, fitnessGoal } = user;
-
-//     try {
-//       // 调用 AI 模型计算每日热量摄取量
-//       const dailyCalories = await getDailyCalories(height, weight, age, exerciseType, fitnessGoal);
-//       console.log('Daily Calories:', dailyCalories);  // 打印计算出的热量
-
-//       // 返回计算结果并指定状态码 200
-//       res.status(200).json({ dailyCalories: dailyCalories });
-//     } catch (error) {
-//       console.error('计算每日热量摄取量失败:', error);
-//       res.status(500).json({ error: '计算每日摄入热量失败' });
-//     }
-//   });
-// });
-
 
 // 模糊查询API
 app.post("/searchGoals", (req, res) => {
@@ -805,7 +646,108 @@ app.get('/goals', (req, res) => {
   });
 });
 
+const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions';
+const RESULT_URL = 'https://open.bigmodel.cn/api/paas/v4/async-result';
+const API_KEY = process.env.API_KEY;
 
+// 构造问题并向智谱AI发送请求
+async function getDailyCalories(height, weight, age, activityType, goal) {
+  const question = `
+    请根据以下信息计算每日所需热量摄取量：
+    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(',', ' ')}，运动目标：${goal.replace(',', ' ')}。
+    请返回每日热量摄取量。
+    请隐藏计算过程，仅返回结果。
+    ！！！！！！！注意只返回数字，不要包含任何其他文字，单位为千卡，
+    格式：xxx 千卡。
+  `;
+
+  try {
+    const response = await axios.post(ZHIPU_API_URL, {
+      model: 'glm-4-plus',
+      messages: [{ role: 'user', content: question }],
+    }, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const taskId = response.data.id;
+    console.log('AI 请求成功, 任务ID:', taskId);
+
+    // 轮询获取 AI 结果
+    const getAIResult = async (taskId) => {
+      const maxRetries = 10; // 增加最大重试次数
+      const delay = 3000; // 增加每次重试的间隔时间到3秒
+
+      for (let i = 0; i < maxRetries; i++) {
+        const resultResponse = await axios.get(`${RESULT_URL}/${taskId}`, {
+          headers: {
+            'Authorization': `Bearer ${API_KEY}`,
+          },
+        });
+
+        if (resultResponse.data.task_status === 'SUCCESS') {
+          return resultResponse.data.choices[0].message.content.trim();
+        } else if (resultResponse.data.task_status === 'FAILED') {
+          throw new Error('AI 任务失败');
+        }
+        await new Promise(resolve => setTimeout(resolve, delay)); // 等待一段时间再重试
+      }
+      throw new Error('AI 任务超时');
+    };
+
+    // 获取最终 AI 结果
+    const dailyCalories = await getAIResult(taskId);
+    console.log('AI 计算结果:', dailyCalories);
+
+    return dailyCalories;
+
+  } catch (error) {
+    console.error('调用智谱 AI 失败:', error);
+    throw new Error('计算每日热量摄取量失败');
+  }
+}
+
+// API 路由，处理前端请求
+app.post('/api/calculateCalories', async (req, res) => {
+  const { username } = req.body;
+
+  // 验证用户名是否提供
+  if (!username) {
+    return res.status(400).json({ error: '用户名未提供' });
+  }
+
+  // 从数据库获取用户信息
+  connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
+    if (err) {
+      console.error('数据库查询失败:', err);
+      return res.status(500).json({ error: '数据库查询失败' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: '用户未找到' });
+    }
+
+    const user = results[0];
+    const { height, weight, age, exerciseType, fitnessGoal } = user;
+
+    if (!height || !weight || !age || !exerciseType || !fitnessGoal) {
+      return res.status(400).json({ error: '用户健康信息不完整' });
+    }
+
+    try {
+      // 调用 AI 模型计算每日热量摄取量
+      const dailyCalories = await getDailyCalories(height, weight, age, exerciseType, fitnessGoal);
+      console.log('Daily Calories:', dailyCalories);  // 打印计算出的热量
+
+      // 返回计算结果并指定状态码 200
+      res.status(200).json({ dailyCalories: dailyCalories });
+    } catch (error) {
+      console.error('计算每日热量摄取量失败:', error);
+      res.status(500).json({ error: '计算每日摄入热量失败' });
+    }
+  });
+});
 // API: 添加健身封面（需要 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, 图片文件）
 // app.post('/addGoal', upload.single('image'), (req, res) => {
 //   // 获取前端发送的数据
@@ -834,24 +776,24 @@ app.get('/goals', (req, res) => {
 // });
 
 // 处理文件上传接口
-app.post('/upload', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send({ success: false, message: '未上传文件' });
-  }
+// app.post('/upload', upload.single('file'), (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).send({ success: false, message: '未上传文件' });
+//   }
 
-  const fileExtension = path.extname(req.file.originalname);
-  const newFilename = `${Date.now()}${fileExtension}`; // 生成唯一的文件名
-  const newFilePath = path.join(__dirname, 'uploads', newFilename);
+//   const fileExtension = path.extname(req.file.originalname);
+//   const newFilename = `${Date.now()}${fileExtension}`; // 生成唯一的文件名
+//   const newFilePath = path.join(__dirname, 'uploads', newFilename);
 
-  // 重命名文件
-  const fs = require('fs');
-  fs.renameSync(req.file.path, newFilePath);
+//   // 重命名文件
+//   const fs = require('fs');
+//   fs.renameSync(req.file.path, newFilePath);
 
-  res.send({
-    success: true,
-    filename: newFilename // 返回文件名
-  });
-});
+//   res.send({
+//     success: true,
+//     filename: newFilename // 返回文件名
+//   });
+// });
 
 app.put('/goals', (req, res) => {
   let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
