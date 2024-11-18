@@ -9,7 +9,7 @@ const axios = require('axios');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 
 require('dotenv').config();
@@ -35,7 +35,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "123456",
+  password: "123123",
   database: "my_database",
 });
 
@@ -551,7 +551,6 @@ app.post("/searchGoals", (req, res) => {
 });
 
 
-
 // 获取用户的健身目标信息 API
 app.post('/get-user-goals', (req, res) => {
   const { username } = req.body; // 从请求体中获取 username
@@ -629,7 +628,7 @@ app.get('/goals', (req, res) => {
       运动次数 AS times, 
       难度 AS difficulties, 
       卡路里 AS calorie, 
-      CONCAT('http://10.133.80.141:3000/', image_url) AS image_url, 
+      CONCAT('http://192.168.56.1:3000/', image_url) AS image_url, 
       目标 AS goal, 
       运动类型 AS type 
     FROM goal
@@ -657,8 +656,8 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
     身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(',', ' ')}，运动目标：${goal.replace(',', ' ')}。
     请返回每日热量摄取量。
     请隐藏计算过程，仅返回结果。
-    ！！！！！！！注意只返回数字，不要包含任何其他文字，单位为千卡，
-    格式：xxx 千卡。
+    ！！！！！！！注意只返回数字，不要包含任何其他文字！！！！！！！！！！！！！！！！！！！！！！！！！
+    单位为千卡，格式：xxx 千卡。
   `;
 
   try {
