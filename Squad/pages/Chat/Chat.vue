@@ -54,7 +54,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 
-const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = "http://192.168.56.1:3000";
 const messageText = ref('');
 const messages = ref([]);
 const scrollTop = ref(0);

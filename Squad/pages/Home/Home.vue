@@ -355,7 +355,7 @@
                     <text class="add-icon">+</text>添加食物
                   </button>
                   <view class="total-info">
-                    <text>总热量: {{ totalCalories }}kcal</text>
+                    <text>总热量: {{ totalConsumedCalories }}kcal</text>
                     <button class="submit-btn" @click="submitFoodList">
                       提交
                     </button>
@@ -721,19 +721,20 @@ import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 const target = ref(50);
 const modelVale = ref(0);
 const target_eat_percent = ref(50);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
 const selectedGoal = ref("全部"); // 选中的目标筛选项
-const selectedType = ref("全部"); // 选中的类型筛选项
+const selectedType = ref("全部"); // 选中的类型筛选项 
 const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const showMyplan = ref(true);
 const showMyeat = ref(false);
 const today_left_eat = ref(0);
+
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
@@ -781,15 +782,24 @@ const foodList = ref([]);
 const manualFoodList = ref([]);
 const errorMessage = ref("");
 const totalCalories = computed(() => {
-  const autoCalories = foodList.value.reduce(
-    (sum, food) => sum + (food.currentCalories || 0),
-    0
-  );
-  const manualCalories = manualFoodList.value.reduce(
-    (sum, food) => sum + (food.currentCalories || 0),
-    0
-  );
-  return Math.round(autoCalories + manualCalories);
+  const autoCalories = foodList.value.reduce((sum, food) => {
+    const calories = Number(food.currentCalories);
+    // 调试输出
+    console.log(`自动食物 ${food.食物名称} 的热量: ${calories}`);
+    return sum + (isNaN(calories) ? 0 : calories);
+  }, 0);
+
+  const manualCalories = manualFoodList.value.reduce((sum, food) => {
+    const calories = Number(food.currentCalories);
+    // 调试输出
+    console.log(`手动食物 ${food.食物名称} 的热量: ${calories}`);
+    return sum + (isNaN(calories) ? 0 : calories);
+  }, 0);
+
+  // 输出总热量调试信息
+  const total = Math.round(autoCalories + manualCalories);
+  console.log(`总热量 (自动 + 手动): ${total} 千卡`);
+  return total;
 });
 
 // 处理识别结果
@@ -808,8 +818,9 @@ const processRecognitionResult = (resultData) => {
     const newFoodItems = foodItems.map((item) => ({
       食物名称: item.食物名称,
       baseCalories: parseFloat(item.热量.match(/\d+/)[0]), // 提取数字
-      amount: 100, // 默认100g
-      currentCalories: parseFloat(item.热量.match(/\d+/)[0]), // 初始热量等于基础热量
+      amount: "", // 默认100g
+      // currentCalories: parseFloat(item.热量.match(/\d+/)[0]), // 初始热量等于基础热量
+	  currentCalories: 0
     }));
 
     // 将新食物追加到现有列表
@@ -851,7 +862,7 @@ const addManualFood = () => {
     amount: 100,
     currentCalories: 0,
   });
-};
+}; 
 
 // 删除食物
 const removeFood = (index, type) => {
@@ -864,53 +875,57 @@ const removeFood = (index, type) => {
 
 // 提交食物列表
 const submitFoodList = () => {
+	let username = uni.getStorageSync("username"); // 获取当前登录用户
   if (foodList.value.length === 0) {
     uni.showToast({
       title: "请先添加食物",
       icon: "none",
     });
-    return;
+    return; 
   }
 
-  // 计算总热量并更新剩余可摄入热量
-  const totalCalories = foodList.value.reduce((sum, food) => {
-    const calories = parseInt(food.热量);
-    return sum + (isNaN(calories) ? 0 : calories);
-  }, 0);
+  // 直接使用 computed 的 totalCalories
+  const totalConsumedCalories = totalCalories.value;
+   console.log(`提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
+ // 获取用户的每日总热量和剩余热量
+   const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
+   let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+   console.log(`1: ${remainingCalories} 千卡`);
+   // 如果缓存中没有剩余热量，则使用每日热量作为初始值
+     if (remainingCalories === undefined || remainingCalories === null) {
+       // 使用每日热量作为初始值，如果没有每日热量则使用默认值2000
+       remainingCalories = dailyCalories || 2000;
+       // 将计算出的剩余热量保存到本地存储中
+       uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
+     }
+	 console.log(`2: ${remainingCalories} 千卡`);
+// 确保 remainingCalories 是有效数字
+  remainingCalories = isNaN(remainingCalories) ? (dailyCalories || 2000) : remainingCalories;
+  console.log(`3: ${remainingCalories} 千卡`);
+  // 计算并更新剩余热量
+    remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
+	console.log(`4: ${remainingCalories} 千卡`);
+    today_left_eat.value = remainingCalories;
+  // 计算剩余热量占每日总热量的百分比
+  target_eat_percent.value = dailyCalories
+    ? Math.round((remainingCalories / dailyCalories) * 100)
+    : 0;
+	  
+	// 保存更新后的剩余热量到本地
+  uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
 
-  today_left_eat.value = Math.max(0, today_left_eat.value - totalCalories);
-  target_eat_percent.value = ((2000 - today_left_eat.value) / 2000) * 100;
+  // 清空食物列表
+  foodList.value = [];
 
-  // 提交到服务器
-  uni.request({
-    url: serverUrl + "/submitFoodList",
-    method: "POST",
-    data: {
-      foodList: foodList.value,
-      username: username,
-      totalCalories: totalCalories,
-    },
-    success: (res) => {
-      if (res.statusCode === 200) {
-        uni.showToast({
-          title: "提交成功",
-          icon: "success",
-        });
-        foodList.value = []; // 清空列表
-      } else {
-        uni.showToast({
-          title: "提交失败",
-          icon: "none",
-        });
-      }
-    },
-    fail: () => {
-      uni.showToast({
-        title: "提交失败，请检查网络",
-        icon: "none",
-      });
-    },
+  // 显示成功提示
+  uni.showToast({
+    title: "已更新每日摄入",
+    icon: "success",
   });
+
+  // 调试信息
+  console.log(`总消耗: ${totalConsumedCalories} 千卡`);
+  console.log(`剩余可摄入热量: ${remainingCalories} 千卡`);
 };
 const takePicture = async () => {
   try {
@@ -996,11 +1011,11 @@ const takePicture = async () => {
     errorMessage.value = "请求失败，请检查网络连接。";
 
     // 请求失败提示
-    uni.showToast({
-      title: "请求失败",
-      icon: "error",
-      duration: 2000,
-    });
+    // uni.showToast({
+    //   title: "请求失败",
+    //   icon: "error",
+    //   duration: 2000,
+    // });
 
     // 关闭加载状态
     isRecognizing.value = false;
@@ -1038,10 +1053,25 @@ const fetchPlansFromBackend = () => {
   });
 };
 
-// 修正后的代码
+// 获取每日热量
 async function fetchDailyCalories(username) {
   username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   try {
+    // 检查是否需要重新获取每日热量（通过日期判断）
+	  const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username}`);
+	  const today = new Date().toLocaleDateString();
+	   if (lastFetchDate === today) {
+			console.log("今日已获取过热量数据");
+			// 如果当天已经获取过数据，则直接从本地获取并显示
+			const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
+			if (cachedCalories) {
+			  today_left_eat.value = cachedCalories;
+			  target_eat_percent.value = 100; // 假设每日目标2000千卡
+			}
+			return;
+		  }
+	  
+	  
     // 发送请求到后端获取每日热量数据
     const response = await uni.request({
       url: serverUrl + "/api/calculateCalories",
@@ -1063,16 +1093,21 @@ async function fetchDailyCalories(username) {
       if (dailyCalories) {
         today_left_eat.value = dailyCalories; // 设置可摄入的热量
         target_eat_percent.value = 100; // 设置进度条的百分比
+		  // 将热量保存到本地
+        uni.setStorageSync(`dailyCalories_${username}`, dailyCalories);
+        uni.setStorageSync(`lastFetchDate_${username}`, today); // 记录获取日期
+		
+		uni.setStorageSync(`today_left_eat_${username}`, dailyCalories);
         uni.showToast({
           title: "获取热量成功",
-          icon: "success",
+          icon: "success", 
         });
       } else if (error) {
         uni.showToast({
           title: error || "获取热量失败",
           icon: "none",
         });
-      }
+      } 
     } else {
       uni.showToast({
         title: "获取热量失败，请稍后重试",
@@ -1241,7 +1276,34 @@ onMounted(() => {
   fetchDailyCalories(username.value);
   // 监听来自 Search 页面更新计划的通知
   uni.$on("plansUpdated", loadMyPlans);
+  // 每分钟检查一次是否到了0点
+    const checkMidnight = setInterval(() => {
+      const now = new Date();
+      if (now.getHours() === 0 && now.getMinutes() === 0) {
+        console.log("已到0点，重新获取每日热量");
+        fetchDailyCalories();
+		resetRemainingCalories();
+      }
+    }, 60000); // 每分钟检查一次
+	username = uni.getStorageSync("username");
+	 // 页面加载时初始化数据
+	   initializeRemainingCalories();
 });
+// 初始化剩余热量
+const initializeRemainingCalories = () => {
+  const username = uni.getStorageSync("username");
+  const today_left_eat = uni.setStorageSync(`today_left_eat_${username}`, dailyCalories);
+};
+
+// 重置剩余热量为每日热量
+const resetRemainingCalories = () => {
+  const username = uni.getStorageSync("username");
+  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
+  today_left_eat.value = dailyCalories || 2000; // 重置为每日热量
+  uni.setStorageSync(`today_left_eat_${username}`, today_left_eat.value); // 更新本地存储
+  target_eat_percent.value = 100; // 重置进度条
+  console.log("已重置剩余热量为每日热量");
+};
 // 添加计划到“我的计划”
 const handleAdd = (plan) => {
   // 先加载现有的计划
@@ -1733,7 +1795,7 @@ uni-button {
   margin-top: 2.5px;
   margin-left: 2.5px;
   width: 350rpx;
-  height: 200rpx;
+  height: 199rpx;
   box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4); /* 添加边界阴影 */
 }
 

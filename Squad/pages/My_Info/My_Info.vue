@@ -97,7 +97,9 @@
         </view>
         <view class="goals-list" :class="{ 'editing': isEditing.goals }">
           <view v-if="!hasUserInfo" class="empty-text">暂无数据</view>
-          <checkbox-group v-else v-model="userInfo.goals" @change="handleGoalsChange">
+          <checkbox-group 
+              :value="userInfo.goals" 
+              @change="handleGoalsChange">
             <label v-for="goal in goalOptions" :key="goal.value" class="goal-item">
               <checkbox 
                 :value="goal.value" 
@@ -120,7 +122,9 @@
         </view>
         <view class="sport-types-list" :class="{ 'editing': isEditing.sportTypes }">
           <view v-if="!hasUserInfo" class="empty-text">暂无数据</view>
-          <checkbox-group v-else v-model="userInfo.sportTypes" @change="handleSportTypesChange">
+			  <checkbox-group
+			      :value="userInfo.sportTypes" 
+			      @change="handleSportTypesChange">
             <label v-for="type in sportTypeOptions" :key="type.value" class="sport-type-item">
               <checkbox 
                 :value="type.value" 
@@ -327,7 +331,7 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = "http://192.168.56.1:3000";
 const defaultAvatar = "/static/default-avatar.png";
 
 // 用户信息

@@ -76,7 +76,7 @@ const myPlans = ref([]);
 const add_icon = '/static/icon/add.png';
 const delete_icon = '/static/icon/delete.png';
 const username = uni.getStorageSync('username');
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 // 计算属性：根据搜索关键词筛选计划
 const filteredPlans = computed(() => {
   if (!searchQuery.value) return [];

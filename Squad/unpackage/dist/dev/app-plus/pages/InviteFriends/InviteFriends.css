@@ -509,292 +509,63 @@
 }
 
 .container {
-  height: 100vh;
-  background: #f8f8f8;
-}
-.nav-bar {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  position: relative;
-  display: flex;
-  padding: 0.625rem 1.25rem;
-  background: #fff;
-  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.05);
-}
-.nav-item {
-  flex: 1;
-  text-align: center;
-  font-size: 1rem;
-  color: #666;
-  padding: 0.625rem 0;
-  transition: all 0.3s;
-}
-.nav-item.active {
-  color: #12b7f5;
-  font-weight: 500;
-}
-.nav-slider {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50%;
-  height: 0.125rem;
-  background: #12b7f5;
-  transition: transform 0.3s;
-}
-.content {
-  height: calc(100vh - 2.75rem);
+	padding: 0.9375rem;
+	background: #f8f8f8;
+	min-height: 100vh;
 }
 .search-box {
-  margin: 0.625rem;
-  padding: 0.625rem 0.9375rem;
-  background: #fff;
-  border-radius: 1.25rem;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.05);
+	background: #fff;
+	padding: 0.625rem 0.9375rem;
+	border-radius: 1.25rem;
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.9375rem;
 }
 .search-input {
-  flex: 1;
-  margin-left: 0.625rem;
-  font-size: 0.875rem;
+	flex: 1;
+	margin-left: 0.625rem;
+	font-size: 0.875rem;
 }
 .friends-list {
-  height: calc(100% - 3.75rem);
-  padding: 0 0.9375rem;
-}
-.index-letter {
-  padding: 0.5rem 0.625rem;
-  font-size: 0.75rem;
-  color: #999;
+	height: calc(100vh - 5.625rem);
 }
 .friend-item {
-  display: flex;
-  align-items: center;
-  padding: 0.625rem;
-  margin-bottom: 0.625rem;
-  background: #fff;
-  border-radius: 0.625rem;
-  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.9375rem;
+	background: #fff;
+	border-radius: 0.5rem;
+	margin-bottom: 0.625rem;
 }
-.friend-item-hover {
-  transform: scale(0.98);
-  background: #f5f5f5;
-}
-.avatar-box {
-  position: relative;
+.friend-info {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
 }
 .avatar {
-  width: 3.125rem;
-  height: 3.125rem;
-  border-radius: 50%;
-  background: #f0f0f0;
-}
-.online-dot {
-  position: absolute;
-  right: 0.125rem;
-  bottom: 0.125rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: #07c160;
-  border: 0.125rem solid #fff;
-  border-radius: 50%;
-}
-.info {
-  flex: 1;
-  margin-left: 0.75rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
 }
 .name {
-  font-size: 1rem;
-  color: #333;
-  font-weight: 500;
-}
-.signature {
-  font-size: 0.75rem;
-  color: #999;
-  margin-top: 0.25rem;
-}
-.letter-nav {
-  position: fixed;
-  right: 0.625rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  padding: 0.625rem 0.3125rem;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 0.9375rem;
-  box-shadow: 0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.1);
-}
-.letter {
-  padding: 0.25rem;
-  font-size: 0.75rem;
-  color: #666;
-  transition: all 0.2s;
-}
-.letter-active {
-  color: #12b7f5;
-  font-weight: 500;
-  transform: scale(1.2);
-}
-.letter-tip {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 5rem;
-  height: 5rem;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 0.625rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  color: #fff;
-}
-.add-btn {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 3.75rem;
-  width: 3.125rem;
-  height: 3.125rem;
-  background: linear-gradient(135deg, #12b7f5, #0e9bd4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0.125rem 0.625rem rgba(18, 183, 245, 0.3);
-  transition: all 0.2s;
-}
-.btn-hover {
-  transform: scale(0.95);
-  box-shadow: 0 0.0625rem 0.3125rem rgba(18, 183, 245, 0.2);
-}
-.team-content {
-  padding: 0.9375rem;
-  background: #f8f8f8;
-}
-.goal-card {
-  background: #000;
-  padding: 0.9375rem;
-  border-radius: 0.625rem;
-  margin-bottom: 0.9375rem;
-}
-.card-title {
-  color: #fff;
-  font-size: 0.875rem;
-  margin-bottom: 0.625rem;
-}
-.goal-options {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9375rem;
-}
-.goal-item {
-  display: flex;
-  align-items: baseline;
-}
-.goal-value {
-  color: #4b7bf9;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-.goal-unit {
-  color: #4b7bf9;
-  font-size: 0.75rem;
-  margin-left: 0.125rem;
-}
-.goal-divider {
-  color: #666;
-  font-size: 0.75rem;
-}
-.level-card {
-  background: #fff;
-  padding: 0.9375rem;
-  border-radius: 0.625rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 0.9375rem;
-}
-.user-avatar {
-  width: 3.75rem;
-  height: 3.75rem;
-  border-radius: 50%;
-  margin-bottom: 0.625rem;
-  border: 0.125rem solid #4b7bf9;
-}
-.level-info {
-  width: 6.25rem;
-  text-align: center;
-}
-.level-text {
-  font-size: 0.875rem;
-  color: #333;
-  margin-bottom: 0.3125rem;
-}
-.level-progress {
-  width: 100%;
-  border-radius: 0.3125rem;
-}
-.checkin-container {
-  background: #fff;
-  padding: 0.9375rem;
-  border-radius: 0.625rem;
-  margin-bottom: 0.9375rem;
-}
-.checkin-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-}
-.checkin-item {
-  padding: 0.75rem;
-  border-radius: 0.375rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.checkin-item.completed {
-  background: #4b7bf9;
-}
-.checkin-item.pending {
-  background: #f5f5f5;
-}
-.day-text {
-  font-size: 0.875rem;
-  color: #333;
-}
-.status-text {
-  font-size: 0.875rem;
-}
-.checkin-item.completed .day-text,
-.checkin-item.completed .status-text {
-  color: #fff;
-}
-.checkin-item.pending .status-text {
-  color: #999;
+	font-size: 1rem;
+	color: #333;
 }
 .invite-btn {
-  background: linear-gradient(135deg, #4cd964, #3cb371);
-  padding: 0.9375rem;
-  border-radius: 3.125rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3125rem;
-  box-shadow: 0 0.125rem 0.625rem rgba(76, 217, 100, 0.3);
-  transition: all 0.2s;
+	background: #4CD964;
+	color: #fff;
+	padding: 0.375rem 1.25rem;
+	border-radius: 3.125rem;
+	font-size: 0.875rem;
+	border: none;
+	margin: 0;
+	min-width: 4.375rem;
 }
-.invite-text {
-  color: #fff;
-  font-size: 1rem;
+.invite-btn.invited {
+	background: #ccc;
 }
-.btn-hover {
-  transform: scale(0.98);
-  opacity: 0.9;
+.friend-item-hover {
+	background: #f5f5f5;
 }
+  

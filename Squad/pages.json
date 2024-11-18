@@ -75,7 +75,7 @@
 	    "navigationBarTitleText": "聊天",
 	    "enablePullDownRefresh": false
 	  }
-	},
+	}
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
