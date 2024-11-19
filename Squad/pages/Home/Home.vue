@@ -733,8 +733,8 @@ const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const showMyplan = ref(true);
 const showMyeat = ref(false);
+// const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
 const today_left_eat = ref(0);
-
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
@@ -891,19 +891,20 @@ const submitFoodList = () => {
    const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
    let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
    console.log(`1: ${remainingCalories} 千卡`);
-   // 如果缓存中没有剩余热量，则使用每日热量作为初始值
-     if (remainingCalories === undefined || remainingCalories === null) {
-       // 使用每日热量作为初始值，如果没有每日热量则使用默认值2000
-       remainingCalories = dailyCalories || 2000;
-       // 将计算出的剩余热量保存到本地存储中
-       uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
-     }
-	 console.log(`2: ${remainingCalories} 千卡`);
+  //  // 如果缓存中没有剩余热量，则使用每日热量作为初始值
+  //    if (remainingCalories === undefined || remainingCalories === null) {
+  //      // 使用每日热量作为初始值，如果没有每日热量则使用默认值2000
+  //      remainingCalories = dailyCalories || 2000;
+  //      // 将计算出的剩余热量保存到本地存储中
+  //      uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
+  //    }
+	 // console.log(`2: ${remainingCalories} 千卡`);
 // 确保 remainingCalories 是有效数字
   remainingCalories = isNaN(remainingCalories) ? (dailyCalories || 2000) : remainingCalories;
   console.log(`3: ${remainingCalories} 千卡`);
   // 计算并更新剩余热量
     remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
+	// remainingCalories = remainingCalories - totalConsumedCalories;
 	console.log(`4: ${remainingCalories} 千卡`);
     today_left_eat.value = remainingCalories;
   // 计算剩余热量占每日总热量的百分比
@@ -1063,11 +1064,20 @@ async function fetchDailyCalories(username) {
 	   if (lastFetchDate === today) {
 			console.log("今日已获取过热量数据");
 			// 如果当天已经获取过数据，则直接从本地获取并显示
-			const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
-			if (cachedCalories) {
-			  today_left_eat.value = cachedCalories;
-			  target_eat_percent.value = 100; // 假设每日目标2000千卡
-			}
+			// const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
+			// if (cachedCalories) {
+			//   today_left_eat.value = cachedCalories;
+			//   target_eat_percent.value = 100; // 假设每日目标2000千卡
+			// }
+			
+			today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
+			console.log(`剩余热量: ${today_left_eat.value} 千卡`);
+			const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
+			let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+			target_eat_percent.value = dailyCalories
+			  ? Math.round((remainingCalories / dailyCalories) * 100)
+			  : 0;
+			
 			return;
 		  }
 	  
@@ -1096,8 +1106,9 @@ async function fetchDailyCalories(username) {
 		  // 将热量保存到本地
         uni.setStorageSync(`dailyCalories_${username}`, dailyCalories);
         uni.setStorageSync(`lastFetchDate_${username}`, today); // 记录获取日期
-		
-		uni.setStorageSync(`today_left_eat_${username}`, dailyCalories);
+		uni.setStorageSync(`today_left_eat_${username}`, today_left_eat.value);
+		let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+		console.log(`更新剩余热量: ${remainingCalories} 千卡`);
         uni.showToast({
           title: "获取热量成功",
           icon: "success", 
@@ -1116,10 +1127,10 @@ async function fetchDailyCalories(username) {
     }
   } catch (error) {
     console.error("请求失败:", error);
-    uni.showToast({
-      title: "网络请求失败，请稍后重试",
-      icon: "none",
-    });
+    // uni.showToast({
+    //   title: "网络请求失败，请稍后重试",
+    //   icon: "none",
+    // });
   }
 }
 
@@ -1281,7 +1292,7 @@ onMounted(() => {
       const now = new Date();
       if (now.getHours() === 0 && now.getMinutes() === 0) {
         console.log("已到0点，重新获取每日热量");
-        fetchDailyCalories();
+        fetchDailyCalories(username.value);
 		resetRemainingCalories();
       }
     }, 60000); // 每分钟检查一次
@@ -1292,7 +1303,8 @@ onMounted(() => {
 // 初始化剩余热量
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
-  const today_left_eat = uni.setStorageSync(`today_left_eat_${username}`, dailyCalories);
+  
+  today_left_eat.value =  uni.getStorageSync(`today_left_eat_${username}`);
 };
 
 // 重置剩余热量为每日热量
