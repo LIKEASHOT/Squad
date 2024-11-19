@@ -147,7 +147,7 @@
       <view class="top_bar_sport">
         <view class="sportbar">
           <l-circle
-            v-model:current="modelVale"
+            v-model="modelVale"
             :percent="target"
             :size="50"
             class="circle_process"
@@ -177,7 +177,7 @@
           >
             <text>{{ day.date }}</text>
             <l-circle
-              v-model:current="modelVale"
+              v-model="modelVale"
               :percent="day.progress"
               :size="30"
               class="circle_process"
@@ -259,7 +259,7 @@
           <view v-if="showMyeat === true" class="eat_page">
             <view class="circle_process_eat">
               <l-circle
-                v-model:current="modelVale"
+                v-model="modelVale"
                 :percent="target_eat_percent"
                 :size="120"
                 trailWidth="20"
