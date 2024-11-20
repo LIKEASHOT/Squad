@@ -19488,6 +19488,7 @@ ${i3}
       const showMyplan = vue.ref(true);
       const showMyeat = vue.ref(false);
       const today_left_eat = vue.ref(0);
+      const totalConsumedCalories = vue.ref(0);
       const IsManager = vue.ref(false);
       const foodName = vue.ref("");
       const calories = vue.ref("");
@@ -19533,16 +19534,16 @@ ${i3}
       const totalCalories = vue.computed(() => {
         const autoCalories = foodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:788", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:790", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const manualCalories = manualFoodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:795", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:797", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const total = Math.round(autoCalories + manualCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:801", `总热量 (自动 + 手动): ${total} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:803", `总热量 (自动 + 手动): ${total} 千卡`);
         return total;
       });
       const processRecognitionResult = (resultData) => {
@@ -19570,7 +19571,7 @@ ${i3}
             icon: "success"
           });
         } catch (err) {
-          formatAppLog("error", "at pages/Home/Home.vue:835", "处理识别结果错误:", err);
+          formatAppLog("error", "at pages/Home/Home.vue:837", "处理识别结果错误:", err);
           uni.showToast({
             title: "数据格式错误",
             icon: "none"
@@ -19611,25 +19612,26 @@ ${i3}
           });
           return;
         }
-        const totalConsumedCalories = totalCalories.value;
-        formatAppLog("log", "at pages/Home/Home.vue:889", `提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
+        const totalConsumedCalories2 = totalCalories.value;
+        formatAppLog("log", "at pages/Home/Home.vue:891", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
         const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
         let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-        formatAppLog("log", "at pages/Home/Home.vue:893", `1: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:895", `1: ${remainingCalories} 千卡`);
         remainingCalories = isNaN(remainingCalories) ? dailyCalories || 2e3 : remainingCalories;
-        formatAppLog("log", "at pages/Home/Home.vue:904", `3: ${remainingCalories} 千卡`);
-        remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:908", `4: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:906", `3: ${remainingCalories} 千卡`);
+        remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories2);
+        formatAppLog("log", "at pages/Home/Home.vue:910", `4: ${remainingCalories} 千卡`);
         today_left_eat.value = remainingCalories;
         target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
         uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
         foodList.value = [];
+        manualFoodList.value = [];
         uni.showToast({
           title: "已更新每日摄入",
           icon: "success"
         });
-        formatAppLog("log", "at pages/Home/Home.vue:928", `总消耗: ${totalConsumedCalories} 千卡`);
-        formatAppLog("log", "at pages/Home/Home.vue:929", `剩余可摄入热量: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:930", `总消耗: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:931", `剩余可摄入热量: ${remainingCalories} 千卡`);
       };
       const takePicture = async () => {
         try {
@@ -19663,7 +19665,7 @@ ${i3}
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:971", "识别失败");
+                  formatAppLog("error", "at pages/Home/Home.vue:973", "识别失败");
                   errorMessage.value = "识别失败，请稍后重试。";
                   uni.showToast({
                     title: "识别失败",
@@ -19672,7 +19674,7 @@ ${i3}
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:982", "解析 JSON 错误:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:984", "解析 JSON 错误:", err);
                 errorMessage.value = "响应数据格式错误，请稍后重试。";
                 uni.showToast({
                   title: "数据格式错误",
@@ -19682,7 +19684,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:994", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:996", "上传失败", err);
               errorMessage.value = "上传失败，请检查网络连接。";
               uni.showToast({
                 title: "上传失败",
@@ -19696,7 +19698,7 @@ ${i3}
             }
           });
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1011", "请求失败", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1013", "请求失败", error2);
           errorMessage.value = "请求失败，请检查网络连接。";
           isRecognizing.value = false;
           uni.hideLoading();
@@ -19708,7 +19710,7 @@ ${i3}
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1032", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:1034", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -19724,11 +19726,11 @@ ${i3}
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1048", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1050", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1052", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1054", "请求失败:", err);
           }
         });
       };
@@ -19738,9 +19740,9 @@ ${i3}
           const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username2}`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
-            formatAppLog("log", "at pages/Home/Home.vue:1065", "今日已获取过热量数据");
+            formatAppLog("log", "at pages/Home/Home.vue:1067", "今日已获取过热量数据");
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1074", `剩余热量: ${today_left_eat.value} 千卡`);
+            formatAppLog("log", "at pages/Home/Home.vue:1076", `剩余热量: ${today_left_eat.value} 千卡`);
             const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
             target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
@@ -19757,7 +19759,7 @@ ${i3}
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1097", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1099", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -19767,7 +19769,7 @@ ${i3}
               uni.setStorageSync(`lastFetchDate_${username2}`, today);
               uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
               let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-              formatAppLog("log", "at pages/Home/Home.vue:1111", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1113", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -19785,7 +19787,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1129", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1131", "请求失败:", error2);
         }
       }
       const aiInput = vue.ref("");
@@ -19826,7 +19828,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1191", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1193", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -19862,7 +19864,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1234", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:1236", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -19878,7 +19880,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1251", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1253", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -19910,7 +19912,7 @@ ${i3}
         setInterval(() => {
           const now = /* @__PURE__ */ new Date();
           if (now.getHours() === 0 && now.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1294", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1296", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -19928,14 +19930,14 @@ ${i3}
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1317", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1318", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1329", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1330", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -19944,7 +19946,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1342", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1343", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -19952,7 +19954,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1359", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1360", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -19962,6 +19964,17 @@ ${i3}
         tab.value = "plan-board";
       };
       const handleAddPlan_board = () => {
+        planForm.value = {
+          title: "",
+          times: "",
+          duration: "",
+          difficulties: "",
+          calorie: "",
+          type: "",
+          goal: "",
+          imageUrl: "",
+          videoUrl: ""
+        };
         openPopup();
       };
       const uploadImage = () => {
@@ -19986,7 +19999,7 @@ ${i3}
                 }
               },
               fail: (err) => {
-                formatAppLog("error", "at pages/Home/Home.vue:1402", "上传失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:1414", "上传失败:", err);
                 uni.showToast({ title: "封面上传失败", icon: "none" });
               }
             });
@@ -20007,7 +20020,7 @@ ${i3}
           image_url: planForm.value.imageUrl || "",
           video_url: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1427", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1439", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
             url: `${serverUrl$3}/goals`,
@@ -20026,7 +20039,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1449", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1461", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20048,7 +20061,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1471", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1483", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20059,8 +20072,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1486", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1487", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1498", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1499", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -20081,7 +20094,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1511", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1523", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -20123,9 +20136,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1562", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1574", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1565", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1577", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -20218,7 +20231,7 @@ ${i3}
         });
       };
       const isRecognizing = vue.ref(false);
-      const __returned__ = { serverUrl: serverUrl$3, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, processRecognitionResult, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, uploadImage, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$3, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, processRecognitionResult, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, uploadImage, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -20824,7 +20837,7 @@ ${i3}
                       vue.createElementVNode(
                         "text",
                         null,
-                        "总热量: " + vue.toDisplayString(_ctx.totalConsumedCalories) + "kcal",
+                        "总热量: " + vue.toDisplayString($setup.totalCalories) + "kcal",
                         1
                         /* TEXT */
                       ),

@@ -355,7 +355,8 @@
                     <text class="add-icon">+</text>添加食物
                   </button>
                   <view class="total-info">
-                    <text>总热量: {{ totalConsumedCalories }}kcal</text>
+                    <text>总热量: {{ totalCalories }}kcal</text>
+					
                     <button class="submit-btn" @click="submitFoodList">
                       提交
                     </button>
@@ -735,6 +736,7 @@ const showMyplan = ref(true);
 const showMyeat = ref(false);
 // const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
 const today_left_eat = ref(0);
+const totalConsumedCalories = ref(0);
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
 const delete_icon = "/static/icon/delete.png";
@@ -917,7 +919,7 @@ const submitFoodList = () => {
 
   // 清空食物列表
   foodList.value = [];
-
+  manualFoodList.value=[];
   // 显示成功提示
   uni.showToast({
     title: "已更新每日摄入",
@@ -1303,7 +1305,6 @@ onMounted(() => {
 // 初始化剩余热量
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
-  
   today_left_eat.value =  uni.getStorageSync(`today_left_eat_${username}`);
 };
 
@@ -1373,7 +1374,18 @@ const closePopup = () => {
   tab.value = "plan-board";
 };
 const handleAddPlan_board = () => {
-  // 添加计划逻辑
+  // 添加计划逻辑 
+  planForm.value = {
+    title: "",
+    times: "",
+    duration: "",
+    difficulties: "", 
+    calorie: "",
+    type: "",
+    goal: "", 
+    imageUrl: "",
+    videoUrl: "",
+  };
   openPopup();
 };
 //添加封面逻辑
