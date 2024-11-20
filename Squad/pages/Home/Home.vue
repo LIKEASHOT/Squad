@@ -524,13 +524,12 @@
                     />
                   </uni-forms-item>
 
-                  <uni-forms-item label="封面">
-                    <uni-easyinput
-                      v-model="planForm.imageUrl"
-                      type="string"
-                      placeholder="请输入封面url"
-                    />
-                  </uni-forms-item>
+                   <uni-forms-item label="封面">
+                      <button @click="chooseCoverImage" type="primary">选择封面图片</button>
+                      <view v-if="planForm.imageUrl" class="cover-preview">
+                        <image :src="planForm.imageUrl" mode="aspectFill" style="width: 100px; height: 100px;" />
+                      </view>
+                    </uni-forms-item>
 
                   <uni-forms-item label="视频链接">
                     <uni-easyinput
@@ -642,12 +641,12 @@
               />
             </uni-forms-item>
             <uni-forms-item label="封面">
-              <uni-easyinput
-                v-model="planForm.imageUrl"
-                type="string"
-                placeholder="请输入封面url"
-              />
-            </uni-forms-item>
+               <button @click="chooseCoverImage" type="primary">选择封面图片</button>
+               <view v-if="planForm.imageUrl" class="cover-preview">
+                 <image :src="planForm.imageUrl" mode="aspectFill" style=" box-shadow: 0 4px 8px rgba(94, 87, 87, 0.603); margin-top: 10px; margin-left: 33px; width: 150px; height: 80px;" />
+               </view>
+             </uni-forms-item>
+			 
             <uni-forms-item label="视频链接">
               <uni-easyinput
                 v-model="planForm.videoUrl"
@@ -1012,13 +1011,6 @@ const takePicture = async () => {
   } catch (error) {
     console.error("请求失败", error);
     errorMessage.value = "请求失败，请检查网络连接。";
-
-    // 请求失败提示
-    // uni.showToast({
-    //   title: "请求失败",
-    //   icon: "error",
-    //   duration: 2000,
-    // });
 
     // 关闭加载状态
     isRecognizing.value = false;
@@ -1388,36 +1380,6 @@ const handleAddPlan_board = () => {
   };
   openPopup();
 };
-//添加封面逻辑
-const uploadImage = () => {
-  uni.chooseImage({
-    count: 1, // 选择一张图片
-    success: (res) => {
-      const tempFilePath = res.tempFilePaths[0];
-
-      // 上传图片到后端
-      uni.uploadFile({
-        url: `${serverUrl}/upload`, // 假设后端的上传接口
-        filePath: tempFilePath,
-        name: "file", // 传给后端的文件字段名
-        success: (uploadRes) => {
-          const data = JSON.parse(uploadRes.data);
-          if (data.success) {
-            // 图片上传成功后设置 imageUrl
-            planForm.value.imageUrl = `/uploads/${data.filename}`; // 后端返回的文件名
-            uni.showToast({ title: "封面上传成功", icon: "success" });
-          } else {
-            uni.showToast({ title: "封面上传失败", icon: "none" });
-          }
-        },
-        fail: (err) => {
-          console.error("上传失败:", err);
-          uni.showToast({ title: "封面上传失败", icon: "none" });
-        },
-      });
-    },
-  });
-};
 // 保存计划
 const savePlan = () => {
   const isEditing = currentEditIndex.value !== -1;
@@ -1450,6 +1412,7 @@ const savePlan = () => {
           // 更新前端的 plans 数组
           plans.value.splice(currentEditIndex.value, 1, { ...planData });
           uni.showToast({ title: "修改成功", icon: "success" });
+		   closePopup();
         } else {
           uni.showToast({
             title: res.data.message || "修改失败",
@@ -1466,15 +1429,16 @@ const savePlan = () => {
     // 添加新的计划
     uni.request({
       url: `${serverUrl}/goals/add`, // 假设后端POST API地址
-      method: "POST",
-      data: planData,
+      method: "POST", 
+      data: planData, 
       success: (res) => {
         if (res.data.message === "添加成功") {
           plans.value.push(planData);
           uni.showToast({ title: "添加成功", icon: "success" });
+		   closePopup();
         } else {
           uni.showToast({
-            title: res.data.message || "添加失败",
+            title: res.data.message || "添加失败", 
             icon: "none",
           });
         }
@@ -1485,13 +1449,84 @@ const savePlan = () => {
       },
     });
   }
+ 
+};
+// 选择封面图片
+const chooseCoverImage = async () => {
+  try {
+    console.log("选择图片按钮被点击");
+    const res = await uni.chooseImage({
+      count: 1, // 选择一张图片
+      sourceType: ['album', 'camera'], // 可以选择相册或拍照
+    });
 
-  // 重置编辑索引并关闭弹窗
-  currentEditIndex.value = -1;
-  closePopup();
-  filterPlans();
+    if (res.errMsg === "chooseImage:ok") {
+      const filePath = res.tempFilePaths[0];
+      console.log("选择的图片路径：", filePath);
+
+      // 上传图片到服务器
+      const uploadRes = await uploadImage(filePath);
+      if (uploadRes && uploadRes.imageUrl) {
+        planForm.value.imageUrl = uploadRes.imageUrl; // 将返回的图片 URL 存储在 planForm.imageUrl 中
+        console.log("图片上传成功，图片 URL:", uploadRes.imageUrl);
+      } else {
+        console.error("图片上传失败");
+      }
+    }
+  } catch (error) {
+    console.error("选择图片失败:", error);
+  }
 };
 
+// 上传图片函数
+const uploadImage = (filePath) => {
+  return new Promise((resolve, reject) => {
+    console.log("开始上传图片，路径:", filePath);  // 调试输出文件路径
+
+    uni.uploadFile({
+      url: serverUrl + "/upload", // 假设上传接口的URL
+      filePath: filePath,
+      name: "file",
+      success: (uploadRes) => {
+        try {
+          // 解析响应的字符串数据
+          const response = JSON.parse(uploadRes.data); // 上传成功返回的是一个JSON字符串
+          if (uploadRes.statusCode === 200 && response.success) {
+            const imageUrl = response.imageUrl;
+            console.log("上传成功，返回的图片URL:", imageUrl);
+            
+            // 更新表单中的 imageUrl
+            planForm.value.imageUrl = imageUrl;
+            uni.showToast({
+              title: "上传成功",
+              icon: "success",
+              duration: 2000
+            });
+          } else {
+            console.error("上传失败，返回错误:", response);
+            uni.showToast({
+              title: "上传失败，请重试",
+              icon: "none"
+            });
+          }
+        } catch (err) {
+          console.error("解析响应数据失败:", err);
+          uni.showToast({
+            title: "响应数据解析失败",
+            icon: "none"
+          });
+        }
+      },
+      fail: (err) => {
+        console.error("上传失败", err);
+        uni.showToast({
+          title: "上传失败，请检查网络连接",
+          icon: "none"
+        });
+      }
+    });
+  });
+};
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
   currentEditIndex.value = index;

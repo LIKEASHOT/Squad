@@ -19534,16 +19534,16 @@ ${i3}
       const totalCalories = vue.computed(() => {
         const autoCalories = foodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:790", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:789", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const manualCalories = manualFoodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:797", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:796", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const total = Math.round(autoCalories + manualCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:803", `总热量 (自动 + 手动): ${total} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:802", `总热量 (自动 + 手动): ${total} 千卡`);
         return total;
       });
       const processRecognitionResult = (resultData) => {
@@ -19571,7 +19571,7 @@ ${i3}
             icon: "success"
           });
         } catch (err) {
-          formatAppLog("error", "at pages/Home/Home.vue:837", "处理识别结果错误:", err);
+          formatAppLog("error", "at pages/Home/Home.vue:836", "处理识别结果错误:", err);
           uni.showToast({
             title: "数据格式错误",
             icon: "none"
@@ -19613,14 +19613,14 @@ ${i3}
           return;
         }
         const totalConsumedCalories2 = totalCalories.value;
-        formatAppLog("log", "at pages/Home/Home.vue:891", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:890", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
         const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
         let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-        formatAppLog("log", "at pages/Home/Home.vue:895", `1: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:894", `1: ${remainingCalories} 千卡`);
         remainingCalories = isNaN(remainingCalories) ? dailyCalories || 2e3 : remainingCalories;
-        formatAppLog("log", "at pages/Home/Home.vue:906", `3: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:905", `3: ${remainingCalories} 千卡`);
         remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories2);
-        formatAppLog("log", "at pages/Home/Home.vue:910", `4: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:909", `4: ${remainingCalories} 千卡`);
         today_left_eat.value = remainingCalories;
         target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
         uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
@@ -19630,8 +19630,8 @@ ${i3}
           title: "已更新每日摄入",
           icon: "success"
         });
-        formatAppLog("log", "at pages/Home/Home.vue:930", `总消耗: ${totalConsumedCalories2} 千卡`);
-        formatAppLog("log", "at pages/Home/Home.vue:931", `剩余可摄入热量: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:929", `总消耗: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:930", `剩余可摄入热量: ${remainingCalories} 千卡`);
       };
       const takePicture = async () => {
         try {
@@ -19665,7 +19665,7 @@ ${i3}
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:973", "识别失败");
+                  formatAppLog("error", "at pages/Home/Home.vue:972", "识别失败");
                   errorMessage.value = "识别失败，请稍后重试。";
                   uni.showToast({
                     title: "识别失败",
@@ -19674,7 +19674,7 @@ ${i3}
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:984", "解析 JSON 错误:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:983", "解析 JSON 错误:", err);
                 errorMessage.value = "响应数据格式错误，请稍后重试。";
                 uni.showToast({
                   title: "数据格式错误",
@@ -19684,7 +19684,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:996", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:995", "上传失败", err);
               errorMessage.value = "上传失败，请检查网络连接。";
               uni.showToast({
                 title: "上传失败",
@@ -19698,7 +19698,7 @@ ${i3}
             }
           });
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1013", "请求失败", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1012", "请求失败", error2);
           errorMessage.value = "请求失败，请检查网络连接。";
           isRecognizing.value = false;
           uni.hideLoading();
@@ -19710,7 +19710,7 @@ ${i3}
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1034", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:1026", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -19726,11 +19726,11 @@ ${i3}
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1050", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1042", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1054", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1046", "请求失败:", err);
           }
         });
       };
@@ -19740,9 +19740,9 @@ ${i3}
           const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username2}`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
-            formatAppLog("log", "at pages/Home/Home.vue:1067", "今日已获取过热量数据");
+            formatAppLog("log", "at pages/Home/Home.vue:1059", "今日已获取过热量数据");
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1076", `剩余热量: ${today_left_eat.value} 千卡`);
+            formatAppLog("log", "at pages/Home/Home.vue:1068", `剩余热量: ${today_left_eat.value} 千卡`);
             const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
             target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
@@ -19759,7 +19759,7 @@ ${i3}
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1099", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1091", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -19769,7 +19769,7 @@ ${i3}
               uni.setStorageSync(`lastFetchDate_${username2}`, today);
               uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
               let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-              formatAppLog("log", "at pages/Home/Home.vue:1113", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1105", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -19787,7 +19787,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1131", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1123", "请求失败:", error2);
         }
       }
       const aiInput = vue.ref("");
@@ -19828,7 +19828,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1193", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1185", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -19864,7 +19864,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1236", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:1228", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -19880,7 +19880,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1253", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1245", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -19912,7 +19912,7 @@ ${i3}
         setInterval(() => {
           const now = /* @__PURE__ */ new Date();
           if (now.getHours() === 0 && now.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1296", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1288", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -19930,14 +19930,14 @@ ${i3}
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1318", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1310", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1330", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1322", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -19946,7 +19946,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1343", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1335", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -19954,7 +19954,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1360", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1352", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -19977,35 +19977,6 @@ ${i3}
         };
         openPopup();
       };
-      const uploadImage = () => {
-        uni.chooseImage({
-          count: 1,
-          // 选择一张图片
-          success: (res) => {
-            const tempFilePath = res.tempFilePaths[0];
-            uni.uploadFile({
-              url: `${serverUrl$3}/upload`,
-              // 假设后端的上传接口
-              filePath: tempFilePath,
-              name: "file",
-              // 传给后端的文件字段名
-              success: (uploadRes) => {
-                const data = JSON.parse(uploadRes.data);
-                if (data.success) {
-                  planForm.value.imageUrl = `/uploads/${data.filename}`;
-                  uni.showToast({ title: "封面上传成功", icon: "success" });
-                } else {
-                  uni.showToast({ title: "封面上传失败", icon: "none" });
-                }
-              },
-              fail: (err) => {
-                formatAppLog("error", "at pages/Home/Home.vue:1414", "上传失败:", err);
-                uni.showToast({ title: "封面上传失败", icon: "none" });
-              }
-            });
-          }
-        });
-      };
       const savePlan = () => {
         const isEditing = currentEditIndex.value !== -1;
         const planData = {
@@ -20020,7 +19991,7 @@ ${i3}
           image_url: planForm.value.imageUrl || "",
           video_url: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1439", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1401", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
             url: `${serverUrl$3}/goals`,
@@ -20031,6 +20002,7 @@ ${i3}
               if (res.data.message === "更新成功") {
                 plans.value.splice(currentEditIndex.value, 1, { ...planData });
                 uni.showToast({ title: "修改成功", icon: "success" });
+                closePopup();
               } else {
                 uni.showToast({
                   title: res.data.message || "修改失败",
@@ -20039,7 +20011,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1461", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1424", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20053,6 +20025,7 @@ ${i3}
               if (res.data.message === "添加成功") {
                 plans.value.push(planData);
                 uni.showToast({ title: "添加成功", icon: "success" });
+                closePopup();
               } else {
                 uni.showToast({
                   title: res.data.message || "添加失败",
@@ -20061,19 +20034,85 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1483", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1447", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
         }
-        currentEditIndex.value = -1;
-        closePopup();
-        filterPlans();
+      };
+      const chooseCoverImage = async () => {
+        try {
+          formatAppLog("log", "at pages/Home/Home.vue:1457", "选择图片按钮被点击");
+          const res = await uni.chooseImage({
+            count: 1,
+            // 选择一张图片
+            sourceType: ["album", "camera"]
+            // 可以选择相册或拍照
+          });
+          if (res.errMsg === "chooseImage:ok") {
+            const filePath = res.tempFilePaths[0];
+            formatAppLog("log", "at pages/Home/Home.vue:1465", "选择的图片路径：", filePath);
+            const uploadRes = await uploadImage(filePath);
+            if (uploadRes && uploadRes.imageUrl) {
+              planForm.value.imageUrl = uploadRes.imageUrl;
+              formatAppLog("log", "at pages/Home/Home.vue:1471", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+            } else {
+              formatAppLog("error", "at pages/Home/Home.vue:1473", "图片上传失败");
+            }
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Home/Home.vue:1477", "选择图片失败:", error2);
+        }
+      };
+      const uploadImage = (filePath) => {
+        return new Promise((resolve, reject) => {
+          formatAppLog("log", "at pages/Home/Home.vue:1484", "开始上传图片，路径:", filePath);
+          uni.uploadFile({
+            url: serverUrl$3 + "/upload",
+            // 假设上传接口的URL
+            filePath,
+            name: "file",
+            success: (uploadRes) => {
+              try {
+                const response = JSON.parse(uploadRes.data);
+                if (uploadRes.statusCode === 200 && response.success) {
+                  const imageUrl = response.imageUrl;
+                  formatAppLog("log", "at pages/Home/Home.vue:1496", "上传成功，返回的图片URL:", imageUrl);
+                  planForm.value.imageUrl = imageUrl;
+                  uni.showToast({
+                    title: "上传成功",
+                    icon: "success",
+                    duration: 2e3
+                  });
+                } else {
+                  formatAppLog("error", "at pages/Home/Home.vue:1506", "上传失败，返回错误:", response);
+                  uni.showToast({
+                    title: "上传失败，请重试",
+                    icon: "none"
+                  });
+                }
+              } catch (err) {
+                formatAppLog("error", "at pages/Home/Home.vue:1513", "解析响应数据失败:", err);
+                uni.showToast({
+                  title: "响应数据解析失败",
+                  icon: "none"
+                });
+              }
+            },
+            fail: (err) => {
+              formatAppLog("error", "at pages/Home/Home.vue:1521", "上传失败", err);
+              uni.showToast({
+                title: "上传失败，请检查网络连接",
+                icon: "none"
+              });
+            }
+          });
+        });
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1498", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1499", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1533", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1534", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -20094,7 +20133,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1523", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1558", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -20136,9 +20175,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1574", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1609", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1577", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1612", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -20231,7 +20270,7 @@ ${i3}
         });
       };
       const isRecognizing = vue.ref(false);
-      const __returned__ = { serverUrl: serverUrl$3, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, processRecognitionResult, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, uploadImage, savePlan, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$3, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, processRecognitionResult, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -21076,12 +21115,20 @@ ${i3}
                       }),
                       vue.createVNode(_component_uni_forms_item, { label: "封面" }, {
                         default: vue.withCtx(() => [
-                          vue.createVNode(_component_uni_easyinput, {
-                            modelValue: $setup.planForm.imageUrl,
-                            "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.planForm.imageUrl = $event),
-                            type: "string",
-                            placeholder: "请输入封面url"
-                          }, null, 8, ["modelValue"])
+                          vue.createElementVNode("button", {
+                            onClick: $setup.chooseCoverImage,
+                            type: "primary"
+                          }, "选择封面图片"),
+                          $setup.planForm.imageUrl ? (vue.openBlock(), vue.createElementBlock("view", {
+                            key: 0,
+                            class: "cover-preview"
+                          }, [
+                            vue.createElementVNode("image", {
+                              src: $setup.planForm.imageUrl,
+                              mode: "aspectFill",
+                              style: { "width": "100px", "height": "100px" }
+                            }, null, 8, ["src"])
+                          ])) : vue.createCommentVNode("v-if", true)
                         ]),
                         _: 1
                         /* STABLE */
@@ -21090,7 +21137,7 @@ ${i3}
                         default: vue.withCtx(() => [
                           vue.createVNode(_component_uni_easyinput, {
                             modelValue: $setup.planForm.videoUrl,
-                            "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.planForm.videoUrl = $event),
+                            "onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => $setup.planForm.videoUrl = $event),
                             type: "string",
                             placeholder: "请输入演示视频url"
                           }, null, 8, ["modelValue"])
@@ -21213,7 +21260,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.title,
-                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => $setup.planForm.title = $event),
+                      "onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => $setup.planForm.title = $event),
                       placeholder: "请输入名称"
                     }, null, 8, ["modelValue"])
                   ]),
@@ -21224,7 +21271,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.times,
-                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => $setup.planForm.times = $event),
+                      "onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => $setup.planForm.times = $event),
                       type: "string",
                       placeholder: "请输入运动次数"
                     }, null, 8, ["modelValue"])
@@ -21236,7 +21283,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.duration,
-                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.planForm.duration = $event),
+                      "onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => $setup.planForm.duration = $event),
                       placeholder: "请输入时间"
                     }, null, 8, ["modelValue"])
                   ]),
@@ -21247,7 +21294,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.calorie,
-                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => $setup.planForm.calorie = $event),
+                      "onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => $setup.planForm.calorie = $event),
                       type: "number",
                       placeholder: "请输入卡路里"
                     }, null, 8, ["modelValue"])
@@ -21259,7 +21306,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_data_select, {
                       modelValue: $setup.planForm.type,
-                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => $setup.planForm.type = $event),
+                      "onUpdate:modelValue": _cache[27] || (_cache[27] = ($event) => $setup.planForm.type = $event),
                       localdata: $setup.types,
                       placeholder: "请选择运动类型"
                     }, null, 8, ["modelValue", "localdata"])
@@ -21272,7 +21319,7 @@ ${i3}
                     vue.createVNode(_component_uni_data_checkbox, {
                       placeholder: "请选择运动目标",
                       modelValue: $setup.planForm.goal,
-                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.planForm.goal = $event),
+                      "onUpdate:modelValue": _cache[28] || (_cache[28] = ($event) => $setup.planForm.goal = $event),
                       localdata: $setup.goals,
                       multiple: "",
                       map: { text: "text", value: "value" }
@@ -21285,7 +21332,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_data_select, {
                       modelValue: $setup.planForm.difficulties,
-                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => $setup.planForm.difficulties = $event),
+                      "onUpdate:modelValue": _cache[29] || (_cache[29] = ($event) => $setup.planForm.difficulties = $event),
                       localdata: $setup.difficulties,
                       placeholder: "请选择难度"
                     }, null, 8, ["modelValue", "localdata"])
@@ -21295,12 +21342,20 @@ ${i3}
                 }),
                 vue.createVNode(_component_uni_forms_item, { label: "封面" }, {
                   default: vue.withCtx(() => [
-                    vue.createVNode(_component_uni_easyinput, {
-                      modelValue: $setup.planForm.imageUrl,
-                      "onUpdate:modelValue": _cache[31] || (_cache[31] = ($event) => $setup.planForm.imageUrl = $event),
-                      type: "string",
-                      placeholder: "请输入封面url"
-                    }, null, 8, ["modelValue"])
+                    vue.createElementVNode("button", {
+                      onClick: $setup.chooseCoverImage,
+                      type: "primary"
+                    }, "选择封面图片"),
+                    $setup.planForm.imageUrl ? (vue.openBlock(), vue.createElementBlock("view", {
+                      key: 0,
+                      class: "cover-preview"
+                    }, [
+                      vue.createElementVNode("image", {
+                        src: $setup.planForm.imageUrl,
+                        mode: "aspectFill",
+                        style: { "box-shadow": "0 4px 8px rgba(94, 87, 87, 0.603)", "margin-top": "10px", "margin-left": "33px", "width": "150px", "height": "80px" }
+                      }, null, 8, ["src"])
+                    ])) : vue.createCommentVNode("v-if", true)
                   ]),
                   _: 1
                   /* STABLE */
@@ -21309,7 +21364,7 @@ ${i3}
                   default: vue.withCtx(() => [
                     vue.createVNode(_component_uni_easyinput, {
                       modelValue: $setup.planForm.videoUrl,
-                      "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.planForm.videoUrl = $event),
+                      "onUpdate:modelValue": _cache[30] || (_cache[30] = ($event) => $setup.planForm.videoUrl = $event),
                       type: "string",
                       placeholder: "请输入演示视频url"
                     }, null, 8, ["modelValue"])
@@ -21329,7 +21384,7 @@ ${i3}
               vue.createElementVNode("button", {
                 class: "btn-confirm",
                 type: "primary",
-                onClick: _cache[33] || (_cache[33] = ($event) => $setup.savePlan())
+                onClick: _cache[31] || (_cache[31] = ($event) => $setup.savePlan())
               }, " 确定 ")
             ])
           ])
@@ -21355,7 +21410,7 @@ ${i3}
                 "input",
                 {
                   type: "text",
-                  "onUpdate:modelValue": _cache[34] || (_cache[34] = ($event) => $setup.newFood.食物名称 = $event),
+                  "onUpdate:modelValue": _cache[32] || (_cache[32] = ($event) => $setup.newFood.食物名称 = $event),
                   placeholder: "请输入食物名称"
                 },
                 null,
@@ -21371,7 +21426,7 @@ ${i3}
                 "input",
                 {
                   type: "number",
-                  "onUpdate:modelValue": _cache[35] || (_cache[35] = ($event) => $setup.newFood.amount = $event),
+                  "onUpdate:modelValue": _cache[33] || (_cache[33] = ($event) => $setup.newFood.amount = $event),
                   placeholder: "请输入食用量"
                 },
                 null,
@@ -21387,7 +21442,7 @@ ${i3}
                 "input",
                 {
                   type: "number",
-                  "onUpdate:modelValue": _cache[36] || (_cache[36] = ($event) => $setup.newFood.baseCalories = $event),
+                  "onUpdate:modelValue": _cache[34] || (_cache[34] = ($event) => $setup.newFood.baseCalories = $event),
                   placeholder: "请输入每100g热量"
                 },
                 null,

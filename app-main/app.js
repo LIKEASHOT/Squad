@@ -397,31 +397,23 @@ app.post('/generateFitnessPlan', async (req, res) => {
 });
 
 
-// 配置 multer 存储
+// 设置 multer 存储配置
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = 'uploadimages';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
+    const uploadPath = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath); // 如果文件夹不存在则创建
     }
-    cb(null, uploadDir);
+    cb(null, uploadPath); // 保存路径
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-  }
+    const filename = Date.now() + path.extname(file.originalname); // 使用时间戳命名文件
+    cb(null, filename);
+  },
 });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('只允许上传图片文件'));
-    }
-  }
-});
+// 配置 multer
+const upload = multer({ storage: storage });
 
 // 修改食物热量识别路由
 app.post('/foodCalorie', upload.single('file'), async (req, res) => {
@@ -774,25 +766,19 @@ app.post('/api/calculateCalories', async (req, res) => {
 //   });
 // });
 
-// 处理文件上传接口
-// app.post('/upload', upload.single('file'), (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).send({ success: false, message: '未上传文件' });
-//   }
-
-//   const fileExtension = path.extname(req.file.originalname);
-//   const newFilename = `${Date.now()}${fileExtension}`; // 生成唯一的文件名
-//   const newFilePath = path.join(__dirname, 'uploads', newFilename);
-
-//   // 重命名文件
-//   const fs = require('fs');
-//   fs.renameSync(req.file.path, newFilePath);
-
-//   res.send({
-//     success: true,
-//     filename: newFilename // 返回文件名
-//   });
-// });
+// 图片上传接口
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (req.file) {
+    console.log("上传的文件:", req.file);  // 调试输出文件信息
+    const imageUrl = 'uploads/' + req.file.filename;
+    res.json({
+      success: true,
+      imageUrl: imageUrl,  // 返回上传的图片路径
+    });
+  } else {
+    res.status(400).json({ success: false, message: '上传失败' });
+  }
+});
 
 app.put('/goals', (req, res) => {
   let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
