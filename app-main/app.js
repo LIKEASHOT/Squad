@@ -11,7 +11,11 @@ const path = require('path');
 const fs = require('fs');
 const serverUrl = "http://10.133.80.141.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
-
+const config = {
+  // 获取本地IP地址
+  localIP: 'localhost',
+  port: 3000
+};
 require('dotenv').config();
 
 // 创建应用实例
@@ -613,6 +617,8 @@ app.post('/add-user-goals', (req, res) => {
 
 // 返回所有计划信息（SELECT 名称, 时间, 运动次数, 难度, 卡路里, video_url, image_url, 目标, 运动类型）
 app.get('/goals', (req, res) => {
+  console.log('请求所有计划信息');
+  console.log('ip地址',config.localIP);
   const sql = `
     SELECT 
       名称 AS title, 
@@ -620,7 +626,7 @@ app.get('/goals', (req, res) => {
       运动次数 AS times, 
       难度 AS difficulties, 
       卡路里 AS calorie, 
-      CONCAT('http://192.168.56.1:3000/', image_url) AS image_url, 
+      CONCAT('http://${config.localIP}:${config.port}/', image_url) AS image_url, 
       目标 AS goal, 
       运动类型 AS type 
     FROM goal
