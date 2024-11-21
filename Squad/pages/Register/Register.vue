@@ -100,7 +100,7 @@ const changepwd_vis_confirm = () => {
   password_confirm.value = !password_confirm.value;
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const form = ref({
   username: "",
   password: "",
