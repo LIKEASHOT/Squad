@@ -52,22 +52,110 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 
 const serverUrl = "http://192.168.56.1:3000";
 const messageText = ref('');
 const messages = ref([]);
 const scrollTop = ref(0);
+const websocket = ref(null);
+
+// 用户信息
 const userInfo = ref({
   username: uni.getStorageSync('username'),
   avatar: uni.getStorageSync('userInfo')?.avatar || '/static/avatar/default.png'
 });
+
+// 好友信息
 const friendInfo = ref({
   username: '',
   avatar: '/static/avatar/default.png'
 });
 
-// 获取路由参数
+// 初始化WebSocket连接
+const initWebSocket = () => {
+  websocket.value = uni.connectSocket({
+    url: `ws://:3000/chat`,
+    success: () => {
+      console.log('WebSocket连接成功');
+    }
+  });
+
+  websocket.value.onOpen(() => {
+    // 发送身份验证信息
+    websocket.value.send({
+      data: JSON.stringify({
+        type: 'auth',
+        username: userInfo.value.username
+      })
+    });
+  });
+
+  websocket.value.onMessage((res) => {
+    try {
+      const data = JSON.parse(res.data);
+      if (data.type === 'message' && data.sender === friendInfo.value.username) {
+        messages.value.push({
+          sender: data.sender,
+          content: data.content,
+          time: data.time
+        });
+        scrollToBottom();
+      }
+    } catch (error) {
+      console.error('解析消息失败:', error);
+    }
+  });
+
+  websocket.value.onClose(() => {
+    console.log('WebSocket连接关闭');
+  });
+
+  websocket.value.onError((error) => {
+    console.error('WebSocket错误:', error);
+  });
+};
+
+// 发送消息
+const sendMessage = async () => {
+  if (!messageText.value.trim()) return;
+
+  const newMessage = {
+    type: 'message',
+    sender: userInfo.value.username,
+    receiver: friendInfo.value.username,
+    content: messageText.value,
+    time: new Date().getTime()
+  };
+
+  try {
+    // 通过WebSocket发送消息
+    websocket.value.send({
+      data: JSON.stringify(newMessage),
+      success: () => {
+        // 本地添加消息
+        messages.value.push({
+          sender: userInfo.value.username,
+          content: messageText.value,
+          time: new Date().getTime()
+        });
+        messageText.value = '';
+        scrollToBottom();
+      },
+      fail: (error) => {
+        throw error;
+      }
+    });
+  } catch (error) {
+    console.error('发送消息失败:', error);
+    uni.showToast({
+      title: '发送失败',
+      icon: 'none'
+    });
+  }
+};
+
+// 获取路由参数并初始化
 const initPage = () => {
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1];
@@ -75,7 +163,15 @@ const initPage = () => {
   
   friendInfo.value.username = name;
   loadChatHistory(id);
+  initWebSocket(); // 初始化WebSocket连接
 };
+
+// 组件卸载时关闭WebSocket连接
+onUnmounted(() => {
+  if (websocket.value) {
+    websocket.value.close();
+  }
+});
 
 // 加载聊天历史
 const loadChatHistory = async (friendId) => {
@@ -101,44 +197,6 @@ const loadChatHistory = async (friendId) => {
     console.error('获取聊天历史失败:', error);
     uni.showToast({
       title: '获取聊天记录失败',
-      icon: 'none'
-    });
-  }
-};
-
-// 发送消息
-const sendMessage = async () => {
-  if (!messageText.value.trim()) return;
-
-  const newMessage = {
-    sender: userInfo.value.username,
-    content: messageText.value,
-    time: new Date().getTime()
-  };
-
-  try {
-    const [error, res] = await uni.request({
-      url: `${serverUrl}/chat/send`,
-      method: 'POST',
-      data: {
-        ...newMessage,
-        receiver: friendInfo.value.username
-      }
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    if (res.statusCode === 200) {
-      messages.value.push(newMessage);
-      messageText.value = '';
-      scrollToBottom();
-    }
-  } catch (error) {
-    console.error('发送消息失败:', error);
-    uni.showToast({
-      title: '发送失败',
       icon: 'none'
     });
   }

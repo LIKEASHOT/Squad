@@ -75,6 +75,13 @@
 	    "navigationBarTitleText": "聊天",
 	    "enablePullDownRefresh": false
 	  }
+	},
+	{
+	  "path": "pages/DietRecord/DietRecord",
+	  "style": {
+	    "navigationBarTitleText": "饮食记录",
+	    "enablePullDownRefresh": false
+	  }
 	}
   ],
   "globalStyle": {

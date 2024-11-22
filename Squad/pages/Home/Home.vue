@@ -147,7 +147,7 @@
       <view class="top_bar_sport">
         <view class="sportbar">
           <l-circle
-            v-model:current="modelVale"
+            v-model="modelVale"
             :percent="target"
             :size="50"
             class="circle_process"
@@ -177,7 +177,7 @@
           >
             <text>{{ day.date }}</text>
             <l-circle
-              v-model:current="modelVale"
+              v-model="modelVale"
               :percent="day.progress"
               :size="30"
               class="circle_process"
@@ -217,6 +217,14 @@
                 :class="{ swcbt: true, active: showMyeat }"
               >
                 <text>我的饮食</text>
+              </button>
+            </view>
+            <view class="eat_date">
+              <button
+                @click="toDietRecord"
+                :class="{ swcbt: true, active: showDietrecord }"
+              >
+                <text>饮食记录</text>
               </button>
             </view>
           </view>
@@ -259,7 +267,7 @@
           <view v-if="showMyeat === true" class="eat_page">
             <view class="circle_process_eat">
               <l-circle
-                v-model:current="modelVale"
+                v-model="modelVale"
                 :percent="target_eat_percent"
                 :size="120"
                 trailWidth="20"
@@ -356,7 +364,7 @@
                   </button>
                   <view class="total-info">
                     <text>总热量: {{ totalCalories }}kcal</text>
-					
+
                     <button class="submit-btn" @click="submitFoodList">
                       提交
                     </button>
@@ -524,12 +532,18 @@
                     />
                   </uni-forms-item>
 
-                   <uni-forms-item label="封面">
-                      <button @click="chooseCoverImage" type="primary">选择封面图片</button>
-                      <view v-if="planForm.imageUrl" class="cover-preview">
-                        <image :src="planForm.imageUrl" mode="aspectFill" style="width: 100px; height: 100px;" />
-                      </view>
-                    </uni-forms-item>
+                  <uni-forms-item label="封面">
+                    <button @click="chooseCoverImage" type="primary">
+                      选择封面图片
+                    </button>
+                    <view v-if="planForm.imageUrl" class="cover-preview">
+                      <image
+                        :src="planForm.imageUrl"
+                        mode="aspectFill"
+                        style="width: 100px; height: 100px"
+                      />
+                    </view>
+                  </uni-forms-item>
 
                   <uni-forms-item label="视频链接">
                     <uni-easyinput
@@ -641,12 +655,24 @@
               />
             </uni-forms-item>
             <uni-forms-item label="封面">
-               <button @click="chooseCoverImage" type="primary">选择封面图片</button>
-               <view v-if="planForm.imageUrl" class="cover-preview">
-                 <image :src="planForm.imageUrl" mode="aspectFill" style=" box-shadow: 0 4px 8px rgba(94, 87, 87, 0.603); margin-top: 10px; margin-left: 33px; width: 150px; height: 80px;" />
-               </view>
-             </uni-forms-item>
-			 
+              <button @click="chooseCoverImage" type="primary">
+                选择封面图片
+              </button>
+              <view v-if="planForm.imageUrl" class="cover-preview">
+                <image
+                  :src="planForm.imageUrl"
+                  mode="aspectFill"
+                  style="
+                    box-shadow: 0 4px 8px rgba(94, 87, 87, 0.603);
+                    margin-top: 10px;
+                    margin-left: 33px;
+                    width: 150px;
+                    height: 80px;
+                  "
+                />
+              </view>
+            </uni-forms-item>
+
             <uni-forms-item label="视频链接">
               <uni-easyinput
                 v-model="planForm.videoUrl"
@@ -728,11 +754,11 @@ const target_eat_percent = ref(50);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
 const selectedGoal = ref("全部"); // 选中的目标筛选项
-const selectedType = ref("全部"); // 选中的类型筛选项 
+const selectedType = ref("全部"); // 选中的类型筛选项
 const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const showMyplan = ref(true);
-const showMyeat = ref(false);
+const showMyeat = ref(false); 
 // const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
 const today_left_eat = ref(0);
 const totalConsumedCalories = ref(0);
@@ -803,43 +829,6 @@ const totalCalories = computed(() => {
   return total;
 });
 
-// 处理识别结果
-const processRecognitionResult = (resultData) => {
-  try {
-    let foodItems;
-    if (Array.isArray(resultData)) {
-      foodItems = resultData;
-    } else if (typeof resultData === "object") {
-      foodItems = [resultData];
-    } else {
-      throw new Error("Invalid data format");
-    }
-
-    // 将新识别的食物添加到现有列表中，而不是覆盖
-    const newFoodItems = foodItems.map((item) => ({
-      食物名称: item.食物名称,
-      baseCalories: parseFloat(item.热量.match(/\d+/)[0]), // 提取数字
-      amount: "", // 默认100g
-      // currentCalories: parseFloat(item.热量.match(/\d+/)[0]), // 初始热量等于基础热量
-	  currentCalories: 0
-    }));
-
-    // 将新食物追加到现有列表
-    foodList.value = [...foodList.value, ...newFoodItems];
-
-    // 显示添加成功提示
-    uni.showToast({
-      title: `成功添加${newFoodItems.length}个食物`,
-      icon: "success",
-    });
-  } catch (err) {
-    console.error("处理识别结果错误:", err);
-    uni.showToast({
-      title: "数据格式错误",
-      icon: "none",
-    });
-  }
-};
 
 // 计算单个食物的热量
 const calculateFoodCalories = (food) => {
@@ -856,14 +845,14 @@ const calculateManualFoodCalories = (food) => {
 };
 
 // 添加手动食物
-const addManualFood = () => {
+const addManualFood = async() => {
   manualFoodList.value.push({
     食物名称: "",
     baseCalories: 0,
     amount: 100,
     currentCalories: 0,
   });
-}; 
+};
 
 // 删除食物
 const removeFood = (index, type) => {
@@ -875,50 +864,68 @@ const removeFood = (index, type) => {
 };
 
 // 提交食物列表
-const submitFoodList = () => {
-	let username = uni.getStorageSync("username"); // 获取当前登录用户
+const submitFoodList = async() => {
+  let username = uni.getStorageSync("username"); // 获取当前登录用户
   if (foodList.value.length === 0) {
     uni.showToast({
       title: "请先添加食物",
       icon: "none",
     });
-    return; 
+    return;
   }
 
-  // 直接使用 computed 的 totalCalories
+  // 保存食物记录到本地存储
+  const today = new Date().toISOString().split("T")[0];
+  const storageKey = `dailyFoods_${username}_${today}`;
+
+  // 获取已有的当日记录
+  let dailyFoods = uni.getStorageSync(storageKey) || [];
+  if (!Array.isArray(dailyFoods)) {
+    dailyFoods = [];
+  }
+
+  // 准备新的食物记录
+  const newFoods = [...foodList.value, ...manualFoodList.value].map((food) => ({
+    食物名称: food.食物名称,
+    amount: food.amount,
+    baseCalories: food.baseCalories, 
+    currentCalories: food.currentCalories,
+    imageUrl: food.imageUrl || "",
+    time: new Date().toLocaleTimeString(),
+  }));
+
+  // 添加新记录
+  dailyFoods = [...dailyFoods, ...newFoods];
+  uni.setStorageSync(storageKey, dailyFoods);
+
+  // 原有的卡路里计算逻辑
   const totalConsumedCalories = totalCalories.value;
-   console.log(`提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
- // 获取用户的每日总热量和剩余热量
-   const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
-   let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
-   console.log(`1: ${remainingCalories} 千卡`);
-  //  // 如果缓存中没有剩余热量，则使用每日热量作为初始值
-  //    if (remainingCalories === undefined || remainingCalories === null) {
-  //      // 使用每日热量作为初始值，如果没有每日热量则使用默认值2000
-  //      remainingCalories = dailyCalories || 2000;
-  //      // 将计算出的剩余热量保存到本地存储中
-  //      uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
-  //    }
-	 // console.log(`2: ${remainingCalories} 千卡`);
-// 确保 remainingCalories 是有效数字
-  remainingCalories = isNaN(remainingCalories) ? (dailyCalories || 2000) : remainingCalories;
+  console.log(`提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
+
+  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
+  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+  console.log(`1: ${remainingCalories} 千卡`);
+
+  remainingCalories = isNaN(remainingCalories)
+    ? dailyCalories || 2000
+    : remainingCalories;
   console.log(`3: ${remainingCalories} 千卡`);
   // 计算并更新剩余热量
-    remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
-	// remainingCalories = remainingCalories - totalConsumedCalories;
-	console.log(`4: ${remainingCalories} 千卡`);
-    today_left_eat.value = remainingCalories;
+  remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
+  // remainingCalories = remainingCalories - totalConsumedCalories;
+  console.log(`4: ${remainingCalories} 千卡`);
+  today_left_eat.value = remainingCalories;
   // 计算剩余热量占每日总热量的百分比
   target_eat_percent.value = dailyCalories
     ? Math.round((remainingCalories / dailyCalories) * 100)
     : 0;
-	  
-	// 保存更新后的剩余热量到本地
+
+  // 保存更新后的剩余热量到本地
   uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
 
   // 清空食物列表
   foodList.value = [];
-  manualFoodList.value=[];
+  manualFoodList.value = [];
   // 显示成功提示
   uni.showToast({
     title: "已更新每日摄入",
@@ -928,9 +935,46 @@ const submitFoodList = () => {
   // 调试信息
   console.log(`总消耗: ${totalConsumedCalories} 千卡`);
   console.log(`剩余可摄入热量: ${remainingCalories} 千卡`);
+
+  // 可以选择是否自动跳转到饮食记录页面
+  // uni.navigateTo({
+  //   url: '/pages/DietRecord/DietRecord'
+  // });
+  try {
+      // 向后端发送数据
+      const res = await uni.request({
+        url: serverUrl + "/submitDailyFoods",
+        method: "POST",
+        data: {
+          username: username,
+          date: today,
+          foods: newFoods,
+        },
+      });
+  
+      if (res.statusCode === 200 && res.data.success) {
+        uni.showToast({
+          title: "上传成功",
+          icon: "success",
+        });
+         
+        // 清空食物列表
+        foodList.value = [];
+        manualFoodList.value = []; 
+      } else {
+        throw new Error(res.data.message || "上传失败，请稍后重试");
+      }
+    } catch (error) {
+      console.error("上传失败:", error);
+      uni.showToast({
+        title: "上传失败，请稍后重试",
+        icon: "none",
+      });
+    }
 };
 const takePicture = async () => {
-  try {
+  try {  
+    // 选择图片
     const res = await uni.chooseImage();
     if (res.errMsg === "chooseImage:fail User cancelled") {
       errorMessage.value = "用户取消了选择图片操作，请重新选择。";
@@ -939,84 +983,138 @@ const takePicture = async () => {
 
     const filePath = res.tempFilePaths[0];
 
-    // 开始识别，显示加载状态
+    // 显示加载状态
     isRecognizing.value = true;
     uni.showLoading({
       title: "正在识别中...",
       mask: true,
     });
 
-    uni.uploadFile({
-      url: serverUrl + "/foodCalorie",
-      filePath: filePath,
-      name: "file",
-      success: (uploadRes) => {
-        try {
-          const response = JSON.parse(uploadRes.data);
-          if (uploadRes.statusCode === 200) {
-            let resultData = response.result;
-            resultData = resultData
-              .replace(/^```json\s*/, "")
-              .replace(/\s*```$/, "");
-            const foodItems = JSON.parse(resultData);
-            processRecognitionResult(foodItems);
-            errorMessage.value = "";
-
-            // 识别成功提示
-            uni.showToast({
-              title: "识别成功",
-              icon: "success",
-              duration: 2000,
-            });
-          } else {
-            console.error("识别失败");
-            errorMessage.value = "识别失败，请稍后重试。";
-
-            // 识别失败提示
-            uni.showToast({
-              title: "识别失败",
-              icon: "error",
-              duration: 2000,
-            });
+    // 1. 识别图片热量信息
+    const recognizePromise = new Promise((resolve, reject) => {
+      uni.uploadFile({
+        url: serverUrl + "/foodCalorie",
+        filePath: filePath,
+        name: "file",
+        success: (uploadRes) => {
+          try {
+            const response = JSON.parse(uploadRes.data);
+            if (uploadRes.statusCode === 200) {
+              let resultData = response.result;
+              resultData = resultData
+                .replace(/^```json\s*/, "")
+                .replace(/\s*```$/, "");
+              const foodItems = JSON.parse(resultData);
+              resolve(foodItems); // 返回识别结果
+            } else {
+              reject("识别失败，请稍后重试。");
+            }
+          } catch (err) {
+            reject("响应数据格式错误，请稍后重试。");
           }
-        } catch (err) {
-          console.error("解析 JSON 错误:", err);
-          errorMessage.value = "响应数据格式错误，请稍后重试。";
-
-          // 数据解析错误提示
-          uni.showToast({
-            title: "数据格式错误",
-            icon: "error",
-            duration: 2000,
-          });
-        }
-      },
-      fail: (err) => {
-        console.error("上传失败", err);
-        errorMessage.value = "上传失败，请检查网络连接。";
-
-        // 上传失败提示
-        uni.showToast({
-          title: "上传失败",
-          icon: "error",
-          duration: 2000,
-        });
-      },
-      complete: () => {
-        // 无论成功失败，都关闭加载提示
-        isRecognizing.value = false;
-        uni.hideLoading();
-      },
+        },
+        fail: () => {
+          reject("上传失败，请检查网络连接。");
+        },
+      });
     });
-  } catch (error) {
-    console.error("请求失败", error);
-    errorMessage.value = "请求失败，请检查网络连接。";
 
+    // 2. 上传图片到后端
+    const uploadPromise = new Promise((resolve, reject) => {
+      uni.uploadFile({
+        url: serverUrl + "/upload",
+        filePath: filePath,
+        name: "file",
+        success: (uploadRes) => {
+          try {
+            const response = JSON.parse(uploadRes.data);
+            if (response.success) {
+              resolve(response.imageUrl); // 返回图片路径
+            } else {
+              reject("图片上传失败，请稍后重试。");
+            }
+          } catch (err) {
+            reject("上传响应数据格式错误。");
+          }
+        },
+        fail: () => {
+          reject("图片上传失败，请检查网络连接。");
+        },
+      });
+    });
+
+    // 等待识别和上传完成
+    const [foodItems, imageUrl] = await Promise.all([
+      recognizePromise,
+      uploadPromise,
+    ]);
+
+    // 处理识别结果并更新饮食记录
+    processRecognitionResult(foodItems, imageUrl);
+
+    // 识别成功提示
+    uni.showToast({
+      title: "识别成功",
+      icon: "success",
+      duration: 2000,
+    });
+
+    errorMessage.value = "";
+  } catch (error) {
+    console.error(error);
+    errorMessage.value = error;
+
+    // // 错误提示
+    // uni.showToast({
+    //   title: error,
+    //   icon: "error",
+    //   duration: 2000,
+    // });
+  } finally {
     // 关闭加载状态
     isRecognizing.value = false;
     uni.hideLoading();
   }
 };
+
+const processRecognitionResult = (resultData, imageUrl = null) => {
+  try {
+    let foodItems;
+    if (Array.isArray(resultData)) {
+      foodItems = resultData;
+    } else if (typeof resultData === "object") {
+      foodItems = [resultData];
+    } else {
+      throw new Error("Invalid data format");
+    }
+
+    // 将新识别的食物添加到现有列表中，而不是覆盖
+    const newFoodItems = foodItems.map((item) => ({
+      食物名称: item.食物名称,
+      baseCalories: parseFloat(item.热量.match(/\d+/)[0]), // 提取数字
+      amount: "", // 默认100g
+      currentCalories: 0, // 初始化为0，稍后由用户设置
+      imageUrl: imageUrl || null, // 设置上传的图片路径，默认为空
+    }));
+
+    // 将新食物追加到现有列表
+    foodList.value = [...foodList.value, ...newFoodItems];
+
+    // 显示添加成功提示
+    uni.showToast({ 
+      title: `成功添加${newFoodItems.length}个食物`,
+      icon: "success",
+    });
+  } catch (err) {
+    console.error("处理识别结果错误:", err);
+    uni.showToast({
+      title: "数据格式错误",
+      icon: "none",
+    });
+  }
+};
+
+
 // 从后端获取计划数据
 const fetchPlansFromBackend = () => {
   uni.request({
@@ -1053,29 +1151,28 @@ async function fetchDailyCalories(username) {
   username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   try {
     // 检查是否需要重新获取每日热量（通过日期判断）
-	  const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username}`);
-	  const today = new Date().toLocaleDateString();
-	   if (lastFetchDate === today) {
-			console.log("今日已获取过热量数据");
-			// 如果当天已经获取过数据，则直接从本地获取并显示
-			// const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
-			// if (cachedCalories) {
-			//   today_left_eat.value = cachedCalories;
-			//   target_eat_percent.value = 100; // 假设每日目标2000千卡
-			// }
-			
-			today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
-			console.log(`剩余热量: ${today_left_eat.value} 千卡`);
-			const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
-			let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
-			target_eat_percent.value = dailyCalories
-			  ? Math.round((remainingCalories / dailyCalories) * 100)
-			  : 0;
-			
-			return;
-		  }
-	  
-	  
+    const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username}`);
+    const today = new Date().toLocaleDateString();
+    if (lastFetchDate === today) {
+      console.log("今日已获取过热量数据");
+      // 如果当天已经获取过数据，则直接从本地获取并显示
+      // const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
+      // if (cachedCalories) {
+      //   today_left_eat.value = cachedCalories;
+      //   target_eat_percent.value = 100; // 假设每日目标2000千卡
+      // }
+
+      today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
+      console.log(`剩余热量: ${today_left_eat.value} 千卡`);
+      const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
+      let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+      target_eat_percent.value = dailyCalories
+        ? Math.round((remainingCalories / dailyCalories) * 100)
+        : 0;
+
+      return;
+    }
+
     // 发送请求到后端获取每日热量数据
     const response = await uni.request({
       url: serverUrl + "/api/calculateCalories",
@@ -1097,22 +1194,24 @@ async function fetchDailyCalories(username) {
       if (dailyCalories) {
         today_left_eat.value = dailyCalories; // 设置可摄入的热量
         target_eat_percent.value = 100; // 设置进度条的百分比
-		  // 将热量保存到本地
+        // 将热量保存到本地
         uni.setStorageSync(`dailyCalories_${username}`, dailyCalories);
         uni.setStorageSync(`lastFetchDate_${username}`, today); // 记录获取日期
-		uni.setStorageSync(`today_left_eat_${username}`, today_left_eat.value);
-		let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
-		console.log(`更新剩余热量: ${remainingCalories} 千卡`);
+        uni.setStorageSync(`today_left_eat_${username}`, today_left_eat.value);
+        let remainingCalories = uni.getStorageSync(
+          `today_left_eat_${username}`
+        );
+        console.log(`更新剩余热量: ${remainingCalories} 千卡`);
         uni.showToast({
           title: "获取热量成功",
-          icon: "success", 
+          icon: "success",
         });
       } else if (error) {
         uni.showToast({
           title: error || "获取热量失败",
           icon: "none",
         });
-      } 
+      }
     } else {
       uni.showToast({
         title: "获取热量失败，请稍后重试",
@@ -1282,22 +1381,22 @@ onMounted(() => {
   // 监听来自 Search 页面更新计划的通知
   uni.$on("plansUpdated", loadMyPlans);
   // 每分钟检查一次是否到了0点
-    const checkMidnight = setInterval(() => {
-      const now = new Date();
-      if (now.getHours() === 0 && now.getMinutes() === 0) {
-        console.log("已到0点，重新获取每日热量");
-        fetchDailyCalories(username.value);
-		resetRemainingCalories();
-      }
-    }, 60000); // 每分钟检查一次
-	username = uni.getStorageSync("username");
-	 // 页面加载时初始化数据
-	   initializeRemainingCalories();
+  const checkMidnight = setInterval(() => {
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+      console.log("已到0点，重新获取每日热量");
+      fetchDailyCalories(username.value);
+      resetRemainingCalories();
+    } 
+  }, 60000); // 每分钟检查一次
+  username = uni.getStorageSync("username");
+  // 页面加载时初始化数据
+  initializeRemainingCalories();
 });
 // 初始化剩余热量
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
-  today_left_eat.value =  uni.getStorageSync(`today_left_eat_${username}`);
+  today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
 };
 
 // 重置剩余热量为每日热量
@@ -1366,15 +1465,15 @@ const closePopup = () => {
   tab.value = "plan-board";
 };
 const handleAddPlan_board = () => {
-  // 添加计划逻辑 
+  // 添加计划逻辑
   planForm.value = {
     title: "",
     times: "",
     duration: "",
-    difficulties: "", 
+    difficulties: "",
     calorie: "",
     type: "",
-    goal: "", 
+    goal: "",
     imageUrl: "",
     videoUrl: "",
   };
@@ -1412,7 +1511,7 @@ const savePlan = () => {
           // 更新前端的 plans 数组
           plans.value.splice(currentEditIndex.value, 1, { ...planData });
           uni.showToast({ title: "修改成功", icon: "success" });
-		   closePopup();
+          closePopup();
         } else {
           uni.showToast({
             title: res.data.message || "修改失败",
@@ -1429,16 +1528,16 @@ const savePlan = () => {
     // 添加新的计划
     uni.request({
       url: `${serverUrl}/goals/add`, // 假设后端POST API地址
-      method: "POST", 
-      data: planData, 
+      method: "POST",
+      data: planData,
       success: (res) => {
         if (res.data.message === "添加成功") {
           plans.value.push(planData);
           uni.showToast({ title: "添加成功", icon: "success" });
-		   closePopup();
+          closePopup();
         } else {
           uni.showToast({
-            title: res.data.message || "添加失败", 
+            title: res.data.message || "添加失败",
             icon: "none",
           });
         }
@@ -1449,7 +1548,6 @@ const savePlan = () => {
       },
     });
   }
- 
 };
 // 选择封面图片
 const chooseCoverImage = async () => {
@@ -1457,7 +1555,7 @@ const chooseCoverImage = async () => {
     console.log("选择图片按钮被点击");
     const res = await uni.chooseImage({
       count: 1, // 选择一张图片
-      sourceType: ['album', 'camera'], // 可以选择相册或拍照
+      sourceType: ["album", "camera"], // 可以选择相册或拍照
     });
 
     if (res.errMsg === "chooseImage:ok") {
@@ -1481,7 +1579,7 @@ const chooseCoverImage = async () => {
 // 上传图片函数
 const uploadImage = (filePath) => {
   return new Promise((resolve, reject) => {
-    console.log("开始上传图片，路径:", filePath);  // 调试输出文件路径
+    console.log("开始上传图片，路径:", filePath); // 调试输出文件路径
 
     uni.uploadFile({
       url: serverUrl + "/upload", // 假设上传接口的URL
@@ -1494,36 +1592,36 @@ const uploadImage = (filePath) => {
           if (uploadRes.statusCode === 200 && response.success) {
             const imageUrl = response.imageUrl;
             console.log("上传成功，返回的图片URL:", imageUrl);
-            
+
             // 更新表单中的 imageUrl
             planForm.value.imageUrl = imageUrl;
             uni.showToast({
               title: "上传成功",
               icon: "success",
-              duration: 2000
+              duration: 2000, 
             });
           } else {
-            console.error("上传失败，返回错误:", response);
+            console.error("上传失败，返回错误:", response); 
             uni.showToast({
               title: "上传失败，请重试",
-              icon: "none"
+              icon: "none",
             });
           }
         } catch (err) {
           console.error("解析响应数据失败:", err);
           uni.showToast({
             title: "响应数据解析失败",
-            icon: "none"
-          });
+            icon: "none",
+          }); 
         }
       },
       fail: (err) => {
         console.error("上传失败", err);
         uni.showToast({
           title: "上传失败，请检查网络连接",
-          icon: "none"
+          icon: "none",
         });
-      }
+      },
     });
   });
 };
@@ -1568,6 +1666,12 @@ const To_myplan = () => {
 const To_myeat = () => {
   showMyplan.value = false;
   showMyeat.value = true;
+};
+// 添加跳转方法
+const toDietRecord = () => {
+  uni.navigateTo({
+    url: "/pages/DietRecord/DietRecord",
+  });
 };
 /**
  * 获取任意时间
@@ -1621,7 +1725,7 @@ const addCheckIn = () => {
   refreshCalendar();
 };
 
-// 添加签到记录
+// 添加签到记录 
 const addSignIn = () => {
   const newDate = currentday.value;
   info.value.selected.push({
@@ -1731,6 +1835,8 @@ const confirmAddFood = () => {
 
 // 添加加载状态变量
 const isRecognizing = ref(false);
+
+
 </script>
 
 <style scoped lang="scss">

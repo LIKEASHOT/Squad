@@ -11,7 +11,11 @@ const path = require('path');
 const fs = require('fs');
 const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
-
+const config = {
+  // 获取本地IP地址
+  localIP: 'localhost',
+  port: 3000
+};
 require('dotenv').config();
 
 // 创建应用实例
@@ -613,6 +617,8 @@ app.post('/add-user-goals', (req, res) => {
 
 // 返回所有计划信息（SELECT 名称, 时间, 运动次数, 难度, 卡路里, video_url, image_url, 目标, 运动类型）
 app.get('/goals', (req, res) => {
+  console.log('请求所有计划信息');
+  console.log('ip地址',config.localIP);
   const sql = `
     SELECT 
       名称 AS title, 
@@ -739,32 +745,6 @@ app.post('/api/calculateCalories', async (req, res) => {
     }
   });
 });
-// API: 添加健身封面（需要 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, 图片文件）
-// app.post('/addGoal', upload.single('image'), (req, res) => {
-//   // 获取前端发送的数据
-//   const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
-
-//   // 确保图片文件存在
-//   if (!req.file) {
-//     return res.status(400).json({ error: "请上传一张图片" });
-//   }
-
-//   // 获取上传的文件路径和文件名
-//   const imagePath = path.join(__dirname, 'uploads', req.file.filename);
-//   const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`; // 假设你的服务器在这个 URL 下提供文件
-
-//   // 将数据插入数据库
-//   const insertQuery = `
-//     INSERT INTO goal (名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, image_url, video_url) 
-//     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-//   connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
-//     if (err) {
-//       return res.status(500).json({ error: "Database error" });
-//     } 
-//     res.status(200).json({ message: "Goal added successfully", imageUrl });
-//   });
-// });
 
 // 图片上传接口
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -778,6 +758,154 @@ app.post('/upload', upload.single('file'), (req, res) => {
   } else {
     res.status(400).json({ success: false, message: '上传失败' });
   }
+});
+// 提交每日饮食记录
+app.post("/submitDailyFoods", async (req, res) => {
+  const { username, date, foods } = req.body;
+
+  if (!username || !date || !Array.isArray(foods)) {
+    return res.status(400).json({ success: false, message: "缺少参数" });
+  }
+
+  connection.beginTransaction((err) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "数据库事务开始失败" });
+    }
+
+    try {
+      // 查询用户ID
+      connection.query("SELECT id FROM users WHERE name = ?", [username], (err, userRows) => {
+        if (err) {
+          return connection.rollback(() => {
+            res.status(500).json({ success: false, message: "数据库查询失败" });
+          });
+        }
+
+        if (userRows.length === 0) {
+          return connection.rollback(() => {
+            res.status(404).json({ success: false, message: "用户不存在" });
+          });
+        }
+        const userId = userRows[0].id;
+
+        // 插入食物记录
+        const insertPromises = foods.map((food) =>
+          new Promise((resolve, reject) => {
+            connection.query(
+              `INSERT INTO food_records 
+                (user_id, record_date, food_name, base_calories, amount, current_calories, image_url, time)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                userId,
+                date,
+                food.食物名称,
+                food.baseCalories,
+                food.amount,
+                food.currentCalories,
+                food.imageUrl,
+                new Date().toLocaleTimeString('en-GB', { hour12: false })  // 格式化时间
+              ],
+              (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+              }
+            );
+          })
+        );
+        
+        // 等待所有插入操作完成
+        Promise.all(insertPromises)
+          .then(() => {
+            connection.commit((err) => {
+              if (err) {
+                return connection.rollback(() => {
+                  res.status(500).json({ success: false, message: "事务提交失败" });
+                });
+              }
+
+              res.json({ success: true, message: "记录上传成功" });
+            });
+          })
+          .catch((error) => {
+            connection.rollback(() => {
+              console.error("插入失败:", error);
+              res.status(500).json({ success: false, message: "插入食物记录失败" });
+            });
+          });
+      });
+    } catch (error) {
+      console.error("数据库操作失败:", error);
+      connection.rollback(() => {
+        res.status(500).json({ success: false, message: "服务器错误" });
+      });
+    }
+  });
+});
+
+// 获取用户某日饮食记录
+app.post('/getDailyFoods', async (req, res) => {
+  const { username, date } = req.body;
+
+  if (!username || !date) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
+
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+      const userId = userRows[0].id;
+
+      // 查询饮食记录
+      connection.query(
+        `SELECT food_name AS 食物名称, base_calories AS 基础热量, amount AS 食用量, 
+                current_calories AS 当前热量, image_url AS 图片路径, time AS 时间
+         FROM food_records 
+         WHERE user_id = ? AND record_date = ?`,
+        [userId, date],
+        (err, foodRows) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '数据库查询失败' });
+          }
+
+          res.json({ success: true, foods: foodRows });
+        }
+      );
+    });
+  } catch (error) {
+    console.error('数据库查询失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 删除食物记录的接口
+app.post('/deleteFood', (req, res) => {
+  const { username, foodName } = req.body;
+
+  if (!username || !foodName) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  // 删除数据库中的食物记录
+  const query = 'DELETE FROM food_records WHERE food_name = ? AND user_id = (SELECT user_id FROM users WHERE name = ?)';
+  connection.query(query, [foodName, username], (err, result) => {
+    if (err) {
+      console.error('数据库删除错误:', err);
+      return res.status(500).json({ success: false, message: '数据库删除错误' });
+    }
+
+    if (result.affectedRows > 0) {
+      return res.status(200).json({ success: true, message: '删除成功' });
+    } else {
+      return res.status(404).json({ success: false, message: '未找到匹配的记录' });
+    }
+  });
 });
 
 app.put('/goals', (req, res) => {
