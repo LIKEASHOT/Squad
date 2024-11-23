@@ -9,7 +9,7 @@ VALUES (1, 0, 'admin', '123');
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     permission int NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    username VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     lastLogin DATETIME,
     gender VARCHAR(10),
@@ -22,8 +22,60 @@ CREATE TABLE users (
     goalid VARCHAR(255), 
     calories_goal int,
     sport_time int,
-    head_url varchar(255)
+    avatar VARCHAR(255),                 -- 头像 URL，最大长度 255
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 注册时间，默认当前时间
 );
+
+
+CREATE TABLE messages (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,      -- 消息唯一标识，主键，自增
+    sender_id INT NOT NULL,                    -- 消息发送者 ID，关联 users.id
+    receiver_id INT NOT NULL,                  -- 消息接收者 ID，关联 users.id
+    content TEXT NOT NULL,                     -- 消息内容
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 消息发送时间，默认当前时间
+    is_read BOOLEAN DEFAULT FALSE,             -- 是否已读，默认为 false
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,   -- 外键约束，指向 users 表的 id
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE  -- 外键约束，指向 users 表的 id
+);
+
+-- 创建索引
+CREATE INDEX idx_sender_receiver ON messages(sender_id, receiver_id);
+CREATE INDEX idx_timestamp ON messages(timestamp);
+
+
+
+CREATE TABLE friendships (
+    id INT AUTO_INCREMENT PRIMARY KEY,                     -- 关系唯一标识，主键，自增
+    user_id INT NOT NULL,                                  -- 用户 ID，关联 users.id
+    friend_id INT NOT NULL,                                -- 好友 ID，关联 users.id
+    status ENUM('pending', 'accepted', 'blocked') NOT NULL, -- 关系状态，枚举类型
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,        -- 好友关系创建时间，默认当前时间
+    UNIQUE KEY uniq_user_friend (user_id, friend_id),      -- 唯一约束，避免重复好友关系
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,   -- 外键约束，指向 users 表
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE  -- 外键约束，指向 users 表
+);
+
+-- 创建索引
+CREATE INDEX idx_status ON friendships(status);
+
+
+
+CREATE TABLE unread_messages (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,       -- 唯一标识，主键，自增
+    user_id INT NOT NULL,                       -- 接收用户 ID，关联 users.id
+    sender_id INT NOT NULL,                     -- 发送者 ID，关联 users.id
+    content TEXT NOT NULL,                      -- 消息内容
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 消息发送时间，默认当前时间
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  -- 外键约束，关联接收者
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE -- 外键约束，关联发送者
+);
+
+-- 创建索引
+CREATE INDEX idx_user_id ON unread_messages(user_id);
+CREATE INDEX idx_sender_id ON unread_messages(sender_id);
+CREATE INDEX idx_timestamp ON unread_messages(timestamp);
+
+
 
 CREATE TABLE goal (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,28 +90,6 @@ CREATE TABLE goal (
     `image_url` varchar(255) NOT NULL,
     `video_url` varchar(255) NOT NULL
 );
-
-CREATE TABLE friends (
-    id INT AUTO_INCREMENT PRIMARY KEY,         
-    user_id INT NOT NULL,                   
-    friend_id INT NOT NULL,
-    Group_friend_id INT,        
-    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending', 
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  
-    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
-    `head_url` varchar(255) NOT NULL,
-    goal_start_time DATETIME  
-);
-
-CREATE TABLE friend_requests (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
-    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 
 INSERT INTO goal (id, `名称`, `运动次数`, `难度`, `卡路里`, `B站连接`, `目标`, `运动类型`, `时间` ,`image_url`)
 VALUES 

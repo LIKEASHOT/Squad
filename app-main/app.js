@@ -859,6 +859,229 @@ app.post('/goals/add', (req, res) => {
   });
 });
 
+
+// 获取好友列表接口
+app.get("/friends", async (req, res) => {
+  const { userId } = req.query; // 从查询参数获取 userId
+
+  if (!userId) {
+    return res.status(400).json({ error: "userId 参数是必需的。" });
+  }
+
+  try {
+    // SQL 查询：获取好友列表
+    const query = `
+      SELECT 
+        f.friend_id AS friendId, 
+        u.username AS friendName, 
+        u.avatar AS friendAvatar, 
+        f.created_at AS friendshipSince
+      FROM 
+        friendships f
+      JOIN 
+        users u ON f.friend_id = u.id
+      WHERE 
+        f.user_id = ? AND f.status = 'accepted'
+      UNION
+      SELECT 
+        f.user_id AS friendId, 
+        u.username AS friendName, 
+        u.avatar AS friendAvatar, 
+        f.created_at AS friendshipSince
+      FROM 
+        friendships f
+      JOIN 
+        users u ON f.user_id = u.id
+      WHERE 
+        f.friend_id = ? AND f.status = 'accepted';
+    `;
+
+    const [results] = await db.query(query, [userId, userId]); // 执行查询
+
+    res.status(200).json(results); // 返回好友列表
+  } catch (error) {
+    console.error("数据库查询失败：", error);
+    res.status(500).json({ error: "服务器内部错误" });
+  }
+});
+
+ 
+// 查找聊天记录并标记为已读
+app.post('/chat/history', (req, res) => {
+  const { userId, friendId, page = 1, limit = 20 } = req.body;
+
+  if (!userId || !friendId) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Missing userId or friendId'
+    });
+  }
+
+  const offset = (page - 1) * limit;
+
+  const query = `
+    SELECT id, sender_id AS senderId, receiver_id AS receiverId, content, timestamp, is_read AS isRead
+    FROM messages
+    WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
+    ORDER BY timestamp DESC
+    LIMIT ? OFFSET ?;
+  `;
+
+  db.query(query, [userId, friendId, friendId, userId, parseInt(limit), parseInt(offset)], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error'
+      });
+    }
+
+    // 更新未读消息为已读
+    const updateQuery = `
+      UPDATE messages
+      SET is_read = TRUE
+      WHERE receiver_id = ? AND sender_id = ? AND is_read = FALSE;
+    `;
+    db.query(updateQuery, [userId, friendId], (updateErr) => {
+      if (updateErr) {
+        console.error(updateErr);
+        return res.status(500).json({
+          status: 'error',
+          message: 'Failed to mark messages as read'
+        });
+      }
+
+      // 删除未读表中的消息
+      const deleteUnreadQuery = `
+        DELETE FROM unread_messages
+        WHERE user_id = ? AND sender_id = ?;
+      `;
+      db.query(deleteUnreadQuery, [userId, friendId], (deleteErr) => {
+        if (deleteErr) {
+          console.error(deleteErr);
+          return res.status(500).json({
+            status: 'error',
+            message: 'Failed to delete unread messages'
+          });
+        }
+
+        // 获取总记录数
+        const countQuery = `
+          SELECT COUNT(*) AS total
+          FROM messages
+          WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?);
+        `;
+
+        db.query(countQuery, [userId, friendId, friendId, userId], (countErr, countResults) => {
+          if (countErr) {
+            console.error(countErr);
+            return res.status(500).json({
+              status: 'error',
+              message: 'Internal Server Error'
+            });
+          }
+
+          const total = countResults[0].total;
+
+          res.json({
+            status: 'success',
+            data: {
+              messages: results,
+              pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total: total
+              }
+            }
+          });
+        });
+      });
+    });
+  });
+});
+
+
+
+
+// 发送消息
+app.post('/chat/send', async (req, res) => {
+  const { senderId, receiverId, content } = req.body;
+
+  if (!senderId || !receiverId || !content) {
+    return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
+  }
+
+  try {
+    const connection = await pool.getConnection();
+    await connection.beginTransaction();
+
+    // 插入消息
+    const [messageResult] = await connection.execute(
+      `INSERT INTO messages (sender_id, receiver_id, content, is_read)
+       VALUES (?, ?, ?, FALSE)`,
+      [senderId, receiverId, content]
+    );
+
+    // 插入未读消息
+    await connection.execute(
+      `INSERT INTO unread_messages (user_id, sender_id, content)
+       VALUES (?, ?, ?)`,
+      [receiverId, senderId, content]
+    );
+
+    // 获取插入的消息时间戳
+    const [timestampRows] = await connection.execute(
+      `SELECT timestamp FROM messages WHERE id = ?`,
+      [messageResult.insertId]
+    );
+
+    await connection.commit();
+    connection.release();
+
+    return res.json({
+      status: 'success',
+      messageId: messageResult.insertId,
+      timestamp: timestampRows[0]?.timestamp || null
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ status: 'error', message: 'Database error.' });
+  }
+});
+
+
+
+//获取未读消息数
+app.get('/chat/unread', async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
+  }
+
+  try {
+    // 查询未读消息数量并按照发送者分组
+    const [unreadMessages] = await pool.execute(
+      `SELECT sender_id, COUNT(*) AS unreadCount
+       FROM unread_messages
+       WHERE user_id = ?
+       GROUP BY sender_id`,
+      [userId]
+    );
+
+    return res.json({
+      status: 'success',
+      unreadMessages: unreadMessages
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ status: 'error', message: 'Database error.' });
+  }
+});
+
+
 // 启动服务器
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
