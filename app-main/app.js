@@ -884,29 +884,66 @@ app.post('/getDailyFoods', async (req, res) => {
   }
 });
 
-// 删除食物记录的接口
-app.post('/deleteFood', (req, res) => {
-  const { username, foodName } = req.body;
+// 删除用户饮食记录
+app.post('/deleteFood', async (req, res) => {
+  const { username, foodName, date } = req.body;
 
-  if (!username || !foodName) {
+  if (!username || !foodName || !date) {
     return res.status(400).json({ success: false, message: '缺少参数' });
   }
 
-  // 删除数据库中的食物记录
-  const query = 'DELETE FROM food_records WHERE food_name = ? AND user_id = (SELECT user_id FROM users WHERE name = ?)';
-  connection.query(query, [foodName, username], (err, result) => {
-    if (err) {
-      console.error('数据库删除错误:', err);
-      return res.status(500).json({ success: false, message: '数据库删除错误' });
-    }
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
 
-    if (result.affectedRows > 0) {
-      return res.status(200).json({ success: true, message: '删除成功' });
-    } else {
-      return res.status(404).json({ success: false, message: '未找到匹配的记录' });
-    }
-  });
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+
+      const userId = userRows[0].id;
+
+      // 查询并删除指定的食物记录
+      connection.query(
+        `SELECT current_calories AS 当前热量 
+         FROM food_records 
+         WHERE user_id = ? AND record_date = ? AND food_name = ?`,
+        [userId, date, foodName],
+        (err, foodRows) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '数据库查询失败' });
+          }
+
+          if (foodRows.length === 0) {
+            return res.status(404).json({ success: false, message: '记录不存在' });
+          }
+
+          const deletedCalories = foodRows[0].当前热量;
+
+          // 删除记录
+          connection.query(
+            `DELETE FROM food_records 
+             WHERE user_id = ? AND record_date = ? AND food_name = ?`,
+            [userId, date, foodName],
+            (err) => {
+              if (err) {
+                return res.status(500).json({ success: false, message: '删除失败' });
+              }
+
+              res.json({ success: true, message: '删除成功', deletedCalories });
+            }
+          );
+        }
+      );
+    });
+  } catch (error) {
+    console.error('删除记录失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
 });
+
 
 app.put('/goals', (req, res) => {
   let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
