@@ -128,9 +128,9 @@ const loadDailyFoods = async () => {
 
 // 编辑食物
 const editFood = (index) => {
-  editingFood.value = { ...dailyFoods.value[index] };
+  editingFood.value = { ...dailyFoods.value[index] }; // 深拷贝选中食物数据
   editingIndex.value = index;
-  showEditPopup.value = true;
+  showEditPopup.value = true; // 显示编辑弹窗
 };
 
 // 删除食物
@@ -140,28 +140,32 @@ const deleteFood = (index) => {
     content: '是否确认删除这条记录？',
     success: async (res) => {
       if (res.confirm) {
-		  // let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);//获取剩余热量
-		  // remainingCalories+=currentCalories;//加上被删除的热量
-		  // // 保存更新后的剩余热量到本地
-		  // uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
-		  
-		  
         const foodToDelete = dailyFoods.value[index];
         try {
-          // 向后端发送删除请求，使用食物名称作为标识
-          const res = await uni.request({
-            url: serverUrl + '/deleteFood',  // 后端删除接口
+          const res = await uni.request({ 
+            url: serverUrl + '/deleteFood', // 后端删除接口
             method: 'POST',
             data: {
-              username: username,  // 当前用户名
-              foodName: foodToDelete.食物名称,  // 食物名称作为唯一标识
+              username: username,        // 当前用户名
+              foodName: foodToDelete.食物名称, // 食物名称
+              date: selectedDate.value.toISOString().split('T')[0], // 日期（ISO格式）
             },
-          });
+          }); 
 
           if (res.statusCode === 200 && res.data.success) {
-            // 删除成功后从前端数据中移除该记录
-            dailyFoods.value.splice(index, 1); 
-            saveDailyFoods();  // 保存更新后的数据到本地存储
+            const { deletedCalories } = res.data; // 获取被删除食物的热量
+			 // 如果删除的是当天的食物，更新本地剩余热量
+            if (deletedCalories && selectedDate.value.toDateString() === new Date().toDateString()) {
+              let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;
+              remainingCalories += deletedCalories; 
+              uni.setStorageSync(`today_left_eat_${username}`, remainingCalories); 
+            }
+
+            // 删除成功后更新前端数据
+            dailyFoods.value.splice(index, 1);
+            saveDailyFoods(); // 保存更新后的数据到本地存储
+			// 通知 Home 页面删除食物事件
+			uni.$emit("foodDeleted");
             uni.showToast({
               title: '删除成功',
               icon: 'success',
@@ -180,25 +184,78 @@ const deleteFood = (index) => {
           });
         }
       }
-    }
+    },
   });
-  
 };
 
-
 // 保存编辑
-const saveEdit = () => {
+const saveEdit = async () => {
   if (editingIndex.value > -1) {
-    // 更新热量
+    // 获取编辑前的热量
+    const originalCalories = dailyFoods.value[editingIndex.value].currentCalories;
+
+    // 计算编辑后的热量
     editingFood.value.currentCalories = Math.round(
       (editingFood.value.baseCalories * editingFood.value.amount) / 100
     );
-    
+
+    // 计算热量差异（编辑后 - 编辑前）
+    const calorieDifference = editingFood.value.currentCalories - originalCalories;
+
+    // 更新前端列表
     dailyFoods.value[editingIndex.value] = { ...editingFood.value };
-    saveDailyFoods();
+    saveDailyFoods(); // 保存更新后的本地存储
+
+    // 如果是当天的食物，更新本地剩余热量
+    const today = new Date().toDateString();
+    if (selectedDate.value.toDateString() === today) {
+      let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;
+      remainingCalories -= calorieDifference; // 更新剩余热量
+      uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
+    }
+	// 通知 Home 页面删除食物事件
+	uni.$emit("foodEdit");
+    // 向后端发送更新请求
+    try {
+      const res = await uni.request({
+        url: serverUrl + '/updateFood', // 后端更新接口
+        method: 'POST',
+        data: {
+          username: username,
+          foodName: editingFood.value.食物名称,
+          amount: editingFood.value.amount,
+          currentCalories: editingFood.value.currentCalories,
+        },
+      });
+
+      if (res.statusCode === 200 && res.data.success) {
+        uni.showToast({
+          title: '更新成功',
+          icon: 'success',
+        });
+      } else {
+        uni.showToast({
+          title: '更新失败',
+          icon: 'none',
+        });
+      }
+    } catch (error) {
+      console.error('更新失败:', error);
+      uni.showToast({
+        title: '网络错误',
+        icon: 'none',
+      });
+    }
+
+    // 通知 Home 页面食物更新事件
+    uni.$emit("foodUpdated");
+
+    // 隐藏编辑弹窗
     showEditPopup.value = false;
   }
 };
+
+
 
 // 取消编辑
 const cancelEdit = () => {

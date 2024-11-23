@@ -19483,9 +19483,9 @@ ${i3}
     __name: "Home",
     setup(__props, { expose: __expose }) {
       __expose();
-      const target = vue.ref(50);
+      const target = vue.ref(1);
       const modelVale = vue.ref(0);
-      const target_eat_percent = vue.ref(50);
+      const target_eat_percent = vue.ref(100);
       const tab = vue.ref("plan");
       const activeButton = vue.ref("all");
       const selectedGoal = vue.ref("全部");
@@ -19494,7 +19494,7 @@ ${i3}
       const username = uni.getStorageSync("username");
       const showMyplan = vue.ref(true);
       const showMyeat = vue.ref(false);
-      const today_left_eat = vue.ref(0);
+      const today_left_eat = vue.ref(3e3);
       const totalConsumedCalories = vue.ref(0);
       const IsManager = vue.ref(false);
       const foodName = vue.ref("");
@@ -19971,10 +19971,12 @@ ${i3}
         loadMyPlans();
         fetchDailyCalories(username.value);
         uni.$on("plansUpdated", loadMyPlans);
+        uni.$on("foodDeleted", initializeRemainingCalories);
+        uni.$on("foodEdit", initializeRemainingCalories);
         setInterval(() => {
           const now = /* @__PURE__ */ new Date();
           if (now.getHours() === 0 && now.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1387", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1391", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -19985,6 +19987,14 @@ ${i3}
       const initializeRemainingCalories = () => {
         const username2 = uni.getStorageSync("username");
         today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
+        const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
+        let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`) || 0;
+        if (remainingCalories > dailyCalories) {
+          remainingCalories = dailyCalories;
+        }
+        uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
+        today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
+        target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
       };
       const resetRemainingCalories = () => {
         const username2 = uni.getStorageSync("username");
@@ -19992,14 +20002,14 @@ ${i3}
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1409", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1424", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1421", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1436", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -20008,7 +20018,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1434", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1449", "计划已添加:", plan.title);
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -20016,7 +20026,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1451", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1466", "计划已删除:", plan.title);
         loadMyPlans();
       };
       const openPopup = () => {
@@ -20053,7 +20063,7 @@ ${i3}
           image_url: planForm.value.imageUrl || "",
           video_url: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1500", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1515", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
             url: `${serverUrl$4}/goals`,
@@ -20073,7 +20083,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1523", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1538", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20096,7 +20106,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1546", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1561", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20104,7 +20114,7 @@ ${i3}
       };
       const chooseCoverImage = async () => {
         try {
-          formatAppLog("log", "at pages/Home/Home.vue:1555", "选择图片按钮被点击");
+          formatAppLog("log", "at pages/Home/Home.vue:1570", "选择图片按钮被点击");
           const res = await uni.chooseImage({
             count: 1,
             // 选择一张图片
@@ -20113,22 +20123,22 @@ ${i3}
           });
           if (res.errMsg === "chooseImage:ok") {
             const filePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/Home/Home.vue:1563", "选择的图片路径：", filePath);
+            formatAppLog("log", "at pages/Home/Home.vue:1578", "选择的图片路径：", filePath);
             const uploadRes = await uploadImage(filePath);
             if (uploadRes && uploadRes.imageUrl) {
               planForm.value.imageUrl = uploadRes.imageUrl;
-              formatAppLog("log", "at pages/Home/Home.vue:1569", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+              formatAppLog("log", "at pages/Home/Home.vue:1584", "图片上传成功，图片 URL:", uploadRes.imageUrl);
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1571", "图片上传失败");
+              formatAppLog("error", "at pages/Home/Home.vue:1586", "图片上传失败");
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1575", "选择图片失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1590", "选择图片失败:", error2);
         }
       };
       const uploadImage = (filePath) => {
         return new Promise((resolve, reject) => {
-          formatAppLog("log", "at pages/Home/Home.vue:1582", "开始上传图片，路径:", filePath);
+          formatAppLog("log", "at pages/Home/Home.vue:1597", "开始上传图片，路径:", filePath);
           uni.uploadFile({
             url: serverUrl$4 + "/upload",
             // 假设上传接口的URL
@@ -20139,7 +20149,7 @@ ${i3}
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200 && response.success) {
                   const imageUrl = response.imageUrl;
-                  formatAppLog("log", "at pages/Home/Home.vue:1594", "上传成功，返回的图片URL:", imageUrl);
+                  formatAppLog("log", "at pages/Home/Home.vue:1609", "上传成功，返回的图片URL:", imageUrl);
                   planForm.value.imageUrl = imageUrl;
                   uni.showToast({
                     title: "上传成功",
@@ -20147,14 +20157,14 @@ ${i3}
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:1604", "上传失败，返回错误:", response);
+                  formatAppLog("error", "at pages/Home/Home.vue:1619", "上传失败，返回错误:", response);
                   uni.showToast({
                     title: "上传失败，请重试",
                     icon: "none"
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:1611", "解析响应数据失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:1626", "解析响应数据失败:", err);
                 uni.showToast({
                   title: "响应数据解析失败",
                   icon: "none"
@@ -20162,7 +20172,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1619", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1634", "上传失败", err);
               uni.showToast({
                 title: "上传失败，请检查网络连接",
                 icon: "none"
@@ -20173,8 +20183,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1631", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1632", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1646", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1647", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -20195,7 +20205,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1656", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1671", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -20242,9 +20252,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1713", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1728", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1716", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1731", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -22912,7 +22922,6 @@ ${i3}
       const messageText = vue.ref("");
       const messages2 = vue.ref([]);
       const scrollTop = vue.ref(0);
-      const websocket = vue.ref(null);
       const userInfo = vue.ref({
         username: uni.getStorageSync("username"),
         avatar: ((_a2 = uni.getStorageSync("userInfo")) == null ? void 0 : _a2.avatar) || "/static/avatar/default.png"
@@ -22921,90 +22930,13 @@ ${i3}
         username: "",
         avatar: "/static/avatar/default.png"
       });
-      const initWebSocket = () => {
-        websocket.value = uni.connectSocket({
-          url: `ws://:3000/chat`,
-          success: () => {
-            formatAppLog("log", "at pages/Chat/Chat.vue:80", "WebSocket连接成功");
-          }
-        });
-        websocket.value.onOpen(() => {
-          websocket.value.send({
-            data: JSON.stringify({
-              type: "auth",
-              username: userInfo.value.username
-            })
-          });
-        });
-        websocket.value.onMessage((res) => {
-          try {
-            const data = JSON.parse(res.data);
-            if (data.type === "message" && data.sender === friendInfo.value.username) {
-              messages2.value.push({
-                sender: data.sender,
-                content: data.content,
-                time: data.time
-              });
-              scrollToBottom();
-            }
-          } catch (error2) {
-            formatAppLog("error", "at pages/Chat/Chat.vue:106", "解析消息失败:", error2);
-          }
-        });
-        websocket.value.onClose(() => {
-          formatAppLog("log", "at pages/Chat/Chat.vue:111", "WebSocket连接关闭");
-        });
-        websocket.value.onError((error2) => {
-          formatAppLog("error", "at pages/Chat/Chat.vue:115", "WebSocket错误:", error2);
-        });
-      };
-      const sendMessage = async () => {
-        if (!messageText.value.trim())
-          return;
-        const newMessage = {
-          type: "message",
-          sender: userInfo.value.username,
-          receiver: friendInfo.value.username,
-          content: messageText.value,
-          time: (/* @__PURE__ */ new Date()).getTime()
-        };
-        try {
-          websocket.value.send({
-            data: JSON.stringify(newMessage),
-            success: () => {
-              messages2.value.push({
-                sender: userInfo.value.username,
-                content: messageText.value,
-                time: (/* @__PURE__ */ new Date()).getTime()
-              });
-              messageText.value = "";
-              scrollToBottom();
-            },
-            fail: (error2) => {
-              throw error2;
-            }
-          });
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:150", "发送消息失败:", error2);
-          uni.showToast({
-            title: "发送失败",
-            icon: "none"
-          });
-        }
-      };
       const initPage = () => {
         const pages2 = getCurrentPages();
         const currentPage = pages2[pages2.length - 1];
         const { id, name } = currentPage.$page.options;
         friendInfo.value.username = name;
         loadChatHistory(id);
-        initWebSocket();
       };
-      vue.onUnmounted(() => {
-        if (websocket.value) {
-          websocket.value.close();
-        }
-      });
       const loadChatHistory = async (friendId) => {
         try {
           const [error2, res] = await uni.request({
@@ -23023,9 +22955,42 @@ ${i3}
             scrollToBottom();
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:197", "获取聊天历史失败:", error2);
+          formatAppLog("error", "at pages/Chat/Chat.vue:101", "获取聊天历史失败:", error2);
           uni.showToast({
             title: "获取聊天记录失败",
+            icon: "none"
+          });
+        }
+      };
+      const sendMessage = async () => {
+        if (!messageText.value.trim())
+          return;
+        const newMessage = {
+          sender: userInfo.value.username,
+          content: messageText.value,
+          time: (/* @__PURE__ */ new Date()).getTime()
+        };
+        try {
+          const [error2, res] = await uni.request({
+            url: `${serverUrl$1}/chat/send`,
+            method: "POST",
+            data: {
+              ...newMessage,
+              receiver: friendInfo.value.username
+            }
+          });
+          if (error2) {
+            throw error2;
+          }
+          if (res.statusCode === 200) {
+            messages2.value.push(newMessage);
+            messageText.value = "";
+            scrollToBottom();
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Chat/Chat.vue:139", "发送消息失败:", error2);
+          uni.showToast({
+            title: "发送失败",
             icon: "none"
           });
         }
@@ -23037,7 +23002,7 @@ ${i3}
         return `${hours}:${minutes}`;
       };
       const scrollToBottom = () => {
-        vue.nextTick(() => {
+        nextTick(() => {
           const query = uni.createSelectorQuery();
           query.select(".message-list").boundingClientRect();
           query.exec((res) => {
@@ -23055,7 +23020,7 @@ ${i3}
       vue.onMounted(() => {
         initPage();
       });
-      const __returned__ = { serverUrl: serverUrl$1, messageText, messages: messages2, scrollTop, websocket, userInfo, friendInfo, initWebSocket, sendMessage, initPage, loadChatHistory, formatTime, scrollToBottom, loadMoreMessages, goBack, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick };
+      const __returned__ = { serverUrl: serverUrl$1, messageText, messages: messages2, scrollTop, userInfo, friendInfo, initPage, loadChatHistory, sendMessage, formatTime, scrollToBottom, loadMoreMessages, goBack, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -23248,13 +23213,22 @@ ${i3}
                   data: {
                     username,
                     // 当前用户名
-                    foodName: foodToDelete.食物名称
-                    // 食物名称作为唯一标识
+                    foodName: foodToDelete.食物名称,
+                    // 食物名称
+                    date: selectedDate.value.toISOString().split("T")[0]
+                    // 日期（ISO格式）
                   }
                 });
                 if (res2.statusCode === 200 && res2.data.success) {
+                  const { deletedCalories } = res2.data;
+                  if (deletedCalories && selectedDate.value.toDateString() === (/* @__PURE__ */ new Date()).toDateString()) {
+                    let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;
+                    remainingCalories += deletedCalories;
+                    uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
+                  }
                   dailyFoods.value.splice(index, 1);
                   saveDailyFoods();
+                  uni.$emit("foodDeleted");
                   uni.showToast({
                     title: "删除成功",
                     icon: "success"
@@ -23266,7 +23240,7 @@ ${i3}
                   });
                 }
               } catch (error2) {
-                formatAppLog("error", "at pages/DietRecord/DietRecord.vue:176", "删除失败:", error2);
+                formatAppLog("error", "at pages/DietRecord/DietRecord.vue:180", "删除失败:", error2);
                 uni.showToast({
                   title: "网络错误",
                   icon: "none"
@@ -23276,13 +23250,53 @@ ${i3}
           }
         });
       };
-      const saveEdit = () => {
+      const saveEdit = async () => {
         if (editingIndex.value > -1) {
+          const originalCalories = dailyFoods.value[editingIndex.value].currentCalories;
           editingFood.value.currentCalories = Math.round(
             editingFood.value.baseCalories * editingFood.value.amount / 100
           );
+          const calorieDifference = editingFood.value.currentCalories - originalCalories;
           dailyFoods.value[editingIndex.value] = { ...editingFood.value };
           saveDailyFoods();
+          const today = (/* @__PURE__ */ new Date()).toDateString();
+          if (selectedDate.value.toDateString() === today) {
+            let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;
+            remainingCalories -= calorieDifference;
+            uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
+          }
+          uni.$emit("foodEdit");
+          try {
+            const res = await uni.request({
+              url: serverUrl + "/updateFood",
+              // 后端更新接口
+              method: "POST",
+              data: {
+                username,
+                foodName: editingFood.value.食物名称,
+                amount: editingFood.value.amount,
+                currentCalories: editingFood.value.currentCalories
+              }
+            });
+            if (res.statusCode === 200 && res.data.success) {
+              uni.showToast({
+                title: "更新成功",
+                icon: "success"
+              });
+            } else {
+              uni.showToast({
+                title: "更新失败",
+                icon: "none"
+              });
+            }
+          } catch (error2) {
+            formatAppLog("error", "at pages/DietRecord/DietRecord.vue:243", "更新失败:", error2);
+            uni.showToast({
+              title: "网络错误",
+              icon: "none"
+            });
+          }
+          uni.$emit("foodUpdated");
           showEditPopup.value = false;
         }
       };

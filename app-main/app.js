@@ -944,6 +944,50 @@ app.post('/deleteFood', async (req, res) => {
   }
 });
 
+app.post('/updateFood', async (req, res) => {
+  const { username, foodName, amount, currentCalories } = req.body;
+
+  if (!username || !foodName || !amount || !currentCalories) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
+
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+
+      const userId = userRows[0].id;
+
+      // 更新数据库中的食物数据
+      connection.query(
+        `UPDATE food_records 
+         SET amount = ?, current_calories = ? 
+         WHERE user_id = ? AND food_name = ?`,
+        [amount, currentCalories, userId, foodName],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '更新失败' });
+          }
+
+          if (result.affectedRows > 0) {
+            res.json({ success: true, message: '更新成功' });
+          } else {
+            res.status(404).json({ success: false, message: '记录未找到' });
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error('更新失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
 
 app.put('/goals', (req, res) => {
   let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
