@@ -747,10 +747,10 @@ import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
-const target = ref(50);
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const target = ref(1);
 const modelVale = ref(0);
-const target_eat_percent = ref(50);
+const target_eat_percent = ref(100);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
 const selectedGoal = ref("全部"); // 选中的目标筛选项
@@ -760,7 +760,7 @@ const username = uni.getStorageSync("username"); // 获取已登录用户的用�
 const showMyplan = ref(true);
 const showMyeat = ref(false); 
 // const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
-const today_left_eat = ref(0);
+const today_left_eat = ref(3000);
 const totalConsumedCalories = ref(0);
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
@@ -1380,6 +1380,10 @@ onMounted(() => {
   fetchDailyCalories(username.value);
   // 监听来自 Search 页面更新计划的通知
   uni.$on("plansUpdated", loadMyPlans);
+  // 监听删除食物的通知
+  uni.$on("foodDeleted", initializeRemainingCalories);
+  // 监听编辑食物的通知
+  uni.$on("foodEdit", initializeRemainingCalories);
   // 每分钟检查一次是否到了0点
   const checkMidnight = setInterval(() => {
     const now = new Date();
@@ -1387,16 +1391,27 @@ onMounted(() => {
       console.log("已到0点，重新获取每日热量");
       fetchDailyCalories(username.value);
       resetRemainingCalories();
-    } 
+    }  
   }, 60000); // 每分钟检查一次
   username = uni.getStorageSync("username");
   // 页面加载时初始化数据
   initializeRemainingCalories();
 });
 // 初始化剩余热量
-const initializeRemainingCalories = () => {
+const initializeRemainingCalories = () => { 
   const username = uni.getStorageSync("username");
   today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
+  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);//获取每日热量
+  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;//获取剩余热量
+  if(remainingCalories >dailyCalories){
+	  remainingCalories = dailyCalories; 
+  } 
+  uni.setStorageSync(`today_left_eat_${username}`, remainingCalories); 
+  today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
+  //更新圆环 
+  target_eat_percent.value = dailyCalories
+    ? Math.round((remainingCalories / dailyCalories) * 100) 
+    : 0;
 };
 
 // 重置剩余热量为每日热量
@@ -2521,9 +2536,9 @@ button {
     height: 80rpx;
     line-height: 80rpx;
     text-align: center;
-    border-radius: 8rpx;
+    border-radius: 8rpx; 
     font-size: 28rpx;
-  }
+  } 
 
   .cancel-btn {
     background: #f5f5f5;
