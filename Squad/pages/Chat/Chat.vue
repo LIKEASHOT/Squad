@@ -150,8 +150,6 @@ const userInfo = ref({
   avatar:
     uni.getStorageSync("userInfo")?.avatar || "/static/avatar/default.png",
 });
-
-// 好友信息
 const friendInfo = ref({
   username: "",
   avatar: "/static/avatar/default.png",
@@ -319,15 +317,7 @@ const initPage = () => {
 
   friendInfo.value.username = name;
   loadChatHistory(id);
-  initWebSocket(); // 初始化WebSocket连接
 };
-
-// 组件卸载时关闭WebSocket连接
-onUnmounted(() => {
-  if (websocket.value) {
-    websocket.value.close();
-  }
-});
 
 // 加载聊天历史
 const loadChatHistory = async (friendId) => {
@@ -357,6 +347,7 @@ const loadChatHistory = async (friendId) => {
     });
   }
 };
+
 
 // 格式化时间
 const formatTime = (timestamp) => {

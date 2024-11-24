@@ -745,44 +745,280 @@ app.post('/api/calculateCalories', async (req, res) => {
     }
   });
 });
-// API: 添加健身封面（需要 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, 图片文件）
-// app.post('/addGoal', upload.single('image'), (req, res) => {
-//   // 获取前端发送的数据
-//   const { 名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, video_url } = req.body;
 
-//   // 确保图片文件存在
-//   if (!req.file) {
-//     return res.status(400).json({ error: "请上传一张图片" });
-//   }
-
-//   // 获取上传的文件路径和文件名
-//   const imagePath = path.join(__dirname, 'uploads', req.file.filename);
-//   const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`; // 假设你的服务器在这个 URL 下提供文件
-
-//   // 将数据插入数据库
-//   const insertQuery = `
-//     INSERT INTO goal (名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, image_url, video_url) 
-//     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-//   connection.query(insertQuery, [名称, 运动次数, 难度, 卡路里, B站连接, 目标, 运动类型, 时间, imageUrl, video_url], (err) => {
-//     if (err) {
-//       return res.status(500).json({ error: "Database error" });
-//     } 
-//     res.status(200).json({ message: "Goal added successfully", imageUrl });
-//   });
-// });
-
-// 图片上传接口
-app.post('/upload', upload.single('file'), (req, res) => {
+const uploadedFiles = new Set();
+app.post("/upload", upload.single("file"), (req, res) => {
   if (req.file) {
-    console.log("上传的文件:", req.file);  // 调试输出文件信息
-    const imageUrl = 'uploads/' + req.file.filename;
-    res.json({
-      success: true,
-      imageUrl: imageUrl,  // 返回上传的图片路径
-    });
+    const fileName = req.file.filename;
+
+    if (uploadedFiles.has(fileName)) {
+      return res.status(400).json({ success: false, message: "重复上传" });
+    }
+    uploadedFiles.add(fileName);
+
+    const imageUrl = "uploads/" + fileName;
+    res.json({ success: true, imageUrl: imageUrl });
   } else {
-    res.status(400).json({ success: false, message: '上传失败' });
+    res.status(400).json({ success: false, message: "上传失败" });
+  }
+});
+
+// 提交每日饮食记录
+app.post("/submitDailyFoods", async (req, res) => {
+  const { username, date, foods } = req.body;
+
+  if (!username || !date || !Array.isArray(foods)) {
+    return res.status(400).json({ success: false, message: "缺少参数" });
+  }
+
+  connection.beginTransaction((err) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: "数据库事务开始失败" });
+    }
+
+    try {
+      // 查询用户ID
+      connection.query("SELECT id FROM users WHERE name = ?", [username], (err, userRows) => {
+        if (err) {
+          return connection.rollback(() => {
+            res.status(500).json({ success: false, message: "数据库查询失败" });
+          });
+        }
+
+        if (userRows.length === 0) {
+          return connection.rollback(() => {
+            res.status(404).json({ success: false, message: "用户不存在" });
+          });
+        }
+        const userId = userRows[0].id;
+
+        // 插入食物记录
+        const insertPromises = foods.map((food) =>
+          new Promise((resolve, reject) => {
+            const baseFoodName = food.食物名称;
+
+            // 检查数据库中是否存在重名食物
+            const checkNameQuery = `
+              SELECT COUNT(*) AS count 
+              FROM food_records 
+              WHERE user_id = ? AND record_date = ? AND food_name LIKE ?
+            `;
+            connection.query(
+              checkNameQuery,
+              [userId, date, `${baseFoodName}%`],
+              (err, results) => {
+                if (err) return reject(err);
+
+                let uniqueFoodName = baseFoodName;
+                const count = results[0].count;
+
+                // 如果有重名，则加后缀
+                if (count > 0) {
+                  uniqueFoodName = `${baseFoodName} (${count})`;
+                }
+
+                // 插入记录
+                const insertQuery = `
+                  INSERT INTO food_records 
+                  (user_id, record_date, food_name, base_calories, amount, current_calories, image_url, time)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                connection.query(
+                  insertQuery,
+                  [
+                    userId,
+                    date,
+                    uniqueFoodName,
+                    food.baseCalories,
+                    food.amount,
+                    food.currentCalories,
+                    food.imageUrl,
+                    new Date().toLocaleTimeString("en-GB", { hour12: false }),
+                  ],
+                  (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                  }
+                );
+              }
+            );
+          })
+        );
+
+        // 等待所有插入操作完成
+        Promise.all(insertPromises)
+          .then(() => {
+            connection.commit((err) => {
+              if (err) {
+                return connection.rollback(() => {
+                  res.status(500).json({ success: false, message: "事务提交失败" });
+                });
+              }
+
+              res.json({ success: true, message: "记录上传成功" });
+            });
+          })
+          .catch((error) => {
+            connection.rollback(() => {
+              console.error("插入失败:", error);
+              res.status(500).json({ success: false, message: "插入食物记录失败" });
+            });
+          });
+      });
+    } catch (error) {
+      console.error("数据库操作失败:", error);
+      connection.rollback(() => {
+        res.status(500).json({ success: false, message: "服务器错误" });
+      });
+    }
+  });
+});
+
+
+// 获取用户某日饮食记录
+app.post('/getDailyFoods', async (req, res) => {
+  const { username, date } = req.body;
+
+  if (!username || !date) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
+
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+      const userId = userRows[0].id;
+
+      // 查询饮食记录
+      connection.query(
+        `SELECT food_name AS 食物名称, base_calories AS 基础热量, amount AS 食用量, 
+                current_calories AS 当前热量, image_url AS 图片路径, time AS 时间
+         FROM food_records 
+         WHERE user_id = ? AND record_date = ?`,
+        [userId, date],
+        (err, foodRows) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '数据库查询失败' });
+          }
+
+          res.json({ success: true, foods: foodRows });
+        }
+      );
+    });
+  } catch (error) {
+    console.error('数据库查询失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 删除用户饮食记录
+app.post('/deleteFood', async (req, res) => {
+  const { username, foodName, date } = req.body;
+
+  if (!username || !foodName || !date) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
+
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+
+      const userId = userRows[0].id;
+
+      // 查询并删除指定的食物记录
+      connection.query(
+        `SELECT current_calories AS 当前热量 
+         FROM food_records 
+         WHERE user_id = ? AND record_date = ? AND food_name = ?`,
+        [userId, date, foodName],
+        (err, foodRows) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '数据库查询失败' });
+          }
+
+          if (foodRows.length === 0) {
+            return res.status(404).json({ success: false, message: '记录不存在' });
+          }
+
+          const deletedCalories = foodRows[0].当前热量;
+
+          // 删除记录
+          connection.query(
+            `DELETE FROM food_records 
+             WHERE user_id = ? AND record_date = ? AND food_name = ?`,
+            [userId, date, foodName],
+            (err) => {
+              if (err) {
+                return res.status(500).json({ success: false, message: '删除失败' });
+              }
+
+              res.json({ success: true, message: '删除成功', deletedCalories });
+            }
+          );
+        }
+      );
+    });
+  } catch (error) {
+    console.error('删除记录失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+//更新饮食记录
+app.post('/updateFood', async (req, res) => {
+  const { username, foodName, amount, currentCalories } = req.body;
+
+  if (!username || !foodName || !amount || !currentCalories) {
+    return res.status(400).json({ success: false, message: '缺少参数' });
+  }
+
+  try {
+    // 查询用户ID
+    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '数据库查询失败' });
+      }
+
+      if (userRows.length === 0) {
+        return res.status(404).json({ success: false, message: '用户不存在' });
+      }
+
+      const userId = userRows[0].id;
+
+      // 更新数据库中的食物数据
+      connection.query(
+        `UPDATE food_records 
+         SET amount = ?, current_calories = ? 
+         WHERE user_id = ? AND food_name = ?`,
+        [amount, currentCalories, userId, foodName],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '更新失败' });
+          }
+
+          if (result.affectedRows > 0) {
+            res.json({ success: true, message: '更新成功' });
+          } else {
+            res.status(404).json({ success: false, message: '记录未找到' });
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error('更新失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
