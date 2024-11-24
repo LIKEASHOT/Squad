@@ -189,43 +189,6 @@ const loadChatHistory = async (friendId) => {
   }
 };
 
-// 发送消息
-const sendMessage = async () => {
-  if (!messageText.value.trim()) return;
-
-  const newMessage = {
-    sender: userInfo.value.username,
-    content: messageText.value,
-    time: new Date().getTime()
-  };
-
-  try {
-    const [error, res] = await uni.request({
-      url: `${serverUrl}/chat/send`,
-      method: 'POST',
-      data: {
-        ...newMessage,
-        receiver: friendInfo.value.username
-      }
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    if (res.statusCode === 200) {
-      messages.value.push(newMessage);
-      messageText.value = '';
-      scrollToBottom();
-    }
-  } catch (error) {
-    console.error('发送消息失败:', error);
-    uni.showToast({
-      title: '发送失败',
-      icon: 'none'
-    });
-  }
-};
 
 // 格式化时间
 const formatTime = (timestamp) => {
