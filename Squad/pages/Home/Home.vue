@@ -760,7 +760,7 @@ const username = uni.getStorageSync("username"); // 获取已登录用户的用�
 const showMyplan = ref(true);
 const showMyeat = ref(false); 
 // const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
-const today_left_eat = ref(3000);
+const today_left_eat = ref(2000);
 const totalConsumedCalories = ref(0);
 const IsManager = ref(false);
 const add_icon = "/static/icon/add.png";
@@ -1404,7 +1404,7 @@ const initializeRemainingCalories = () => {
   const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);//获取每日热量
   let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;//获取剩余热量
   if(remainingCalories >dailyCalories){
-	  remainingCalories = dailyCalories; 
+	  remainingCalories = dailyCalories;  
   } 
   uni.setStorageSync(`today_left_eat_${username}`, remainingCalories); 
   today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
