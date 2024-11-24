@@ -746,19 +746,23 @@ app.post('/api/calculateCalories', async (req, res) => {
   });
 });
 
-// 图片上传接口
-app.post('/upload', upload.single('file'), (req, res) => {
+const uploadedFiles = new Set();
+app.post("/upload", upload.single("file"), (req, res) => {
   if (req.file) {
-    console.log("上传的文件:", req.file);  // 调试输出文件信息
-    const imageUrl = 'uploads/' + req.file.filename;
-    res.json({
-      success: true,
-      imageUrl: imageUrl,  // 返回上传的图片路径
-    });
+    const fileName = req.file.filename;
+
+    if (uploadedFiles.has(fileName)) {
+      return res.status(400).json({ success: false, message: "重复上传" });
+    }
+    uploadedFiles.add(fileName);
+
+    const imageUrl = "uploads/" + fileName;
+    res.json({ success: true, imageUrl: imageUrl });
   } else {
-    res.status(400).json({ success: false, message: '上传失败' });
+    res.status(400).json({ success: false, message: "上传失败" });
   }
 });
+
 // 提交每日饮食记录
 app.post("/submitDailyFoods", async (req, res) => {
   const { username, date, foods } = req.body;
@@ -791,28 +795,56 @@ app.post("/submitDailyFoods", async (req, res) => {
         // 插入食物记录
         const insertPromises = foods.map((food) =>
           new Promise((resolve, reject) => {
+            const baseFoodName = food.食物名称;
+
+            // 检查数据库中是否存在重名食物
+            const checkNameQuery = `
+              SELECT COUNT(*) AS count 
+              FROM food_records 
+              WHERE user_id = ? AND record_date = ? AND food_name LIKE ?
+            `;
             connection.query(
-              `INSERT INTO food_records 
-                (user_id, record_date, food_name, base_calories, amount, current_calories, image_url, time)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-              [
-                userId,
-                date,
-                food.食物名称,
-                food.baseCalories,
-                food.amount,
-                food.currentCalories,
-                food.imageUrl,
-                new Date().toLocaleTimeString('en-GB', { hour12: false })  // 格式化时间
-              ],
-              (err, result) => {
-                if (err) reject(err);
-                else resolve(result);
+              checkNameQuery,
+              [userId, date, `${baseFoodName}%`],
+              (err, results) => {
+                if (err) return reject(err);
+
+                let uniqueFoodName = baseFoodName;
+                const count = results[0].count;
+
+                // 如果有重名，则加后缀
+                if (count > 0) {
+                  uniqueFoodName = `${baseFoodName} (${count})`;
+                }
+
+                // 插入记录
+                const insertQuery = `
+                  INSERT INTO food_records 
+                  (user_id, record_date, food_name, base_calories, amount, current_calories, image_url, time)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                connection.query(
+                  insertQuery,
+                  [
+                    userId,
+                    date,
+                    uniqueFoodName,
+                    food.baseCalories,
+                    food.amount,
+                    food.currentCalories,
+                    food.imageUrl,
+                    new Date().toLocaleTimeString("en-GB", { hour12: false }),
+                  ],
+                  (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                  }
+                );
               }
             );
           })
         );
-        
+
         // 等待所有插入操作完成
         Promise.all(insertPromises)
           .then(() => {
@@ -841,6 +873,7 @@ app.post("/submitDailyFoods", async (req, res) => {
     }
   });
 });
+
 
 // 获取用户某日饮食记录
 app.post('/getDailyFoods', async (req, res) => {
@@ -943,7 +976,7 @@ app.post('/deleteFood', async (req, res) => {
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
-
+//更新饮食记录
 app.post('/updateFood', async (req, res) => {
   const { username, foodName, amount, currentCalories } = req.body;
 
