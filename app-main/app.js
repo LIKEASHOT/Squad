@@ -13,7 +13,7 @@ const serverUrl = "http://10.133.80.141.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 const config = {
   // 获取本地IP地址
-  localIP: 'localhost',
+  localIP: '10.133.80.141',
   port: 3000
 };
 require('dotenv').config();
@@ -631,7 +631,7 @@ app.get('/goals', (req, res) => {
       运动类型 AS type 
     FROM goal
   `;
-  
+
   connection.query(sql, (error, results) => {
     if (error) {
       console.error("查询失败:", error);  // 添加错误日志

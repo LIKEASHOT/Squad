@@ -82,6 +82,13 @@
 	    "navigationBarTitleText": "饮食记录",
 	    "enablePullDownRefresh": false
 	  }
+	},
+	{
+	  "path": "pages/Challenge/Challenge",
+	  "style": {
+	    "navigationBarTitleText": "打卡挑战",
+	    "enablePullDownRefresh": false
+	  }
 	}
   ],
   "globalStyle": {

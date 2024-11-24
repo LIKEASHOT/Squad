@@ -1,5 +1,13 @@
 <template>
 	<view class="container">
+	  <!-- 顶部导航栏 -->
+	  <view class="nav-bar">
+		<view class="back-btn" @click="goBack">
+		  <uni-icons type="left" size="24" color="#333"/>
+		</view>
+		<text class="nav-title">邀请好友</text>
+	  </view>
+  
 	  <!-- 顶部搜索 -->
 	  <view class="search-box">
 		<uni-icons type="search" size="18" color="#999"/>
@@ -18,7 +26,6 @@
 		  :key="friend.id" 
 		  class="friend-item"
 		  hover-class="friend-item-hover"
-		  @click="inviteFriend(friend)"
 		>
 		  <view class="friend-info">
 			<image :src="friend.avatar || defaultAvatar" class="avatar"/>
@@ -27,7 +34,7 @@
 		  <button 
 			class="invite-btn"
 			:class="{ 'invited': friend.invited }"
-			@click.stop="inviteFriend(friend)"
+			@click="inviteFriend(friend)"
 		  >
 			{{ friend.invited ? '已邀请' : '邀请' }}
 		  </button>
@@ -60,21 +67,84 @@
   const inviteFriend = (friend) => {
 	if (friend.invited) return;
 	
-	friend.invited = true;
-	uni.showToast({
-	  title: `已邀请 ${friend.username}`,
-	  icon: 'success'
-	});
+	// 构建邀请消息
+	const invitation = {
+	  type: 'invitation',
+	  id: Date.now().toString(),
+	  sender: uni.getStorageSync('username'),
+	  receiver: friend.username,
+	  content: '邀请你参加7天运动挑战',
+	  time: new Date().getTime(),
+	  handled: false,
+	  accepted: null,
+	  challengeData: {
+		duration: 7,
+		goal: {
+		  minutes: 10,
+		  calories: 80
+		},
+		startTime: new Date().getTime()
+	  }
+	};
 	
-	// TODO: 发送邀请的API调用
+	// 发送邀请消息
+	uni.request({
+	  url: `${serverUrl}/chat/send`,
+	  method: 'POST',
+	  data: invitation,
+	  success: (res) => {
+		if (res.statusCode === 200) {
+		  friend.invited = true;
+		  uni.showToast({
+			title: `已邀请 ${friend.username}`,
+			icon: 'success'
+		  });
+		}
+	  },
+	  fail: (err) => {
+		console.error('发送邀请失败:', err);
+		uni.showToast({
+		  title: '邀请失败',
+		  icon: 'none'
+		});
+	  }
+	});
+  };
+  
+  // 返回上一页
+  const goBack = () => {
+	uni.navigateBack();
   };
   </script>
   
-  <style>
+  <style lang="scss" scoped>
   .container {
 	padding: 30rpx;
 	background: #f8f8f8;
 	min-height: 100vh;
+  }
+  
+  .nav-bar {
+	display: flex;
+	align-items: center;
+	padding: 20rpx 0;
+	margin-bottom: 20rpx;
+	
+	.back-btn {
+	  width: 80rpx;
+	  height: 80rpx;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	}
+	
+	.nav-title {
+	  flex: 1;
+	  text-align: center;
+	  font-size: 32rpx;
+	  font-weight: 500;
+	  margin-right: 80rpx;
+	}
   }
   
   .search-box {
@@ -93,7 +163,7 @@
   }
   
   .friends-list {
-	height: calc(100vh - 180rpx);
+	height: calc(100vh - 280rpx);
   }
   
   .friend-item {
@@ -132,10 +202,14 @@
 	border: none;
 	margin: 0;
 	min-width: 140rpx;
-  }
-  
-  .invite-btn.invited {
-	background: #ccc;
+	
+	&.invited {
+	  background: #ccc;
+	}
+	
+	&:active {
+	  opacity: 0.8;
+	}
   }
   
   .friend-item-hover {
