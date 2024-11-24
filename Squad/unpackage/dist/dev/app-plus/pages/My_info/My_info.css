@@ -10,7 +10,7 @@
   border-radius: 0.75rem;
   padding: 1.25rem;
   margin-bottom: 0.9375rem;
-  box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 .avatar-section[data-v-765423c9] {
@@ -22,12 +22,64 @@
 .avatar[data-v-765423c9] {
   width: 5rem;
   height: 5rem;
-  border-radius: 2.5rem;
-  border: 0.125rem solid #f0f0f0;
-  background-color: #f5f5f5;
+  border-radius: 50%;
+  border: 0.1875rem solid transparent;
+  background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #5b67d1, #94dfd4);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  transition: transform 0.3s ease;
 }
 .username[data-v-765423c9] {
   font-size: 1.125rem;
+  font-weight: 700;
+  color: #333;
+}
+.info-section[data-v-765423c9] {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 0.9375rem;
+  margin-bottom: 0.9375rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+.section-header[data-v-765423c9] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.625rem;
+}
+.edit-btn[data-v-765423c9] {
+  padding: 0.15625rem 1.5625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  border: none;
+  border-radius: 0.625rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(92, 109, 243, 0.3);
+  transition: all 0.3s ease;
+  margin-right: 0px;
+}
+.edit-btn[data-v-765423c9]:active {
+  box-shadow: 0 0.0625rem 0.1875rem rgba(92, 109, 243, 0.4);
+  transform: scale(0.95);
+}
+.section-title[data-v-765423c9] {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #333;
+}
+.info-item[data-v-765423c9] {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 0.03125rem solid #ececec;
+}
+.label[data-v-765423c9] {
+  font-size: 0.875rem;
+  color: #666;
+}
+.value[data-v-765423c9] {
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #333;
 }
@@ -38,122 +90,114 @@
   border-radius: 1.25rem;
   padding: 0.625rem 1.875rem;
   font-size: 0.875rem;
+  font-weight: 500;
   border: none;
   box-shadow: 0 0.125rem 0.375rem rgba(92, 109, 243, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.info-section[data-v-765423c9] {
-  background-color: white;
-  border-radius: 0.75rem;
-  padding: 0.9375rem;
-  margin-bottom: 0.9375rem;
-  box-shadow: 0 0.0625rem 0.375rem rgba(0, 0, 0, 0.05);
+.fetch-info-btn[data-v-765423c9]:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.1875rem 0.5625rem rgba(92, 109, 243, 0.3);
 }
-.section-header[data-v-765423c9] {
+.modal[data-v-765423c9] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 半透明背景 */
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 0.9375rem;
+  z-index: 1000;
 }
-.section-title[data-v-765423c9] {
+.modal-content[data-v-765423c9] {
+  width: 80%;
+  max-width: 18.75rem;
+  background-color: #fff;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.2);
+  animation: fadeIn-765423c9 0.3s ease-out;
+}
+.modal-header[data-v-765423c9] {
+  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
+  padding: 0.625rem;
+  text-align: center;
+}
+.modal-title[data-v-765423c9] {
   font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: #fff;
 }
-.edit-btn[data-v-765423c9] {
-  font-size: 0.8125rem;
-  color: #5c6df3;
-  padding: 0.3125rem 0.625rem;
+.modal-body[data-v-765423c9] {
+  padding: 0.9375rem;
 }
-.info-item[data-v-765423c9] {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 0.0625rem solid #f5f5f5;
+.input-group[data-v-765423c9] {
+  margin-bottom: 1.5625rem;
 }
 .label[data-v-765423c9] {
-  width: 4.375rem;
-  font-size: 0.875rem;
-  color: #666;
-}
-.input[data-v-765423c9] {
-  flex: 1;
   font-size: 0.875rem;
   color: #333;
+  margin-bottom: 0.3125rem;
+  display: block;
+}
+.input[data-v-765423c9] {
+  width: 100%;
   padding: 0.3125rem;
+  font-size: 0.875rem;
+  color: #333;
+  border: 0.0625rem solid #e5e5e5;
+  border-radius: 0.375rem;
 }
-.unit[data-v-765423c9] {
-  width: 1.875rem;
-  font-size: 0.75rem;
-  color: #999;
-  text-align: right;
+.input[data-v-765423c9]:focus {
+  border-color: #5c6df3;
+  outline: none;
 }
-.empty-text[data-v-765423c9] {
+.modal-footer[data-v-765423c9] {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem;
+  background-color: #f8f8f8;
+  border-top: 0.03125rem solid #e5e5e5;
+}
+.cancel-btn[data-v-765423c9],
+.save-btn[data-v-765423c9] {
+  flex: 1;
+  margin: 0 0.3125rem;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 0.0625rem;
   text-align: center;
-  color: #999;
-  font-size: 0.875rem;
-  padding: 1.25rem 0;
+  transition: all 0.3s ease;
 }
-.bmi-card[data-v-765423c9] {
-  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
-  border-radius: 0.75rem;
-  padding: 0.9375rem;
-  color: white;
-}
-.bmi-title[data-v-765423c9] {
-  font-size: 0.875rem;
-  opacity: 0.9;
-  margin-bottom: 0.625rem;
-}
-.bmi-content[data-v-765423c9] {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-}
-.bmi-value[data-v-765423c9] {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-.bmi-status[data-v-765423c9] {
-  font-size: 0.875rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.9375rem;
-  background: rgba(255, 255, 255, 0.2);
-}
-.goals-list[data-v-765423c9],
-.sport-types-list[data-v-765423c9] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  padding: 0.3125rem 0;
-}
-.goal-item[data-v-765423c9],
-.sport-type-item[data-v-765423c9] {
-  display: flex;
-  align-items: center;
-  gap: 0.3125rem;
-  background-color: #f8f9fa;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.9375rem;
-  transition: all 0.3s;
-}
-.editing .goal-item[data-v-765423c9],
-.editing .sport-type-item[data-v-765423c9] {
-  background-color: #f0f2ff;
-}
-.goal-text[data-v-765423c9],
-.sport-type-text[data-v-765423c9] {
-  font-size: 0.8125rem;
+.cancel-btn[data-v-765423c9] {
+  background-color: #f5f5f5;
   color: #666;
 }
-.status-thin[data-v-765423c9] {
-  background-color: #ffd700;
+.cancel-btn[data-v-765423c9]:active {
+  background-color: #e0e0e0;
 }
-.status-normal[data-v-765423c9] {
-  background-color: #52c41a;
+.save-btn[data-v-765423c9] {
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  color: #fff;
+  box-shadow: 0 0.125rem 0.25rem rgba(92, 109, 243, 0.3);
 }
-.status-overweight[data-v-765423c9] {
-  background-color: #faad14;
+.save-btn[data-v-765423c9]:active {
+  box-shadow: 0 0.0625rem 0.1875rem rgba(92, 109, 243, 0.4);
+  transform: scale(0.98);
 }
-.status-obese[data-v-765423c9] {
-  background-color: #ff4d4f;
+
+/* 弹窗动画 */
+@keyframes fadeIn-765423c9 {
+from {
+    opacity: 0;
+    transform: scale(0.95);
+}
+to {
+    opacity: 1;
+    transform: scale(1);
+}
 }

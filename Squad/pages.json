@@ -38,7 +38,7 @@
       "path": "pages/Friends/Friends",
       "style": {
         "navigationBarTitleText": "好友",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": false 
       }
     },
     {
@@ -90,6 +90,7 @@
 	    "enablePullDownRefresh": false
 	  }
 	}
+	
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
