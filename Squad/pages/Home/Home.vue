@@ -747,7 +747,8 @@ import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+// const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+const serverUrl =uni.getStorageSync("serverUrl");
 const target = ref(1);
 const modelVale = ref(0);
 const target_eat_percent = ref(100);

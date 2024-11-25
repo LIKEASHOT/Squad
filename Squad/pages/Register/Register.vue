@@ -101,6 +101,8 @@ const changepwd_vis_confirm = () => {
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
 const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+uni.setStorageSync("serverUrl", serverUrl);
+// const serverUrl = uni.getStorageSync("serverUrl");
 const form = ref({
   username: "",
   password: "",

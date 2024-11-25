@@ -1,3 +1,4 @@
+-- Active: 1731423318997@@127.0.0.1@3306@my_database
 CREATE DATABASE my_database;
 
 USE my_database;
@@ -37,7 +38,19 @@ CREATE TABLE messages (
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,   -- 外键约束，指向 users 表的 id
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE  -- 外键约束，指向 users 表的 id
 );
-
+CREATE TABLE food_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,       -- 唯一标识符
+    user_id INT NOT NULL,                    -- 对应 `users` 表的 id
+    record_date DATE NOT NULL,               -- 记录日期
+    food_name VARCHAR(255) NOT NULL,         -- 食物名称
+    base_calories FLOAT NOT NULL,            -- 食物基础热量
+    amount FLOAT NOT NULL DEFAULT 100,       -- 食用量 (默认单位为100g)
+    current_calories FLOAT NOT NULL,         -- 实际摄入热量
+    image_url VARCHAR(255),                  -- 图片路径
+    time TIME NOT NULL,                      -- 食用时间
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 记录创建时间
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 -- 创建索引
 CREATE INDEX idx_sender_receiver ON messages(sender_id, receiver_id);
 CREATE INDEX idx_timestamp ON messages(timestamp);
