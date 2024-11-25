@@ -5,18 +5,18 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken"); // 引入 JWT 库
 const session = require("express-session");
 const cors = require("cors");
-const axios = require('axios');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const axios = require("axios");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const serverUrl = "http://10.133.80.141.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 const config = {
   // 获取本地IP地址
-  localIP: '10.133.80.141',
-  port: 3000
+  localIP: "10.133.80.141",
+  port: 3000,
 };
-require('dotenv').config();
+require("dotenv").config();
 
 // 创建应用实例
 const app = express();
@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请求体
 // 提供静态文件访问
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // 创建数据库连接
 const connection = mysql.createConnection({
   host: "localhost",
@@ -72,7 +72,6 @@ app.use(
   })
 );
 
-
 // 注册 API
 app.post("/register", (req, res) => {
   const { username, password, confirmPassword } = req.body;
@@ -99,7 +98,8 @@ app.post("/register", (req, res) => {
     }
 
     // 插入用户并设置 permission 为 2
-    const insertQuery = "INSERT INTO users (name, password, permission) VALUES (?, ?, 2)";
+    const insertQuery =
+      "INSERT INTO users (name, password, permission) VALUES (?, ?, 2)";
     connection.query(insertQuery, [username, password], (err) => {
       if (err) {
         console.error("插入用户时出错:", err);
@@ -118,7 +118,6 @@ app.post("/register", (req, res) => {
     });
   });
 });
-
 
 // 次级管理员 注册 API（有根级管理员注册）
 app.post("/register-admin", (req, res) => {
@@ -146,7 +145,8 @@ app.post("/register-admin", (req, res) => {
     }
 
     // 插入用户并设置 permission 为 1
-    const insertQuery = "INSERT INTO users (name, password, permission) VALUES (?, ?, 1)";
+    const insertQuery =
+      "INSERT INTO users (name, password, permission) VALUES (?, ?, 1)";
     connection.query(insertQuery, [username, password], (err) => {
       if (err) {
         console.error("插入用户时出错:", err);
@@ -166,11 +166,10 @@ app.post("/register-admin", (req, res) => {
   });
 });
 
-
 //登录API，输入值：账号密码，返回值有（登陆成功信号和对应用户的权限）
 app.post("/login", (req, res) => {
   const { username, password } = req.body; // 从请求体中获取用户名和密码
-  
+
   const query = "SELECT * FROM users WHERE name = ? AND password = ?";
 
   connection.query(query, [username, password], (err, results) => {
@@ -179,9 +178,10 @@ app.post("/login", (req, res) => {
     }
     if (results.length > 0) {
       const user = results[0];
-      
+
       // 登录成功，更新 lastLogin
-      const updateLoginTimeQuery = "UPDATE users SET lastLogin = NOW() WHERE name = ?";
+      const updateLoginTimeQuery =
+        "UPDATE users SET lastLogin = NOW() WHERE name = ?";
       connection.query(updateLoginTimeQuery, [username], (updateErr) => {
         if (updateErr) {
           return res.status(500).json({ error: "Database error" });
@@ -189,12 +189,12 @@ app.post("/login", (req, res) => {
 
         // 生成 JWT
         const token = jwt.sign({ username: username }, JWT_SECRET);
-        
+
         // 返回登录成功消息、token 和用户的权限
-        res.json({ 
-          message: "Login successful", 
-          token, 
-          permission: user.Permission 
+        res.json({
+          message: "Login successful",
+          token,
+          permission: user.Permission,
         });
       });
     } else {
@@ -202,7 +202,6 @@ app.post("/login", (req, res) => {
     }
   });
 });
-
 
 // 输入性别和年龄 API
 app.post("/updateGenderAge", (req, res) => {
@@ -251,8 +250,6 @@ app.post("/updateHealthInfo", (req, res) => {
   });
 });
 
-
-
 // 输入运动目标 API
 app.post("/updateFitnessGoal", (req, res) => {
   const { fitnessGoal, username } = req.body;
@@ -269,8 +266,6 @@ app.post("/updateFitnessGoal", (req, res) => {
     res.status(200).json({ message: "Fitness goal updated successfully" });
   });
 });
-
-
 
 // 输入运动方式 API
 app.post("/updateExerciseType", (req, res) => {
@@ -311,101 +306,109 @@ app.get("/last-login", (req, res) => {
 });
 
 //AI生成健身计划
-app.post('/generateFitnessPlan', async (req, res) => {
+app.post("/generateFitnessPlan", async (req, res) => {
   const { aiInput, username } = req.body;
   // 验证输入
-  if (typeof aiInput !== 'string' || aiInput.trim() === '') {
-    return res.status(400).json({ error: '无效的输入' });
+  if (typeof aiInput !== "string" || aiInput.trim() === "") {
+    return res.status(400).json({ error: "无效的输入" });
   }
 
   // 从数据库获取用户的其他数据
-  connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
-    if (err) {
-      console.error('数据库查询失败:', err);
-      return res.status(500).json({ error: '数据库查询失败' });
-    }
+  connection.query(
+    "SELECT * FROM users WHERE name = ?",
+    [username],
+    async (err, results) => {
+      if (err) {
+        console.error("数据库查询失败:", err);
+        return res.status(500).json({ error: "数据库查询失败" });
+      }
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: '用户未找到' });
-    }
+      if (results.length === 0) {
+        return res.status(404).json({ error: "用户未找到" });
+      }
 
-    const user = results[0];
+      const user = results[0];
 
-    // 获取用户的其他数据
-    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } = user;
+      // 获取用户的其他数据
+      const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } =
+        user;
 
-    const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
-    const API_KEY = process.env.API_KEY;
+      const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+      const API_KEY = process.env.API_KEY;
 
-    if (!API_KEY) {
-      console.error('API 密钥未设置');
-      return res.status(500).json({ error: '缺少 API 密钥' });
-    }
+      if (!API_KEY) {
+        console.error("API 密钥未设置");
+        return res.status(500).json({ error: "缺少 API 密钥" });
+      }
 
-    const model = 'GLM-4-Flash'; // 替换为实际模型ID
+      const model = "GLM-4-Flash"; // 替换为实际模型ID
 
-    try {
-      console.log('请求数据:', {
-        messages: [
-          {
-            role: 'user',
-            content: `用户需求：${aiInput}。根据以下信息生成一个健身计划：
-              性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
-              BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`
-          }
-        ]
-      });
-
-      // 发送请求到 AI API
-      const response = await axios.post(
-        API_URL,
-        {
-          model,  // 模型ID
+      try {
+        console.log("请求数据:", {
           messages: [
             {
-              role: 'user',
+              role: "user",
               content: `用户需求：${aiInput}。根据以下信息生成一个健身计划：
-                性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
-                BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`
-            }
-          ]
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      // 检查响应
-      if (response.status === 200 && response.data.choices && response.data.choices.length > 0) {
-        const fitnessPlan = response.data.choices[0].message.content;
-        res.status(200).json({
-          message: '健身计划生成成功',
-          fitnessPlan
+              性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
+              BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`,
+            },
+          ],
         });
-      } else {
-        console.error('AI 返回数据无效:', response.data);
-        res.status(500).json({ error: 'AI 返回数据无效' });
-      }
-    } catch (error) {
-      console.error('生成健身计划出错:', error.message || error);
-      // 增加请求返回的错误详情
-      if (error.response) {
-        console.error('AI API 错误响应:', error.response.data);
-        console.error('AI API 错误状态:', error.response.status);
-      }
-      res.status(500).json({ error: '生成健身计划失败' });
-    }
-  });
-});
 
+        // 发送请求到 AI API
+        const response = await axios.post(
+          API_URL,
+          {
+            model, // 模型ID
+            messages: [
+              {
+                role: "user",
+                content: `用户需求：${aiInput}。根据以下信息生成一个健身计划：
+                性别：${gender}, 年龄：${age}, 身高：${height}米, 体重：${weight}公斤,
+                BMI：${bmi}, 目标：${fitnessGoal}, 运动类型：${exerciseType}`,
+              },
+            ],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${API_KEY}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        // 检查响应
+        if (
+          response.status === 200 &&
+          response.data.choices &&
+          response.data.choices.length > 0
+        ) {
+          const fitnessPlan = response.data.choices[0].message.content;
+          res.status(200).json({
+            message: "健身计划生成成功",
+            fitnessPlan,
+          });
+        } else {
+          console.error("AI 返回数据无效:", response.data);
+          res.status(500).json({ error: "AI 返回数据无效" });
+        }
+      } catch (error) {
+        console.error("生成健身计划出错:", error.message || error);
+        // 增加请求返回的错误详情
+        if (error.response) {
+          console.error("AI API 错误响应:", error.response.data);
+          console.error("AI API 错误状态:", error.response.status);
+        }
+        res.status(500).json({ error: "生成健身计划失败" });
+      }
+    }
+  );
+});
 
 // 设置 multer 存储配置
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, 'uploads');
+    const uploadPath = path.join(__dirname, "uploads");
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath); // 如果文件夹不存在则创建
     }
@@ -421,46 +424,47 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // 修改食物热量识别路由
-app.post('/foodCalorie', upload.single('file'), async (req, res) => {
+app.post("/foodCalorie", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: '请上传图片' });
+      return res.status(400).json({ error: "请上传图片" });
     }
 
-    const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
     const API_KEY = process.env.API_KEY;
 
     if (!API_KEY) {
-      console.error('API 密钥未设置');
-      return res.status(500).json({ error: '缺少 API 密钥' });
+      console.error("API 密钥未设置");
+      return res.status(500).json({ error: "缺少 API 密钥" });
     }
 
     // 读取图片并转换为 base64
     const imageBuffer = fs.readFileSync(req.file.path);
-    const base64Image = imageBuffer.toString('base64');
+    const base64Image = imageBuffer.toString("base64");
 
     // 发送请求到智谱 AI
     const response = await axios.post(
       API_URL,
       {
-        model: 'GLM-4v-plus',
+        model: "GLM-4v-plus",
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: [
               {
-                type: 'image_url',
+                type: "image_url",
                 image_url: {
                   url: base64Image,
                 },
               },
               {
-                type: 'text',
-                text: '请识别这个食物的热量，热量要用准确数值表示，取一个你认为恰当的值即可，前面不需要加上大约等字样，并且严格按照以下JSON格式输出,如果有多种食物，一定要依次输出，仅输出JSON，不要添加其他内容：\n' +
-                     '{\n' +
-                     '  "食物名称": "xxx",\n' +
-                     '  "热量": "yyy kcal/100g"\n' +
-                     '}',
+                type: "text",
+                text:
+                  "请识别这个食物的热量，热量要用准确数值表示，取一个你认为恰当的值即可，前面不需要加上大约等字样，并且严格按照以下JSON格式输出,如果有多种食物，一定要依次输出，仅输出JSON，不要添加其他内容：\n" +
+                  "{\n" +
+                  '  "食物名称": "xxx",\n' +
+                  '  "热量": "yyy kcal/100g"\n' +
+                  "}",
               },
             ],
           },
@@ -469,7 +473,7 @@ app.post('/foodCalorie', upload.single('file'), async (req, res) => {
       {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -478,30 +482,33 @@ app.post('/foodCalorie', upload.single('file'), async (req, res) => {
     fs.unlinkSync(req.file.path);
 
     // 处理响应
-    if (response.status === 200 && response.data.choices && response.data.choices.length > 0) {
+    if (
+      response.status === 200 &&
+      response.data.choices &&
+      response.data.choices.length > 0
+    ) {
       const aiResponse = response.data.choices[0].message.content;
       res.status(200).json({
-        message: '食物识别成功',
-        result: aiResponse
+        message: "食物识别成功",
+        result: aiResponse,
       });
-      console.log('AI 返回数据:', aiResponse);
+      console.log("AI 返回数据:", aiResponse);
     } else {
-      console.error('AI 返回数据无效:', response.data);
-      res.status(500).json({ error: 'AI 返回数据无效' });
+      console.error("AI 返回数据无效:", response.data);
+      res.status(500).json({ error: "AI 返回数据无效" });
     }
-
   } catch (error) {
-    console.error('食物识别出错:', error.message || error);
+    console.error("食物识别出错:", error.message || error);
     // 清理临时文件
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-    
+
     if (error.response) {
-      console.error('AI API 错误响应:', error.response.data);
-      console.error('AI API 错误状态:', error.response.status);
+      console.error("AI API 错误响应:", error.response.data);
+      console.error("AI API 错误状态:", error.response.status);
     }
-    res.status(500).json({ error: '食物识别失败' });
+    res.status(500).json({ error: "食物识别失败" });
   }
 });
 
@@ -510,7 +517,7 @@ app.post("/searchGoals", (req, res) => {
   const { name, target, type, difficulty } = req.body;
   const conditions = [];
   const params = [];
-  
+
   if (name) {
     conditions.push("名称 LIKE ?");
     params.push(`%${name}%`);
@@ -528,7 +535,8 @@ app.post("/searchGoals", (req, res) => {
     params.push(`%${difficulty}%`);
   }
 
-  let query = "SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal";
+  let query =
+    "SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal";
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
   }
@@ -547,9 +555,8 @@ app.post("/searchGoals", (req, res) => {
   });
 });
 
-
 // 获取用户的健身目标信息 API
-app.post('/get-user-goals', (req, res) => {
+app.post("/get-user-goals", (req, res) => {
   const { username } = req.body; // 从请求体中获取 username
 
   if (!username) {
@@ -557,69 +564,91 @@ app.post('/get-user-goals', (req, res) => {
   }
 
   // 查询用户的 goalid
-  connection.query('SELECT goalid FROM users WHERE name = ?', [username], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
-
-    if (results.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const goalidString = results[0].goalid; // 获取 goalid 字符串
-    const goalidArray = JSON.parse(goalidString); // 解析为数组
-
-    // 使用 goalid 查询 goal 表
-    const query = 'SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal WHERE id IN (?)';
-    connection.query(query, [goalidArray], (err, goals) => {
+  connection.query(
+    "SELECT goalid FROM users WHERE name = ?",
+    [username],
+    (err, results) => {
       if (err) {
-        return res.status(500).json({ error: "Database error while fetching goals" });
+        return res.status(500).json({ error: "Database error" });
       }
 
-      res.status(200).json({ goals });
-    });
-  });
+      if (results.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const goalidString = results[0].goalid; // 获取 goalid 字符串
+      const goalidArray = JSON.parse(goalidString); // 解析为数组
+
+      // 使用 goalid 查询 goal 表
+      const query =
+        "SELECT 名称, 运动次数, 时间, 难度, 卡路里, image_url, video_url FROM goal WHERE id IN (?)";
+      connection.query(query, [goalidArray], (err, goals) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ error: "Database error while fetching goals" });
+        }
+
+        res.status(200).json({ goals });
+      });
+    }
+  );
 });
 
-
 // 添加用户目标 API
-app.post('/add-user-goals', (req, res) => {
-  const { username, goalNames } = req.body; 
-  if (!username || !goalNames || !Array.isArray(goalNames) || goalNames.length === 0) {
-    return res.status(400).json({ error: "Username and goal names are required" });
+app.post("/add-user-goals", (req, res) => {
+  const { username, goalNames } = req.body;
+  if (
+    !username ||
+    !goalNames ||
+    !Array.isArray(goalNames) ||
+    goalNames.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Username and goal names are required" });
   }
 
   // 查询目标名称对应的 id
-  const placeholders = goalNames.map(() => '?').join(',');
+  const placeholders = goalNames.map(() => "?").join(",");
   const query = `SELECT id FROM goal WHERE 名称 IN (${placeholders})`;
 
   connection.query(query, goalNames, (err, results) => {
     if (err) {
-      return res.status(500).json({ error: "Database error while fetching goals" });
+      return res
+        .status(500)
+        .json({ error: "Database error while fetching goals" });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ error: "No goals found for the provided names" });
+      return res
+        .status(404)
+        .json({ error: "No goals found for the provided names" });
     }
 
     // 获取目标 ID 列表
-    const goalIds = results.map(result => result.id);
+    const goalIds = results.map((result) => result.id);
 
     // 更新用户的 goalid
-    connection.query('UPDATE users SET goalid = ? WHERE name = ?', [JSON.stringify(goalIds), username], (err) => {
-      if (err) {
-        return res.status(500).json({ error: "Database error while updating user goals" });
+    connection.query(
+      "UPDATE users SET goalid = ? WHERE name = ?",
+      [JSON.stringify(goalIds), username],
+      (err) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ error: "Database error while updating user goals" });
+        }
+        res.status(200).json({ message: "User goals updated successfully" });
       }
-      res.status(200).json({ message: "User goals updated successfully" });
-    });
+    );
   });
 });
 
-
 // 返回所有计划信息（SELECT 名称, 时间, 运动次数, 难度, 卡路里, video_url, image_url, 目标, 运动类型）
-app.get('/goals', (req, res) => {
-  console.log('请求所有计划信息');
-  console.log('ip地址',config.localIP);
+app.get("/goals", (req, res) => {
+  console.log("请求所有计划信息");
+  console.log("ip地址", config.localIP);
   const sql = `
     SELECT 
       名称 AS title, 
@@ -635,24 +664,28 @@ app.get('/goals', (req, res) => {
 
   connection.query(sql, (error, results) => {
     if (error) {
-      console.error("查询失败:", error);  // 添加错误日志
-      return res.status(500).json({ message: '查询失败', error });
+      console.error("查询失败:", error); // 添加错误日志
+      return res.status(500).json({ message: "查询失败", error });
     }
-    
+
     // console.log("查询结果:", results);  // 添加调试输出
     return res.json(results.length > 0 ? results : []);
   });
 });
 
-const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/async/chat/completions';
-const RESULT_URL = 'https://open.bigmodel.cn/api/paas/v4/async-result';
+const ZHIPU_API_URL =
+  "https://open.bigmodel.cn/api/paas/v4/async/chat/completions";
+const RESULT_URL = "https://open.bigmodel.cn/api/paas/v4/async-result";
 const API_KEY = process.env.API_KEY;
 
 // 构造问题并向智谱AI发送请求
 async function getDailyCalories(height, weight, age, activityType, goal) {
   const question = `
     请根据以下信息计算每日所需热量摄取量：
-    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(',', ' ')}，运动目标：${goal.replace(',', ' ')}。
+    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(
+    ",",
+    " "
+  )}，运动目标：${goal.replace(",", " ")}。
     请返回每日热量摄取量。
     请隐藏计算过程，仅返回结果。
     ！！！！！！！注意只返回数字，不要包含任何其他文字！！！！！！！！！！！！！！！！！！！！！！！！！
@@ -660,17 +693,21 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
   `;
 
   try {
-    const response = await axios.post(ZHIPU_API_URL, {
-      model: 'glm-4-plus',
-      messages: [{ role: 'user', content: question }],
-    }, {
-      headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
+    const response = await axios.post(
+      ZHIPU_API_URL,
+      {
+        model: "glm-4-plus",
+        messages: [{ role: "user", content: question }],
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     const taskId = response.data.id;
-    console.log('AI 请求成功, 任务ID:', taskId);
+    console.log("AI 请求成功, 任务ID:", taskId);
 
     // 轮询获取 AI 结果
     const getAIResult = async (taskId) => {
@@ -680,71 +717,80 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
       for (let i = 0; i < maxRetries; i++) {
         const resultResponse = await axios.get(`${RESULT_URL}/${taskId}`, {
           headers: {
-            'Authorization': `Bearer ${API_KEY}`,
+            Authorization: `Bearer ${API_KEY}`,
           },
         });
 
-        if (resultResponse.data.task_status === 'SUCCESS') {
+        if (resultResponse.data.task_status === "SUCCESS") {
           return resultResponse.data.choices[0].message.content.trim();
-        } else if (resultResponse.data.task_status === 'FAILED') {
-          throw new Error('AI 任务失败');
+        } else if (resultResponse.data.task_status === "FAILED") {
+          throw new Error("AI 任务失败");
         }
-        await new Promise(resolve => setTimeout(resolve, delay)); // 等待一段时间再重试
+        await new Promise((resolve) => setTimeout(resolve, delay)); // 等待一段时间再重试
       }
-      throw new Error('AI 任务超时');
+      throw new Error("AI 任务超时");
     };
 
     // 获取最终 AI 结果
     const dailyCalories = await getAIResult(taskId);
-    console.log('AI 计算结果:', dailyCalories);
+    console.log("AI 计算结果:", dailyCalories);
 
     return dailyCalories;
-
   } catch (error) {
-    console.error('调用智谱 AI 失败:', error);
-    throw new Error('计算每日热量摄取量失败');
+    console.error("调用智谱 AI 失败:", error);
+    throw new Error("计算每日热量摄取量失败");
   }
 }
 
 // API 路由，处理前端请求
-app.post('/api/calculateCalories', async (req, res) => {
+app.post("/api/calculateCalories", async (req, res) => {
   const { username } = req.body;
 
   // 验证用户名是否提供
   if (!username) {
-    return res.status(400).json({ error: '用户名未提供' });
+    return res.status(400).json({ error: "用户名未提供" });
   }
 
   // 从数据库获取用户信息
-  connection.query('SELECT * FROM users WHERE name = ?', [username], async (err, results) => {
-    if (err) {
-      console.error('数据库查询失败:', err);
-      return res.status(500).json({ error: '数据库查询失败' });
+  connection.query(
+    "SELECT * FROM users WHERE name = ?",
+    [username],
+    async (err, results) => {
+      if (err) {
+        console.error("数据库查询失败:", err);
+        return res.status(500).json({ error: "数据库查询失败" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: "用户未找到" });
+      }
+
+      const user = results[0];
+      const { height, weight, age, exerciseType, fitnessGoal } = user;
+
+      if (!height || !weight || !age || !exerciseType || !fitnessGoal) {
+        return res.status(400).json({ error: "用户健康信息不完整" });
+      }
+
+      try {
+        // 调用 AI 模型计算每日热量摄取量
+        const dailyCalories = await getDailyCalories(
+          height,
+          weight,
+          age,
+          exerciseType,
+          fitnessGoal
+        );
+        console.log("Daily Calories:", dailyCalories); // 打印计算出的热量
+
+        // 返回计算结果并指定状态码 200
+        res.status(200).json({ dailyCalories: dailyCalories });
+      } catch (error) {
+        console.error("计算每日热量摄取量失败:", error);
+        res.status(500).json({ error: "计算每日摄入热量失败" });
+      }
     }
-
-    if (results.length === 0) {
-      return res.status(404).json({ error: '用户未找到' });
-    }
-
-    const user = results[0];
-    const { height, weight, age, exerciseType, fitnessGoal } = user;
-
-    if (!height || !weight || !age || !exerciseType || !fitnessGoal) {
-      return res.status(400).json({ error: '用户健康信息不完整' });
-    }
-
-    try {
-      // 调用 AI 模型计算每日热量摄取量
-      const dailyCalories = await getDailyCalories(height, weight, age, exerciseType, fitnessGoal);
-      console.log('Daily Calories:', dailyCalories);  // 打印计算出的热量
-
-      // 返回计算结果并指定状态码 200
-      res.status(200).json({ dailyCalories: dailyCalories });
-    } catch (error) {
-      console.error('计算每日热量摄取量失败:', error);
-      res.status(500).json({ error: '计算每日摄入热量失败' });
-    }
-  });
+  );
 });
 
 const uploadedFiles = new Set();
@@ -774,98 +820,113 @@ app.post("/submitDailyFoods", async (req, res) => {
 
   connection.beginTransaction((err) => {
     if (err) {
-      return res.status(500).json({ success: false, message: "数据库事务开始失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库事务开始失败" });
     }
 
     try {
       // 查询用户ID
-      connection.query("SELECT id FROM users WHERE name = ?", [username], (err, userRows) => {
-        if (err) {
-          return connection.rollback(() => {
-            res.status(500).json({ success: false, message: "数据库查询失败" });
-          });
-        }
+      connection.query(
+        "SELECT id FROM users WHERE name = ?",
+        [username],
+        (err, userRows) => {
+          if (err) {
+            return connection.rollback(() => {
+              res
+                .status(500)
+                .json({ success: false, message: "数据库查询失败" });
+            });
+          }
 
-        if (userRows.length === 0) {
-          return connection.rollback(() => {
-            res.status(404).json({ success: false, message: "用户不存在" });
-          });
-        }
-        const userId = userRows[0].id;
+          if (userRows.length === 0) {
+            return connection.rollback(() => {
+              res.status(404).json({ success: false, message: "用户不存在" });
+            });
+          }
+          const userId = userRows[0].id;
 
-        // 插入食物记录
-        const insertPromises = foods.map((food) =>
-          new Promise((resolve, reject) => {
-            const baseFoodName = food.食物名称;
+          // 插入食物记录
+          const insertPromises = foods.map(
+            (food) =>
+              new Promise((resolve, reject) => {
+                const baseFoodName = food.食物名称;
 
-            // 检查数据库中是否存在重名食物
-            const checkNameQuery = `
+                // 检查数据库中是否存在重名食物
+                const checkNameQuery = `
               SELECT COUNT(*) AS count 
               FROM food_records 
               WHERE user_id = ? AND record_date = ? AND food_name LIKE ?
             `;
-            connection.query(
-              checkNameQuery,
-              [userId, date, `${baseFoodName}%`],
-              (err, results) => {
-                if (err) return reject(err);
+                connection.query(
+                  checkNameQuery,
+                  [userId, date, `${baseFoodName}%`],
+                  (err, results) => {
+                    if (err) return reject(err);
 
-                let uniqueFoodName = baseFoodName;
-                const count = results[0].count;
+                    let uniqueFoodName = baseFoodName;
+                    const count = results[0].count;
 
-                // 如果有重名，则加后缀
-                if (count > 0) {
-                  uniqueFoodName = `${baseFoodName} (${count})`;
-                }
+                    // 如果有重名，则加后缀
+                    if (count > 0) {
+                      uniqueFoodName = `${baseFoodName} (${count})`;
+                    }
 
-                // 插入记录
-                const insertQuery = `
+                    // 插入记录
+                    const insertQuery = `
                   INSERT INTO food_records 
                   (user_id, record_date, food_name, base_calories, amount, current_calories, image_url, time)
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 `;
-                connection.query(
-                  insertQuery,
-                  [
-                    userId,
-                    date,
-                    uniqueFoodName,
-                    food.baseCalories,
-                    food.amount,
-                    food.currentCalories,
-                    food.imageUrl,
-                    new Date().toLocaleTimeString("en-GB", { hour12: false }),
-                  ],
-                  (err, result) => {
-                    if (err) return reject(err);
-                    resolve(result);
+                    connection.query(
+                      insertQuery,
+                      [
+                        userId,
+                        date,
+                        uniqueFoodName,
+                        food.baseCalories,
+                        food.amount,
+                        food.currentCalories,
+                        food.imageUrl,
+                        new Date().toLocaleTimeString("en-GB", {
+                          hour12: false,
+                        }),
+                      ],
+                      (err, result) => {
+                        if (err) return reject(err);
+                        resolve(result);
+                      }
+                    );
                   }
                 );
-              }
-            );
-          })
-        );
+              })
+          );
 
-        // 等待所有插入操作完成
-        Promise.all(insertPromises)
-          .then(() => {
-            connection.commit((err) => {
-              if (err) {
-                return connection.rollback(() => {
-                  res.status(500).json({ success: false, message: "事务提交失败" });
-                });
-              }
+          // 等待所有插入操作完成
+          Promise.all(insertPromises)
+            .then(() => {
+              connection.commit((err) => {
+                if (err) {
+                  return connection.rollback(() => {
+                    res
+                      .status(500)
+                      .json({ success: false, message: "事务提交失败" });
+                  });
+                }
 
-              res.json({ success: true, message: "记录上传成功" });
+                res.json({ success: true, message: "记录上传成功" });
+              });
+            })
+            .catch((error) => {
+              connection.rollback(() => {
+                console.error("插入失败:", error);
+                res
+                  .status(500)
+                  .json({ success: false, message: "插入食物记录失败" });
+              });
             });
-          })
-          .catch((error) => {
-            connection.rollback(() => {
-              console.error("插入失败:", error);
-              res.status(500).json({ success: false, message: "插入食物记录失败" });
-            });
-          });
-      });
+        }
+      );
     } catch (error) {
       console.error("数据库操作失败:", error);
       connection.rollback(() => {
@@ -875,168 +936,215 @@ app.post("/submitDailyFoods", async (req, res) => {
   });
 });
 
-
 // 获取用户某日饮食记录
-app.post('/getDailyFoods', async (req, res) => {
+app.post("/getDailyFoods", async (req, res) => {
   const { username, date } = req.body;
 
   if (!username || !date) {
-    return res.status(400).json({ success: false, message: '缺少参数' });
+    return res.status(400).json({ success: false, message: "缺少参数" });
   }
 
   try {
     // 查询用户ID
-    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: '数据库查询失败' });
-      }
+    connection.query(
+      "SELECT id FROM users WHERE name = ?",
+      [username],
+      (err, userRows) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ success: false, message: "数据库查询失败" });
+        }
 
-      if (userRows.length === 0) {
-        return res.status(404).json({ success: false, message: '用户不存在' });
-      }
-      const userId = userRows[0].id;
+        if (userRows.length === 0) {
+          return res
+            .status(404)
+            .json({ success: false, message: "用户不存在" });
+        }
+        const userId = userRows[0].id;
 
-      // 查询饮食记录
-      connection.query(
-        `SELECT food_name AS 食物名称, base_calories AS 基础热量, amount AS 食用量, 
+        // 查询饮食记录
+        connection.query(
+          `SELECT food_name AS 食物名称, base_calories AS 基础热量, amount AS 食用量, 
                 current_calories AS 当前热量, image_url AS 图片路径, time AS 时间
          FROM food_records 
          WHERE user_id = ? AND record_date = ?`,
-        [userId, date],
-        (err, foodRows) => {
-          if (err) {
-            return res.status(500).json({ success: false, message: '数据库查询失败' });
-          }
+          [userId, date],
+          (err, foodRows) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ success: false, message: "数据库查询失败" });
+            }
 
-          res.json({ success: true, foods: foodRows });
-        }
-      );
-    });
+            res.json({ success: true, foods: foodRows });
+          }
+        );
+      }
+    );
   } catch (error) {
-    console.error('数据库查询失败:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    console.error("数据库查询失败:", error);
+    res.status(500).json({ success: false, message: "服务器错误" });
   }
 });
 
 // 删除用户饮食记录
-app.post('/deleteFood', async (req, res) => {
+app.post("/deleteFood", async (req, res) => {
   const { username, foodName, date } = req.body;
 
   if (!username || !foodName || !date) {
-    return res.status(400).json({ success: false, message: '缺少参数' });
+    return res.status(400).json({ success: false, message: "缺少参数" });
   }
 
   try {
     // 查询用户ID
-    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: '数据库查询失败' });
-      }
+    connection.query(
+      "SELECT id FROM users WHERE name = ?",
+      [username],
+      (err, userRows) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ success: false, message: "数据库查询失败" });
+        }
 
-      if (userRows.length === 0) {
-        return res.status(404).json({ success: false, message: '用户不存在' });
-      }
+        if (userRows.length === 0) {
+          return res
+            .status(404)
+            .json({ success: false, message: "用户不存在" });
+        }
 
-      const userId = userRows[0].id;
+        const userId = userRows[0].id;
 
-      // 查询并删除指定的食物记录
-      connection.query(
-        `SELECT current_calories AS 当前热量 
+        // 查询并删除指定的食物记录
+        connection.query(
+          `SELECT current_calories AS 当前热量 
          FROM food_records 
          WHERE user_id = ? AND record_date = ? AND food_name = ?`,
-        [userId, date, foodName],
-        (err, foodRows) => {
-          if (err) {
-            return res.status(500).json({ success: false, message: '数据库查询失败' });
-          }
-
-          if (foodRows.length === 0) {
-            return res.status(404).json({ success: false, message: '记录不存在' });
-          }
-
-          const deletedCalories = foodRows[0].当前热量;
-
-          // 删除记录
-          connection.query(
-            `DELETE FROM food_records 
-             WHERE user_id = ? AND record_date = ? AND food_name = ?`,
-            [userId, date, foodName],
-            (err) => {
-              if (err) {
-                return res.status(500).json({ success: false, message: '删除失败' });
-              }
-
-              res.json({ success: true, message: '删除成功', deletedCalories });
+          [userId, date, foodName],
+          (err, foodRows) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ success: false, message: "数据库查询失败" });
             }
-          );
-        }
-      );
-    });
+
+            if (foodRows.length === 0) {
+              return res
+                .status(404)
+                .json({ success: false, message: "记录不存在" });
+            }
+
+            const deletedCalories = foodRows[0].当前热量;
+
+            // 删除记录
+            connection.query(
+              `DELETE FROM food_records 
+             WHERE user_id = ? AND record_date = ? AND food_name = ?`,
+              [userId, date, foodName],
+              (err) => {
+                if (err) {
+                  return res
+                    .status(500)
+                    .json({ success: false, message: "删除失败" });
+                }
+
+                res.json({
+                  success: true,
+                  message: "删除成功",
+                  deletedCalories,
+                });
+              }
+            );
+          }
+        );
+      }
+    );
   } catch (error) {
-    console.error('删除记录失败:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    console.error("删除记录失败:", error);
+    res.status(500).json({ success: false, message: "服务器错误" });
   }
 });
 //更新饮食记录
-app.post('/updateFood', async (req, res) => {
+app.post("/updateFood", async (req, res) => {
   const { username, foodName, amount, currentCalories } = req.body;
 
   if (!username || !foodName || !amount || !currentCalories) {
-    return res.status(400).json({ success: false, message: '缺少参数' });
+    return res.status(400).json({ success: false, message: "缺少参数" });
   }
 
   try {
     // 查询用户ID
-    connection.query('SELECT id FROM users WHERE name = ?', [username], (err, userRows) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: '数据库查询失败' });
-      }
+    connection.query(
+      "SELECT id FROM users WHERE name = ?",
+      [username],
+      (err, userRows) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ success: false, message: "数据库查询失败" });
+        }
 
-      if (userRows.length === 0) {
-        return res.status(404).json({ success: false, message: '用户不存在' });
-      }
+        if (userRows.length === 0) {
+          return res
+            .status(404)
+            .json({ success: false, message: "用户不存在" });
+        }
 
-      const userId = userRows[0].id;
+        const userId = userRows[0].id;
 
-      // 更新数据库中的食物数据
-      connection.query(
-        `UPDATE food_records 
+        // 更新数据库中的食物数据
+        connection.query(
+          `UPDATE food_records 
          SET amount = ?, current_calories = ? 
          WHERE user_id = ? AND food_name = ?`,
-        [amount, currentCalories, userId, foodName],
-        (err, result) => {
-          if (err) {
-            return res.status(500).json({ success: false, message: '更新失败' });
-          }
+          [amount, currentCalories, userId, foodName],
+          (err, result) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ success: false, message: "更新失败" });
+            }
 
-          if (result.affectedRows > 0) {
-            res.json({ success: true, message: '更新成功' });
-          } else {
-            res.status(404).json({ success: false, message: '记录未找到' });
+            if (result.affectedRows > 0) {
+              res.json({ success: true, message: "更新成功" });
+            } else {
+              res.status(404).json({ success: false, message: "记录未找到" });
+            }
           }
-        }
-      );
-    });
+        );
+      }
+    );
   } catch (error) {
-    console.error('更新失败:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    console.error("更新失败:", error);
+    res.status(500).json({ success: false, message: "服务器错误" });
   }
 });
 
-app.put('/goals', (req, res) => {
-  let { 名称, 运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url } = req.body;
+app.put("/goals", (req, res) => {
+  let {
+    名称,
+    运动次数,
+    时间,
+    卡路里,
+    运动类型,
+    目标,
+    难度,
+    image_url,
+    video_url,
+  } = req.body;
 
-  console.log('接收到的更新数据:', req.body);
-   // 修改时间字段的提取逻辑
-  if (typeof 时间 === 'string') {
+  console.log("接收到的更新数据:", req.body);
+  // 修改时间字段的提取逻辑
+  if (typeof 时间 === "string") {
     const timeMatch = 时间.match(/\d+/); // 提取字符串中的数字部分
     时间 = timeMatch ? parseInt(timeMatch[0], 10) : 0; // 只保留数字部分，转换为整数
   } else {
     时间 = parseInt(时间, 10) || 0; // 如果时间本身是数字，直接使用
   }
   // 只保留 `uploads` 之后的部分
-  if (image_url && image_url.includes('uploads/')) {
-    image_url = image_url.substring(image_url.indexOf('uploads'));
+  if (image_url && image_url.includes("uploads/")) {
+    image_url = image_url.substring(image_url.indexOf("uploads"));
   }
   const sql = `
     UPDATE goal 
@@ -1051,25 +1159,35 @@ app.put('/goals', (req, res) => {
       video_url = ? 
     WHERE 名称 = ?`;
 
-  const params = [运动次数, 时间, 卡路里, 运动类型, 目标, 难度, image_url, video_url, 名称];
+  const params = [
+    运动次数,
+    时间,
+    卡路里,
+    运动类型,
+    目标,
+    难度,
+    image_url,
+    video_url,
+    名称,
+  ];
 
-  console.log('执行的SQL:', sql);
-  console.log('传入的参数:', params); 
+  console.log("执行的SQL:", sql);
+  console.log("传入的参数:", params);
 
   connection.query(sql, params, (error, results) => {
     if (error) {
-      console.error('数据库更新失败:', error);
-      return res.status(500).json({ message: '更新失败', error });
+      console.error("数据库更新失败:", error);
+      return res.status(500).json({ message: "更新失败", error });
     }
     if (results.affectedRows > 0) {
-      return res.json({ message: '更新成功' });
+      return res.json({ message: "更新成功" });
     } else {
-      return res.json({ message: '未找到相关数据' });
+      return res.json({ message: "未找到相关数据" });
     }
   });
 });
 
-app.post('/goals/add', (req, res) => {
+app.post("/goals/add", (req, res) => {
   const {
     名称,
     运动次数,
@@ -1080,22 +1198,36 @@ app.post('/goals/add', (req, res) => {
     时间,
     image_url,
     video_url,
-    B站连接
+    B站连接,
   } = req.body;
 
-  if (!名称) return res.status(400).json({ message: '计划名称不能为空' });
+  if (!名称) return res.status(400).json({ message: "计划名称不能为空" });
 
   const sql = `
     INSERT INTO goal 
     (名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, video_url, B站连接) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  connection.query(sql, [名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, video_url, B站连接], (error, results) => {
-    if (error) return res.status(500).json({ message: '添加失败', error });
-    res.json({ message: '添加成功' });
-  });
+  connection.query(
+    sql,
+    [
+      名称,
+      运动次数,
+      难度,
+      卡路里,
+      目标,
+      运动类型,
+      时间,
+      image_url,
+      video_url,
+      B站连接,
+    ],
+    (error, results) => {
+      if (error) return res.status(500).json({ message: "添加失败", error });
+      res.json({ message: "添加成功" });
+    }
+  );
 });
-
 
 // 获取好友列表接口
 app.get("/friends", async (req, res) => {
@@ -1142,15 +1274,14 @@ app.get("/friends", async (req, res) => {
   }
 });
 
- 
 // 查找聊天记录并标记为已读
-app.post('/chat/history', (req, res) => {
+app.post("/chat/history", (req, res) => {
   const { userId, friendId, page = 1, limit = 20 } = req.body;
 
   if (!userId || !friendId) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Missing userId or friendId'
+      status: "error",
+      message: "Missing userId or friendId",
     });
   }
 
@@ -1164,88 +1295,95 @@ app.post('/chat/history', (req, res) => {
     LIMIT ? OFFSET ?;
   `;
 
-  db.query(query, [userId, friendId, friendId, userId, parseInt(limit), parseInt(offset)], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({
-        status: 'error',
-        message: 'Internal Server Error'
-      });
-    }
+  db.query(
+    query,
+    [userId, friendId, friendId, userId, parseInt(limit), parseInt(offset)],
+    (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          status: "error",
+          message: "Internal Server Error",
+        });
+      }
 
-    // 更新未读消息为已读
-    const updateQuery = `
+      // 更新未读消息为已读
+      const updateQuery = `
       UPDATE messages
       SET is_read = TRUE
       WHERE receiver_id = ? AND sender_id = ? AND is_read = FALSE;
     `;
-    db.query(updateQuery, [userId, friendId], (updateErr) => {
-      if (updateErr) {
-        console.error(updateErr);
-        return res.status(500).json({
-          status: 'error',
-          message: 'Failed to mark messages as read'
-        });
-      }
-
-      // 删除未读表中的消息
-      const deleteUnreadQuery = `
-        DELETE FROM unread_messages
-        WHERE user_id = ? AND sender_id = ?;
-      `;
-      db.query(deleteUnreadQuery, [userId, friendId], (deleteErr) => {
-        if (deleteErr) {
-          console.error(deleteErr);
+      db.query(updateQuery, [userId, friendId], (updateErr) => {
+        if (updateErr) {
+          console.error(updateErr);
           return res.status(500).json({
-            status: 'error',
-            message: 'Failed to delete unread messages'
+            status: "error",
+            message: "Failed to mark messages as read",
           });
         }
 
-        // 获取总记录数
-        const countQuery = `
+        // 删除未读表中的消息
+        const deleteUnreadQuery = `
+        DELETE FROM unread_messages
+        WHERE user_id = ? AND sender_id = ?;
+      `;
+        db.query(deleteUnreadQuery, [userId, friendId], (deleteErr) => {
+          if (deleteErr) {
+            console.error(deleteErr);
+            return res.status(500).json({
+              status: "error",
+              message: "Failed to delete unread messages",
+            });
+          }
+
+          // 获取总记录数
+          const countQuery = `
           SELECT COUNT(*) AS total
           FROM messages
           WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?);
         `;
 
-        db.query(countQuery, [userId, friendId, friendId, userId], (countErr, countResults) => {
-          if (countErr) {
-            console.error(countErr);
-            return res.status(500).json({
-              status: 'error',
-              message: 'Internal Server Error'
-            });
-          }
-
-          const total = countResults[0].total;
-
-          res.json({
-            status: 'success',
-            data: {
-              messages: results,
-              pagination: {
-                page: parseInt(page),
-                limit: parseInt(limit),
-                total: total
+          db.query(
+            countQuery,
+            [userId, friendId, friendId, userId],
+            (countErr, countResults) => {
+              if (countErr) {
+                console.error(countErr);
+                return res.status(500).json({
+                  status: "error",
+                  message: "Internal Server Error",
+                });
               }
+
+              const total = countResults[0].total;
+
+              res.json({
+                status: "success",
+                data: {
+                  messages: results,
+                  pagination: {
+                    page: parseInt(page),
+                    limit: parseInt(limit),
+                    total: total,
+                  },
+                },
+              });
             }
-          });
+          );
         });
       });
-    });
-  });
+    }
+  );
 });
 
-
-
-
 // 发送消息
-app.post('/chat/send', async (req, res) => {
+app.post("/chat/send", async (req, res) => {
   const { senderId, receiverId, content } = req.body;
 
   if (!senderId || !receiverId || !content) {
-    return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
+    return res
+      .status(400)
+      .json({ status: "error", message: "Invalid parameters." });
   }
 
   try {
@@ -1276,25 +1414,26 @@ app.post('/chat/send', async (req, res) => {
     connection.release();
 
     return res.json({
-      status: 'success',
+      status: "success",
       messageId: messageResult.insertId,
-      timestamp: timestampRows[0]?.timestamp || null
+      timestamp: timestampRows[0]?.timestamp || null,
     });
-
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ status: 'error', message: 'Database error.' });
+    return res
+      .status(500)
+      .json({ status: "error", message: "Database error." });
   }
 });
 
-
-
 //获取未读消息数
-app.get('/chat/unread', async (req, res) => {
+app.get("/chat/unread", async (req, res) => {
   const { userId } = req.query;
 
   if (!userId) {
-    return res.status(400).json({ status: 'error', message: 'Invalid parameters.' });
+    return res
+      .status(400)
+      .json({ status: "error", message: "Invalid parameters." });
   }
 
   try {
@@ -1308,13 +1447,14 @@ app.get('/chat/unread', async (req, res) => {
     );
 
     return res.json({
-      status: 'success',
-      unreadMessages: unreadMessages
+      status: "success",
+      unreadMessages: unreadMessages,
     });
-
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ status: 'error', message: 'Database error.' });
+    return res
+      .status(500)
+      .json({ status: "error", message: "Database error." });
   }
 });
 
