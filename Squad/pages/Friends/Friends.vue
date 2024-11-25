@@ -230,15 +230,15 @@ const enterChat = (friend) => {
   uni.navigateTo({
     url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
     success: () => {
-      console.log('进入聊天页面');
+      console.log("进入聊天页面");
     },
     fail: (err) => {
-      console.error('打开聊天页面失败:', err);
+      console.error("打开聊天页面失败:", err);
       uni.showToast({
-        title: '打开聊天失败',
-        icon: 'none'
+        title: "打开聊天失败",
+        icon: "none",
       });
-    }
+    },
   });
 };
 
