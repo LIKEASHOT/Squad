@@ -48,7 +48,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$t = {
+  const _sfc_main$x = {
     name: "fui-input",
     emits: ["input", "update:modelValue", "focus", "blur", "confirm", "click", "keyboardheightchange"],
     props: {
@@ -430,7 +430,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -560,7 +560,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-a23503dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-a23503dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
   const icons = {
     "addressbook": "",
     "addfriends-fill": "",
@@ -726,7 +726,7 @@ if (uni.restoreGlobal) {
     "goods": "",
     "goods-fill": ""
   };
-  const _sfc_main$s = {
+  const _sfc_main$w = {
     name: "fui-icon",
     emits: ["click"],
     props: {
@@ -805,7 +805,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -818,10 +818,10 @@ if (uni.restoreGlobal) {
       /* TEXT, CLASS, STYLE */
     );
   }
-  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
+  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$7 = "http://192.168.56.1:3000";
-  const _sfc_main$r = {
+  const serverUrl$a = "http://192.168.56.1:3000";
+  const _sfc_main$v = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -853,7 +853,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Login/Login.vue:115", "提交登录表单", form.value);
         uni.request({
-          url: serverUrl$7 + "/login",
+          url: serverUrl$a + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -884,13 +884,13 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/Login/Login.vue:146", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$7, form, submitLogin, goRegister, ref: vue.ref };
+      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$a, form, submitLogin, goRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$3);
+  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$4);
     const _component_fui_icon = resolveEasycom(vue.resolveDynamicComponent("fui-icon"), __easycom_1$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
       vue.createCommentVNode(" Logo 和标题 "),
@@ -969,8 +969,8 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-461d1d79"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Login/Login.vue"]]);
-  const _sfc_main$q = {
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-461d1d79"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Login/Login.vue"]]);
+  const _sfc_main$u = {
     name: "fui-checkbox",
     emits: ["change"],
     props: {
@@ -1111,7 +1111,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -1144,8 +1144,8 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-bc643473"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
-  const _sfc_main$p = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-bc643473"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
+  const _sfc_main$t = {
     name: "fui-list-cell",
     emits: ["click"],
     props: {
@@ -1268,7 +1268,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -1316,8 +1316,8 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-c16a41c6"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
-  const _sfc_main$o = {
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-c16a41c6"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
+  const _sfc_main$s = {
     name: "fui-label",
     props: {
       //padding值：['20rpx','32rpx']->[上，右，下，左]
@@ -1356,7 +1356,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -1371,8 +1371,8 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-186dfc0c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
-  const _sfc_main$n = {
+  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-186dfc0c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
+  const _sfc_main$r = {
     name: "fui-checkbox-group",
     emits: ["change", "input", "update:modelValue"],
     props: {
@@ -1432,13 +1432,13 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("checkbox-group", { name: $props.name }, [
       vue.renderSlot(_ctx.$slots, "default")
     ], 8, ["name"]);
   }
-  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
-  const _sfc_main$m = {
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
+  const _sfc_main$q = {
     data() {
       return {
         title: "checkbox 复选框",
@@ -1506,11 +1506,11 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_1$1);
-    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_2$1);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_3$1);
-    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_4$1);
+  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$3);
+    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createElementVNode("view", { class: "fui-section__title" }, "修改圆角值"),
       vue.createVNode(_component_fui_checkbox_group, null, {
@@ -1653,10 +1653,10 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$6 = "http://192.168.56.1:3000";
-  const _sfc_main$l = {
+  const serverUrl$9 = "http://192.168.56.1:3000";
+  const _sfc_main$p = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -1696,7 +1696,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Register/Register.vue:129", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$6 + "/register",
+          url: serverUrl$9 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1738,13 +1738,13 @@ if (uni.restoreGlobal) {
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$6, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$9, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$3);
+  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$4);
     const _component_fui_icon = resolveEasycom(vue.resolveDynamicComponent("fui-icon"), __easycom_1$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
       vue.createCommentVNode(" Logo 和标题 "),
@@ -1832,7 +1832,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-6b0433d4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Register/Register.vue"]]);
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-6b0433d4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Register/Register.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -2483,7 +2483,7 @@ if (uni.restoreGlobal) {
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$k = {
+  const _sfc_main$o = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -2537,7 +2537,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -2552,7 +2552,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -2571,7 +2571,7 @@ if (uni.restoreGlobal) {
     }
     return style;
   }
-  const _sfc_main$j = {
+  const _sfc_main$n = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -2920,7 +2920,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -3045,11 +3045,11 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   const _imports_0$1 = "/static/back/back2.png";
-  const serverUrl$5 = "http://192.168.56.1:3000";
+  const serverUrl$8 = "http://192.168.56.1:3000";
   const logo = "/static/Squad1.png";
-  const _sfc_main$i = {
+  const _sfc_main$m = {
     __name: "FirstLogin",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -3098,7 +3098,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:204", "用户名", username);
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:205", "提交身高和体重", form.value);
         uni.request({
-          url: serverUrl$5 + "/updateHealthInfo",
+          url: serverUrl$8 + "/updateHealthInfo",
           method: "POST",
           data: {
             height: form.value.height,
@@ -3141,7 +3141,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:252", "提交性别和年龄", form.value);
         uni.request({
-          url: serverUrl$5 + "/updateGenderAge",
+          url: serverUrl$8 + "/updateGenderAge",
           method: "POST",
           data: {
             gender: form.value.gender,
@@ -3191,7 +3191,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:306", "提交运动目标", selectedGoals.join(","));
         uni.request({
-          url: serverUrl$5 + "/updateFitnessGoal",
+          url: serverUrl$8 + "/updateFitnessGoal",
           method: "POST",
           data: {
             fitnessGoal: selectedGoals.join(","),
@@ -3239,7 +3239,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/FirstLogin/FirstLogin.vue:357", "提交运动方式", selectedTypes.join(","));
         uni.request({
-          url: serverUrl$5 + "/updateExerciseType",
+          url: serverUrl$8 + "/updateExerciseType",
           method: "POST",
           data: {
             exerciseType: selectedTypes.join(","),
@@ -3283,17 +3283,17 @@ if (uni.restoreGlobal) {
           formatAppLog("error", "at pages/FirstLogin/FirstLogin.vue:404", "跳转失败：", err);
         });
       };
-      const __returned__ = { serverUrl: serverUrl$5, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
+      const __returned__ = { serverUrl: serverUrl$8, logo, step, username, form, goalOptions, sportTypeOptions, nextStep, prevStep, submitHealthInfo, submitGenderAge, submitFitnessGoal, submitExerciseType, submitForm, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_3);
-    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_1$1);
-    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_2$1);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_3$1);
-    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_4$1);
+    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$3);
+    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 返回按钮 "),
       vue.createCommentVNode(' <img\r\n      v-if="step > 1"\r\n      src="@/static/back/返回 (2).png"\r\n      alt="返回"\r\n      class="back-icon"\r\n      @click="prevStep"\r\n    /> '),
@@ -3564,7 +3564,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-e8fa868b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/FirstLogin/FirstLogin.vue"]]);
+  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-e8fa868b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/FirstLogin/FirstLogin.vue"]]);
   const pages = [
     {
       path: "pages/Login/Login",
@@ -3646,6 +3646,30 @@ if (uni.restoreGlobal) {
       style: {
         navigationBarTitleText: "饮食记录",
         enablePullDownRefresh: false
+      }
+    },
+    {
+      path: "pages/Setting/Setting",
+      style: {
+        navigationBarTitleText: "设置"
+      }
+    },
+    {
+      path: "pages/Setting/Info/Info",
+      style: {
+        navigationBarTitleText: "个人信息"
+      }
+    },
+    {
+      path: "pages/Setting/changePassword/changePassword",
+      style: {
+        navigationBarTitleText: "密码设置"
+      }
+    },
+    {
+      path: "pages/Setting/sportSetting/sportSetting",
+      style: {
+        navigationBarTitleText: "运动设置"
       }
     }
   ];
@@ -6456,7 +6480,7 @@ ${i3}
     } }), xs(Gs), Gs.addInterceptor = N, Gs.removeInterceptor = D, Gs.interceptObject = F;
   })();
   var Ys = Gs;
-  const _sfc_main$h = {
+  const _sfc_main$l = {
     name: "uni-data-select",
     mixins: [Ys.mixinDatacom || {}],
     props: {
@@ -6708,7 +6732,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
@@ -6848,8 +6872,8 @@ ${i3}
       )
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
-  const _sfc_main$g = {
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const _sfc_main$k = {
     name: "UniSection",
     emits: ["click"],
     props: {
@@ -6908,7 +6932,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-section" }, [
       vue.createElementVNode("view", {
         class: "uni-section-header",
@@ -6965,7 +6989,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
   var calendar = {
     /**
         * 农历1900-2100的润大小信息表
@@ -8448,7 +8472,7 @@ ${i3}
     "zh-Hant": zhHant$1
   };
   const { t: t$3 } = initVueI18n(i18nMessages);
-  const _sfc_main$f = {
+  const _sfc_main$j = {
     emits: ["change"],
     props: {
       weeks: {
@@ -8485,7 +8509,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -8582,9 +8606,9 @@ ${i3}
       /* CLASS */
     );
   }
-  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-65626c58"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
+  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-65626c58"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
   const { t: t$2 } = initVueI18n(i18nMessages);
-  const _sfc_main$e = {
+  const _sfc_main$i = {
     components: {
       CalendarItem
     },
@@ -8853,7 +8877,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_calendar_item = vue.resolveComponent("calendar-item");
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-calendar" }, [
       !$props.insert && $data.show ? (vue.openBlock(), vue.createElementBlock(
@@ -9060,8 +9084,8 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
-  const _sfc_main$d = {
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
+  const _sfc_main$h = {
     name: "uniFormsItem",
     options: {
       virtualHost: true
@@ -9393,7 +9417,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -9449,7 +9473,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
   const en = {
     "uni-load-more.contentdown": "Pull up to show more",
     "uni-load-more.contentrefresh": "loading...",
@@ -9477,7 +9501,7 @@ ${i3}
   const {
     t: t$1
   } = initVueI18n(messages);
-  const _sfc_main$c = {
+  const _sfc_main$g = {
     name: "UniLoadMore",
     emits: ["clickLoadMore"],
     props: {
@@ -9559,7 +9583,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "uni-load-more",
       onClick: _cache[0] || (_cache[0] = (...args) => $options.onClick && $options.onClick(...args))
@@ -9634,8 +9658,8 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
-  const _sfc_main$b = {
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const _sfc_main$f = {
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
     emits: ["input", "update:modelValue", "change"],
@@ -9978,7 +10002,7 @@ ${i3}
       }
     }
   };
-  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -10191,7 +10215,7 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -10765,7 +10789,7 @@ ${i3}
       return false;
     }
   };
-  const _sfc_main$a = {
+  const _sfc_main$e = {
     name: "uniForms",
     emits: ["validate", "submit"],
     options: {
@@ -11062,14 +11086,14 @@ ${i3}
       _isEqual: isEqual
     }
   };
-  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-forms" }, [
       vue.createElementVNode("form", null, [
         vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
       ])
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const decodeCache = {};
   function getDecodeCache(exclude) {
     let cache = decodeCache[exclude];
@@ -16929,7 +16953,7 @@ ${i3}
       "--l-background": background
     };
   }
-  const _sfc_main$9 = vue.defineComponent({
+  const _sfc_main$d = vue.defineComponent({
     name: "l-circle",
     props: CircleProps,
     emits: ["update:current"],
@@ -17012,7 +17036,7 @@ ${i3}
       };
     }
   });
-  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -17071,7 +17095,7 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-a96e7be9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
+  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-a96e7be9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
   function bind(fn, thisArg) {
     return function wrap() {
       return fn.apply(thisArg, arguments);
@@ -19475,11 +19499,11 @@ ${i3}
   const axios$1 = axios;
   const _imports_0 = "/static/icon/shot_sport.png";
   const _imports_1 = "/static/icon/dropdown.png";
-  const serverUrl$4 = "http://192.168.56.1:3000";
+  const serverUrl$7 = "http://192.168.56.1:3000";
   const add_icon$1 = "/static/icon/add.png";
   const delete_icon$1 = "/static/icon/delete.png";
   const column_bar = "/static/icon/columnbar.png";
-  const _sfc_main$8 = {
+  const _sfc_main$c = {
     __name: "Home",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -19625,7 +19649,7 @@ ${i3}
         formatAppLog("log", "at pages/Home/Home.vue:937", `剩余可摄入热量: ${remainingCalories} 千卡`);
         try {
           const res = await uni.request({
-            url: serverUrl$4 + "/submitDailyFoods",
+            url: serverUrl$7 + "/submitDailyFoods",
             method: "POST",
             data: {
               username: username2,
@@ -19666,7 +19690,7 @@ ${i3}
           });
           const recognizePromise = new Promise((resolve, reject) => {
             uni.uploadFile({
-              url: serverUrl$4 + "/foodCalorie",
+              url: serverUrl$7 + "/foodCalorie",
               filePath,
               name: "file",
               success: (uploadRes) => {
@@ -19691,7 +19715,7 @@ ${i3}
           });
           const uploadPromise = new Promise((resolve, reject) => {
             uni.uploadFile({
-              url: serverUrl$4 + "/upload",
+              url: serverUrl$7 + "/upload",
               filePath,
               name: "file",
               success: (uploadRes) => {
@@ -19766,7 +19790,7 @@ ${i3}
       };
       const fetchPlansFromBackend = () => {
         uni.request({
-          url: serverUrl$4 + "/goals",
+          url: serverUrl$7 + "/goals",
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
@@ -19809,7 +19833,7 @@ ${i3}
             return;
           }
           const response = await uni.request({
-            url: serverUrl$4 + "/api/calculateCalories",
+            url: serverUrl$7 + "/api/calculateCalories",
             method: "POST",
             header: {
               "Content-Type": "application/json"
@@ -19913,7 +19937,7 @@ ${i3}
         }
         const username2 = uni.getStorageSync("username");
         uni.request({
-          url: serverUrl$4 + "/generateFitnessPlan",
+          url: serverUrl$7 + "/generateFitnessPlan",
           // 请根据实际情况调整 IP 地址和端口
           method: "POST",
           data: {
@@ -20066,7 +20090,7 @@ ${i3}
         formatAppLog("log", "at pages/Home/Home.vue:1515", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
-            url: `${serverUrl$4}/goals`,
+            url: `${serverUrl$7}/goals`,
             // 假设后端PUT API地址
             method: "PUT",
             data: planData,
@@ -20089,7 +20113,7 @@ ${i3}
           });
         } else {
           uni.request({
-            url: `${serverUrl$4}/goals/add`,
+            url: `${serverUrl$7}/goals/add`,
             // 假设后端POST API地址
             method: "POST",
             data: planData,
@@ -20140,7 +20164,7 @@ ${i3}
         return new Promise((resolve, reject) => {
           formatAppLog("log", "at pages/Home/Home.vue:1597", "开始上传图片，路径:", filePath);
           uni.uploadFile({
-            url: serverUrl$4 + "/upload",
+            url: serverUrl$7 + "/upload",
             // 假设上传接口的URL
             filePath,
             name: "file",
@@ -20347,7 +20371,7 @@ ${i3}
         });
       };
       const isRecognizing = vue.ref(false);
-      const __returned__ = { serverUrl: serverUrl$4, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl$7, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -20358,7 +20382,7 @@ ${i3}
       return __returned__;
     }
   };
-  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$1);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_1);
     const _component_uni_calendar = resolveEasycom(vue.resolveDynamicComponent("uni-calendar"), __easycom_2);
@@ -21558,9 +21582,9 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-7ffebbf4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Home/Home.vue"]]);
+  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-7ffebbf4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Home/Home.vue"]]);
   const defaultAvatar$2 = "/static/avatar/default.png";
-  const _sfc_main$7 = {
+  const _sfc_main$b = {
     __name: "Friends",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -21799,7 +21823,7 @@ ${i3}
       return __returned__;
     }
   };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 顶部导航栏 "),
@@ -22070,20 +22094,20 @@ ${i3}
       ))
     ]);
   }
-  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
-  const _sfc_main$6 = {
+  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
+  const _sfc_main$a = {
     data() {
       return {};
     },
     methods: {}
   };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view");
   }
-  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Sports/Sports.vue"]]);
-  const serverUrl$3 = "http://192.168.56.1:3000";
+  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Sports/Sports.vue"]]);
+  const serverUrl$6 = "http://192.168.56.1:3000";
   const defaultAvatar$1 = "/static/default-avatar.jpg";
-  const _sfc_main$5 = {
+  const _sfc_main$9 = {
     __name: "My_info",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -22094,39 +22118,45 @@ ${i3}
       const targetCalories = vue.ref(100);
       const username = uni.getStorageSync("username");
       vue.onMounted(() => {
+        uni.getStorageSync("username");
         fetchUserTargets();
+        uni.$on("saveEdit", fetchUserTargets);
       });
       const fetchUserTargets = async () => {
         try {
+          const username2 = uni.getStorageSync("username");
+          uni.setStorageSync(`username`, username2);
+          formatAppLog("log", "at pages/My_info/My_info.vue:89", `username: ${username2}`);
           const res = await uni.request({
-            url: `${serverUrl$3}/getTargets`,
+            url: `${serverUrl$6}/getTargets`,
             method: "POST",
-            data: { username }
+            data: { username: username2 }
             // 向后端发送用户名 
           });
           if (res.data.success) {
             targetDuration.value = res.data.data.sport_time_goal;
             targetCalories.value = res.data.data.calories_goal;
             if (res.data.data.avatar != null) {
-              userInfo.value.avatar = `${serverUrl$3}/${res.data.data.avatar}`;
+              userInfo.value.avatar = `${serverUrl$6}/${res.data.data.avatar}`;
             } else {
               userInfo.value.avatar = defaultAvatar$1;
             }
-            formatAppLog("log", "at pages/My_info/My_info.vue:92", `1: ${userInfo.value.avatar}`);
+            formatAppLog("log", "at pages/My_info/My_info.vue:106", `1: ${userInfo.value.avatar}`);
           } else {
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_info/My_info.vue:97", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_info/My_info.vue:111", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
       const updateUserTargets = async (calories, duration) => {
+        const username2 = uni.getStorageSync("username");
         try {
           const res = await uni.request({
-            url: `${serverUrl$3}/updateTargets`,
+            url: `${serverUrl$6}/updateTargets`,
             method: "POST",
-            data: { username, calories_goal: calories, sport_time_goal: duration }
+            data: { username: username2, calories_goal: calories, sport_time_goal: duration }
             // 向后端发送修改数据
           });
           if (res.data.success) {
@@ -22137,7 +22167,7 @@ ${i3}
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_info/My_info.vue:119", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_info/My_info.vue:134", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -22149,6 +22179,11 @@ ${i3}
       const saveEdit = () => {
         updateUserTargets(editCalories.value, editDuration.value);
         isEditing.value = false;
+      };
+      const goToSettings = () => {
+        uni.navigateTo({
+          url: "/pages/Setting/Setting"
+        });
       };
       const cancelEdit = () => {
         isEditing.value = false;
@@ -22163,29 +22198,16 @@ ${i3}
         goals: [],
         sportTypes: []
       });
-      const genderOptions = ["男", "女"];
-      const goalOptions = [
-        { value: "减脂", name: "减脂" },
-        { value: "增肌", name: "增肌" },
-        { value: "耐力", name: "耐力" },
-        { value: "柔韧性", name: "柔韧性" },
-        { value: "综合健身", name: "综合健身" }
-      ];
-      const sportTypeOptions = [
-        { value: "跑步", text: "跑步" },
-        { value: "徒手", text: "徒手" },
-        { value: "撸铁", text: "撸铁" },
-        { value: "瑜伽", text: "瑜伽" },
-        { value: "篮球", text: "篮球" }
-      ];
       const changeAvatar = async () => {
         uni.chooseImage({
           count: 1,
           success: async (chooseResult) => {
             const filePath = chooseResult.tempFilePaths[0];
+            const username2 = uni.getStorageSync("username");
+            formatAppLog("log", "at pages/My_info/My_info.vue:180", `username: ${username2}`);
             try {
               const uploadRes = await uni.uploadFile({
-                url: `${serverUrl$3}/upload`,
+                url: `${serverUrl$6}/upload`,
                 // 上传 API
                 filePath,
                 name: "file"
@@ -22194,10 +22216,10 @@ ${i3}
               if (uploadData.success) {
                 const newAvatarUrl = uploadData.imageUrl;
                 const updateRes = await uni.request({
-                  url: `${serverUrl$3}/updateAvatar`,
+                  url: `${serverUrl$6}/updateAvatar`,
                   method: "POST",
                   data: {
-                    username,
+                    username: username2,
                     avatar: newAvatarUrl
                   }
                 });
@@ -22212,7 +22234,7 @@ ${i3}
                 uni.showToast({ title: "上传失败", icon: "none" });
               }
             } catch (error2) {
-              formatAppLog("error", "at pages/My_info/My_info.vue:211", "更换头像失败:", error2);
+              formatAppLog("error", "at pages/My_info/My_info.vue:214", "更换头像失败:", error2);
               uni.showToast({ title: "服务器错误", icon: "none" });
             }
           },
@@ -22220,15 +22242,23 @@ ${i3}
           }
         });
       };
-      const __returned__ = { serverUrl: serverUrl$3, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, cancelEdit, userInfo, genderOptions, goalOptions, sportTypeOptions, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { serverUrl: serverUrl$6, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, goToSettings, cancelEdit, userInfo, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 头部信息卡片 "),
       vue.createElementVNode("view", { class: "info-card" }, [
+        vue.createCommentVNode(" 添加设置按钮 "),
+        vue.createElementVNode("view", { class: "header" }, [
+          vue.createElementVNode("text", { class: "header-title" }, "个人信息"),
+          vue.createElementVNode("button", {
+            class: "settings-btn",
+            onClick: $setup.goToSettings
+          }, " ⚙️ ")
+        ]),
         vue.createElementVNode("view", { class: "avatar-section" }, [
           vue.createElementVNode("image", {
             src: $setup.userInfo.avatar || $setup.defaultAvatar,
@@ -22337,11 +22367,11 @@ ${i3}
       ])
     ]);
   }
-  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-765423c9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/My_info/My_info.vue"]]);
+  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-765423c9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/My_info/My_info.vue"]]);
   const add_icon = "/static/icon/add.png";
   const delete_icon = "/static/icon/delete.png";
-  const serverUrl$2 = "http://192.168.56.1:3000";
-  const _sfc_main$4 = {
+  const serverUrl$5 = "http://192.168.56.1:3000";
+  const _sfc_main$8 = {
     __name: "Search",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -22402,7 +22432,7 @@ ${i3}
       };
       const fetchPlansFromBackend = () => {
         uni.request({
-          url: serverUrl$2 + "/goals",
+          url: serverUrl$5 + "/goals",
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
@@ -22439,12 +22469,12 @@ ${i3}
         searchQuery.value = "";
         uni.switchTab({ url: "/pages/Home/Home" });
       };
-      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl: serverUrl$2, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, inject: vue.inject, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl: serverUrl$5, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, inject: vue.inject, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "search-page" }, [
       vue.createCommentVNode(" 搜索输入框 "),
       vue.createElementVNode("div", { class: "search-header" }, [
@@ -22575,9 +22605,9 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-a9e5e983"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Search/Search.vue"]]);
+  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-a9e5e983"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Search/Search.vue"]]);
   const defaultAvatar = "/static/avatar/default.png";
-  const _sfc_main$3 = {
+  const _sfc_main$7 = {
     __name: "InviteFriends",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -22606,7 +22636,7 @@ ${i3}
       return __returned__;
     }
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 顶部搜索 "),
@@ -22671,9 +22701,9 @@ ${i3}
       ])
     ]);
   }
-  const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/InviteFriends/InviteFriends.vue"]]);
-  const serverUrl$1 = "http://192.168.56.1:3000";
-  const _sfc_main$2 = {
+  const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/InviteFriends/InviteFriends.vue"]]);
+  const serverUrl$4 = "http://192.168.56.1:3000";
+  const _sfc_main$6 = {
     __name: "Chat",
     setup(__props, { expose: __expose }) {
       var _a2;
@@ -22699,7 +22729,7 @@ ${i3}
       const loadChatHistory = async (friendId) => {
         try {
           const [error2, res] = await uni.request({
-            url: `${serverUrl$1}/chat/history`,
+            url: `${serverUrl$4}/chat/history`,
             method: "POST",
             data: {
               userId: userInfo.value.username,
@@ -22731,7 +22761,7 @@ ${i3}
         };
         try {
           const [error2, res] = await uni.request({
-            url: `${serverUrl$1}/chat/send`,
+            url: `${serverUrl$4}/chat/send`,
             method: "POST",
             data: {
               ...newMessage,
@@ -22779,12 +22809,12 @@ ${i3}
       vue.onMounted(() => {
         initPage();
       });
-      const __returned__ = { serverUrl: serverUrl$1, messageText, messages: messages2, scrollTop, userInfo, friendInfo, initPage, loadChatHistory, sendMessage, formatTime, scrollToBottom, loadMoreMessages, goBack, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted };
+      const __returned__ = { serverUrl: serverUrl$4, messageText, messages: messages2, scrollTop, userInfo, friendInfo, initPage, loadChatHistory, sendMessage, formatTime, scrollToBottom, loadMoreMessages, goBack, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-container" }, [
       vue.createCommentVNode(" 顶部栏 "),
@@ -22891,10 +22921,10 @@ ${i3}
       ])
     ]);
   }
-  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-5eb7b895"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Chat/Chat.vue"]]);
+  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-5eb7b895"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Chat/Chat.vue"]]);
   const defaultFoodImage = "/static/default-food.png";
-  const serverUrl = "http://192.168.56.1:3000";
-  const _sfc_main$1 = {
+  const serverUrl$3 = "http://192.168.56.1:3000";
+  const _sfc_main$5 = {
     __name: "DietRecord",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -22925,7 +22955,7 @@ ${i3}
         try {
           const formattedDate = selectedDate.value.toISOString().split("T")[0];
           const res = await uni.request({
-            url: serverUrl + "/getDailyFoods",
+            url: serverUrl$3 + "/getDailyFoods",
             method: "POST",
             data: {
               username,
@@ -22939,7 +22969,7 @@ ${i3}
               baseCalories: food.基础热量,
               amount: food.食用量,
               currentCalories: food.当前热量,
-              imageUrl: serverUrl + "/" + food.图片路径,
+              imageUrl: serverUrl$3 + "/" + food.图片路径,
               // 拼接完整路径
               time: food.时间
             }));
@@ -22966,7 +22996,7 @@ ${i3}
               const foodToDelete = dailyFoods.value[index];
               try {
                 const res2 = await uni.request({
-                  url: serverUrl + "/deleteFood",
+                  url: serverUrl$3 + "/deleteFood",
                   // 后端删除接口
                   method: "POST",
                   data: {
@@ -23027,7 +23057,7 @@ ${i3}
           uni.$emit("foodEdit");
           try {
             const res = await uni.request({
-              url: serverUrl + "/updateFood",
+              url: serverUrl$3 + "/updateFood",
               // 后端更新接口
               method: "POST",
               data: {
@@ -23071,12 +23101,12 @@ ${i3}
       vue.onMounted(() => {
         loadDailyFoods();
       });
-      const __returned__ = { selectedDate, dailyFoods, defaultFoodImage, showEditPopup, editingFood, editingIndex, serverUrl, username, formatDate, dailyTotalCalories, changeDate, loadDailyFoods, editFood, deleteFood, saveEdit, cancelEdit, saveDailyFoods, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { selectedDate, dailyFoods, defaultFoodImage, showEditPopup, editingFood, editingIndex, serverUrl: serverUrl$3, username, formatDate, dailyTotalCalories, changeDate, loadDailyFoods, editFood, deleteFood, saveEdit, cancelEdit, saveDailyFoods, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
-  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "diet-record" }, [
       vue.createCommentVNode(" 日期导航 "),
       vue.createElementVNode("view", { class: "date-nav" }, [
@@ -23207,7 +23237,689 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesDietRecordDietRecord = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-f6f5839d"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/DietRecord/DietRecord.vue"]]);
+  const PagesDietRecordDietRecord = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-f6f5839d"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/DietRecord/DietRecord.vue"]]);
+  /*!
+    * vue-router v4.3.0
+    * (c) 2024 Eduardo San Martin Morote
+    * @license MIT
+    */
+  var NavigationType;
+  (function(NavigationType2) {
+    NavigationType2["pop"] = "pop";
+    NavigationType2["push"] = "push";
+  })(NavigationType || (NavigationType = {}));
+  var NavigationDirection;
+  (function(NavigationDirection2) {
+    NavigationDirection2["back"] = "back";
+    NavigationDirection2["forward"] = "forward";
+    NavigationDirection2["unknown"] = "";
+  })(NavigationDirection || (NavigationDirection = {}));
+  var NavigationFailureType;
+  (function(NavigationFailureType2) {
+    NavigationFailureType2[NavigationFailureType2["aborted"] = 4] = "aborted";
+    NavigationFailureType2[NavigationFailureType2["cancelled"] = 8] = "cancelled";
+    NavigationFailureType2[NavigationFailureType2["duplicated"] = 16] = "duplicated";
+  })(NavigationFailureType || (NavigationFailureType = {}));
+  const routerKey = Symbol("router");
+  function useRouter() {
+    return vue.inject(routerKey);
+  }
+  const _sfc_main$4 = {
+    __name: "Setting",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const router = useRouter();
+      const goToPersonalInfo = () => {
+        uni.navigateTo({
+          url: "/pages/Setting/Info/Info"
+        });
+      };
+      const goToPasswordSetting = () => {
+        uni.navigateTo({
+          url: "/pages/Setting/changePassword/changePassword"
+        });
+      };
+      const goToSportSetting = () => {
+        uni.navigateTo({
+          url: "/pages/Setting/sportSetting/sportSetting"
+        });
+      };
+      const logout = () => {
+        uni.showModal({
+          title: "提示",
+          content: "确认退出登录吗？",
+          success: (res) => {
+            if (res.confirm) {
+              uni.navigateTo({
+                url: "/pages/Login/Login"
+              });
+            }
+          }
+        });
+      };
+      const __returned__ = { router, goToPersonalInfo, goToPasswordSetting, goToSportSetting, logout, get useRouter() {
+        return useRouter;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "settings-container" }, [
+      vue.createCommentVNode(" 账号部分 "),
+      vue.createElementVNode("view", { class: "section" }, [
+        vue.createElementVNode("text", { class: "section-title" }, "账号"),
+        vue.createElementVNode("view", {
+          class: "option",
+          onClick: $setup.goToPersonalInfo
+        }, "个人信息"),
+        vue.createElementVNode("view", {
+          class: "option",
+          onClick: $setup.goToPasswordSetting
+        }, "密码设置")
+      ]),
+      vue.createCommentVNode(" 通用部分 "),
+      vue.createElementVNode("view", { class: "section" }, [
+        vue.createElementVNode("text", { class: "section-title" }, "通用"),
+        vue.createElementVNode("view", {
+          class: "option",
+          onClick: $setup.goToSportSetting
+        }, "运动设置")
+      ]),
+      vue.createCommentVNode(" 退出按钮 "),
+      vue.createElementVNode("view", { class: "footer" }, [
+        vue.createElementVNode("button", {
+          class: "logout-btn",
+          onClick: $setup.logout
+        }, "退出")
+      ])
+    ]);
+  }
+  const PagesSettingSetting = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-3c55a289"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Setting.vue"]]);
+  const serverUrl$2 = "http://192.168.56.1:3000";
+  const _sfc_main$3 = {
+    __name: "Info",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const username = uni.getStorageSync("username");
+      const userInfo = vue.ref({
+        username,
+        height: 170,
+        weight: 60,
+        age: 25,
+        gender: "男"
+      });
+      vue.onMounted(() => {
+        fetchUserInfo();
+      });
+      const fetchUserInfo = async () => {
+        try {
+          const res = await uni.request({
+            url: `${serverUrl$2}/getUserInfo`,
+            // 请求后端接口
+            method: "POST",
+            data: { username }
+            // 将用户名发送给后端
+          });
+          if (res.data.success) {
+            userInfo.value = res.data.data;
+            userInfo.value.username = uni.getStorageSync("username");
+          } else {
+            uni.showToast({ title: "获取用户信息失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Setting/Info/Info.vue:97", "获取用户信息失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        }
+      };
+      const editData = vue.ref({ ...userInfo.value });
+      const isEditing = vue.ref(false);
+      const openEditModal = () => {
+        editData.value = { ...userInfo.value };
+        isEditing.value = true;
+      };
+      const closeEditModal = () => {
+        isEditing.value = false;
+      };
+      const saveEdit = async () => {
+        try {
+          const res = await uni.request({
+            url: `${serverUrl$2}/updateUserInfo`,
+            // 后端接口
+            method: "POST",
+            data: {
+              oldUsername: userInfo.value.username,
+              // 提交旧用户名
+              ...editData.value
+              // 提交修改后的数据，包括新用户名
+            }
+          });
+          if (res.data.success) {
+            userInfo.value = { ...editData.value };
+            uni.setStorageSync(`username`, userInfo.value.username);
+            const username2 = uni.getStorageSync("username");
+            formatAppLog("log", "at pages/Setting/Info/Info.vue:129", `1: ${username2}`);
+            uni.$emit("saveEdit");
+            uni.navigateTo({
+              url: "/pages/My_Info/My_Info"
+              // 替换为你想刷新的页面路径
+            });
+            uni.showToast({ title: "修改成功", icon: "success" });
+          } else {
+            uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Setting/Info/Info.vue:140", "保存用户信息失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        } finally {
+          isEditing.value = false;
+        }
+      };
+      const __returned__ = { serverUrl: serverUrl$2, username, userInfo, fetchUserInfo, editData, isEditing, openEditModal, closeEditModal, saveEdit, ref: vue.ref, onMounted: vue.onMounted };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "profile-container" }, [
+      vue.createCommentVNode(" 信息展示部分 "),
+      vue.createElementVNode("view", { class: "info-display" }, [
+        vue.createElementVNode("view", { class: "info-item" }, [
+          vue.createElementVNode("text", { class: "label" }, "用户名："),
+          vue.createElementVNode(
+            "text",
+            { class: "value" },
+            vue.toDisplayString($setup.userInfo.username),
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "info-item" }, [
+          vue.createElementVNode("text", { class: "label" }, "身高："),
+          vue.createElementVNode(
+            "text",
+            { class: "value" },
+            vue.toDisplayString($setup.userInfo.height) + " cm",
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "info-item" }, [
+          vue.createElementVNode("text", { class: "label" }, "体重："),
+          vue.createElementVNode(
+            "text",
+            { class: "value" },
+            vue.toDisplayString($setup.userInfo.weight) + " kg",
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "info-item" }, [
+          vue.createElementVNode("text", { class: "label" }, "年龄："),
+          vue.createElementVNode(
+            "text",
+            { class: "value" },
+            vue.toDisplayString($setup.userInfo.age) + " 岁",
+            1
+            /* TEXT */
+          )
+        ]),
+        vue.createElementVNode("view", { class: "info-item" }, [
+          vue.createElementVNode("text", { class: "label" }, "性别："),
+          vue.createElementVNode(
+            "text",
+            { class: "value" },
+            vue.toDisplayString($setup.userInfo.gender),
+            1
+            /* TEXT */
+          )
+        ])
+      ]),
+      vue.createCommentVNode(" 编辑按钮 "),
+      vue.createElementVNode("button", {
+        class: "edit-btn",
+        onClick: $setup.openEditModal
+      }, "编辑"),
+      vue.createCommentVNode(" 编辑弹窗 "),
+      $setup.isEditing ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 0,
+        class: "modal"
+      }, [
+        vue.createElementVNode("view", { class: "modal-content" }, [
+          vue.createElementVNode("view", { class: "modal-header" }, [
+            vue.createElementVNode("text", null, "编辑个人信息")
+          ]),
+          vue.createElementVNode("view", { class: "modal-body" }, [
+            vue.createElementVNode("view", { class: "input-group" }, [
+              vue.createElementVNode("text", { class: "label" }, "用户名："),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.editData.username = $event),
+                  placeholder: "请输入用户名"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $setup.editData.username]
+              ])
+            ]),
+            vue.createElementVNode("view", { class: "input-group" }, [
+              vue.createElementVNode("text", { class: "label" }, "身高："),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editData.height = $event),
+                  type: "number",
+                  placeholder: "请输入身高(cm)"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $setup.editData.height]
+              ])
+            ]),
+            vue.createElementVNode("view", { class: "input-group" }, [
+              vue.createElementVNode("text", { class: "label" }, "体重："),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.editData.weight = $event),
+                  type: "number",
+                  placeholder: "请输入体重(kg)"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $setup.editData.weight]
+              ])
+            ]),
+            vue.createElementVNode("view", { class: "input-group" }, [
+              vue.createElementVNode("text", { class: "label" }, "年龄："),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.editData.age = $event),
+                  type: "number",
+                  placeholder: "请输入年龄"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $setup.editData.age]
+              ])
+            ]),
+            vue.createElementVNode("view", { class: "input-group" }, [
+              vue.createElementVNode("text", { class: "label" }, "性别："),
+              vue.withDirectives(vue.createElementVNode(
+                "input",
+                {
+                  "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.editData.gender = $event),
+                  placeholder: "请输入性别"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, $setup.editData.gender]
+              ])
+            ])
+          ]),
+          vue.createElementVNode("view", { class: "modal-footer" }, [
+            vue.createElementVNode("button", {
+              class: "cancel-btn",
+              onClick: $setup.closeEditModal
+            }, "取消"),
+            vue.createElementVNode("button", {
+              class: "save-btn",
+              onClick: $setup.saveEdit
+            }, "保存")
+          ])
+        ])
+      ])) : vue.createCommentVNode("v-if", true)
+    ]);
+  }
+  const PagesSettingInfoInfo = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-1140c1f2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Info/Info.vue"]]);
+  const serverUrl$1 = "http://192.168.56.1:3000";
+  const _sfc_main$2 = {
+    __name: "changePassword",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const form = vue.ref({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+      const isFormValid = vue.ref(false);
+      const validateForm = () => {
+        isFormValid.value = form.value.oldPassword && form.value.newPassword && form.value.confirmPassword;
+      };
+      const submitPassword = async () => {
+        if (form.value.newPassword !== form.value.confirmPassword) {
+          uni.showToast({ title: "新密码与确认密码不一致", icon: "none" });
+          return;
+        }
+        try {
+          const res = await uni.request({
+            url: `${serverUrl$1}/changePassword`,
+            // 后端接口地址
+            method: "POST",
+            data: {
+              username: uni.getStorageSync("username"),
+              oldPassword: form.value.oldPassword,
+              newPassword: form.value.newPassword
+            }
+          });
+          if (res.data.success) {
+            form.value.oldPassword = "";
+            form.value.newPassword = "";
+            form.value.confirmPassword = "";
+            isFormValid.value = false;
+            uni.navigateBack();
+            uni.showToast({ title: "密码修改成功", icon: "success" });
+          } else {
+            uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Setting/changePassword/changePassword.vue:98", "密码修改请求失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        }
+      };
+      const __returned__ = { serverUrl: serverUrl$1, form, isFormValid, validateForm, submitPassword, ref: vue.ref };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "password-container" }, [
+      vue.createElementVNode("view", { class: "input-group" }, [
+        vue.createElementVNode("text", { class: "label" }, "原密码："),
+        vue.withDirectives(vue.createElementVNode(
+          "input",
+          {
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.oldPassword = $event),
+            placeholder: "请输入原密码",
+            type: "password",
+            onInput: $setup.validateForm
+          },
+          null,
+          544
+          /* NEED_HYDRATION, NEED_PATCH */
+        ), [
+          [vue.vModelText, $setup.form.oldPassword]
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "input-group" }, [
+        vue.createElementVNode("text", { class: "label" }, "新密码："),
+        vue.withDirectives(vue.createElementVNode(
+          "input",
+          {
+            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.newPassword = $event),
+            placeholder: "请输入新密码",
+            type: "password",
+            onInput: $setup.validateForm
+          },
+          null,
+          544
+          /* NEED_HYDRATION, NEED_PATCH */
+        ), [
+          [vue.vModelText, $setup.form.newPassword]
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "input-group" }, [
+        vue.createElementVNode("text", { class: "label" }, "确认密码："),
+        vue.withDirectives(vue.createElementVNode(
+          "input",
+          {
+            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.confirmPassword = $event),
+            placeholder: "请再次输入新密码",
+            type: "password",
+            onInput: $setup.validateForm
+          },
+          null,
+          544
+          /* NEED_HYDRATION, NEED_PATCH */
+        ), [
+          [vue.vModelText, $setup.form.confirmPassword]
+        ])
+      ]),
+      vue.createElementVNode("button", {
+        class: vue.normalizeClass(["submit-btn", { "active": $setup.isFormValid }]),
+        disabled: !$setup.isFormValid,
+        onClick: $setup.submitPassword
+      }, " 提交 ", 10, ["disabled"])
+    ]);
+  }
+  const PagesSettingChangePasswordChangePassword = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-ad9c736f"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/changePassword/changePassword.vue"]]);
+  const serverUrl = "http://192.168.56.1:3000";
+  const _sfc_main$1 = {
+    __name: "sportSetting",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const goalOptions = vue.ref([
+        { value: "减脂", name: "减脂", checked: false },
+        { value: "增肌", name: "增肌", checked: false },
+        { value: "耐力", name: "耐力", checked: false },
+        { value: "柔韧性", name: "柔韧性", checked: false },
+        { value: "综合健身", name: "综合健身", checked: false }
+      ]);
+      const typeOptions = vue.ref([
+        { value: "跑步", name: "跑步", checked: false },
+        { value: "游泳", name: "游泳", checked: false },
+        { value: "徒手", name: "徒手", checked: false },
+        { value: "瑜伽", name: "瑜伽", checked: false },
+        { value: "篮球", name: "篮球", checked: false }
+      ]);
+      const form = vue.ref({
+        goals: [],
+        types: []
+      });
+      const isFormValid = vue.computed(() => {
+        return form.value.goals.length > 0 && form.value.types.length > 0;
+      });
+      vue.onMounted(() => {
+        fetchUserSportData();
+      });
+      const fetchUserSportData = async () => {
+        try {
+          const res = await uni.request({
+            url: `${serverUrl}/getSportData`,
+            // 后端接口地址
+            method: "POST",
+            data: { username: uni.getStorageSync("username") }
+          });
+          if (res.data.success) {
+            const fitnessGoal = res.data.data.fitnessGoal.split(",");
+            const exerciseType = res.data.data.exerciseType.split(",");
+            goalOptions.value.forEach((item) => {
+              if (fitnessGoal.includes(item.value)) {
+                item.checked = true;
+              }
+            });
+            typeOptions.value.forEach((item) => {
+              if (exerciseType.includes(item.value)) {
+                item.checked = true;
+              }
+            });
+            form.value.goals = fitnessGoal;
+            form.value.types = exerciseType;
+          } else {
+            uni.showToast({ title: "获取数据失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:120", "获取运动数据失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        }
+      };
+      const submitData = async () => {
+        try {
+          const res = await uni.request({
+            url: `${serverUrl}/updateSportData`,
+            // 后端接口地址
+            method: "POST",
+            data: {
+              username: uni.getStorageSync("username"),
+              fitnessGoal: form.value.goals.join(","),
+              exerciseType: form.value.types.join(",")
+            }
+          });
+          if (res.data.success) {
+            uni.navigateBack();
+            uni.showToast({ title: "数据提交成功", icon: "success" });
+          } else {
+            uni.showToast({ title: res.data.message || "提交失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:146", "提交数据失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        }
+      };
+      const __returned__ = { serverUrl, goalOptions, typeOptions, form, isFormValid, fetchUserSportData, submitData, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$3);
+    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
+    return vue.openBlock(), vue.createElementBlock("view", { class: "sport-container" }, [
+      vue.createCommentVNode(" 运动目标多选框 "),
+      vue.createElementVNode("view", { class: "checkbox-group" }, [
+        vue.createElementVNode("text", { class: "label" }, "运动目标："),
+        vue.createVNode(_component_fui_checkbox_group, {
+          modelValue: $setup.form.goals,
+          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.goals = $event)
+        }, {
+          default: vue.withCtx(() => [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($setup.goalOptions, (item, index) => {
+                return vue.openBlock(), vue.createBlock(
+                  _component_fui_label,
+                  { key: index },
+                  {
+                    default: vue.withCtx(() => [
+                      vue.createVNode(
+                        _component_fui_list_cell,
+                        null,
+                        {
+                          default: vue.withCtx(() => [
+                            vue.createElementVNode("view", { class: "fui-align__center" }, [
+                              vue.createVNode(_component_fui_checkbox, {
+                                checked: item.checked,
+                                value: item.value,
+                                color: "#777CFF",
+                                borderColor: "#B2B2B2",
+                                borderRadius: "8rpx"
+                              }, null, 8, ["checked", "value"]),
+                              vue.createElementVNode(
+                                "text",
+                                { class: "fui-text" },
+                                vue.toDisplayString(item.name),
+                                1
+                                /* TEXT */
+                              )
+                            ])
+                          ]),
+                          _: 2
+                          /* DYNAMIC */
+                        },
+                        1024
+                        /* DYNAMIC_SLOTS */
+                      )
+                    ]),
+                    _: 2
+                    /* DYNAMIC */
+                  },
+                  1024
+                  /* DYNAMIC_SLOTS */
+                );
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"])
+      ]),
+      vue.createCommentVNode(" 运动类型多选框 "),
+      vue.createElementVNode("view", { class: "checkbox-group" }, [
+        vue.createElementVNode("text", { class: "label" }, "运动类型："),
+        vue.createVNode(_component_fui_checkbox_group, {
+          modelValue: $setup.form.types,
+          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.types = $event)
+        }, {
+          default: vue.withCtx(() => [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($setup.typeOptions, (item, index) => {
+                return vue.openBlock(), vue.createBlock(
+                  _component_fui_label,
+                  { key: index },
+                  {
+                    default: vue.withCtx(() => [
+                      vue.createVNode(
+                        _component_fui_list_cell,
+                        null,
+                        {
+                          default: vue.withCtx(() => [
+                            vue.createElementVNode("view", { class: "fui-align__center" }, [
+                              vue.createVNode(_component_fui_checkbox, {
+                                checked: item.checked,
+                                value: item.value,
+                                color: "#777CFF",
+                                borderColor: "#B2B2B2",
+                                borderRadius: "8rpx"
+                              }, null, 8, ["checked", "value"]),
+                              vue.createElementVNode(
+                                "text",
+                                { class: "fui-text" },
+                                vue.toDisplayString(item.name),
+                                1
+                                /* TEXT */
+                              )
+                            ])
+                          ]),
+                          _: 2
+                          /* DYNAMIC */
+                        },
+                        1024
+                        /* DYNAMIC_SLOTS */
+                      )
+                    ]),
+                    _: 2
+                    /* DYNAMIC */
+                  },
+                  1024
+                  /* DYNAMIC_SLOTS */
+                );
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["modelValue"])
+      ]),
+      vue.createCommentVNode(" 提交按钮 "),
+      vue.createElementVNode("button", {
+        class: "submit-btn",
+        disabled: !$setup.isFormValid,
+        onClick: $setup.submitData
+      }, "提交", 8, ["disabled"])
+    ]);
+  }
+  const PagesSettingSportSettingSportSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-ff4fc63b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/sportSetting/sportSetting.vue"]]);
   __definePage("pages/Login/Login", PagesLoginLogin);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/Register/Register", PagesRegisterRegister);
@@ -23220,6 +23932,10 @@ ${i3}
   __definePage("pages/InviteFriends/InviteFriends", PagesInviteFriendsInviteFriends);
   __definePage("pages/Chat/Chat", PagesChatChat);
   __definePage("pages/DietRecord/DietRecord", PagesDietRecordDietRecord);
+  __definePage("pages/Setting/Setting", PagesSettingSetting);
+  __definePage("pages/Setting/Info/Info", PagesSettingInfoInfo);
+  __definePage("pages/Setting/changePassword/changePassword", PagesSettingChangePasswordChangePassword);
+  __definePage("pages/Setting/sportSetting/sportSetting", PagesSettingSportSettingSportSetting);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("warn", "at App.vue:4", "当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！");

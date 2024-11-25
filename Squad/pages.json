@@ -82,6 +82,34 @@
 	    "navigationBarTitleText": "饮食记录",
 	    "enablePullDownRefresh": false
 	  }
+	},
+	{
+		"path" : "pages/Setting/Setting",
+		"style" : 
+		{
+			"navigationBarTitleText" : "设置"
+		}
+	},
+	{
+		"path" : "pages/Setting/Info/Info",
+		"style" : 
+		{
+			"navigationBarTitleText" : "个人信息"
+		}
+	},
+	{
+		"path" : "pages/Setting/changePassword/changePassword",
+		"style" : 
+		{
+			"navigationBarTitleText" : "密码设置"
+		}
+	},
+	{
+		"path" : "pages/Setting/sportSetting/sportSetting",
+		"style" : 
+		{
+			"navigationBarTitleText" : "运动设置"
+		}
 	}
 	
   ],

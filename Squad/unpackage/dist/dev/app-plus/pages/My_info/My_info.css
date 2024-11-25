@@ -20,6 +20,7 @@
   gap: 0.625rem;
 }
 .avatar[data-v-765423c9] {
+  margin-top: 15px;
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
@@ -200,4 +201,55 @@ to {
     opacity: 1;
     transform: scale(1);
 }
+}
+.header[data-v-765423c9] {
+  margin-top: 0px;
+  position: relative;
+  /* 相对定位，方便调整子元素 */
+  display: flex;
+  align-items: center;
+  /* 垂直居中对齐 */
+  justify-content: center;
+  /* 标题完全居中 */
+  padding: 0.625rem;
+  border-bottom: 0.03125rem solid #e0e0e0;
+  /* 下划线分隔 */
+}
+.header-title[data-v-765423c9] {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #333;
+}
+.settings-btn[data-v-765423c9] {
+  position: absolute;
+  /* 绝对定位 */
+  right: 0.625rem;
+  /* 靠右边距 */
+  top: 50%;
+  /* 垂直居中 */
+  transform: translateY(-50%);
+  /* 修正垂直居中偏移 */
+  border: none;
+  margin-right: 1px;
+  width: 1.875rem;
+  height: 1.875rem;
+  /* 方形按钮 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  font-size: 1.125rem;
+  /* 设置符号大小 */
+  color: #ffffff;
+  /* 设置符号颜色 */
+  border-radius: 0.3125rem;
+  /* 圆角边框 */
+  box-shadow: 0 0.125rem 0.1875rem rgba(0, 0, 0, 0.1);
+  /* 添加阴影 */
+  transition: all 0.3s ease;
+  /* 动画效果 */
+}
+.settings-btn[data-v-765423c9]:active {
+  transform: translateY(-50%) scale(0.95);
+  /* 点击时缩小效果 */
 }
