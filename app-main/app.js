@@ -1802,7 +1802,148 @@ app.post("/updateAvatar", (req, res) => {
     res.json({ success: true, message: "头像更新成功" });
   });
 });
+// 新增接口：获取用户信息
+app.post("/getUserInfo", (req, res) => {
+  const { username } = req.body;
 
+  if (!username) {
+    return res.status(400).json({ success: false, message: "用户名不能为空" });
+  }
+
+  const query = "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
+  connection.query(query, [username], (error, results) => {
+    if (error) {
+      console.error("获取用户信息失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.length > 0) {
+      res.json({ success: true, data: results[0] });
+    } else {
+      res.status(404).json({ success: false, message: "用户不存在" });
+    }
+  });
+});
+// 更新用户信息接口
+app.post("/updateUserInfo", (req, res) => {
+  const { oldUsername, username, height, weight, age, gender } = req.body;
+
+  // 检查旧用户名是否存在
+  if (!oldUsername || !username) {
+    return res.status(400).json({ success: false, message: "用户名不能为空" });
+  }
+
+  // 定义 SQL 语句
+  const query = `
+    UPDATE users 
+    SET name = ?, height = ?, weight = ?, age = ?, gender = ?
+    WHERE name = ?
+  `;
+
+  // 执行 SQL 更新语句
+  connection.query(
+    query,
+    [username, height, weight, age, gender, oldUsername],
+    (error, results) => {
+      if (error) {
+        console.error("更新用户信息失败:", error);
+        return res.status(500).json({ success: false, message: "服务器错误" });
+      }
+
+      if (results.affectedRows > 0) {
+        res.json({ success: true, message: "用户信息更新成功" });
+      } else {
+        res.status(404).json({ success: false, message: "用户不存在" });
+      }
+    }
+  );
+});
+
+app.post("/changePassword", (req, res) => {
+  const { username, oldPassword, newPassword } = req.body;
+
+  if (!username || !oldPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: "参数不完整" });
+  }
+
+  const querySelect = "SELECT password FROM users WHERE name = ?";
+  const queryUpdate = "UPDATE users SET password = ? WHERE name = ?";
+
+  connection.query(querySelect, [username], (error, results) => {
+    if (error) {
+      console.error("查询用户密码失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: "用户不存在" });
+    }
+
+    const currentPassword = results[0].password;
+
+    if (currentPassword !== oldPassword) {
+      return res.status(400).json({ success: false, message: "原密码错误" });
+    }
+
+    // 更新密码
+    connection.query(queryUpdate, [newPassword, username], (err, updateResults) => {
+      if (err) {
+        console.error("更新密码失败:", err);
+        return res.status(500).json({ success: false, message: "服务器错误" });
+      }
+
+      if (updateResults.affectedRows > 0) {
+        res.json({ success: true, message: "密码修改成功" });
+      } else {
+        res.status(500).json({ success: false, message: "密码修改失败" });
+      }
+    });
+  });
+});
+// 获取用户运动数据
+app.post("/getSportData", (req, res) => {
+  const { username } = req.body;
+
+  const query = `SELECT fitnessGoal, exerciseType FROM users WHERE name = ?`;
+
+  connection.query(query, [username], (error, results) => {
+    if (error) {
+      console.error("获取运动数据失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.length > 0) {
+      const data = results[0];
+      res.json({ success: true, data });
+    } else {
+      res.status(404).json({ success: false, message: "用户不存在" });
+    }
+  });
+});
+
+// 更新用户运动数据
+app.post("/updateSportData", (req, res) => {
+  const { username, fitnessGoal, exerciseType } = req.body;
+
+  const query = `
+    UPDATE users 
+    SET fitnessGoal = ?, exerciseType = ?
+    WHERE name = ?
+  `;
+
+  connection.query(query, [fitnessGoal, exerciseType, username], (error, results) => {
+    if (error) {
+      console.error("更新运动数据失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.affectedRows > 0) {
+      res.json({ success: true, message: "数据更新成功" });
+    } else {
+      res.status(404).json({ success: false, message: "用户不存在" });
+    }
+  });
+});
 // 启动服务器
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
