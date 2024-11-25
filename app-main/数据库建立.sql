@@ -10,7 +10,7 @@ VALUES (1, 0, 'admin', '123');
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     permission int NOT NULL,
-    username VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     lastLogin DATETIME,
     gender VARCHAR(10),
@@ -21,8 +21,8 @@ CREATE TABLE users (
     fitnessGoal VARCHAR(255),
     exerciseType VARCHAR(255),
     goalid VARCHAR(255), 
-    calories_goal int,
-    sport_time int,
+    calories_goal int DEFAULT 100,                        --目标热量,默认100卡
+    sport_time_goal int DEFAULT 20,                 BIGINT      --目标运动时间,默认20min
     avatar VARCHAR(255),                 -- 头像 URL，最大长度 255
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 注册时间，默认当前时间
 );
@@ -102,6 +102,41 @@ CREATE TABLE goal (
     `时间` INT,
     `image_url` varchar(255) NOT NULL,
     `video_url` varchar(255) NOT NULL
+);
+
+CREATE TABLE friends (
+    id INT AUTO_INCREMENT PRIMARY KEY,         
+    user_id INT NOT NULL,                   
+    friend_id INT NOT NULL,
+    Group_friend_id INT,        
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending', 
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+    `head_url` varchar(255) NOT NULL,
+    goal_start_time DATETIME  
+);
+
+CREATE TABLE friend_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE food_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,       -- 唯一标识符
+    user_id INT NOT NULL,                    -- 对应 `users` 表的 id
+    record_date DATE NOT NULL,               -- 记录日期
+    food_name VARCHAR(255) NOT NULL,         -- 食物名称
+    base_calories FLOAT NOT NULL,            -- 食物基础热量
+    amount FLOAT NOT NULL DEFAULT 100,       -- 食用量 (默认单位为100g)
+    current_calories FLOAT NOT NULL,         -- 实际摄入热量
+    image_url VARCHAR(255),                  -- 图片路径
+    time TIME NOT NULL,                      -- 食用时间
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 记录创建时间
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 INSERT INTO goal (id, `名称`, `运动次数`, `难度`, `卡路里`, `B站连接`, `目标`, `运动类型`, `时间` ,`image_url`)

@@ -1714,6 +1714,94 @@ app.post("/chat/mark-read", (req, res) => {
     });
   });
 });
+app.post("/getTargets", async (req, res) => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ success: false, message: "用户名不能为空" });
+  }
+
+  const query = `
+    SELECT sport_time_goal, calories_goal, avatar 
+    FROM users 
+    WHERE name = ?;
+  `;
+
+  connection.query(query, [username], (error, results) => {
+    if (error) {
+      console.error("查询用户目标失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: "用户不存在" });
+    }
+
+    const { sport_time_goal, calories_goal, avatar } = results[0];
+    res.json({
+      success: true,
+      data: {
+        sport_time_goal,
+        calories_goal,
+        avatar,
+      },
+    });
+  });
+});
+
+// 更新用户目标
+app.post("/updateTargets", (req, res) => {
+  const { username, calories_goal, sport_time_goal } = req.body;
+
+  if (!username || calories_goal == null || sport_time_goal == null) {
+    return res.json({ success: false, message: "参数缺失" });
+  }
+
+  const query =
+    "UPDATE users SET calories_goal = ?, sport_time_goal = ? WHERE name = ?";
+  connection.query(
+    query,
+    [calories_goal, sport_time_goal, username],
+    (err, results) => {
+      if (err) {
+        console.error("更新用户目标失败:", err);
+        return res.json({ success: false, message: "服务器错误" });
+      }
+
+      if (results.affectedRows > 0) {
+        res.json({ success: true });
+      } else {
+        res.json({ success: false, message: "用户目标更新失败" });
+      }
+    }
+  );
+});
+app.post("/updateAvatar", (req, res) => {
+  const { username, avatar } = req.body;
+
+  if (!username || !avatar) {
+    return res.status(400).json({ success: false, message: "参数不完整" });
+  }
+
+  const query = `
+    UPDATE users 
+    SET avatar = ? 
+    WHERE name = ?;
+  `;
+
+  connection.query(query, [avatar, username], (error, results) => {
+    if (error) {
+      console.error("更新头像失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "用户不存在" });
+    }
+
+    res.json({ success: true, message: "头像更新成功" });
+  });
+});
 
 // 启动服务器
 app.listen(port, () => {

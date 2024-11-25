@@ -118,12 +118,12 @@ const submitRegister = () => {
     uni.showToast({
       title: "请填写完整信息",
       icon: "none",
-    });
+    }); 
     return;
   }
   if (form.value.password !== form.value.confirmPassword) {
     uni.showToast({
-      title: "两次密码输入不一致",
+      title: "两次密码输入不一致", 
       icon: "none",
     });
     return;
@@ -134,7 +134,7 @@ const submitRegister = () => {
     url: serverUrl + "/register",
     method: "POST",
     data: {
-      username: form.value.username,
+      username: form.value.username, 
       password: form.value.password,
       confirmPassword: form.value.confirmPassword,
     },

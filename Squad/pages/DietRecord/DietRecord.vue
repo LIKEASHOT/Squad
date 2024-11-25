@@ -154,25 +154,19 @@ const deleteFood = (index) => {
 
           if (res.statusCode === 200 && res.data.success) {
             const { deletedCalories } = res.data; // 获取被删除食物的热量
-            // 如果删除的是当天的食物，更新本地剩余热量
-            if (
-              deletedCalories &&
-              selectedDate.value.toDateString() === new Date().toDateString()
-            ) {
-              let remainingCalories =
-                uni.getStorageSync(`today_left_eat_${username}`) || 0;
-              remainingCalories += deletedCalories;
-              uni.setStorageSync(
-                `today_left_eat_${username}`,
-                remainingCalories
-              );
+			 // 如果删除的是当天的食物，更新本地剩余热量
+            if (deletedCalories && selectedDate.value.toDateString() === new Date().toDateString()) {
+              let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;
+              remainingCalories += deletedCalories; 
+              uni.setStorageSync(`today_left_eat_${username}`, remainingCalories); 
+			  // 通知 Home 页面删除食物事件
+			  uni.$emit("foodDeleted");
             }
 
             // 删除成功后更新前端数据
             dailyFoods.value.splice(index, 1);
             saveDailyFoods(); // 保存更新后的数据到本地存储
-            // 通知 Home 页面删除食物事件
-            uni.$emit("foodDeleted");
+			
             uni.showToast({
               title: "删除成功",
               icon: "success",

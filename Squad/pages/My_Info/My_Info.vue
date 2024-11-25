@@ -6,334 +6,137 @@
         <image :src="userInfo.avatar || defaultAvatar" class="avatar" @click="changeAvatar"></image>
         <text class="username">{{ userInfo.username || '未登录' }}</text>
       </view>
-      <!-- 获取信息按钮 -->
-      <button class="fetch-info-btn" @click="fetchUserInfo">
-        <text class="btn-text">{{ hasUserInfo ? '更新信息' : '获取信息' }}</text>
-      </button>
     </view>
 
-    <!-- 信息展示区域 -->
-    <view class="info-content">
-      <!-- 基本信息部分 -->
-      <view class="info-section">
+     <view class="info-section">
         <view class="section-header">
-          <text class="section-title">基本信息</text>
-          <text class="edit-btn" @click="toggleEdit('basic')" v-if="hasUserInfo">
-            {{ isEditing.basic ? '保存' : '编辑' }}
-          </text>
+          <text class="section-title">我的数据</text>
+          <button class="edit-btn" @click="openEditModal">编辑</button>
         </view>
         <view class="info-list">
           <view class="info-item">
-            <text class="label">身高</text>
-            <input
-              type="number"
-              v-model="userInfo.height"
-              :disabled="!isEditing.basic"
-              class="input"
-              placeholder="- -"
-              @blur="updateInfo('height')"
-            />
-            <text class="unit">cm</text>
+            <text class="label">目标时长</text>
+            <text class="value">{{ targetDuration || '- -' }} 分钟</text>
           </view>
-
           <view class="info-item">
-            <text class="label">体重</text>
-            <input
-              type="number"
-              v-model="userInfo.weight"
-              :disabled="!isEditing.basic"
-              class="input"
-              placeholder="- -"
-              @blur="updateInfo('weight')"
-            />
-            <text class="unit">kg</text>
-          </view>
-
-          <view class="info-item">
-            <text class="label">性别</text>
-            <picker
-              :range="genderOptions"
-              :disabled="!isEditing.basic"
-              @change="handleGenderChange"
-              class="picker"
-            >
-              <view class="picker-text">{{ userInfo.gender || '- -' }}</view>
-            </picker>
-          </view>
-
-          <view class="info-item">
-            <text class="label">年龄</text>
-            <input
-              type="number"
-              v-model="userInfo.age"
-              :disabled="!isEditing.basic"
-              class="input"
-              placeholder="- -"
-              @blur="updateInfo('age')"
-            />
-            <text class="unit">岁</text>
+            <text class="label">目标热量</text>
+            <text class="value">{{ targetCalories || '- -' }} kcal</text>
           </view>
         </view>
+    
+       <!-- 编辑弹窗 -->
+       <view v-if="isEditing" class="modal">
+         <view class="modal-content">
+           <!-- 弹窗头部 -->
+           <view class="modal-header">
+             <text class="modal-title">编辑目标</text>
+           </view>
+       
+           <!-- 弹窗内容 -->
+           <view class="modal-body">
+             <view class="input-group">
+               <text class="label">目标时长 (分钟)</text>
+               <input v-model="editDuration" type="number" class="input" placeholder="请输入目标时长" />
+             </view>
+             <view class="input-group">
+               <text class="label">目标热量 (kcal)</text>
+               <input v-model="editCalories" type="number" class="input" placeholder="请输入目标热量" />
+             </view>
+           </view>
+       
+           <!-- 弹窗底部 -->
+           <view class="modal-footer">
+             <button class="cancel-btn" @click="cancelEdit">取消</button>
+             <button class="save-btn" @click="saveEdit">保存</button>
+           </view>
+         </view>
+       </view>
       </view>
-
-      <!-- BMI信息展示 -->
-      <view class="bmi-section" v-if="hasUserInfo">
-        <view class="bmi-card">
-          <view class="bmi-title">BMI 指数</view>
-          <view class="bmi-content">
-            <text class="bmi-value">{{ calculateBMI() }}</text>
-            <text class="bmi-status" :class="getBMIStatusClass()">{{ getBMIStatus() }}</text>
-          </view>
-        </view>
-      </view>
-
-      <!-- 运动目标部分 -->
-      <view class="info-section">
-        <view class="section-header">
-          <text class="section-title">运动目标</text>
-          <text class="edit-btn" @click="toggleEdit('goals')" v-if="hasUserInfo">
-            {{ isEditing.goals ? '保存' : '编辑' }}
-          </text>
-        </view>
-        <view class="goals-list" :class="{ 'editing': isEditing.goals }">
-          <view v-if="!hasUserInfo" class="empty-text">暂无数据</view>
-          <checkbox-group 
-              :value="userInfo.goals" 
-              @change="handleGoalsChange">
-            <label v-for="goal in goalOptions" :key="goal.value" class="goal-item">
-              <checkbox 
-                :value="goal.value" 
-                :checked="userInfo.goals.includes(goal.value)"
-                :disabled="!isEditing.goals"
-              />
-              <text class="goal-text">{{ goal.name }}</text>
-            </label>
-          </checkbox-group>
-        </view>
-      </view>
-
-      <!-- 运动类型部分 -->
-      <view class="info-section">
-        <view class="section-header">
-          <text class="section-title">运动类型</text>
-          <text class="edit-btn" @click="toggleEdit('sportTypes')" v-if="hasUserInfo">
-            {{ isEditing.sportTypes ? '保存' : '编辑' }}
-          </text>
-        </view>
-        <view class="sport-types-list" :class="{ 'editing': isEditing.sportTypes }">
-          <view v-if="!hasUserInfo" class="empty-text">暂无数据</view>
-			  <checkbox-group
-			      :value="userInfo.sportTypes" 
-			      @change="handleSportTypesChange">
-            <label v-for="type in sportTypeOptions" :key="type.value" class="sport-type-item">
-              <checkbox 
-                :value="type.value" 
-                :checked="userInfo.sportTypes.includes(type.value)"
-                :disabled="!isEditing.sportTypes"
-              />
-              <text class="sport-type-text">{{ type.text }}</text>
-            </label>
-          </checkbox-group>
-        </view>
-      </view>
-    </view>
-  </view>
+	</view>
 </template>
 
-<style lang="scss" scoped>
-.container {
-  padding: 30rpx;
-  background-color: #f7f8fa;
-  min-height: 100vh;
-}
-
-.info-card {
-  background-color: white;
-  border-radius: 24rpx;
-  padding: 40rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-  text-align: center;
-}
-
-.avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20rpx;
-}
-
-.avatar {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 80rpx;
-  border: 4rpx solid #f0f0f0;
-  background-color: #f5f5f5;
-}
-
-.username {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.fetch-info-btn {
-  margin-top: 30rpx;
-  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
-  color: white;
-  border-radius: 40rpx;
-  padding: 20rpx 60rpx;
-  font-size: 28rpx;
-  border: none;
-  box-shadow: 0 4rpx 12rpx rgba(92, 109, 243, 0.2);
-}
-
-.info-section {
-  background-color: white;
-  border-radius: 24rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30rpx;
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.edit-btn {
-  font-size: 26rpx;
-  color: #5c6df3;
-  padding: 10rpx 20rpx;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  padding: 24rpx 0;
-  border-bottom: 2rpx solid #f5f5f5;
-}
-
-.label {
-  width: 140rpx;
-  font-size: 28rpx;
-  color: #666;
-}
-
-.input {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333;
-  padding: 10rpx;
-}
-
-.unit {
-  width: 60rpx;
-  font-size: 24rpx;
-  color: #999;
-  text-align: right;
-}
-
-.empty-text {
-  text-align: center;
-  color: #999;
-  font-size: 28rpx;
-  padding: 40rpx 0;
-}
-
-.bmi-card {
-  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
-  border-radius: 24rpx;
-  padding: 30rpx;
-  color: white;
-}
-
-.bmi-title {
-  font-size: 28rpx;
-  opacity: 0.9;
-  margin-bottom: 20rpx;
-}
-
-.bmi-content {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-}
-
-.bmi-value {
-  font-size: 48rpx;
-  font-weight: bold;
-}
-
-.bmi-status {
-  font-size: 28rpx;
-  padding: 8rpx 24rpx;
-  border-radius: 30rpx;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.goals-list,
-.sport-types-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20rpx;
-  padding: 10rpx 0;
-}
-
-.goal-item,
-.sport-type-item {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  background-color: #f8f9fa;
-  padding: 16rpx 24rpx;
-  border-radius: 30rpx;
-  transition: all 0.3s;
-}
-
-.editing .goal-item,
-.editing .sport-type-item {
-  background-color: #f0f2ff;
-}
-
-.goal-text,
-.sport-type-text {
-  font-size: 26rpx;
-  color: #666;
-}
-
-// BMI状态颜色
-.status-thin {
-  background-color: #ffd700;
-}
-
-.status-normal {
-  background-color: #52c41a;
-}
-
-.status-overweight {
-  background-color: #faad14;
-}
-
-.status-obese {
-  background-color: #ff4d4f;
-}
-</style>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed,onMounted } from "vue";
 
 const serverUrl = "http://192.168.56.1:3000";
-const defaultAvatar = "/static/default-avatar.png";
+const defaultAvatar = "/static/default-avatar.jpg";
+const isEditing = ref(false);
+const editDuration = ref(null);
+const editCalories = ref(null);
+const targetDuration = ref(20); // 目标运动时间，初始值为 20min
+const targetCalories = ref(100); // 目标热量，初始值为 100卡
+const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+onMounted(() => {
+    fetchUserTargets();
+});
+// 获取用户目标数据和头像
+const fetchUserTargets = async () => {
+  try {
+    const res = await uni.request({
+      url: `${serverUrl}/getTargets`, 
+      method: "POST", 
+      data: { username }, // 向后端发送用户名 
+    });
 
+    if (res.data.success) {
+      // 更新目标数据
+      targetDuration.value = res.data.data.sport_time_goal;
+      targetCalories.value = res.data.data.calories_goal;
+     if(res.data.data.avatar!=null){
+		   userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}` ;// 拼接完整 URL 
+	 }
+	else{
+		userInfo.value.avatar = defaultAvatar;
+	}
+	  console.log(`1: ${userInfo.value.avatar}`);
+    } else {
+      uni.showToast({ title: "加载用户数据失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("获取用户目标失败:", error); 
+    uni.showToast({ title: "服务器错误", icon: "none" });
+  }
+};
+
+// 更新用户目标
+const updateUserTargets = async (calories, duration) => {
+  try {
+    const res = await uni.request({
+      url: `${serverUrl}/updateTargets`,
+      method: "POST",
+      data: { username, calories_goal: calories, sport_time_goal: duration }, // 向后端发送修改数据
+    });
+
+    if (res.data.success) {
+      targetCalories.value = calories;
+      targetDuration.value = duration;
+      uni.showToast({ title: "更新成功", icon: "success" });
+    } else {
+      uni.showToast({ title: "更新失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("更新用户目标失败:", error);
+    uni.showToast({ title: "服务器错误", icon: "none" });
+  }
+};
+// 打开编辑弹窗
+const openEditModal = () => {
+  editDuration.value = targetDuration.value;
+  editCalories.value = targetCalories.value;
+  isEditing.value = true; 
+};
+
+// 保存编辑
+const saveEdit = () => {
+  updateUserTargets(editCalories.value, editDuration.value);
+  isEditing.value = false;
+};
+
+// 取消编辑
+const cancelEdit = () => {
+  isEditing.value = false;
+};
 // 用户信息
 const userInfo = ref({
   username: uni.getStorageSync("username") || "",
@@ -345,55 +148,6 @@ const userInfo = ref({
   goals: [],
   sportTypes: [],
 });
-
-// 编辑状态
-const isEditing = ref({
-  basic: false,
-  goals: false,
-  sportTypes: false
-});
-
-// 是否已获取用户信息
-const hasUserInfo = computed(() => {
-  return userInfo.value.height || userInfo.value.weight || userInfo.value.gender || userInfo.value.age;
-});
-
-// 切换编辑状态
-const toggleEdit = async (section) => {
-  if (isEditing.value[section]) {
-    // 如果当前是编辑状态，点击后保存
-    await saveChanges(section);
-  }
-  isEditing.value[section] = !isEditing.value[section];
-};
-
-// 保存更改
-const saveChanges = async (section) => {
-  try {
-    const response = await uni.request({
-      url: `${serverUrl}/updateUserInfo`,
-      method: "POST",
-      data: {
-        username: userInfo.value.username,
-        ...userInfo.value
-      }
-    });
-    
-    if (response.statusCode === 200) {
-      uni.showToast({
-        title: '保存成功',
-        icon: 'success'
-      });
-    } else {
-      throw new Error('保存失败');
-    }
-  } catch (error) {
-    uni.showToast({
-      title: '保存失败',
-      icon: 'none'
-    });
-  }
-};
 
 // 选项数据
 const genderOptions = ["男", "女"];
@@ -412,182 +166,291 @@ const sportTypeOptions = [
   { value: "篮球", text: "篮球" },
 ];
 
-// 获取用户信息
-const fetchUserInfo = async () => {
-  try {
-    uni.showLoading({
-      title: '获取信息中...',
-      mask: true
-    });
-    
-    // 先尝试从本地缓存获取
-    const cachedInfo = uni.getStorageSync('userInfo');
-    if (cachedInfo) {
-      userInfo.value = JSON.parse(cachedInfo);
-      hasUserInfo.value = true;
-    }
-    
-    // 然后从服务器获取最新数据
-    const [error, res] = await uni.request({
-      url: `${serverUrl}/getUserInfo`,
-      method: "POST",
-      data: {
-        username: userInfo.value.username,
-      },
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    if (res.statusCode === 200 && res.data) {
-      const data = res.data;
-      userInfo.value = {
-        ...userInfo.value,
-        height: data.height || "",
-        weight: data.weight || "",
-        gender: data.gender || "",
-        age: data.age || "",
-        goals: data.fitnessGoal ? data.fitnessGoal.split(",") : [],
-        sportTypes: data.exerciseType ? data.exerciseType.split(",") : [],
-      };
-      uni.setStorageSync("userInfo", JSON.stringify(userInfo.value));
-      hasUserInfo.value = true;
-      
-      uni.showToast({
-        title: '获取成功',
-        icon: 'success'
-      });
-    } else {
-      throw new Error('获取信息失败');
-    }
-  } catch (error) {
-    console.error("获取用户信息失败:", error);
-    uni.showToast({
-      title: '获取信息失败',
-      icon: 'none'
-    });
-  } finally {
-    uni.hideLoading();
-  }
-};
-
-// 更新信息到后端
-const updateInfo = async (field) => {
-  console.log(`正在更新 ${field}:`, userInfo.value[field]); // 调试信息
-  const updateData = {
-    username: userInfo.value.username,
-    [field]: userInfo.value[field],
-  };
-
-  try {
-    const [error, res] = await uni.request({
-      url: `${serverUrl}/updateUserInfo`,
-      method: "POST",
-      data: updateData,
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    if (res.statusCode === 200) {
-      uni.showToast({
-        title: "更新成功",
-        icon: "success",
-      });
-      // 更新本地缓存
-      uni.setStorageSync("userInfo", JSON.stringify(userInfo.value));
-      console.log("信息更新成功"); // 调试信息
-    } else {
-      uni.showToast({
-        title: "更新失败",
-        icon: "none",
-      });
-      console.log("更新失败:", res); // 调试信息
-    }
-  } catch (error) {
-    console.error("更新信息失败:", error);
-    uni.showToast({
-      title: "网络错误",
-      icon: "none",
-    });
-  }
-};
-
-// 处理性别变化
-const handleGenderChange = (e) => {
-  userInfo.value.gender = genderOptions[e.detail.value];
-  updateInfo("gender");
-};
-
-// 处理运动目标变化
-const handleGoalsChange = (e) => {
-  userInfo.value.goals = e.detail.value;
-  updateInfo("goals");
-};
-
-// 处理运动类型变化
-const handleSportTypesChange = (e) => {
-  userInfo.value.sportTypes = e.detail.value;
-  updateInfo("sportTypes");
-};
-
-// 计算BMI
-const calculateBMI = () => {
-  if (!userInfo.value.height || !userInfo.value.weight) return "未知";
-  const height = userInfo.value.height / 100; // 转换为米
-  const bmi = (userInfo.value.weight / (height * height)).toFixed(1);
-  return bmi;
-};
-
-// 获取BMI状态
-const getBMIStatus = () => {
-  const bmi = calculateBMI();
-  if (bmi === "未知") return "";
-  if (bmi < 18.5) return "偏瘦";
-  if (bmi < 24) return "正常";
-  if (bmi < 28) return "偏胖";
-  return "肥胖";
-};
 
 // 更换头像
-const changeAvatar = () => {
+const changeAvatar = async () => {
+  // 选择图片文件
   uni.chooseImage({
     count: 1,
-    success: (res) => {
-      const tempFilePath = res.tempFilePaths[0];
-      // 上传头像到服务器
-      uni.uploadFile({
-        url: `${serverUrl}/uploadAvatar`,
-        filePath: tempFilePath,
-        name: "avatar",
-        formData: {
-          username: userInfo.value.username,
-        },
-        success: (uploadRes) => {
-          const data = JSON.parse(uploadRes.data);
-          if (data.success) {
-            userInfo.value.avatar = data.url;
-            uni.setStorageSync("userInfo", JSON.stringify(userInfo.value));
-            uni.showToast({
-              title: "头像更新成功",
-              icon: "success",
-            });
+    success: async (chooseResult) => {
+      const filePath = chooseResult.tempFilePaths[0];
+
+      try {
+        // 上传文件到后端
+        const uploadRes = await uni.uploadFile({
+          url: `${serverUrl}/upload`, // 上传 API
+          filePath,
+          name: "file",
+        });
+
+        const uploadData = JSON.parse(uploadRes.data);
+        if (uploadData.success) {
+          const newAvatarUrl = uploadData.imageUrl;
+
+          // 更新头像 URL 到数据库
+          const updateRes = await uni.request({
+            url: `${serverUrl}/updateAvatar`,
+            method: "POST", 
+            data: {
+              username,
+              avatar: newAvatarUrl,
+            },
+          });
+
+          if (updateRes.data.success) {
+            userInfo.value.avatar = newAvatarUrl; // 更新本地显示的头像
+            uni.showToast({ title: "头像更换成功", icon: "success" }); 
+			fetchUserTargets();
+          } else {
+            uni.showToast({ title: "更新头像失败", icon: "none" });
           }
-        },
-      });
+        } else {
+          uni.showToast({ title: "上传失败", icon: "none" });
+        }
+      } catch (error) {
+        console.error("更换头像失败:", error);
+        uni.showToast({ title: "服务器错误", icon: "none" });
+      }
+    },
+    fail: () => {
+      // uni.showToast({ title: "取消选择图片", icon: "none" });
     },
   });
 };
 
-// 添加 BMI 状态样式类
-const getBMIStatusClass = () => {
-  const bmi = calculateBMI();
-  if (bmi === '未知') return '';
-  if (bmi < 18.5) return 'status-thin';
-  if (bmi < 24) return 'status-normal';
-  if (bmi < 28) return 'status-overweight';
-  return 'status-obese';
-};
+
 </script>
+
+<style lang="scss" scoped>
+.container {
+  padding: 30rpx;
+  background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+.info-card {
+  background-color: white;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  border: 6rpx solid transparent;
+  background-image: linear-gradient(#fff, #fff),
+    linear-gradient(135deg, #5b67d1, #94dfd4);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  transition: transform 0.3s ease;
+}
+
+
+.username {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.info-section {
+  background-color: white;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.edit-btn {
+  padding: 5rpx 50rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  border: none;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 8rpx rgba(92, 109, 243, 0.3);
+  transition: all 0.3s ease;
+  margin-right:0px ;
+}
+
+.edit-btn:active {
+  box-shadow: 0 2rpx 6rpx rgba(92, 109, 243, 0.4);
+  transform: scale(0.95);
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #ececec;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.fetch-info-btn {
+  margin-top: 30rpx;
+  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
+  color: white;
+  border-radius: 40rpx;
+  padding: 20rpx 60rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  box-shadow: 0 4rpx 12rpx rgba(92, 109, 243, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fetch-info-btn:hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 6rpx 18rpx rgba(92, 109, 243, 0.3);
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 80%;
+  max-width: 600rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
+  padding: 20rpx;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.input-group {
+  margin-bottom: 50rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  padding: 10rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  // box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #5c6df3;
+  outline: none;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-top: 1rpx solid #e5e5e5;
+}
+.cancel-btn,
+.save-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  padding: 12rpx 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: 2rpx ;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.cancel-btn:active {
+  background-color: #e0e0e0;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  color: #fff;
+  box-shadow: 0 4rpx 8rpx rgba(92, 109, 243, 0.3);
+}
+
+.save-btn:active {
+  box-shadow: 0 2rpx 6rpx rgba(92, 109, 243, 0.4);
+  transform: scale(0.98);
+}
+
+/* 弹窗动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+</style>
