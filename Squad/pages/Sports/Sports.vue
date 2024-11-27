@@ -58,47 +58,148 @@
     </div>
   </view>
   <!-- 视频弹窗 -->
-      <uni-popup ref="videoPopup" type="center">
-        <view class="popup-content">
-          <iframe
-            v-if="currentVideoUrl"
-            :src="currentVideoUrl"
-            class="video-iframe"
-            frameborder="0"
-            allowfullscreen
-          ></iframe>
-          <button class="close-btn" @click="closeVideo">关闭</button>
-        </view>
-      </uni-popup>
+   <view v-if="isModalVisible" class="modal-overlay" @click="closeVideo">
+     <view class="modal" @click.stop>
+       <!-- 实时计时显示 -->
+       <div class="timer-header">
+         当前运动时长：{{ Math.floor(elapsedTime / 60) }}分{{ elapsedTime % 60 }}秒
+       </div>
+       <iframe
+         v-if="currentVideoUrl"
+         :src="currentVideoUrl"
+         class="video-iframe"
+         frameborder="0"
+         allowfullscreen
+       ></iframe>
+       <button class="close-btn" @click="closeVideo">关闭</button>
+     </view>
+   </view>
 </div> 
   <!-- 自由训练展示 -->
   <view v-if="tab === 'freeExercise'" class = "plan-section">
     
   </view>
-</template>	
+</template>	 
 
 <script setup>
 import {ref,onMounted} from "vue";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import uniPopup from "@/uni_modules/uni-popup/components/uni-popup/uni-popup.vue";
-const currentExercise = ref(30); // 当前运动时长
-const planExercise = ref(60); // 计划运动时长	
+import dayjs from "dayjs"; // 引入 dayjs 日期库
+// 当前日期
+const today = dayjs().format("YYYY-MM-DD");
+const exerciseDurations = ref({}); // 存储所有日期的运动时长
+const currentExercise = ref(0); // 当前显示的运动时长
+const planExercise = ref(20); // 计划运动时长
 const modelVale = ref(0);
 const target = ref(50);
 const tab = ref("myExercise"); // 当前选中的标签
-const myExercise = ref(true);
-const freeExercise = ref(false);
-const username = uni.getStorageSync("username"); // 获取已登录用户的用户
-const currentVideoUrl = ref(""); // 当前视频的 URL
-const videoPopup = ref(null); // 弹窗引用
+const myPlans = ref([]); // 存储我的课程数据
+const currentVideoUrl = ref(""); // 当前播放视频的 URL
+const isModalVisible = ref(false); // 控制弹窗显示
+const username = uni.getStorageSync("username"); // 获取已登录用户
+const startTime = ref(0); // 视频播放开始的时间戳
+const elapsedTime = ref(0); // 当前累计的运动时间
+const timerInterval = ref(null); // 定时器的引用
+const serverUrl =uni.getStorageSync("serverUrl");
 // 页面加载时调用
-onMounted(() => {
+onMounted(() => { 
   loadMyPlans();
-  // 监听添加计划的通知
+  loadExerciseDurations(); // 加载每日运动时长
+  fetchPlanExercise(); // 获取计划运动时长
+  // 监听添加计划的通知 
   uni.$on("handleAdd", loadMyPlans);
   // 监听删除计划的通知
   uni.$on("handleRemove", loadMyPlans);
 });
+
+// 从后端加载计划运动时长
+const fetchPlanExercise = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  uni.request({
+    url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(username)}`, // 拼接 username 参数
+    method: "GET",
+    header: {
+      "Content-Type": "application/json", 
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        planExercise.value = res.data.data.sport_time_goal || 60; // 更新计划运动时长
+      } else {
+        console.error("获取计划运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
+
+// 加载运动时长
+const loadExerciseDurations = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  uni.request({
+    url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(username)}`, // 传递 username
+    method: "GET",
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        currentExercise.value = res.data.data.exercise_duration || 0; // 更新当前运动时长
+      } else {
+        console.error("获取今日运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
+// 保存运动时长
+const saveExerciseDuration = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  const today = dayjs().format("YYYY-MM-DD"); // 获取今天的日期
+  const exerciseDuration = currentExercise.value; // 获取当前运动时长
+
+  uni.request({
+    url: `${serverUrl}/save-exercise-duration`,
+    method: "POST", 
+    data: {
+      username: username,
+      date: today,
+      exercise_duration: exerciseDuration,
+    },
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        console.log("今日运动时长已保存");
+      } else {
+        console.error("保存今日运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
 //状态切换
 const switchTab = (selectedTab) => {
   tab.value = selectedTab;
@@ -115,8 +216,6 @@ const planForm = ref({
   videoUrl: "",
 });
 
-// 存储我的计划
-const myPlans = ref([]);
 // 添加一个变量存储当前编辑的索引
 const currentEditIndex = ref(-1);
 // 加载当前用户的计划
@@ -128,44 +227,22 @@ const loadMyPlans = () => {
     myPlans.value = [];
   }
 };
-// 从后端获取计划数据
-const fetchPlansFromBackend = () => {
-  uni.request({
-    url: serverUrl + "/goals", // 替换为你的实际后端地址
-    method: "GET",
-    success: (res) => {
-      console.log("返回的所有计划数据:", res.data);
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        // 处理返回的数据
-        plans.value = res.data.map((item) => ({
-          title: item.title,
-          duration: `${item.duration}min`, // 注意单位格式
-          imageUrl: item.image_url,
-          times: item.times,
-          difficulties: item.difficulties,
-          calorie: item.calorie,
-          goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按号拆分并去除空格
-          type: item.type,
-		  videoUrl:item.videoUrl,
-        }));
-        // 在获取数据后，根据筛选条件过滤数据
-        filterPlans();
-      } else {
-        console.log("未找到相关计划数据");
-      }
-    },
-    fail: (err) => {
-      console.error("请求失败:", err);
-    },
-  }); 
-};
+// 记录开始时间
+let videoStartTime = null;
 // 播放课程
 const playPlan = (plan) => {
-	console.log("返回的所有计划数据:", plan.videoUrl);
+  console.log("BV数据:", plan.videoUrl);
   if (plan.videoUrl) {
-    currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}`;
-    const videoPopup = uni.$refs.videoPopup;
-    videoPopup.open();
+    currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}&quality=120`;
+    isModalVisible.value = true; // 显示弹窗
+
+    // 记录播放开始时间
+    startTime.value = Date.now();
+
+    // 启动定时器
+    timerInterval.value = setInterval(() => {
+      elapsedTime.value = Math.floor((Date.now() - startTime.value) / 1000); // 秒数
+    }, 1000);
   } else {
     uni.showToast({
       title: "该课程没有视频",
@@ -173,12 +250,29 @@ const playPlan = (plan) => {
     });
   }
 };
-// 关闭视频弹窗
+
+// 关闭视频时计算观看时长
 const closeVideo = () => {
-  const videoPopup = uni.$refs.videoPopup;
-  videoPopup.close();
+  isModalVisible.value = false; // 隐藏弹窗
   currentVideoUrl.value = ""; // 清空视频 URL
+
+  // 停止定时器
+  if (timerInterval.value) {
+    clearInterval(timerInterval.value);
+    timerInterval.value = null;
+
+    // 更新当前运动时间
+    const addedMinutes = Math.floor(elapsedTime.value / 60); // 计算分钟数
+    currentExercise.value += addedMinutes;
+
+    // 更新到本地存储
+    exerciseDurations.value[today] = currentExercise.value;
+    saveExerciseDuration();
+  }
+
+  elapsedTime.value = 0; // 重置计时器
 };
+
 </script>
 
 <style scoped lang="scss">
@@ -196,6 +290,7 @@ const closeVideo = () => {
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
+  margin-left: 10px;
 }
 .sportbar {
   display: flex;
@@ -245,8 +340,8 @@ const closeVideo = () => {
 
 .plan-list {
   margin-top: 10px;
-  width:97%;
-  margin-left:3px ;
+  width:94%;
+  margin-left:10px ;
 }
 
 .plan-item {
@@ -342,4 +437,53 @@ const closeVideo = () => {
   border-radius: 5px;
   cursor: pointer;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 90%;
+  width: 600px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.video-iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 8px;
+}
+
+.close-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.timer-header {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+}
+
 </style>

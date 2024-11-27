@@ -1134,6 +1134,7 @@ const fetchPlansFromBackend = () => {
           calorie: item.calorie,
           goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按号拆分并去除空格
           type: item.type,
+		  videoUrl:item.videoUrl,
         }));
         // 在获取数据后，根据筛选条件过滤数据
         filterPlans();
@@ -1444,7 +1445,7 @@ const handleAdd = (plan) => {
 
   // 如果计划不存在，则添加新计划
   currentPlans.push(plan);
-
+  
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
   console.log("计划已添加:", plan.title);
@@ -1468,6 +1469,7 @@ const handleRemove = (plan) => {
   console.log("计划已删除:", plan.title);
   // 通知 删除计划
   uni.$emit("handleRemove");
+  
   // 重新加载计划
   loadMyPlans();
 };

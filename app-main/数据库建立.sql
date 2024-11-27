@@ -26,7 +26,13 @@ CREATE TABLE users (
     avatar VARCHAR(255),                 -- 头像 URL，最大长度 255
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 注册时间，默认当前时间
 );
-
+--记录运动时长
+CREATE TABLE exercise_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  exercise_duration INT DEFAULT 0
+);
 
 CREATE TABLE messages (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,      -- 消息唯一标识，主键，自增
