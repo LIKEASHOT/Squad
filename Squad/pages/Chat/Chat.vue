@@ -228,7 +228,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 
-const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = "http://192.168.56.1:3000";
 const messageText = ref("");
 const messages = ref([]);
 const scrollTop = ref(0);
@@ -274,7 +274,7 @@ const groupedMessages = computed(() => {
 const initWebSocket = () => {
   try {
     websocket.value = uni.connectSocket({
-      url: `ws://10.133.80.141:3001/chat`,
+      url: `ws://192.168.56.1:3001/chat`,
       complete: () => {
         console.log("WebSocket连接尝试完成");
       },

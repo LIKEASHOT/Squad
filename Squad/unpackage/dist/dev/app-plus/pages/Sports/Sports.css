@@ -1,0 +1,263 @@
+/* 水平间距 */
+/* 水平间距 */
+@supports (background: conic-gradient(#000, #fff)) {
+.check[data-v-a96e7be9] {
+    height: 0.03125rem;
+    position: absolute;
+}
+}
+[data-v-a96e7be9]:root {
+  display: inline-block;
+  --l-circle-percent: 0%;
+  --l-circle-percent2: 0;
+}
+.l-circle[data-v-a96e7be9] {
+  --l-circle-percent: 0%;
+  transition-property: --l-circle-percent2, --l-circle-percent;
+  transition-duration: 300ms;
+  position: relative;
+  display: inline-block;
+}
+.l-circle__canvas[data-v-a96e7be9] {
+  width: 100%;
+  height: 100%;
+}
+.l-circle__inner[data-v-a96e7be9] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+
+  display: flex;
+}
+.l-circle__view[data-v-a96e7be9] {
+  flex: 1;
+}
+.l-circle__trail[data-v-a96e7be9], .l-circle__stroke[data-v-a96e7be9], .l-circle__stroke-line[data-v-a96e7be9] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.l-circle__trail[data-v-a96e7be9] {
+  background: var(--l-background);
+}
+.l-circle__stroke-line[data-v-a96e7be9] {
+  z-index: 2;
+  background: var(--l-background);
+}
+.is-round .l-circle__trail[data-v-a96e7be9] {
+  --l-circle-percent: 100%;
+  --l-circle-percent2: 1;
+}
+.is-round .l-circle__trail .cap[data-v-a96e7be9] {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle var(--l-circle-trail-cap-size) at 50% var(--l-circle-trail-cap-size), currentColor, currentColor var(--l-circle-trail-cap-size), transparent);
+  transform: rotate(var(--l-circle-trail-cap-start));
+}
+.is-round .l-circle__trail .cap.end[data-v-a96e7be9] {
+  transform: rotate(var(--l-circle-trail-cap-end));
+}
+.is-round .l-circle__stroke .cap[data-v-a96e7be9] {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle var(--l-circle-stroke-cap-size) at 50% var(--l-circle-stroke-cap-size), var(--l-circle-stroke-cap-color, currentColor), var(--l-circle-stroke-cap-color, currentColor) var(--l-circle-stroke-cap-size), transparent);
+  transform: rotate(var(--l-circle-stroke-cap-start));
+}
+.is-round .l-circle__stroke .cap.end[data-v-a96e7be9] {
+  transform: rotate(var(--l-circle-stroke-cap-end));
+  color: var(--l-circle-stroke-cap-color-end, currentColor);
+}
+.clockwise[data-v-a96e7be9] {
+  transform: translateY(var(--l-circle-offset-top, 0)) scale(-1, 1);
+}
+.clockwise .l-circle__inner[data-v-a96e7be9] {
+  transform: scale(-1, 1);
+}
+
+/* 水平间距 */
+/* 水平间距 */
+.uni-popup[data-v-4dd3c44b] {
+  position: fixed;
+  z-index: 99;
+}
+.uni-popup.top[data-v-4dd3c44b], .uni-popup.left[data-v-4dd3c44b], .uni-popup.right[data-v-4dd3c44b] {
+  top: 0;
+}
+.uni-popup .uni-popup__wrapper[data-v-4dd3c44b] {
+  display: block;
+  position: relative;
+  /* iphonex 等安全区设置，底部安全区适配 */
+}
+.uni-popup .uni-popup__wrapper.left[data-v-4dd3c44b], .uni-popup .uni-popup__wrapper.right[data-v-4dd3c44b] {
+  padding-top: 0;
+  flex: 1;
+}
+.fixforpc-z-index[data-v-4dd3c44b] {
+  z-index: 999;
+}
+.fixforpc-top[data-v-4dd3c44b] {
+  top: 0;
+}
+/* 水平间距 */
+/* 水平间距 */
+.add_icon[data-v-ec372f74] {
+  width: 3.125rem;
+  height: 3.125rem;
+}
+.delete_icon[data-v-ec372f74] {
+  width: 3.125rem;
+  height: 3.125rem;
+  margin-top: 0.3125rem;
+}
+.top_bar_sport[data-v-ec372f74] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+}
+.sportbar[data-v-ec372f74] {
+  display: flex;
+  align-items: center;
+  width: 75%;
+  padding: 10px;
+  background-color: white;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+.exercise-duration[data-v-ec372f74] {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  font-size: 16px;
+  color: #333;
+}
+.circle_process_eat[data-v-ec372f74] {
+  margin-top: 1.5625rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.shot_icon[data-v-ec372f74] {
+  left: 0.9375rem;
+  width: 3.125rem;
+  height: 3.125rem;
+}
+.tab-container[data-v-ec372f74] {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.tab-container span[data-v-ec372f74] {
+  padding: 10px;
+}
+.tab-container .active[data-v-ec372f74] {
+  color: #333;
+  border-bottom: 2px solid #333;
+}
+.plan-section[data-v-ec372f74] {
+  margin-top: 10px;
+}
+.plan-list[data-v-ec372f74] {
+  margin-top: 10px;
+  width: 97%;
+  margin-left: 3px;
+}
+.plan-item[data-v-ec372f74] {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.603);
+  /* 添加边界阴影 */
+}
+.plan-image[data-v-ec372f74] {
+  margin-top: 2.5px;
+  margin-left: 2.5px;
+  width: 10.9375rem;
+  height: 5.9375rem;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4);
+  /* 添加边界阴影 */
+}
+.plan-info[data-v-ec372f74] {
+  margin-left: 10px;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+}
+.plan-title[data-v-ec372f74] {
+  font-size: 16px;
+}
+.plan-duration[data-v-ec372f74] {
+  color: black;
+  font-size: 12px;
+}
+.plan-times[data-v-ec372f74] {
+  color: black;
+  font-size: 12px;
+  white-space: nowrap;
+  /* 防止换行 */
+}
+.plan-difficulties[data-v-ec372f74] {
+  color: black;
+  font-size: 12px;
+}
+.plan-calorie[data-v-ec372f74] {
+  color: black;
+  font-size: 12px;
+}
+.vertical-line[data-v-ec372f74] {
+  position: relative;
+  width: 2px;
+  background-color: #ccc;
+}
+.play-button[data-v-ec372f74] {
+  margin-top: 37px;
+  margin-left: 8px;
+  width: 0;
+  height: 0;
+  border-left: 1.25rem solid #ff0000;
+  /* 设置三角形的颜色 */
+  border-top: 0.78125rem solid transparent;
+  border-bottom: 0.78125rem solid transparent;
+  cursor: pointer;
+  margin-right: 0.3125rem;
+}
+.plan-section[data-v-ec372f74] {
+  margin-top: 10px;
+}
+.popup-content[data-v-ec372f74] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+}
+.video-iframe[data-v-ec372f74] {
+  width: 100%;
+  max-width: 800px;
+  height: 450px;
+  /* 16:9 比例 */
+  border-radius: 8px;
+  border: none;
+}
+.close-btn[data-v-ec372f74] {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

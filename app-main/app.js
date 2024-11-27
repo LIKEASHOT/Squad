@@ -9,11 +9,11 @@ const axios = require("axios");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const serverUrl = "http://10.133.80.141.1:3000"; // 服务器地址
+const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 const config = {
   // 获取本地IP地址
-  localIP: "10.133.80.141",
+  localIP: "192.168.56.1",
   port: 3000,
 };
 require("dotenv").config();
@@ -758,7 +758,8 @@ app.get("/goals", (req, res) => {
       卡路里 AS calorie, 
       CONCAT('http://${config.localIP}:${config.port}/', image_url) AS image_url, 
       目标 AS goal, 
-      运动类型 AS type 
+      运动类型 AS type,
+      B站连接 as videoUrl
     FROM goal
   `;
 
