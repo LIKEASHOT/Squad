@@ -820,7 +820,7 @@ if (uni.restoreGlobal) {
   }
   const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$7 = "http://192.168.56.1:3000";
+  const serverUrl$6 = "http://192.168.56.1:3000";
   const _sfc_main$y = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
@@ -839,7 +839,7 @@ if (uni.restoreGlobal) {
       const onButtonRelease = () => {
         isPressed.value = false;
       };
-      uni.setStorageSync("serverUrl", serverUrl$7);
+      uni.setStorageSync("serverUrl", serverUrl$6);
       const form = vue.ref({
         username: "",
         password: ""
@@ -854,7 +854,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Login/Login.vue:117", "提交登录表单", form.value);
         uni.request({
-          url: serverUrl$7 + "/login",
+          url: serverUrl$6 + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -885,7 +885,7 @@ if (uni.restoreGlobal) {
         formatAppLog("log", "at pages/Login/Login.vue:148", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$7, form, submitLogin, goRegister, ref: vue.ref };
+      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$6, form, submitLogin, goRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -1656,7 +1656,7 @@ if (uni.restoreGlobal) {
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$6 = "http://192.168.56.1:3000";
+  const serverUrl$5 = "http://192.168.56.1:3000";
   const _sfc_main$s = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1697,7 +1697,7 @@ if (uni.restoreGlobal) {
         }
         formatAppLog("log", "at pages/Register/Register.vue:129", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$6 + "/register",
+          url: serverUrl$5 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1739,7 +1739,7 @@ if (uni.restoreGlobal) {
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$6, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$5, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -19566,7 +19566,7 @@ ${i3}
         type: "",
         videoUrl: ""
       });
-      const plans2 = vue.ref([]);
+      const plans = vue.ref([]);
       const foodList = vue.ref([]);
       const manualFoodList = vue.ref([]);
       const errorMessage = vue.ref("");
@@ -19804,7 +19804,7 @@ ${i3}
           success: (res) => {
             formatAppLog("log", "at pages/Home/Home.vue:1125", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
-              plans2.value = res.data.map((item) => ({
+              plans.value = res.data.map((item) => ({
                 title: item.title,
                 duration: `${item.duration}min`,
                 // 注意单位格式
@@ -19814,15 +19814,16 @@ ${i3}
                 calorie: item.calorie,
                 goal: item.goal ? item.goal.split(",").map((g2) => g2.trim()) : [],
                 // 将 goal 字符串按号拆分并去除空格
-                type: item.type
+                type: item.type,
+                videoUrl: item.videoUrl
               }));
-              filterPlans2();
+              filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1141", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1142", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1145", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1146", "请求失败:", err);
           }
         });
       };
@@ -19832,9 +19833,9 @@ ${i3}
           const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username2}`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
-            formatAppLog("log", "at pages/Home/Home.vue:1158", "今日已获取过热量数据");
+            formatAppLog("log", "at pages/Home/Home.vue:1159", "今日已获取过热量数据");
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1167", `剩余热量: ${today_left_eat.value} 千卡`);
+            formatAppLog("log", "at pages/Home/Home.vue:1168", `剩余热量: ${today_left_eat.value} 千卡`);
             const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
             target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
@@ -19851,7 +19852,7 @@ ${i3}
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1189", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1190", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -19863,7 +19864,7 @@ ${i3}
               let remainingCalories = uni.getStorageSync(
                 `today_left_eat_${username2}`
               );
-              formatAppLog("log", "at pages/Home/Home.vue:1205", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1206", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -19881,7 +19882,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1223", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1224", "请求失败:", error2);
         }
       }
       const aiInput = vue.ref("");
@@ -19911,10 +19912,10 @@ ${i3}
       const selectType = (value) => {
         selectedType.value = selectedType.value === value ? "" : value;
       };
-      const filteredPlans = vue.ref([...plans2.value]);
-      const filterPlans2 = () => {
+      const filteredPlans = vue.ref([...plans.value]);
+      const filterPlans = () => {
         logSelectedFilters();
-        filteredPlans.value = plans2.value.filter((plan) => {
+        filteredPlans.value = plans.value.filter((plan) => {
           const matchesGoal = selectedGoal.value === "全部" || plan.goal.includes(selectedGoal.value);
           const matchesType = selectedType.value === "全部" || plan.type === selectedType.value;
           const matchesDifficulty = selectedDifficulty.value === "全部" || plan.difficulties === selectedDifficulty.value;
@@ -19922,7 +19923,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1285", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1286", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -19958,7 +19959,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1328", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:1329", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -19974,7 +19975,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1345", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1346", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -20008,7 +20009,7 @@ ${i3}
         setInterval(() => {
           const now = /* @__PURE__ */ new Date();
           if (now.getHours() === 0 && now.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1392", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1393", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -20034,14 +20035,14 @@ ${i3}
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1425", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1426", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1437", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1438", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -20050,7 +20051,7 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1450", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1451", "计划已添加:", plan.title);
         uni.$emit("handleAdd");
         loadMyPlans();
       };
@@ -20059,7 +20060,7 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1468", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1469", "计划已删除:", plan.title);
         uni.$emit("handleRemove");
         loadMyPlans();
       };
@@ -20097,7 +20098,7 @@ ${i3}
           image_url: planForm.value.imageUrl || "",
           video_url: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1518", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1520", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
             url: `${serverUrl2}/goals`,
@@ -20106,7 +20107,7 @@ ${i3}
             data: planData,
             success: (res) => {
               if (res.data.message === "更新成功") {
-                plans2.value.splice(currentEditIndex.value, 1, { ...planData });
+                plans.value.splice(currentEditIndex.value, 1, { ...planData });
                 uni.showToast({ title: "修改成功", icon: "success" });
                 closePopup();
               } else {
@@ -20117,7 +20118,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1541", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1543", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20129,7 +20130,7 @@ ${i3}
             data: planData,
             success: (res) => {
               if (res.data.message === "添加成功") {
-                plans2.value.push(planData);
+                plans.value.push(planData);
                 uni.showToast({ title: "添加成功", icon: "success" });
                 closePopup();
               } else {
@@ -20140,7 +20141,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1564", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1566", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20148,7 +20149,7 @@ ${i3}
       };
       const chooseCoverImage = async () => {
         try {
-          formatAppLog("log", "at pages/Home/Home.vue:1573", "选择图片按钮被点击");
+          formatAppLog("log", "at pages/Home/Home.vue:1575", "选择图片按钮被点击");
           const res = await uni.chooseImage({
             count: 1,
             // 选择一张图片
@@ -20157,22 +20158,22 @@ ${i3}
           });
           if (res.errMsg === "chooseImage:ok") {
             const filePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/Home/Home.vue:1581", "选择的图片路径：", filePath);
+            formatAppLog("log", "at pages/Home/Home.vue:1583", "选择的图片路径：", filePath);
             const uploadRes = await uploadImage(filePath);
             if (uploadRes && uploadRes.imageUrl) {
               planForm.value.imageUrl = uploadRes.imageUrl;
-              formatAppLog("log", "at pages/Home/Home.vue:1587", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+              formatAppLog("log", "at pages/Home/Home.vue:1589", "图片上传成功，图片 URL:", uploadRes.imageUrl);
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1589", "图片上传失败");
+              formatAppLog("error", "at pages/Home/Home.vue:1591", "图片上传失败");
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1593", "选择图片失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1595", "选择图片失败:", error2);
         }
       };
       const uploadImage = (filePath) => {
         return new Promise((resolve, reject) => {
-          formatAppLog("log", "at pages/Home/Home.vue:1600", "开始上传图片，路径:", filePath);
+          formatAppLog("log", "at pages/Home/Home.vue:1602", "开始上传图片，路径:", filePath);
           uni.uploadFile({
             url: serverUrl2 + "/upload",
             // 假设上传接口的URL
@@ -20183,7 +20184,7 @@ ${i3}
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200 && response.success) {
                   const imageUrl = response.imageUrl;
-                  formatAppLog("log", "at pages/Home/Home.vue:1612", "上传成功，返回的图片URL:", imageUrl);
+                  formatAppLog("log", "at pages/Home/Home.vue:1614", "上传成功，返回的图片URL:", imageUrl);
                   planForm.value.imageUrl = imageUrl;
                   uni.showToast({
                     title: "上传成功",
@@ -20191,14 +20192,14 @@ ${i3}
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:1622", "上传失败，返回错误:", response);
+                  formatAppLog("error", "at pages/Home/Home.vue:1624", "上传失败，返回错误:", response);
                   uni.showToast({
                     title: "上传失败，请重试",
                     icon: "none"
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:1629", "解析响应数据失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:1631", "解析响应数据失败:", err);
                 uni.showToast({
                   title: "响应数据解析失败",
                   icon: "none"
@@ -20206,7 +20207,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1637", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1639", "上传失败", err);
               uni.showToast({
                 title: "上传失败，请检查网络连接",
                 icon: "none"
@@ -20217,8 +20218,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1649", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1650", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1651", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1652", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -20239,7 +20240,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1674", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1676", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -20286,9 +20287,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1731", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1733", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1734", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1736", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -20317,7 +20318,7 @@ ${i3}
         });
       };
       vue.onMounted(() => {
-        filterPlans2();
+        filterPlans();
         showCalendar.value = true;
         setTimeout(() => {
           info.value.date = getDate(/* @__PURE__ */ new Date(), -30).fullDate;
@@ -20381,7 +20382,7 @@ ${i3}
         });
       };
       const isRecognizing = vue.ref(false);
-      const __returned__ = { serverUrl: serverUrl2, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans: plans2, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans: filterPlans2, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      const __returned__ = { serverUrl: serverUrl2, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -23017,25 +23018,409 @@ ${i3}
     ]);
   }
   const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
+  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+  }
+  var dayjs_min = { exports: {} };
+  (function(module, exports) {
+    !function(t2, e2) {
+      module.exports = e2();
+    }(commonjsGlobal, function() {
+      var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i2 = "second", s2 = "minute", u2 = "hour", a2 = "day", o2 = "week", c2 = "month", f2 = "quarter", h2 = "year", d2 = "date", l2 = "Invalid Date", $2 = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y2 = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
+        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
+        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
+      } }, m2 = function(t3, e3, n3) {
+        var r3 = String(t3);
+        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
+      }, v2 = { s: m2, z: function(t3) {
+        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
+        return (e3 <= 0 ? "+" : "-") + m2(r3, 2, "0") + ":" + m2(i3, 2, "0");
+      }, m: function t3(e3, n3) {
+        if (e3.date() < n3.date())
+          return -t3(n3, e3);
+        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c2), s3 = n3 - i3 < 0, u3 = e3.clone().add(r3 + (s3 ? -1 : 1), c2);
+        return +(-(r3 + (n3 - i3) / (s3 ? i3 - u3 : u3 - i3)) || 0);
+      }, a: function(t3) {
+        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
+      }, p: function(t3) {
+        return { M: c2, y: h2, w: o2, d: a2, D: d2, h: u2, m: s2, s: i2, ms: r2, Q: f2 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
+      }, u: function(t3) {
+        return void 0 === t3;
+      } }, g2 = "en", D2 = {};
+      D2[g2] = M2;
+      var p2 = "$isDayjsObject", S2 = function(t3) {
+        return t3 instanceof _2 || !(!t3 || !t3[p2]);
+      }, w2 = function t3(e3, n3, r3) {
+        var i3;
+        if (!e3)
+          return g2;
+        if ("string" == typeof e3) {
+          var s3 = e3.toLowerCase();
+          D2[s3] && (i3 = s3), n3 && (D2[s3] = n3, i3 = s3);
+          var u3 = e3.split("-");
+          if (!i3 && u3.length > 1)
+            return t3(u3[0]);
+        } else {
+          var a3 = e3.name;
+          D2[a3] = e3, i3 = a3;
+        }
+        return !r3 && i3 && (g2 = i3), i3 || !r3 && g2;
+      }, O2 = function(t3, e3) {
+        if (S2(t3))
+          return t3.clone();
+        var n3 = "object" == typeof e3 ? e3 : {};
+        return n3.date = t3, n3.args = arguments, new _2(n3);
+      }, b2 = v2;
+      b2.l = w2, b2.i = S2, b2.w = function(t3, e3) {
+        return O2(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
+      };
+      var _2 = function() {
+        function M3(t3) {
+          this.$L = w2(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p2] = true;
+        }
+        var m3 = M3.prototype;
+        return m3.parse = function(t3) {
+          this.$d = function(t4) {
+            var e3 = t4.date, n3 = t4.utc;
+            if (null === e3)
+              return /* @__PURE__ */ new Date(NaN);
+            if (b2.u(e3))
+              return /* @__PURE__ */ new Date();
+            if (e3 instanceof Date)
+              return new Date(e3);
+            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
+              var r3 = e3.match($2);
+              if (r3) {
+                var i3 = r3[2] - 1 || 0, s3 = (r3[7] || "0").substring(0, 3);
+                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3);
+              }
+            }
+            return new Date(e3);
+          }(t3), this.init();
+        }, m3.init = function() {
+          var t3 = this.$d;
+          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
+        }, m3.$utils = function() {
+          return b2;
+        }, m3.isValid = function() {
+          return !(this.$d.toString() === l2);
+        }, m3.isSame = function(t3, e3) {
+          var n3 = O2(t3);
+          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
+        }, m3.isAfter = function(t3, e3) {
+          return O2(t3) < this.startOf(e3);
+        }, m3.isBefore = function(t3, e3) {
+          return this.endOf(e3) < O2(t3);
+        }, m3.$g = function(t3, e3, n3) {
+          return b2.u(t3) ? this[e3] : this.set(n3, t3);
+        }, m3.unix = function() {
+          return Math.floor(this.valueOf() / 1e3);
+        }, m3.valueOf = function() {
+          return this.$d.getTime();
+        }, m3.startOf = function(t3, e3) {
+          var n3 = this, r3 = !!b2.u(e3) || e3, f3 = b2.p(t3), l3 = function(t4, e4) {
+            var i3 = b2.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
+            return r3 ? i3 : i3.endOf(a2);
+          }, $3 = function(t4, e4) {
+            return b2.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
+          }, y3 = this.$W, M4 = this.$M, m4 = this.$D, v3 = "set" + (this.$u ? "UTC" : "");
+          switch (f3) {
+            case h2:
+              return r3 ? l3(1, 0) : l3(31, 11);
+            case c2:
+              return r3 ? l3(1, M4) : l3(0, M4 + 1);
+            case o2:
+              var g3 = this.$locale().weekStart || 0, D3 = (y3 < g3 ? y3 + 7 : y3) - g3;
+              return l3(r3 ? m4 - D3 : m4 + (6 - D3), M4);
+            case a2:
+            case d2:
+              return $3(v3 + "Hours", 0);
+            case u2:
+              return $3(v3 + "Minutes", 1);
+            case s2:
+              return $3(v3 + "Seconds", 2);
+            case i2:
+              return $3(v3 + "Milliseconds", 3);
+            default:
+              return this.clone();
+          }
+        }, m3.endOf = function(t3) {
+          return this.startOf(t3, false);
+        }, m3.$set = function(t3, e3) {
+          var n3, o3 = b2.p(t3), f3 = "set" + (this.$u ? "UTC" : ""), l3 = (n3 = {}, n3[a2] = f3 + "Date", n3[d2] = f3 + "Date", n3[c2] = f3 + "Month", n3[h2] = f3 + "FullYear", n3[u2] = f3 + "Hours", n3[s2] = f3 + "Minutes", n3[i2] = f3 + "Seconds", n3[r2] = f3 + "Milliseconds", n3)[o3], $3 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
+          if (o3 === c2 || o3 === h2) {
+            var y3 = this.clone().set(d2, 1);
+            y3.$d[l3]($3), y3.init(), this.$d = y3.set(d2, Math.min(this.$D, y3.daysInMonth())).$d;
+          } else
+            l3 && this.$d[l3]($3);
+          return this.init(), this;
+        }, m3.set = function(t3, e3) {
+          return this.clone().$set(t3, e3);
+        }, m3.get = function(t3) {
+          return this[b2.p(t3)]();
+        }, m3.add = function(r3, f3) {
+          var d3, l3 = this;
+          r3 = Number(r3);
+          var $3 = b2.p(f3), y3 = function(t3) {
+            var e3 = O2(l3);
+            return b2.w(e3.date(e3.date() + Math.round(t3 * r3)), l3);
+          };
+          if ($3 === c2)
+            return this.set(c2, this.$M + r3);
+          if ($3 === h2)
+            return this.set(h2, this.$y + r3);
+          if ($3 === a2)
+            return y3(1);
+          if ($3 === o2)
+            return y3(7);
+          var M4 = (d3 = {}, d3[s2] = e2, d3[u2] = n2, d3[i2] = t2, d3)[$3] || 1, m4 = this.$d.getTime() + r3 * M4;
+          return b2.w(m4, this);
+        }, m3.subtract = function(t3, e3) {
+          return this.add(-1 * t3, e3);
+        }, m3.format = function(t3) {
+          var e3 = this, n3 = this.$locale();
+          if (!this.isValid())
+            return n3.invalidDate || l2;
+          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b2.z(this), s3 = this.$H, u3 = this.$m, a3 = this.$M, o3 = n3.weekdays, c3 = n3.months, f3 = n3.meridiem, h3 = function(t4, n4, i4, s4) {
+            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s4);
+          }, d3 = function(t4) {
+            return b2.s(s3 % 12 || 12, t4, "0");
+          }, $3 = f3 || function(t4, e4, n4) {
+            var r4 = t4 < 12 ? "AM" : "PM";
+            return n4 ? r4.toLowerCase() : r4;
+          };
+          return r3.replace(y2, function(t4, r4) {
+            return r4 || function(t5) {
+              switch (t5) {
+                case "YY":
+                  return String(e3.$y).slice(-2);
+                case "YYYY":
+                  return b2.s(e3.$y, 4, "0");
+                case "M":
+                  return a3 + 1;
+                case "MM":
+                  return b2.s(a3 + 1, 2, "0");
+                case "MMM":
+                  return h3(n3.monthsShort, a3, c3, 3);
+                case "MMMM":
+                  return h3(c3, a3);
+                case "D":
+                  return e3.$D;
+                case "DD":
+                  return b2.s(e3.$D, 2, "0");
+                case "d":
+                  return String(e3.$W);
+                case "dd":
+                  return h3(n3.weekdaysMin, e3.$W, o3, 2);
+                case "ddd":
+                  return h3(n3.weekdaysShort, e3.$W, o3, 3);
+                case "dddd":
+                  return o3[e3.$W];
+                case "H":
+                  return String(s3);
+                case "HH":
+                  return b2.s(s3, 2, "0");
+                case "h":
+                  return d3(1);
+                case "hh":
+                  return d3(2);
+                case "a":
+                  return $3(s3, u3, true);
+                case "A":
+                  return $3(s3, u3, false);
+                case "m":
+                  return String(u3);
+                case "mm":
+                  return b2.s(u3, 2, "0");
+                case "s":
+                  return String(e3.$s);
+                case "ss":
+                  return b2.s(e3.$s, 2, "0");
+                case "SSS":
+                  return b2.s(e3.$ms, 3, "0");
+                case "Z":
+                  return i3;
+              }
+              return null;
+            }(t4) || i3.replace(":", "");
+          });
+        }, m3.utcOffset = function() {
+          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
+        }, m3.diff = function(r3, d3, l3) {
+          var $3, y3 = this, M4 = b2.p(d3), m4 = O2(r3), v3 = (m4.utcOffset() - this.utcOffset()) * e2, g3 = this - m4, D3 = function() {
+            return b2.m(y3, m4);
+          };
+          switch (M4) {
+            case h2:
+              $3 = D3() / 12;
+              break;
+            case c2:
+              $3 = D3();
+              break;
+            case f2:
+              $3 = D3() / 3;
+              break;
+            case o2:
+              $3 = (g3 - v3) / 6048e5;
+              break;
+            case a2:
+              $3 = (g3 - v3) / 864e5;
+              break;
+            case u2:
+              $3 = g3 / n2;
+              break;
+            case s2:
+              $3 = g3 / e2;
+              break;
+            case i2:
+              $3 = g3 / t2;
+              break;
+            default:
+              $3 = g3;
+          }
+          return l3 ? $3 : b2.a($3);
+        }, m3.daysInMonth = function() {
+          return this.endOf(c2).$D;
+        }, m3.$locale = function() {
+          return D2[this.$L];
+        }, m3.locale = function(t3, e3) {
+          if (!t3)
+            return this.$L;
+          var n3 = this.clone(), r3 = w2(t3, e3, true);
+          return r3 && (n3.$L = r3), n3;
+        }, m3.clone = function() {
+          return b2.w(this.$d, this);
+        }, m3.toDate = function() {
+          return new Date(this.valueOf());
+        }, m3.toJSON = function() {
+          return this.isValid() ? this.toISOString() : null;
+        }, m3.toISOString = function() {
+          return this.$d.toISOString();
+        }, m3.toString = function() {
+          return this.$d.toUTCString();
+        }, M3;
+      }(), k = _2.prototype;
+      return O2.prototype = k, [["$ms", r2], ["$s", i2], ["$m", s2], ["$H", u2], ["$W", a2], ["$M", c2], ["$y", h2], ["$D", d2]].forEach(function(t3) {
+        k[t3[1]] = function(e3) {
+          return this.$g(e3, t3[0], t3[1]);
+        };
+      }), O2.extend = function(t3, e3) {
+        return t3.$i || (t3(e3, _2, O2), t3.$i = true), O2;
+      }, O2.locale = w2, O2.isDayjs = S2, O2.unix = function(t3) {
+        return O2(1e3 * t3);
+      }, O2.en = D2[g2], O2.Ls = D2, O2.p = {}, O2;
+    });
+  })(dayjs_min);
+  var dayjs_minExports = dayjs_min.exports;
+  const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
   const _sfc_main$b = {
     __name: "Sports",
     setup(__props, { expose: __expose }) {
       __expose();
-      const currentExercise = vue.ref(30);
-      const planExercise = vue.ref(60);
+      const today = dayjs().format("YYYY-MM-DD");
+      const exerciseDurations = vue.ref({});
+      const currentExercise = vue.ref(0);
+      const planExercise = vue.ref(20);
       const modelVale = vue.ref(0);
       const target = vue.ref(50);
       const tab = vue.ref("myExercise");
-      const myExercise = vue.ref(true);
-      const freeExercise = vue.ref(false);
-      const username = uni.getStorageSync("username");
+      const myPlans = vue.ref([]);
       const currentVideoUrl = vue.ref("");
-      const videoPopup = vue.ref(null);
+      const isModalVisible = vue.ref(false);
+      const username = uni.getStorageSync("username");
+      const startTime = vue.ref(0);
+      const elapsedTime = vue.ref(0);
+      const timerInterval = vue.ref(null);
+      const serverUrl2 = uni.getStorageSync("serverUrl");
       vue.onMounted(() => {
         loadMyPlans();
+        loadExerciseDurations();
+        fetchPlanExercise();
         uni.$on("handleAdd", loadMyPlans);
         uni.$on("handleRemove", loadMyPlans);
       });
+      const fetchPlanExercise = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:120", "用户未登录");
+          return;
+        }
+        uni.request({
+          url: `${serverUrl2}/sport-time-goal?username=${encodeURIComponent(username2)}`,
+          // 拼接 username 参数
+          method: "GET",
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              planExercise.value = res.data.data.sport_time_goal || 60;
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:134", "获取计划运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:138", "请求失败：", err);
+          }
+        });
+      };
+      const loadExerciseDurations = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:147", "用户未登录");
+          return;
+        }
+        uni.request({
+          url: `${serverUrl2}/exercise-duration?username=${encodeURIComponent(username2)}`,
+          // 传递 username
+          method: "GET",
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              currentExercise.value = res.data.data.exercise_duration || 0;
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:161", "获取今日运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:165", "请求失败：", err);
+          }
+        });
+      };
+      const saveExerciseDuration = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:173", "用户未登录");
+          return;
+        }
+        const today2 = dayjs().format("YYYY-MM-DD");
+        const exerciseDuration = currentExercise.value;
+        uni.request({
+          url: `${serverUrl2}/save-exercise-duration`,
+          method: "POST",
+          data: {
+            username: username2,
+            date: today2,
+            exercise_duration: exerciseDuration
+          },
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              formatAppLog("log", "at pages/Sports/Sports.vue:193", "今日运动时长已保存");
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:195", "保存今日运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:199", "请求失败：", err);
+          }
+        });
+      };
       const switchTab = (selectedTab) => {
         tab.value = selectedTab;
       };
@@ -23050,7 +23435,6 @@ ${i3}
         type: "",
         videoUrl: ""
       });
-      const myPlans = vue.ref([]);
       const currentEditIndex = vue.ref(-1);
       const loadMyPlans = () => {
         const storedPlans = uni.getStorageSync(`myPlans_${username}`);
@@ -23060,43 +23444,16 @@ ${i3}
           myPlans.value = [];
         }
       };
-      const fetchPlansFromBackend = () => {
-        uni.request({
-          url: serverUrl + "/goals",
-          // 替换为你的实际后端地址
-          method: "GET",
-          success: (res) => {
-            formatAppLog("log", "at pages/Sports/Sports.vue:137", "返回的所有计划数据:", res.data);
-            if (Array.isArray(res.data) && res.data.length > 0) {
-              plans.value = res.data.map((item) => ({
-                title: item.title,
-                duration: `${item.duration}min`,
-                // 注意单位格式
-                imageUrl: item.image_url,
-                times: item.times,
-                difficulties: item.difficulties,
-                calorie: item.calorie,
-                goal: item.goal ? item.goal.split(",").map((g2) => g2.trim()) : [],
-                // 将 goal 字符串按号拆分并去除空格
-                type: item.type,
-                videoUrl: item.videoUrl
-              }));
-              filterPlans();
-            } else {
-              formatAppLog("log", "at pages/Sports/Sports.vue:154", "未找到相关计划数据");
-            }
-          },
-          fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:158", "请求失败:", err);
-          }
-        });
-      };
+      let videoStartTime = null;
       const playPlan = (plan) => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:164", "返回的所有计划数据:", plan.videoUrl);
+        formatAppLog("log", "at pages/Sports/Sports.vue:234", "BV数据:", plan.videoUrl);
         if (plan.videoUrl) {
-          currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}`;
-          const videoPopup2 = uni.$refs.videoPopup;
-          videoPopup2.open();
+          currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}&quality=120`;
+          isModalVisible.value = true;
+          startTime.value = Date.now();
+          timerInterval.value = setInterval(() => {
+            elapsedTime.value = Math.floor((Date.now() - startTime.value) / 1e3);
+          }, 1e3);
         } else {
           uni.showToast({
             title: "该课程没有视频",
@@ -23105,11 +23462,25 @@ ${i3}
         }
       };
       const closeVideo = () => {
-        const videoPopup2 = uni.$refs.videoPopup;
-        videoPopup2.close();
+        isModalVisible.value = false;
         currentVideoUrl.value = "";
+        if (timerInterval.value) {
+          clearInterval(timerInterval.value);
+          timerInterval.value = null;
+          const addedMinutes = Math.floor(elapsedTime.value / 60);
+          currentExercise.value += addedMinutes;
+          exerciseDurations.value[today] = currentExercise.value;
+          saveExerciseDuration();
+        }
+        elapsedTime.value = 0;
       };
-      const __returned__ = { currentExercise, planExercise, modelVale, target, tab, myExercise, freeExercise, username, currentVideoUrl, videoPopup, switchTab, planForm, myPlans, currentEditIndex, loadMyPlans, fetchPlansFromBackend, playPlan, closeVideo, ref: vue.ref, onMounted: vue.onMounted, LCircle, uniPopup: __easycom_1 };
+      const __returned__ = { today, exerciseDurations, currentExercise, planExercise, modelVale, target, tab, myPlans, currentVideoUrl, isModalVisible, username, startTime, elapsedTime, timerInterval, serverUrl: serverUrl2, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
+        return videoStartTime;
+      }, set videoStartTime(v2) {
+        videoStartTime = v2;
+      }, playPlan, closeVideo, ref: vue.ref, onMounted: vue.onMounted, LCircle, uniPopup: __easycom_1, get dayjs() {
+        return dayjs;
+      } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -23244,34 +23615,37 @@ ${i3}
             ])
           ])) : vue.createCommentVNode("v-if", true),
           vue.createCommentVNode(" 视频弹窗 "),
-          vue.createVNode(
-            $setup["uniPopup"],
-            {
-              ref: "videoPopup",
-              type: "center"
-            },
-            {
-              default: vue.withCtx(() => [
-                vue.createElementVNode("view", { class: "popup-content" }, [
-                  $setup.currentVideoUrl ? (vue.openBlock(), vue.createElementBlock("iframe", {
-                    key: 0,
-                    src: $setup.currentVideoUrl,
-                    class: "video-iframe",
-                    frameborder: "0",
-                    allowfullscreen: ""
-                  }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true),
-                  vue.createElementVNode("button", {
-                    class: "close-btn",
-                    onClick: $setup.closeVideo
-                  }, "关闭")
-                ])
-              ]),
-              _: 1
-              /* STABLE */
-            },
-            512
-            /* NEED_PATCH */
-          )
+          $setup.isModalVisible ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 1,
+            class: "modal-overlay",
+            onClick: $setup.closeVideo
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal",
+              onClick: _cache[3] || (_cache[3] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createCommentVNode(" 实时计时显示 "),
+              vue.createElementVNode(
+                "div",
+                { class: "timer-header" },
+                " 当前运动时长：" + vue.toDisplayString(Math.floor($setup.elapsedTime / 60)) + "分" + vue.toDisplayString($setup.elapsedTime % 60) + "秒 ",
+                1
+                /* TEXT */
+              ),
+              $setup.currentVideoUrl ? (vue.openBlock(), vue.createElementBlock("iframe", {
+                key: 0,
+                src: $setup.currentVideoUrl,
+                class: "video-iframe",
+                frameborder: "0",
+                allowfullscreen: ""
+              }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true),
+              vue.createElementVNode("button", {
+                class: "close-btn",
+                onClick: $setup.closeVideo
+              }, "关闭")
+            ])
+          ])) : vue.createCommentVNode("v-if", true)
         ]),
         vue.createCommentVNode(" 自由训练展示 "),
         $setup.tab === "freeExercise" ? (vue.openBlock(), vue.createElementBlock("view", {
@@ -23284,7 +23658,7 @@ ${i3}
     );
   }
   const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-ec372f74"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Sports/Sports.vue"]]);
-  const serverUrl$5 = "http://192.168.56.1:3000";
+  const serverUrl$4 = "http://192.168.56.1:3000";
   const defaultAvatar$1 = "/static/default-avatar.jpg";
   const _sfc_main$a = {
     __name: "My_info",
@@ -23307,7 +23681,7 @@ ${i3}
           uni.setStorageSync(`username`, username2);
           formatAppLog("log", "at pages/My_info/My_info.vue:89", `username: ${username2}`);
           const res = await uni.request({
-            url: `${serverUrl$5}/getTargets`,
+            url: `${serverUrl$4}/getTargets`,
             method: "POST",
             data: { username: username2 }
             // 向后端发送用户名 
@@ -23316,7 +23690,7 @@ ${i3}
             targetDuration.value = res.data.data.sport_time_goal;
             targetCalories.value = res.data.data.calories_goal;
             if (res.data.data.avatar != null) {
-              userInfo2.value.avatar = `${serverUrl$5}/${res.data.data.avatar}`;
+              userInfo2.value.avatar = `${serverUrl$4}/${res.data.data.avatar}`;
             } else {
               userInfo2.value.avatar = defaultAvatar$1;
             }
@@ -23333,7 +23707,7 @@ ${i3}
         const username2 = uni.getStorageSync("username");
         try {
           const res = await uni.request({
-            url: `${serverUrl$5}/updateTargets`,
+            url: `${serverUrl$4}/updateTargets`,
             method: "POST",
             data: { username: username2, calories_goal: calories, sport_time_goal: duration }
             // 向后端发送修改数据
@@ -23386,7 +23760,7 @@ ${i3}
             formatAppLog("log", "at pages/My_info/My_info.vue:180", `username: ${username2}`);
             try {
               const uploadRes = await uni.uploadFile({
-                url: `${serverUrl$5}/upload`,
+                url: `${serverUrl$4}/upload`,
                 // 上传 API
                 filePath,
                 name: "file"
@@ -23395,7 +23769,7 @@ ${i3}
               if (uploadData.success) {
                 const newAvatarUrl = uploadData.imageUrl;
                 const updateRes = await uni.request({
-                  url: `${serverUrl$5}/updateAvatar`,
+                  url: `${serverUrl$4}/updateAvatar`,
                   method: "POST",
                   data: {
                     username: username2,
@@ -23421,7 +23795,7 @@ ${i3}
           }
         });
       };
-      const __returned__ = { serverUrl: serverUrl$5, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, goToSettings, cancelEdit, userInfo: userInfo2, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { serverUrl: serverUrl$4, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, goToSettings, cancelEdit, userInfo: userInfo2, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -23555,14 +23929,14 @@ ${i3}
       __expose();
       const searchQuery = vue.ref("");
       const recommendations = vue.ref([]);
-      const plans2 = vue.ref([]);
+      const plans = vue.ref([]);
       const myPlans = vue.ref([]);
       const username = uni.getStorageSync("username");
       const serverUrl2 = uni.getStorageSync("serverUrl");
       const filteredPlans = vue.computed(() => {
         if (!searchQuery.value)
           return [];
-        return plans2.value.filter(
+        return plans.value.filter(
           (item) => item.title.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       });
@@ -23617,7 +23991,7 @@ ${i3}
           success: (res) => {
             formatAppLog("log", "at pages/Search/Search.vue:163", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
-              plans2.value = res.data.map((item) => ({
+              plans.value = res.data.map((item) => ({
                 title: item.title,
                 duration: `${item.duration}min`,
                 // 注意单位格式
@@ -23648,7 +24022,7 @@ ${i3}
         searchQuery.value = "";
         uni.switchTab({ url: "/pages/Home/Home" });
       };
-      const __returned__ = { searchQuery, recommendations, plans: plans2, myPlans, add_icon, delete_icon, username, serverUrl: serverUrl2, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, inject: vue.inject, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { searchQuery, recommendations, plans, myPlans, add_icon, delete_icon, username, serverUrl: serverUrl2, filteredPlans, loadMyPlans, handleAdd, handleRemove, loadRecommendations, fetchPlansFromBackend, onSearchInput, selectRecommendation, cancelSearch, inject: vue.inject, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -23948,7 +24322,7 @@ ${i3}
     ]);
   }
   const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-446afbc7"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/InviteFriends/InviteFriends.vue"]]);
-  const serverUrl$4 = "http://192.168.56.1:3000";
+  const serverUrl$3 = "http://192.168.56.1:3000";
   const _sfc_main$7 = {
     __name: "Chat",
     setup(__props, { expose: __expose }) {
@@ -24084,7 +24458,7 @@ ${i3}
       const loadChatHistory = async (friendId) => {
         try {
           const result = await uni.request({
-            url: `${serverUrl$4}/chat/history`,
+            url: `${serverUrl$3}/chat/history`,
             method: "POST",
             data: {
               userId: userInfo2.value.username,
@@ -24116,7 +24490,7 @@ ${i3}
       const loadUnreadMessages = async () => {
         try {
           const result = await uni.request({
-            url: `${serverUrl$4}/chat/unread`,
+            url: `${serverUrl$3}/chat/unread`,
             method: "GET",
             data: {
               userId: userInfo2.value.username
@@ -24161,7 +24535,7 @@ ${i3}
         scrollToBottom();
         try {
           const res = await uni.request({
-            url: `${serverUrl$4}/chat/send`,
+            url: `${serverUrl$3}/chat/send`,
             method: "POST",
             data: {
               senderId: newMessage.sender,
@@ -24234,7 +24608,7 @@ ${i3}
         scrollToBottom();
         try {
           const [err, res] = await uni.request({
-            url: `${serverUrl$4}/chat/send`,
+            url: `${serverUrl$3}/chat/send`,
             method: "POST",
             data: {
               senderId: invitation.sender,
@@ -24325,7 +24699,7 @@ ${i3}
         isLoading.value = true;
         try {
           const [error2, res] = await uni.request({
-            url: `${serverUrl$4}/chat/history`,
+            url: `${serverUrl$3}/chat/history`,
             method: "POST",
             data: {
               userId: userInfo2.value.username,
@@ -24413,7 +24787,7 @@ ${i3}
         message.sendFailed = false;
         try {
           const res = await uni.request({
-            url: `${serverUrl$4}/chat/send`,
+            url: `${serverUrl$3}/chat/send`,
             method: "POST",
             data: {
               senderId: message.sender,
@@ -24445,7 +24819,7 @@ ${i3}
           websocket.value.close();
         }
       });
-      const __returned__ = { serverUrl: serverUrl$4, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, initWebSocket, sendWebSocketMessage, handleWebSocketMessage, getLocalStorageKey, saveMessageToLocal, getLocalMessages, loadChatHistory, loadUnreadMessages, sendMessage, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, loadMoreMessages, formatTime, scrollToBottom, goBack, enterChallenge, updateChallengeProgress, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed };
+      const __returned__ = { serverUrl: serverUrl$3, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, initWebSocket, sendWebSocketMessage, handleWebSocketMessage, getLocalStorageKey, saveMessageToLocal, getLocalMessages, loadChatHistory, loadUnreadMessages, sendMessage, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, loadMoreMessages, formatTime, scrollToBottom, goBack, enterChallenge, updateChallengeProgress, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -25258,7 +25632,7 @@ ${i3}
     ]);
   }
   const PagesSettingSetting = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-3c55a289"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Setting.vue"]]);
-  const serverUrl$3 = "http://192.168.56.1:3000";
+  const serverUrl$2 = "http://192.168.56.1:3000";
   const _sfc_main$4 = {
     __name: "Info",
     setup(__props, { expose: __expose }) {
@@ -25277,7 +25651,7 @@ ${i3}
       const fetchUserInfo = async () => {
         try {
           const res = await uni.request({
-            url: `${serverUrl$3}/getUserInfo`,
+            url: `${serverUrl$2}/getUserInfo`,
             // 请求后端接口
             method: "POST",
             data: { username }
@@ -25306,7 +25680,7 @@ ${i3}
       const saveEdit = async () => {
         try {
           const res = await uni.request({
-            url: `${serverUrl$3}/updateUserInfo`,
+            url: `${serverUrl$2}/updateUserInfo`,
             // 后端接口
             method: "POST",
             data: {
@@ -25337,7 +25711,7 @@ ${i3}
           isEditing.value = false;
         }
       };
-      const __returned__ = { serverUrl: serverUrl$3, username, userInfo: userInfo2, fetchUserInfo, editData, isEditing, openEditModal, closeEditModal, saveEdit, ref: vue.ref, onMounted: vue.onMounted };
+      const __returned__ = { serverUrl: serverUrl$2, username, userInfo: userInfo2, fetchUserInfo, editData, isEditing, openEditModal, closeEditModal, saveEdit, ref: vue.ref, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -25506,7 +25880,7 @@ ${i3}
     ]);
   }
   const PagesSettingInfoInfo = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-1140c1f2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Info/Info.vue"]]);
-  const serverUrl$2 = "http://192.168.56.1:3000";
+  const serverUrl$1 = "http://192.168.56.1:3000";
   const _sfc_main$3 = {
     __name: "changePassword",
     setup(__props, { expose: __expose }) {
@@ -25527,7 +25901,7 @@ ${i3}
         }
         try {
           const res = await uni.request({
-            url: `${serverUrl$2}/changePassword`,
+            url: `${serverUrl$1}/changePassword`,
             // 后端接口地址
             method: "POST",
             data: {
@@ -25551,7 +25925,7 @@ ${i3}
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
-      const __returned__ = { serverUrl: serverUrl$2, form, isFormValid, validateForm, submitPassword, ref: vue.ref };
+      const __returned__ = { serverUrl: serverUrl$1, form, isFormValid, validateForm, submitPassword, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -25617,7 +25991,7 @@ ${i3}
     ]);
   }
   const PagesSettingChangePasswordChangePassword = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-ad9c736f"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/changePassword/changePassword.vue"]]);
-  const serverUrl$1 = "http://192.168.56.1:3000";
+  const serverUrl = "http://192.168.56.1:3000";
   const _sfc_main$2 = {
     __name: "sportSetting",
     setup(__props, { expose: __expose }) {
@@ -25649,7 +26023,7 @@ ${i3}
       const fetchUserSportData = async () => {
         try {
           const res = await uni.request({
-            url: `${serverUrl$1}/getSportData`,
+            url: `${serverUrl}/getSportData`,
             // 后端接口地址
             method: "POST",
             data: { username: uni.getStorageSync("username") }
@@ -25680,7 +26054,7 @@ ${i3}
       const submitData = async () => {
         try {
           const res = await uni.request({
-            url: `${serverUrl$1}/updateSportData`,
+            url: `${serverUrl}/updateSportData`,
             // 后端接口地址
             method: "POST",
             data: {
@@ -25700,7 +26074,7 @@ ${i3}
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
-      const __returned__ = { serverUrl: serverUrl$1, goalOptions, typeOptions, form, isFormValid, fetchUserSportData, submitData, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed };
+      const __returned__ = { serverUrl, goalOptions, typeOptions, form, isFormValid, fetchUserSportData, submitData, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }

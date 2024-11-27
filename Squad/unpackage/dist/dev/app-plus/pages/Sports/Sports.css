@@ -123,6 +123,7 @@
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
+  margin-left: 10px;
 }
 .sportbar[data-v-ec372f74] {
   display: flex;
@@ -170,8 +171,8 @@
 }
 .plan-list[data-v-ec372f74] {
   margin-top: 10px;
-  width: 97%;
-  margin-left: 3px;
+  width: 94%;
+  margin-left: 10px;
 }
 .plan-item[data-v-ec372f74] {
   display: flex;
@@ -260,4 +261,49 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+.modal-overlay[data-v-ec372f74] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal[data-v-ec372f74] {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 90%;
+  width: 600px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+.video-iframe[data-v-ec372f74] {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 8px;
+}
+.close-btn[data-v-ec372f74] {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.timer-header[data-v-ec372f74] {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
 }

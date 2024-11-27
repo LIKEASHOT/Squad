@@ -9,6 +9,7 @@ const axios = require("axios");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const dayjs = require('dayjs');
 const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
 const config = {
@@ -1945,6 +1946,106 @@ app.post("/updateSportData", (req, res) => {
     }
   });
 });
+//获取目标运动时长
+app.get("/sport-time-goal", (req, res) => {
+  const username = req.query.username; // 前端传递用户名
+  if (!username) {
+    return res.status(400).json({ success: false, message: "用户名缺失" });
+  }
+
+  // 数据库查询
+  const query = `SELECT sport_time_goal FROM users WHERE name = ?`;
+  connection.query(query, [username], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "数据库查询失败" });
+    }
+
+    if (results.length > 0) {
+      res.json({
+        success: true,
+        data: { sport_time_goal: results[0].sport_time_goal },
+      });
+    } else {
+      res.status(404).json({ success: false, message: "用户未找到" });
+    }
+  });
+});
+//获取用户的今日运动时长
+app.get("/exercise-duration", (req, res) => {
+  const username = req.query.username; // 获取前端传递的用户名
+  const today = dayjs().format("YYYY-MM-DD"); // 获取今天的日期
+
+  if (!username) {
+    return res.status(400).json({ success: false, message: "用户名缺失" });
+  }
+
+  const query = `
+    SELECT exercise_duration FROM exercise_logs WHERE username = ? AND date = ?
+  `;
+  connection.query(query, [username, today], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "数据库查询失败" });
+    }
+
+    if (results.length > 0) {
+      res.json({
+        success: true,
+        data: { exercise_duration: results[0].exercise_duration },
+      });
+    } else {
+      res.json({ success: true, data: { exercise_duration: 0 } }); // 没有记录时返回0
+    }
+  });
+});
+//保存运动时长
+app.post("/save-exercise-duration", (req, res) => {
+  const { username, date, exercise_duration } = req.body;
+
+  // 检查必需的参数
+  if (!username || !date || exercise_duration == null) {
+    return res.status(400).json({ success: false, message: "缺少必要参数" });
+  }
+
+  // 查询是否已存在当天的记录
+  const checkQuery = `SELECT * FROM exercise_logs WHERE username = ? AND date = ?`;
+
+  connection.query(checkQuery, [username, date], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "数据库查询失败" });
+    }
+
+    if (results.length > 0) {
+      // 如果当天已有记录，执行更新操作
+      const updateQuery = `UPDATE exercise_logs SET exercise_duration = ? WHERE username = ? AND date = ?`;
+      connection.query(updateQuery, [exercise_duration, username, date], (err, updateResults) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ success: false, message: "更新数据失败" });
+        }
+
+        res.json({ success: true, message: "运动时长更新成功" });
+      });
+    } else {
+      // 如果当天没有记录，执行插入操作
+      const insertQuery = `
+        INSERT INTO exercise_logs (username, date, exercise_duration)
+        VALUES (?, ?, ?)
+      `;
+      connection.query(insertQuery, [username, date, exercise_duration], (err, insertResults) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ success: false, message: "插入数据失败" });
+        }
+
+        res.json({ success: true, message: "运动时长保存成功" });
+      });
+    }
+  });
+});
+
 // 启动服务器
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
