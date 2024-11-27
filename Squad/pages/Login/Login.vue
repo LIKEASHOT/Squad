@@ -69,17 +69,17 @@
       <!-- 注册按钮 -->
       <text class="register-text" @click="goRegister">注册</text>
     </view>
-
+ 
     <!-- 底部协议 -->
     <view class="agreement">
       登录/注册表示您已同意
       <text class="link">《用户协议》</text> 和
       <text class="link">《隐私政策》</text>
-    </view>
+    </view> 
   </view>
 </template>
 
-<script setup>
+<script setup> 
 import { ref } from "vue";
 const isPressed = ref(false); // 响应式变量，记录按钮是否被按下
 const password = ref(true); // 密码是否可见
@@ -100,6 +100,8 @@ const onButtonRelease = () => {
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
 const serverUrl = "http://192.168.56.1:3000";
+// 服务器地址存储在本地
+uni.setStorageSync("serverUrl", serverUrl);
 const form = ref({
   username: "",
   password: "",
@@ -120,7 +122,7 @@ const submitLogin = () => {
       username: form.value.username,
       password: form.value.password,
     },
-    success: (res) => {
+    success: (res) => { 
       if (res.statusCode === 200) {
         uni.showToast({
           title: "登录成功",

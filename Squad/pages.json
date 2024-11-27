@@ -110,6 +110,13 @@
 		{
 			"navigationBarTitleText" : "运动设置"
 		}
+	},
+  {
+	  "path": "pages/Challenge/Challenge",
+	  "style": {
+	    "navigationBarTitleText": "打卡挑战",
+	    "enablePullDownRefresh": false
+	  }
 	}
 	
   ],
