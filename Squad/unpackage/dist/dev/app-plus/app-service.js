@@ -34,6 +34,7 @@ if (uni.restoreGlobal) {
   const ON_SHOW = "onShow";
   const ON_HIDE = "onHide";
   const ON_LAUNCH = "onLaunch";
+  const ON_PULL_DOWN_REFRESH = "onPullDownRefresh";
   function formatAppLog(type2, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type2, filename, ...args);
@@ -50,6 +51,7 @@ if (uni.restoreGlobal) {
   const onShow = /* @__PURE__ */ createHook(ON_SHOW);
   const onHide = /* @__PURE__ */ createHook(ON_HIDE);
   const onLaunch = /* @__PURE__ */ createHook(ON_LAUNCH);
+  const onPullDownRefresh = /* @__PURE__ */ createHook(ON_PULL_DOWN_REFRESH);
   const _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
     for (const [key, val] of props) {
@@ -829,8 +831,6 @@ if (uni.restoreGlobal) {
   }
   const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$2 = "http://10.133.80.141:3000";
-  const websocketUrl$1 = "ws://10.133.80.141:3001";
   const _sfc_main$u = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
@@ -863,8 +863,11 @@ if (uni.restoreGlobal) {
       const onButtonRelease = () => {
         isPressed.value = false;
       };
-      uni.setStorageSync("websocketUrl", websocketUrl$1);
-      uni.setStorageSync("serverUrl", serverUrl$2);
+      const serverUrl2 = "http://124.71.107.192:3000";
+      const websocketUrl = "ws://124.71.107.192:3001";
+      formatAppLog("log", "at pages/Login/Login.vue:139", serverUrl2, websocketUrl);
+      uni.setStorageSync("websocketUrl", websocketUrl);
+      uni.setStorageSync("serverUrl", serverUrl2);
       const form = vue.ref({
         username: "",
         password: ""
@@ -878,7 +881,7 @@ if (uni.restoreGlobal) {
           return;
         }
         uni.request({
-          url: serverUrl$2 + "/login",
+          url: serverUrl2 + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -915,10 +918,10 @@ if (uni.restoreGlobal) {
         });
       };
       const goRegister = () => {
-        formatAppLog("log", "at pages/Login/Login.vue:198", "前往注册页面");
+        formatAppLog("log", "at pages/Login/Login.vue:203", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, rememberMe, handleRememberMe, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$2, websocketUrl: websocketUrl$1, form, submitLogin, goRegister, ref: vue.ref, onMounted: vue.onMounted };
+      const __returned__ = { isPressed, password, rememberMe, handleRememberMe, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl2, websocketUrl, form, submitLogin, goRegister, ref: vue.ref, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -1707,8 +1710,6 @@ if (uni.restoreGlobal) {
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$1 = "http://10.133.80.141:3000";
-  const websocketUrl = "ws://10.133.80.141:3001";
   const _sfc_main$o = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1727,7 +1728,10 @@ if (uni.restoreGlobal) {
       const changepwd_vis_confirm = () => {
         password_confirm.value = !password_confirm.value;
       };
-      uni.setStorageSync("serverUrl", serverUrl$1);
+      const serverUrl2 = "http://124.71.107.192:3000";
+      const websocketUrl = "ws://124.71.107.192:3001";
+      formatAppLog("log", "at pages/Register/Register.vue:109", serverUrl2, websocketUrl);
+      uni.setStorageSync("serverUrl", serverUrl2);
       uni.setStorageSync("websocketUrl", websocketUrl);
       const form = vue.ref({
         username: "",
@@ -1749,9 +1753,9 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/Register/Register.vue:134", "提交注册表单", form.value);
+        formatAppLog("log", "at pages/Register/Register.vue:138", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$1 + "/register",
+          url: serverUrl2 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1759,7 +1763,7 @@ if (uni.restoreGlobal) {
             confirmPassword: form.value.confirmPassword
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Register/Register.vue:145", "注册请求返回：", res);
+            formatAppLog("log", "at pages/Register/Register.vue:149", "注册请求返回：", res);
             if (res.statusCode === 201 && res.data.success) {
               uni.showToast({
                 title: "注册成功",
@@ -1769,13 +1773,13 @@ if (uni.restoreGlobal) {
                 key: "username",
                 data: form.value.username,
                 success: function() {
-                  formatAppLog("log", "at pages/Register/Register.vue:156", "success");
+                  formatAppLog("log", "at pages/Register/Register.vue:160", "success");
                 }
               });
               uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" }).then(() => {
-                formatAppLog("log", "at pages/Register/Register.vue:162", "跳转成功");
+                formatAppLog("log", "at pages/Register/Register.vue:166", "跳转成功");
               }).catch((err) => {
-                formatAppLog("error", "at pages/Register/Register.vue:165", "跳转失败：", err);
+                formatAppLog("error", "at pages/Register/Register.vue:169", "跳转失败：", err);
               });
             } else {
               uni.showToast({
@@ -1789,11 +1793,11 @@ if (uni.restoreGlobal) {
               title: "网络请求失败",
               icon: "none"
             });
-            formatAppLog("error", "at pages/Register/Register.vue:179", "注册请求失败：", err);
+            formatAppLog("error", "at pages/Register/Register.vue:183", "注册请求失败：", err);
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$1, websocketUrl, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl2, websocketUrl, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -3659,7 +3663,7 @@ if (uni.restoreGlobal) {
       path: "pages/Friends/Friends",
       style: {
         navigationBarTitleText: "好友",
-        enablePullDownRefresh: false
+        enablePullDownRefresh: true
       }
     },
     {
@@ -20991,14 +20995,14 @@ This will fail in production.`);
     actions: {
       initWebSocket() {
         try {
-          const websocketUrl2 = uni.getStorageSync("websocketUrl");
+          const websocketUrl = uni.getStorageSync("websocketUrl");
           const username = uni.getStorageSync("username");
           if (!username) {
             formatAppLog("error", "at store/websocket.js:20", "未找到用户信息，无法建立WebSocket连接");
             return;
           }
           this.websocket = uni.connectSocket({
-            url: websocketUrl2,
+            url: websocketUrl,
             success: () => {
               formatAppLog("log", "at store/websocket.js:27", "WebSocket连接成功");
               this.reconnectAttempts = 0;
@@ -24060,6 +24064,8 @@ This will fail in production.`);
     __name: "Friends",
     setup(__props, { expose: __expose }) {
       __expose();
+      const websocketUrl = uni.getStorageSync("websocketUrl");
+      const store = useWebSocketStore();
       const tabs = [
         { key: "friends", name: "好友" },
         { key: "team", name: "组队打卡" }
@@ -24130,10 +24136,10 @@ This will fail in production.`);
         uni.navigateTo({
           url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
           success: () => {
-            formatAppLog("log", "at pages/Friends/Friends.vue:262", "进入聊天页面");
+            formatAppLog("log", "at pages/Friends/Friends.vue:322", "进入聊天页面");
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Friends/Friends.vue:265", "打开聊天页面失败:", err);
+            formatAppLog("error", "at pages/Friends/Friends.vue:325", "打开聊天页面失败:", err);
             uni.showToast({
               title: "打开聊天失败",
               icon: "none"
@@ -24188,7 +24194,7 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:331", "删除好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:391", "删除好友失败:", error2);
           uni.showToast({
             title: "删除失败",
             icon: "none"
@@ -24203,6 +24209,12 @@ This will fail in production.`);
       const closeAddFriend = () => {
         newFriendUsername.value = "";
         addFriendPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
       };
       const confirmAddFriend = async () => {
         if (!newFriendUsername.value) {
@@ -24247,7 +24259,7 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:401", "添加好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:468", "添加好友失败:", error2);
           uni.showToast({
             title: "网络请求失败",
             icon: "none"
@@ -24259,16 +24271,6 @@ This will fail in production.`);
           const username = uni.getStorageSync("username");
           if (!username) {
             throw new Error("用户未登录");
-          }
-          const localFriends = uni.getStorageSync("friendsList");
-          if (localFriends && localFriends.length > 0) {
-            friendsList.value = localFriends.map((friend) => ({
-              ...friend,
-              online: store.getFriendStatus(friend.username).isOnline
-            }));
-            loadUnreadCounts();
-            formatAppLog("log", "at pages/Friends/Friends.vue:429", "从本地加载的好友列表:", friendsList.value);
-            return;
           }
           const res = await uni.request({
             url: `${serverUrl2}/friends`,
@@ -24287,12 +24289,12 @@ This will fail in production.`);
             uni.setStorageSync("friendsList", formattedFriends);
             friendsList.value = formattedFriends;
             loadUnreadCounts();
-            formatAppLog("log", "at pages/Friends/Friends.vue:459", "从服务器更新的好友列表:", friendsList.value);
+            formatAppLog("log", "at pages/Friends/Friends.vue:526", "从服务器更新的好友列表:", friendsList.value);
           } else {
             throw new Error(res.data.message || "获取好友列表失败");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:464", "获取好友列表失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:531", "获取好友列表失败:", error2);
           uni.showToast({
             title: "获取好友列表失败",
             icon: "none"
@@ -24307,8 +24309,8 @@ This will fail in production.`);
           const unreadCount = history.filter(
             (msg) => msg.sender === friend.username && !msg.isRead
           ).length;
-          formatAppLog("log", "at pages/Friends/Friends.vue:485", `好友 ${friend.username} 的未读消息数:`, unreadCount);
-          formatAppLog("log", "at pages/Friends/Friends.vue:486", `聊天历史:`, history);
+          formatAppLog("log", "at pages/Friends/Friends.vue:552", `好友 ${friend.username} 的未读消息数:`, unreadCount);
+          formatAppLog("log", "at pages/Friends/Friends.vue:553", `聊天历史:`, history);
           return {
             ...friend,
             unreadCount
@@ -24318,13 +24320,18 @@ This will fail in production.`);
       vue.onMounted(async () => {
         await loadFriendsList();
         if (!store.isConnected) {
-          formatAppLog("log", "at pages/Friends/Friends.vue:500", "websocket未连接，尝试重新连接");
+          formatAppLog("log", "at pages/Friends/Friends.vue:566", "websocket未连接，尝试新连接");
           store.initWebSocket();
         }
         uni.$on("updateUnreadCounts", () => {
-          formatAppLog("log", "at pages/Friends/Friends.vue:506", "收到未读消息更新事件");
+          formatAppLog("log", "at pages/Friends/Friends.vue:572", "收到未读消息更新事件");
           loadUnreadCounts();
         });
+      });
+      onPullDownRefresh(async () => {
+        formatAppLog("log", "at pages/Friends/Friends.vue:577", "refresh");
+        await loadFriendsList();
+        uni.stopPullDownRefresh();
       });
       vue.onUnmounted(() => {
         uni.$off("updateUnreadCounts");
@@ -24395,8 +24402,6 @@ This will fail in production.`);
           url: "/pages/InviteFriends/InviteFriends"
         });
       };
-      const websocketUrl2 = uni.getStorageSync("websocketUrl");
-      const store = useWebSocketStore();
       uni.$on("friendStatusChanged", ({ username, status }) => {
         const friendIndex = friendsList.value.findIndex(
           (f2) => f2.username === username
@@ -24405,8 +24410,95 @@ This will fail in production.`);
           friendsList.value[friendIndex].online = status === "online";
         }
       });
-      const __returned__ = { tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl: serverUrl2, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, loadUnreadCounts, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, websocketUrl: websocketUrl2, store, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, get useWebSocketStore() {
+      const handleDelete = (friend) => {
+        uni.showModal({
+          title: "删除好友",
+          content: `确定要删除好友 ${friend.username} 吗？`,
+          success: async (res) => {
+            if (res.confirm) {
+              try {
+                const result = await uni.request({
+                  url: `${serverUrl2}/friends/delete`,
+                  method: "POST",
+                  data: {
+                    userId: uni.getStorageSync("username"),
+                    friendUsername: friend.username
+                  }
+                });
+                if (result.statusCode === 200) {
+                  uni.removeStorageSync("friendsList");
+                  await loadFriendsList();
+                  uni.showToast({
+                    title: "删除成功",
+                    icon: "success"
+                  });
+                } else {
+                  throw new Error("删除失败");
+                }
+              } catch (error2) {
+                formatAppLog("error", "at pages/Friends/Friends.vue:709", "删除好友失败:", error2);
+                uni.showToast({
+                  title: "删除失败",
+                  icon: "none"
+                });
+              }
+            }
+          }
+        });
+      };
+      const sidebarPopup = vue.ref(null);
+      const friendsListPopup = vue.ref(null);
+      const isSidebarOpen = vue.ref(false);
+      const showSidebar = () => {
+        isSidebarOpen.value = true;
+        uni.hideTabBar({
+          animation: true
+        });
+        sidebarPopup.value.open();
+      };
+      const closeSidebar = () => {
+        sidebarPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
+      };
+      const showAddFriendDialog = () => {
+        closeSidebar();
+        uni.hideTabBar({
+          animation: true
+        });
+        setTimeout(() => {
+          addFriendPopup.value.open();
+        }, 300);
+      };
+      const showFriendsList = () => {
+        closeSidebar();
+        uni.hideTabBar({
+          animation: true
+        });
+        setTimeout(() => {
+          friendsListPopup.value.open();
+        }, 300);
+      };
+      const closeFriendsList = () => {
+        friendsListPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
+      };
+      const handleMaskClick = () => {
+        closeSidebar();
+      };
+      const __returned__ = { websocketUrl, store, tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl: serverUrl2, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, loadUnreadCounts, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, handleDelete, sidebarPopup, friendsListPopup, isSidebarOpen, showSidebar, closeSidebar, showAddFriendDialog, showFriendsList, closeFriendsList, handleMaskClick, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, get useWebSocketStore() {
         return useWebSocketStore;
+      }, get onPullDownRefresh() {
+        return onPullDownRefresh;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -24452,6 +24544,21 @@ This will fail in production.`);
           /* STYLE */
         )
       ]),
+      vue.createCommentVNode(" 添加新的侧边栏触发按钮 "),
+      vue.createElementVNode(
+        "view",
+        {
+          class: vue.normalizeClass(["sidebar-trigger", { "hidden": $setup.isSidebarOpen }]),
+          onClick: $setup.showSidebar
+        },
+        [
+          vue.createElementVNode("view", { class: "trigger-line" }),
+          vue.createElementVNode("view", { class: "trigger-line" }),
+          vue.createElementVNode("view", { class: "trigger-line" })
+        ],
+        2
+        /* CLASS */
+      ),
       vue.createCommentVNode(" 好友列表页面 "),
       $setup.currentTab === "friends" ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
@@ -24490,68 +24597,65 @@ This will fail in production.`);
             null,
             vue.renderList($setup.groupedFriends, (group, letter) => {
               return vue.openBlock(), vue.createElementBlock("view", { key: letter }, [
-                vue.createCommentVNode(" 字母索引 "),
                 vue.createElementVNode("view", {
                   class: "index-letter",
                   id: `letter-${letter}`
                 }, vue.toDisplayString(letter), 9, ["id"]),
-                vue.createCommentVNode(" 好友项 "),
                 (vue.openBlock(true), vue.createElementBlock(
                   vue.Fragment,
                   null,
                   vue.renderList(group, (friend) => {
                     return vue.openBlock(), vue.createElementBlock("view", {
                       key: friend.id,
-                      class: "friend-item",
-                      "hover-class": "friend-item-hover",
-                      onClick: ($event) => $setup.enterChat(friend)
+                      class: "friend-item"
                     }, [
-                      vue.createElementVNode("view", { class: "avatar-box" }, [
-                        vue.createElementVNode("image", {
-                          src: friend.avatar || $setup.defaultAvatar,
-                          class: "avatar"
-                        }, null, 8, ["src"]),
-                        friend.status === "在线" ? (vue.openBlock(), vue.createElementBlock("view", {
-                          key: 0,
-                          class: "online-dot"
-                        })) : vue.createCommentVNode("v-if", true),
-                        vue.createElementVNode(
+                      vue.createElementVNode("view", {
+                        class: "friend-content",
+                        onClick: ($event) => $setup.enterChat(friend)
+                      }, [
+                        vue.createElementVNode("view", { class: "avatar-box" }, [
+                          vue.createElementVNode("image", {
+                            src: friend.avatar || $setup.defaultAvatar,
+                            class: "avatar"
+                          }, null, 8, ["src"]),
+                          vue.createElementVNode(
+                            "view",
+                            {
+                              class: vue.normalizeClass(["status-dot", { online: friend.online, offline: !friend.online }])
+                            },
+                            null,
+                            2
+                            /* CLASS */
+                          )
+                        ]),
+                        vue.createElementVNode("view", { class: "info" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "name" },
+                            vue.toDisplayString(friend.username),
+                            1
+                            /* TEXT */
+                          ),
+                          vue.createElementVNode(
+                            "text",
+                            { class: "signature" },
+                            vue.toDisplayString(friend.signature || "这个人很懒，什么都没写~"),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        friend.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
                           "view",
                           {
-                            class: vue.normalizeClass(["status-dot", { online: friend.online, offline: !friend.online }])
+                            key: 0,
+                            class: "unread-badge"
                           },
-                          null,
-                          2
-                          /* CLASS */
-                        )
-                      ]),
-                      vue.createElementVNode("view", { class: "info" }, [
-                        vue.createElementVNode(
-                          "text",
-                          { class: "name" },
-                          vue.toDisplayString(friend.username),
+                          vue.toDisplayString(friend.unreadCount > 99 ? "99+" : friend.unreadCount),
                           1
                           /* TEXT */
-                        ),
-                        vue.createElementVNode(
-                          "text",
-                          { class: "signature" },
-                          vue.toDisplayString(friend.signature || "这个人很懒，什么都没写~"),
-                          1
-                          /* TEXT */
-                        )
-                      ]),
-                      friend.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
-                        "view",
-                        {
-                          key: 0,
-                          class: "unread-badge"
-                        },
-                        vue.toDisplayString(friend.unreadCount > 99 ? "99+" : friend.unreadCount),
-                        1
-                        /* TEXT */
-                      )) : vue.createCommentVNode("v-if", true)
-                    ], 8, ["onClick"]);
+                        )) : vue.createCommentVNode("v-if", true)
+                      ], 8, ["onClick"])
+                    ]);
                   }),
                   128
                   /* KEYED_FRAGMENT */
@@ -24581,7 +24685,8 @@ This will fail in production.`);
           _component_uni_popup,
           {
             ref: "addFriendPopup",
-            type: "dialog"
+            type: "dialog",
+            onMaskClick: $setup.closeAddFriend
           },
           {
             default: vue.withCtx(() => [
@@ -24625,17 +24730,7 @@ This will fail in production.`);
           },
           512
           /* NEED_PATCH */
-        ),
-        vue.createCommentVNode(" 添加好友按钮 "),
-        vue.createElementVNode("view", {
-          class: "floating-btn",
-          onClick: $setup.showAddFriend
-        }, [
-          vue.createElementVNode("view", { class: "btn-content" }, [
-            vue.createElementVNode("text", { class: "plus-icon" }, "+")
-          ]),
-          vue.createElementVNode("view", { class: "btn-ripple" })
-        ])
+        )
       ])) : (vue.openBlock(), vue.createElementBlock(
         vue.Fragment,
         { key: 1 },
@@ -24734,7 +24829,122 @@ This will fail in production.`);
         ],
         2112
         /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-      ))
+      )),
+      vue.createCommentVNode(" 侧边栏 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "sidebarPopup",
+          type: "left",
+          onMaskClick: $setup.handleMaskClick
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "sidebar" }, [
+              vue.createElementVNode("view", { class: "sidebar-header" }, [
+                vue.createElementVNode("text", { class: "sidebar-title" }, "好友管理"),
+                vue.createVNode(_component_uni_icons, {
+                  type: "close",
+                  size: "24",
+                  color: "#333",
+                  onClick: $setup.closeSidebar
+                })
+              ]),
+              vue.createElementVNode("view", { class: "sidebar-content" }, [
+                vue.createElementVNode("view", {
+                  class: "sidebar-item",
+                  onClick: $setup.showAddFriendDialog
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "personadd-filled",
+                    size: "24",
+                    color: "#4cd964"
+                  }),
+                  vue.createElementVNode("text", null, "添加好友")
+                ]),
+                vue.createElementVNode("view", {
+                  class: "sidebar-item",
+                  onClick: $setup.showFriendsList
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "staff-filled",
+                    size: "24",
+                    color: "#007aff"
+                  }),
+                  vue.createElementVNode("text", null, "好友列表")
+                ])
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      ),
+      vue.createCommentVNode(" 好友列表弹窗 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "friendsListPopup",
+          type: "bottom",
+          onMaskClick: $setup.closeFriendsList
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "friends-manage-list" }, [
+              vue.createElementVNode("view", { class: "popup-header" }, [
+                vue.createElementVNode("text", { class: "popup-title" }, "好友列表"),
+                vue.createVNode(_component_uni_icons, {
+                  type: "close",
+                  size: "24",
+                  color: "#333",
+                  onClick: $setup.closeFriendsList
+                })
+              ]),
+              vue.createElementVNode("scroll-view", {
+                class: "friends-scroll",
+                "scroll-y": ""
+              }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList($setup.friendsList, (friend) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: friend.id,
+                      class: "friend-manage-item"
+                    }, [
+                      vue.createElementVNode("view", { class: "friend-info" }, [
+                        vue.createElementVNode("image", {
+                          src: friend.avatar || $setup.defaultAvatar,
+                          class: "friend-avatar"
+                        }, null, 8, ["src"]),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "friend-name" },
+                          vue.toDisplayString(friend.username),
+                          1
+                          /* TEXT */
+                        )
+                      ]),
+                      vue.createElementVNode("button", {
+                        class: "delete-btn",
+                        onClick: vue.withModifiers(($event) => $setup.handleDelete(friend), ["stop"])
+                      }, " 删除 ", 8, ["onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      )
     ]);
   }
   const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Friends/Friends.vue"]]);
@@ -25413,7 +25623,7 @@ This will fail in production.`);
       __expose();
       const input_status = vue.ref(true);
       const serverUrl2 = uni.getStorageSync("serverUrl");
-      const websocketUrl2 = uni.getStorageSync("websocketUrl");
+      const websocketUrl = uni.getStorageSync("websocketUrl");
       const messageText = vue.ref("");
       const messages2 = vue.ref([]);
       const scrollTop = vue.ref(0);
@@ -25943,7 +26153,7 @@ This will fail in production.`);
           uni.$emit("updateUnreadCounts");
         }
       };
-      const __returned__ = { input_status, serverUrl: serverUrl2, websocketUrl: websocketUrl2, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, old_scrollTop, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, store, sendMessage, markMessageAsFailed, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, lastReadTimestamp, markAllMessagesAsRead, scrollToBottom, formatTime, goBack, enterChallenge, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, handleMessageClick, handleReadAck, clearHistory, moreMenuPopup, showMoreMenu, handleMenuClick, getLocalStorageKey, saveMessageToLocal, getLocalMessages, observeMessageVisibility, markMessageAsRead, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get useWebSocketStore() {
+      const __returned__ = { input_status, serverUrl: serverUrl2, websocketUrl, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, old_scrollTop, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, store, sendMessage, markMessageAsFailed, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, lastReadTimestamp, markAllMessagesAsRead, scrollToBottom, formatTime, goBack, enterChallenge, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, handleMessageClick, handleReadAck, clearHistory, moreMenuPopup, showMoreMenu, handleMenuClick, getLocalStorageKey, saveMessageToLocal, getLocalMessages, observeMessageVisibility, markMessageAsRead, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get useWebSocketStore() {
         return useWebSocketStore;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });

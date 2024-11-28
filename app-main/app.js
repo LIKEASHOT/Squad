@@ -2066,3 +2066,103 @@ const getOfflineMessages = async (userId) => {
     return [];
   }
 };
+
+// 添加删除好友接口
+app.post("/friends/delete", async (req, res) => {
+  const { userId, friendUsername } = req.body;
+  console.log("收到删除好友请求:", req.body);
+
+  if (!userId || !friendUsername) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing required parameters"
+    });
+  }
+
+  try {
+    // 先查询要删除的好友的用户ID
+    const [friendResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [friendUsername]
+    );
+
+    if (friendResults.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "Friend not found"
+      });
+    }
+
+    // 查询发起删除的用户ID
+    const [userResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [userId]
+    );
+
+    if (userResults.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found"
+      });
+    }
+
+    const requesterId = userResults[0].id;
+    const friendId = friendResults[0].id;
+
+    // 开始事务
+    await pool.query('START TRANSACTION');
+
+    try {
+      // 删除好友关系（双向删除）
+      const deleteQuery = `
+        DELETE FROM friendships 
+        WHERE (user_id = ? AND friend_id = ?) 
+        OR (user_id = ? AND friend_id = ?)
+      `;
+      await pool.query(deleteQuery, [requesterId, friendId, friendId, requesterId]);
+
+      // 删除相关的聊天记录
+      const deleteMessagesQuery = `
+        DELETE FROM messages 
+        WHERE (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)
+      `;
+      await pool.query(deleteMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+
+      // 删除离线消息
+      const deleteOfflineMessagesQuery = `
+        DELETE FROM offline_messages 
+        WHERE (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)
+      `;
+      await pool.query(deleteOfflineMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+
+      // 提交事务
+      await pool.query('COMMIT');
+
+      // 如果好友在线，发送通知
+      const friendSocket = clients.get(friendId);
+      if (friendSocket) {
+        friendSocket.send(JSON.stringify({
+          type: 'friend_deleted',
+          username: userId
+        }));
+      }
+
+      res.json({
+        status: "success",
+        message: "Friend deleted successfully"
+      });
+    } catch (error) {
+      // 如果出错，回滚事务
+      await pool.query('ROLLBACK');
+      throw error;
+    }
+  } catch (error) {
+    console.error("删除好友失败:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to delete friend"
+    });
+  }
+});

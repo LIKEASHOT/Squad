@@ -130,8 +130,13 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://10.133.80.141:3000";
-const websocketUrl = "ws://10.133.80.141:3001";
+// const serverUrl = "http://10.133.80.141:3000";
+// const websocketUrl = "ws://10.133.80.141:3001";
+// Login.vue
+// 读取环境变量
+const serverUrl = import.meta.env.VITE_APP_SERVER_URL;
+const websocketUrl = import.meta.env.VITE_APP_WEBSOCKET_URL;
+console.log(serverUrl, websocketUrl);
 uni.setStorageSync("websocketUrl", websocketUrl);
 // 服务器地址存储在本地
 uni.setStorageSync("serverUrl", serverUrl);

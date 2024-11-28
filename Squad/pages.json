@@ -38,7 +38,7 @@
       "path": "pages/Friends/Friends",
       "style": {
         "navigationBarTitleText": "好友",
-        "enablePullDownRefresh": false 
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -63,36 +63,34 @@
       }
     },
     {
-    	"path" : "pages/InviteFriends/InviteFriends",
-    	"style" : 
-    	{
-			"navigationStyle": "custom",
-    		"navigationBarTitleText" : ""
-    	}
+      "path": "pages/InviteFriends/InviteFriends",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": ""
+      }
     },
-	{
-	  "path": "pages/Chat/Chat",
-	  "style": {
-	    "navigationStyle": "custom",
-	    "navigationBarTitleText": "",
-	    "enablePullDownRefresh": false
-	  }
-	},
-	{
-	  "path": "pages/DietRecord/DietRecord",
-	  "style": {
-	    "navigationBarTitleText": "饮食记录",
-	    "enablePullDownRefresh": false
-	  }
-	},
-	{
-	  "path": "pages/Challenge/Challenge",
-	  "style": {
-	    "navigationBarTitleText": "打卡挑战",
-	    "enablePullDownRefresh": false
-	  }
-	}
-	
+    {
+      "path": "pages/Chat/Chat",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/DietRecord/DietRecord",
+      "style": {
+        "navigationBarTitleText": "饮食记录",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/Challenge/Challenge",
+      "style": {
+        "navigationBarTitleText": "打卡挑战",
+        "enablePullDownRefresh": false
+      }
+    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
