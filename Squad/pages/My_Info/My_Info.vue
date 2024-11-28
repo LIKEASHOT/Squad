@@ -105,7 +105,8 @@ const fetchUserTargets = async () => {
       targetDuration.value = res.data.data.sport_time_goal;
       targetCalories.value = res.data.data.calories_goal; 
      if(res.data.data.avatar!=null){
-		   userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}` ;// 拼接完整 URL 
+       userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}`;// 拼接完整 URL 
+       uni.setStorageSync("userInfo_" + username, userInfo.value);
 	 }
 	else{
 		userInfo.value.avatar = defaultAvatar;

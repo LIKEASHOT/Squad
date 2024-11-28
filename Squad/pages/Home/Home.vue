@@ -164,8 +164,40 @@
           </div>
         </view>
         <view>
-          <image src="../../static/icon/shot_sport.png" class="shot_icon">
-          </image>
+           <!-- 点击按钮打开弹窗 -->
+            <image 
+              src="../../static/icon/shot_sport.png"  
+              class="shot_icon" 
+              @tap="openEditModal" 
+            />
+          
+            <!-- 编辑弹窗 -->
+            <view v-if="isEditing" class="modal">
+              <view class="modal-content">
+                <!-- 弹窗头部 -->
+                <view class="modal-header">
+                  <text class="modal-title">编辑目标</text>
+                </view>
+        
+                <!-- 弹窗内容 -->
+                <view class="modal-body">
+                  <view class="input-group">
+                    <text class="label">目标时长 (分钟)</text>
+                    <input v-model="editDuration" type="number" class="input" placeholder="请输入目标时长" />
+                  </view>
+                  <view class="input-group">
+                    <text class="label">目标热量 (kcal)</text>
+                    <input v-model="editCalories" type="number" class="input" placeholder="请输入目标热量" />
+                  </view>
+                </view>
+        
+                <!-- 弹窗底部 -->
+                <view class="modal-footer">
+                  <button class="cancel-btn1" @click="cancelEdit">取消</button>
+                  <button class="save-btn1" @click="saveEdit">保存</button>
+                </view>
+              </view>
+            </view>
         </view>
       </view>
       <view v-if="showCalendar_bar === false">
@@ -778,6 +810,7 @@ onMounted(() => {
 onPullDownRefresh(async () => {
   console.log("refresh");
   await fetchPlansFromBackend();
+  loadExerciseDurations();
   setTimeout(() => {
     uni.stopPullDownRefresh();
   }, 1000);
@@ -787,7 +820,7 @@ onPullDownRefresh(async () => {
 // store.initWebSocket();
 // const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
 const serverUrl = uni.getStorageSync("serverUrl");
-const target = ref(1);
+const target = ref(0);
 const modelVale = ref(0);
 const target_eat_percent = ref(100);
 const tab = ref("plan"); // 当前选中的标签
@@ -809,7 +842,11 @@ const foodName = ref("");
 const calories = ref("");
 const popup = ref(null);
 const dialogTitle = ref("添加计划");
-
+const targetDuration = ref(20); // 目标运动时间，初始值为 20min
+const targetCalories = ref(100); // 目标热量，初始值为 100
+const isEditing = ref(false); // 控制弹窗显示
+const editDuration = ref(0); // 编辑中的目标时长
+const editCalories = ref(0); // 编辑中的目标热量
 const goals = ref([
   { value: "全部", text: "全部" },
   { value: "减脂", text: "减脂" },
@@ -856,6 +893,7 @@ onMounted(() => {
   fetchDailyCalories(username.value);
   loadExerciseDurations(); // 加载每日运动时长
   fetchPlanExercise(); // 获取计划运动时长
+  fetchUserTargets();
   // 监听添加计划的通知 
   uni.$on("handleAdd", loadMyPlans);
   // 监听删除计划的通知
@@ -876,14 +914,81 @@ onMounted(() => {
     if (now.getHours() === 0 && now.getMinutes() === 0) {
       console.log("已到0点，重新获取每日热量");
       fetchDailyCalories(username.value);
-      resetRemainingCalories();
+      resetRemainingCalories(); 
     }  
   }, 60000); // 每分钟检查一次
   username = uni.getStorageSync("username");
   // 页面加载时初始化数据
   initializeRemainingCalories();
 });
+// 获取用户目标数据和头像
+const fetchUserTargets = async () => {
+  try {  
+	  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+	  uni.setStorageSync(`username`, username);
+	  console.log(`username: ${username}`);
+    const res = await uni.request({
+      url: `${serverUrl}/getTargets`,  
+      method: "POST", 
+      data: { username }, // 向后端发送用户名 
+    });
 
+    if (res.data.success) {
+      // 更新目标数据
+      targetDuration.value = res.data.data.sport_time_goal;
+      targetCalories.value = res.data.data.calories_goal; 
+	  // 计算当前显示运动时长占计划运动时长的百分比
+	  target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+    } else {
+      uni.showToast({ title: "加载用户数据失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("获取用户目标失败:", error); 
+    uni.showToast({ title: "服务器错误", icon: "none" }); 
+  }
+};
+// 打开编辑弹窗
+const openEditModal = () => {
+  editDuration.value = targetDuration.value;
+  editCalories.value = targetCalories.value;
+  isEditing.value = true;
+};
+// 取消编辑
+const cancelEdit = () => {
+  isEditing.value = false;
+};
+
+// 保存编辑
+const saveEdit = async () => {
+  const username = uni.getStorageSync("username"); // 获取用户名
+  try {
+    const res = await uni.request({
+      url: `${serverUrl}/updateTargets`,
+      method: "POST",
+      data: {
+        username,
+        calories_goal: editCalories.value,
+        sport_time_goal: editDuration.value,
+      },
+    });
+
+    if (res.data.success) {
+      // 更新页面目标
+      targetCalories.value = editCalories.value;
+      targetDuration.value = editDuration.value;
+      // 计算当前显示运动时长占计划运动时长的百分比
+      target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+	  loadExerciseDurations();
+      uni.showToast({ title: "更新成功", icon: "success" });
+    } else {
+      uni.showToast({ title: "更新失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("更新用户目标失败:", error);
+    uni.showToast({ title: "服务器错误", icon: "none" });
+  }
+  isEditing.value = false;
+};
 // 从后端加载计划运动时长
 const fetchPlanExercise = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户
@@ -912,6 +1017,7 @@ const fetchPlanExercise = () => {
 };
 // 加载运动时长
 const loadExerciseDurations = () => {
+
   const username = uni.getStorageSync("username"); // 获取已登录用户
   if (!username) {
     console.error("用户未登录");
@@ -928,12 +1034,12 @@ const loadExerciseDurations = () => {
       if (res.statusCode === 200 && res.data.success) {
         currentExercise.value = res.data.data.exercise_duration || 0; // 更新当前运动时长
 		// 计算当前显示运动时长占计划运动时长的百分比
-		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+		  target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
       } else {
         console.error("获取今日运动时长失败：", res.data.message || "未知错误");
       }
     },
-    fail: (err) => {
+    fail: (err) => { 
       console.error("请求失败：", err);
     },
   });
@@ -1028,21 +1134,23 @@ const submitFoodList = async () => {
   uni.setStorageSync(storageKey, dailyFoods);
 
   // 原有的卡路里计算逻辑
-  const totalConsumedCalories = totalCalories.value;
-  console.log(`提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
+	const totalConsumedCalories = totalCalories.value;
+	console.log(`提交时总消耗的热量: ${totalConsumedCalories} 千卡`);
 
-  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
-  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
-  console.log(`1: ${remainingCalories} 千卡`);
+	// 获取每日热量和剩余热量
+	const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username}`)) || 2000;
+	let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
 
-  remainingCalories = isNaN(remainingCalories)
-    ? dailyCalories || 2000
-    : remainingCalories;
-  console.log(`3: ${remainingCalories} 千卡`);
-  // 计算并更新剩余热量
-  remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
-  // remainingCalories = remainingCalories - totalConsumedCalories;
-  console.log(`4: ${remainingCalories} 千卡`);
+	// 日志查看初始值
+	console.log(`1: ${remainingCalories} 千卡`);
+
+	// 确保 `remainingCalories` 是有效数字
+	remainingCalories = parseFloat(remainingCalories) || dailyCalories; 
+	console.log(`3: ${remainingCalories} 千卡`);
+
+	// 计算并更新剩余热量
+	remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories);
+	console.log(`4: ${remainingCalories} 千卡`);
   today_left_eat.value = remainingCalories;
   // 计算剩余热量占每日总热量的百分比
   target_eat_percent.value = dailyCalories
@@ -1060,7 +1168,7 @@ const submitFoodList = async () => {
     title: "已更新每日摄入",
     icon: "success",
   });
-
+ 
   // 调试信息
   console.log(`总消耗: ${totalConsumedCalories} 千卡`);
   console.log(`剩余可摄入热量: ${remainingCalories} 千卡`);
@@ -1785,7 +1893,7 @@ const handleDelete = (item, index) => {
       }
     },
   });
-};
+}; 
 
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
@@ -2725,6 +2833,124 @@ button {
   .confirm-btn {
     background: #007aff;
     color: white;
+  }
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 80%;
+  max-width: 600rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
+  padding: 20rpx;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.input-group {
+  margin-bottom: 50rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+  text-align: left;
+}
+
+.input {
+  width: 100%;
+  padding: 10rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  text-align: left; /* 文本左对齐 */
+  // box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #5c6df3;
+  outline: none;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-top: 1rpx solid #e5e5e5;
+}
+.cancel-btn1,
+.save-btn1 {
+  flex: 1;
+  margin: 0 10rpx;
+  padding: 12rpx 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: 2rpx ;
+  text-align: center;
+  transition: all 0.3s ease;
+  border-radius: 10rpx;
+}
+
+.cancel-btn1 {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.cancel-btn1:active {
+  background-color: #e0e0e0;
+}
+
+.save-btn1 {
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  color: #fff;
+  box-shadow: 0 4rpx 8rpx rgba(92, 109, 243, 0.3);
+}
+
+.save-btn1:active {
+  box-shadow: 0 2rpx 6rpx rgba(92, 109, 243, 0.4);
+  transform: scale(0.98);
+}
+
+/* 弹窗动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>

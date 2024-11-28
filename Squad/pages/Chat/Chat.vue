@@ -271,7 +271,7 @@ const showNewMessageTip = ref(false);
 const isLoading = ref(false);
 const isAtBottom = ref(true);
 const currentPage = ref(1);
-const hasMore = ref(true);
+
 
 // 消息分组计算属性
 const groupedMessages = computed(() => {
@@ -580,9 +580,13 @@ onMounted(() => {
     // 页面加载完成后标记所有消息为已读
     markAllMessagesAsRead();
   });
-
+  userInfo.value.username = uni.getStorageSync("username");
+  userInfo.value.avatar = uni.getStorageSync("userInfo_" + userInfo.value.username).avatar;
+  friendInfo.value.avatar = uni.getStorageSync("friendInfo_" + userInfo.value.username + "_" + friendInfo.value.username).avatar; 
+  console.log("friendInfo.value.avatar: " + friendInfo.value.avatar);
   // 设置好友在线状态
   const status = store.getFriendStatus(friendInfo.value.username);
+
   friendInfo.value.online = status.isOnline;
 });
 
