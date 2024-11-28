@@ -36,18 +36,18 @@
           @click="selectButton('custom')"
           :class="{ active: activeButton === 'custom' }"
         >
-          智能定制 
+          智能定制
         </button>
       </div>
 
       <view v-if="activeButton === 'all'">
         <div class="filter-bar">
-          <div class="filter"> 
+          <div class="filter">
             <uni-section
               title="目标"
               type="line"
-              style="background-color: #f5f5f5" 
-            > 
+              style="background-color: #f5f5f5"
+            >
               <uni-data-select
                 v-model="selectedGoal"
                 :localdata="goals"
@@ -124,21 +124,70 @@
           </div>
         </div>
       </view>
-      <view v-if="activeButton === 'custom'">
-        <!-- 智能定制内容 -->
-        <div class="ai-customization">
+      <view v-if="activeButton === 'custom'" class="ai-customization">
+        <view class="ai-input-container">
+          <view class="input-header">
+            <uni-icons type="lightbulb-filled" size="24" color="#FFD700" />
+            <text class="input-title">告诉AI你的运动需求</text>
+          </view>
           <textarea
             v-model="aiInput"
-            placeholder="请输入您的需求..."
+            placeholder="例如：我想要一个每周三次的增肌计划，每次训练30分钟...
+或者：帮我制定一个适合初学者的减脂计划..."
             class="ai-input"
+            :disabled="isGenerating"
           ></textarea>
-          <button @click="getCustomPlan" class="ai-button">获取定制计划</button>
-          <div v-if="customPlan" class="custom-plan">
-            <h3>定制计划</h3>
-            <div v-html="customPlan"></div>
-            <!-- 渲染 HTML 内容 -->
-          </div>
-        </div>
+          <button
+            @click="getCustomPlan"
+            class="ai-button"
+            :disabled="!aiInput.trim() || isGenerating"
+          >
+            <template v-if="isGenerating">
+              <uni-icons type="refresh" size="20" color="#fff" />
+              <text>生成中...</text>
+            </template>
+            <template v-else>
+              <uni-icons type="paperplane-filled" size="20" color="#fff" />
+              <text>获取专属计划</text>
+            </template>
+          </button>
+        </view>
+
+        <!-- 修改 AI 计划显示部分 -->
+        <view
+          
+          class="custom-plan"
+        >
+          <view class="plan-header">
+            <uni-icons type="flag-filled" size="24" color="#4cd964" />
+            <text class="plan-title">你的专属计划来啦！</text>
+          </view>
+          <view class="plan-content">
+            <view class="motivation-banner">
+              <text class="motivation-text"
+                >💪 准备好开始你的健身之旅了吗？</text
+              >
+            </view>
+            <view class="plan-text">
+              <!-- 修改这里的条件渲染逻辑 -->
+              <div v-if="isGenerating" v-html="streamingContent"></div>
+              <div v-else v-html="customPlan"></div>
+            </view>
+            <view class="plan-actions">
+              <button class="action-btn clear" @click="clearPlan_AI">
+                <uni-icons type="trash" size="16" color="#fff" />
+                <text>清空计划</text>
+              </button>
+              <button class="action-btn save" @click="savePlan_AI">
+                <uni-icons type="plusempty" size="16" color="#fff" />
+                <text>添加计划</text>
+              </button>
+            </view>
+            <view class="motivation-footer">
+              <text class="footer-text">🎯 目标已定，开始行动吧！</text>
+            </view>
+          </view>
+        </view>
       </view>
     </div>
 
@@ -280,18 +329,22 @@
                   <text class="b_highlight">{{ today_left_eat }}</text>
                   <text class="gray_color">千卡</text>
                 </view>
-
-                <!-- <text>{{ modelVale }}%</text> -->
               </l-circle>
-              <button
-                class="take_picture"
-                @click="takePicture"
-                :disabled="isRecognizing"
-              >
-                <text v-if="!isRecognizing">拍照识别</text>
-                <text v-else>识别中...</text>
-              </button>
 
+              <!-- 添加按钮容器 -->
+              <view class="button-group">
+                <button
+                  class="take_picture"
+                  @click="takePicture"
+                  :disabled="isRecognizing"
+                >
+                  <text v-if="!isRecognizing">拍照识别</text>
+                  <text v-else>识别中...</text>
+                </button>
+                <button class="take_picture" @click="fetchDailyCalories">
+                  <text>手动获取</text>
+                </button>
+              </view>
               <!-- 修改识别结果表格部分 -->
               <view
                 v-if="foodList.length > 0 || manualFoodList.length > 0"
@@ -748,33 +801,11 @@ import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
-import { useWebSocketStore } from '@/store/websocket';
-import{onPullDownRefresh} from '@dcloudio/uni-app';
+import { useWebSocketStore } from "@/store/websocket";
+import { onPullDownRefresh } from "@dcloudio/uni-app";
 // 使用 store
 const store = useWebSocketStore();
-onMounted(() => {
-  // 初始化WebSocket连接
-  console.log(store.isConnected);
-  if (!store.isConnected) {
-    store.initWebSocket();
-    console.log("连接初始化...");
-  }
-  // 设置一个定时器，每隔一段时间检查一次连接状态
-  setInterval(() => {
-    if (!store.isConnected) {
-      store.initWebSocket();
-      console.log("连接初始化...");
-    }
-  }, 5000);
-});
-onPullDownRefresh(async () => {
-  console.log("refresh");
-  await fetchPlansFromBackend();
-  setTimeout(() => {
-    uni.stopPullDownRefresh();
-  }, 1000);
 
-});
 // 初始化WebSocket连接
 // store.initWebSocket();
 // const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
@@ -801,7 +832,14 @@ const foodName = ref("");
 const calories = ref("");
 const popup = ref(null);
 const dialogTitle = ref("添加计划");
-
+const completeText = ref("");
+const aiInput = ref(""); // AI 输入内容
+const customPlan = ref(''); // 使用 ref 而不是普通变量
+// 添加新的响应式变量
+const isGenerating = ref(false);
+const streamingContent = ref("");
+// 引入 markdown-it
+const md = new MarkdownIt();
 const goals = ref([
   { value: "全部", text: "全部" },
   { value: "减脂", text: "减脂" },
@@ -840,6 +878,89 @@ const plans = ref([]);
 const foodList = ref([]);
 const manualFoodList = ref([]);
 const errorMessage = ref("");
+
+onMounted(() => {
+  // 初始化WebSocket连接
+  console.log(store.isConnected);
+  if (!store.isConnected) {
+    store.initWebSocket();
+    console.log("连接初始化...");
+  }
+  
+  // 读取缓存的计划
+  const cachedPlan = getCachedPlan();
+  if (cachedPlan) {
+    customPlan.value = cachedPlan;
+  }
+
+  // 设置一个定时器，每隔一段时间检查一次连接状态
+  setInterval(() => {
+    if (!store.isConnected) {
+      store.initWebSocket();
+      console.log("连接初始化...");
+    }
+  }, 5000);
+
+  // WebSocket 消息监听
+  uni.$on("aiPlanMessage", (data) => {
+    if (data.error) {
+      uni.showToast({
+        title: data.error,
+        icon: "none",
+      });
+      isGenerating.value = false;
+      return;
+    }
+
+    try {
+      // 处理 [DONE] 标记
+      if (data.content.includes("[DONE]")) {
+        // 保存最终的 markdown 渲染结果
+        customPlan.value = md.render(completeText.value);
+        
+        // 保存到缓存
+        const username = uni.getStorageSync("username");
+        uni.setStorageSync(`AiPlan_${username}_cache`, customPlan.value);
+        
+        // 清空流式内容，但保持最终结果显示
+        streamingContent.value = "";
+        isGenerating.value = false;
+        return;
+      }
+
+      // 解析 SSE 格式的数据
+      const lines = data.content.split('\n');
+      for (const line of lines) {
+        if (line.trim() && line.startsWith('data: ')) {
+          try {
+            const jsonStr = line.slice(6);
+            const messageData = JSON.parse(jsonStr);
+            if (messageData.choices && 
+                messageData.choices[0].delta && 
+                messageData.choices[0].delta.content) {
+              // 累积完整文本
+              completeText.value += messageData.choices[0].delta.content;
+              // 实时渲染 markdown
+              streamingContent.value = md.render(completeText.value);
+            }
+          } catch (e) {
+            console.warn('解析数据块失败:', e);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('处理 AI 消息失败:', error);
+    }
+  });
+});
+
+onPullDownRefresh(async () => {
+  console.log("refresh");
+  await fetchPlansFromBackend();
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  }, 1000);
+});
 // 页面加载时调用
 onMounted(() => {
   fetchPlansFromBackend();
@@ -848,12 +969,12 @@ onMounted(() => {
   fetchDailyCalories(username.value);
   loadExerciseDurations(); // 加载每日运动时长
   fetchPlanExercise(); // 获取计划运动时长
-  // 监听添加计划的通知 
+  // 监听添加计划的通知
   uni.$on("handleAdd", loadMyPlans);
   // 监听删除计划的通知
   uni.$on("handleRemove", loadMyPlans);
   //监听更新目标的通知
-  uni.$on("updateUserTargets",fetchPlanExercise);
+  uni.$on("updateUserTargets", fetchPlanExercise);
   // 监听来自 Search 页面更新计划的通知
   uni.$on("plansUpdated", loadMyPlans);
   // 监听删除食物的通知
@@ -861,7 +982,7 @@ onMounted(() => {
   // 监听编辑食物的通知
   uni.$on("foodEdit", initializeRemainingCalories);
   //监听保存运动时间的通知
-   uni.$on("saveExerciseDuration",loadExerciseDurations);
+  uni.$on("saveExerciseDuration", loadExerciseDurations);
   // 每分钟检查一次是否到了0点
   const checkMidnight = setInterval(() => {
     const now = new Date();
@@ -869,7 +990,7 @@ onMounted(() => {
       console.log("已到0点，重新获取每日热量");
       fetchDailyCalories(username.value);
       resetRemainingCalories();
-    }  
+    }
   }, 60000); // 每分钟检查一次
   username = uni.getStorageSync("username");
   // 页面加载时初始化数据
@@ -885,10 +1006,12 @@ const fetchPlanExercise = () => {
   }
 
   uni.request({
-    url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(username)}`, // 拼接 username 参数
+    url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(
+      username
+    )}`, // 拼接 username 参数
     method: "GET",
     header: {
-      "Content-Type": "application/json", 
+      "Content-Type": "application/json",
     },
     success: (res) => {
       if (res.statusCode === 200 && res.data.success) {
@@ -911,7 +1034,9 @@ const loadExerciseDurations = () => {
   }
 
   uni.request({
-    url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(username)}`, // 传递 username
+    url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(
+      username
+    )}`, // 传递 username
     method: "GET",
     header: {
       "Content-Type": "application/json",
@@ -919,8 +1044,10 @@ const loadExerciseDurations = () => {
     success: (res) => {
       if (res.statusCode === 200 && res.data.success) {
         currentExercise.value = res.data.data.exercise_duration || 0; // 更新当前运动时长
-		// 计算当前显示运动时长占计划运动时长的百分比
-		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+        // 计算当前显示运动时长占计划运动时长的百分比
+        target.value = Math.round(
+          (currentExercise.value / planExercise.value) * 100
+        );
       } else {
         console.error("获取今日运动时长失败：", res.data.message || "未知错误");
       }
@@ -1253,7 +1380,7 @@ const fetchPlansFromBackend = async () => {
           calorie: item.calorie,
           goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按号拆分并去除空格
           type: item.type,
-		  videoUrl:item.videoUrl,
+          videoUrl: item.videoUrl,
         }));
         // 在获取数据后，根据筛选条件过滤数据
         filterPlans();
@@ -1348,8 +1475,6 @@ async function fetchDailyCalories(username) {
   }
 }
 
-const aiInput = ref(""); // AI 输入内容
-const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
 const currentExercise = ref(0); // 当前运动时长
 const planExercise = ref(20); // 计划运动时长
@@ -1420,57 +1545,97 @@ const goToSearchPage = () => {
   });
 };
 
-const getCustomPlan = () => {
-  // 模拟与 AI 交互获取定制计划
-  // 这里可以替换为实际的 AI 接口调用
-  // 检查用户是否输入了需求
-  if (!aiInput.value.trim()) {
+// 添加新的响应式变量和方法
+const getCachedPlan = () => {
+  const username = uni.getStorageSync("username");
+  return uni.getStorageSync(`AiPlan_${username}_cache`);
+};
+
+// 修改获取AI计划的函数
+const getCustomPlan = async () => {
+  if (!aiInput.value.trim() || isGenerating.value) return;
+
+  isGenerating.value = true;
+  streamingContent.value = "";
+  completeText.value = "";
+  try {
+    // 先检查缓存
+    const cachedPlan = getCachedPlan();
+    if (cachedPlan) {
+      customPlan.value = cachedPlan;
+      uni.showToast({
+        title: "未处理的计划",
+        icon: "loading",
+      });
+      isGenerating.value = false;
+      return;
+    }
+
+    // 使用 WebSocket 发送请求
+    store.sendAiPlanRequest(aiInput.value);
+  } catch (error) {
+    console.error("获取AI计划失败:", error);
     uni.showToast({
-      title: "请输入您的需求",
+      title: "获取计划失败，请重试",
+      icon: "none",
+    });
+    isGenerating.value = false;
+  }
+};
+
+// 修改清空计划方法
+const clearPlan_AI = () => {
+  uni.showModal({
+    title: '提示',
+    content: '确定要清空当前计划吗？',
+    success: (res) => {
+      if (res.confirm) {
+        // 清空所有相关变量
+        customPlan.value = '';
+        streamingContent.value = '';
+        completeText.value = '';
+        
+        // 清除缓存
+        const username = uni.getStorageSync("username");
+        uni.removeStorageSync(`AiPlan_${username}_cache`);
+        
+        uni.showToast({
+          title: '计划已清空',
+          icon: 'success'
+        });
+      }
+    }
+  });
+};
+
+// 添加保存计划方法
+const savePlan_AI = () => {
+  const planContent = customPlan || streamingContent.value;
+  if (!planContent) {
+    uni.showToast({
+      title: "没有可保存的计划",
       icon: "none",
     });
     return;
   }
 
-  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
-  // 发送请求到后端获取定制的运动计划
-  uni.request({
-    url: serverUrl + "/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
-    method: "POST",
-    data: {
-      aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
-      username: username, // 传递用户名
-    },
-    header: {
-      "Content-Type": "application/json",
-    },
+  // 这里可以添加保存到我的计划列表的逻辑
+  uni.showModal({
+    title: "保存计划",
+    content: "是否将此计划添加到我的计划列表？",
     success: (res) => {
-      console.log("服务器响应:", res);
-      if (res.statusCode === 200 && res.data.fitnessPlan) {
-        // 计划生成成功，将其显示在页面上
-        const md = new MarkdownIt();
-        customPlan.value = md.render(res.data.fitnessPlan);
+      if (res.confirm) {
+        // TODO: 添加到计划列表的逻辑
         uni.showToast({
-          title: "计划生成成功",
+          title: "计划已添加",
           icon: "success",
-        });
-      } else {
-        uni.showToast({
-          title: res.data.error || "生成计划失败",
-          icon: "none",
         });
       }
     },
-    fail: (err) => {
-      console.error("请求失败:", err);
-      uni.showToast({
-        title: "网络请求失败，请稍后重试",
-        icon: "none",
-      });
-    },
   });
-  // customPlan.value = `根据您的需求 "${aiInput.value}"，我们为您定制了以下运动计划：...`;
 };
+
+
 
 // 存储我的计划
 const myPlans = ref([]);
@@ -1539,7 +1704,7 @@ const handleAdd = (plan) => {
 
   // 如果计划不存在，则添加新计划
   currentPlans.push(plan);
-  
+
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
   console.log("计划已添加:", plan.title);
@@ -1563,7 +1728,7 @@ const handleRemove = (plan) => {
   console.log("计划已删除:", plan.title);
   // 通知 删除计划
   uni.$emit("handleRemove");
-  
+
   // 重新加载计划
   loadMyPlans();
 };
@@ -1953,6 +2118,11 @@ onUnmounted(() => {
   // WebSocket 的关闭现在由 store 管理
   // 如果需要，可以调用 store.closeWebSocket()
 });
+
+// 组件卸载时清理监听器
+onUnmounted(() => {
+  uni.$off("aiPlanMessage");
+});
 </script>
 
 <style scoped lang="scss">
@@ -2109,41 +2279,168 @@ uni-button {
   font-size: 12px;
 }
 .ai-customization {
+  padding: 30rpx;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
+  gap: 30rpx;
 
-.ai-input {
-  width: 90%;
-  height: 100px;
-  padding: 5%;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  resize: none;
-}
+  .ai-input-container {
+    background: #fff;
+    border-radius: 20rpx;
+    padding: 30rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
 
-.ai-button {
-  padding: 10px;
-  border: none;
-  border-radius: 20px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+    .input-header {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+      margin-bottom: 20rpx;
 
-.ai-button:hover {
-  background-color: #0056b3;
-}
+      .input-title {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #333;
+      }
+    }
 
-.custom-plan {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+    .ai-input {
+      width: 100%;
+      height: 240rpx;
+      padding: 20rpx;
+      border: 2rpx solid #eee;
+      border-radius: 12rpx;
+      font-size: 28rpx;
+      line-height: 1.6;
+      margin-bottom: 20rpx;
+      background: #f8f8f8;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #4cd964;
+        background: #fff;
+      }
+    }
+
+    .ai-button {
+      width: 95%;
+      height: 88rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12rpx;
+      background: linear-gradient(135deg, #4cd964, #3cb371);
+      color: #fff;
+      border-radius: 44rpx;
+      font-size: 32rpx;
+      border: none;
+      transition: all 0.3s;
+
+      &:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+      }
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.7;
+
+        .uni-icons {
+          animation: rotating 1s linear infinite;
+        }
+      }
+    }
+  }
+  }
+
+  @keyframes rotating {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .custom-plan {
+    background: #fff;
+    border-radius: 20rpx;
+    padding: 30rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+
+    .plan-header {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+      margin-bottom: 20rpx;
+      padding-bottom: 20rpx;
+      border-bottom: 2rpx solid #eee;
+
+      .plan-title {
+        font-size: 36rpx;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+
+    .plan-content {
+      .motivation-banner {
+        background: linear-gradient(135deg, #4b7bf9, #2c5ef6);
+        padding: 30rpx;
+        border-radius: 16rpx;
+        margin-bottom: 30rpx;
+
+        .motivation-text {
+          color: #fff;
+          font-size: 32rpx;
+          font-weight: 500;
+          text-align: center;
+          display: block;
+        }
+      }
+
+      .plan-text {
+        font-size: 30rpx;
+        line-height: 1.8;
+        color: #333;
+        padding: 20rpx;
+        background: #f8f9fa;
+        border-radius: 12rpx;
+        margin-bottom: 30rpx;
+        min-height: 100rpx;
+
+        // 添加打字机效果
+        &.streaming {
+          white-space: pre-wrap;
+          border-right: 2px solid #4cd964;
+          animation: blink 0.7s infinite;
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          border-color: transparent;
+        }
+        50% {
+          border-color: #4cd964;
+        }
+      }
+
+      .motivation-footer {
+        text-align: center;
+        padding: 20rpx;
+        background: #e8f5e9;
+        border-radius: 12rpx;
+
+        .footer-text {
+          color: #4cd964;
+          font-size: 28rpx;
+          font-weight: 500;
+        }
+      }
+    }
+  }
 }
 .schedule-section {
   margin-top: 10px;
@@ -2649,6 +2946,113 @@ button {
   .confirm-btn {
     background: #007aff;
     color: white;
+  }
+}
+
+// 添加按钮组样式
+.button-group {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 50rpx;
+  justify-content: center;
+
+  .take_picture {
+    font-size: 30rpx;
+    border-radius: 20rpx;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0 30rpx;
+
+    &:disabled {
+      background-color: #f5f5f5;
+      color: #999;
+      border-color: #ddd;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      background-color: rgb(177, 181, 187);
+      color: white;
+    }
+  }
+}
+
+.ai-customization {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ai-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-input {
+  width: 90%;
+  height: 100px;
+  padding: 5%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  resize: none;
+}
+
+.plan-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.plan-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.plan-content {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+// 添加按钮样式
+.plan-actions {
+  display: flex;
+  gap: 20rpx;
+  margin: 30rpx 0;
+
+  .action-btn {
+    flex: 1;
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10rpx;
+    border-radius: 40rpx;
+    font-size: 28rpx;
+    color: #fff;
+    border: none;
+
+    &.clear {
+      background: linear-gradient(135deg, #ff4d4f, #ff7875);
+
+      &:active {
+        opacity: 0.9;
+      }
+    }
+
+    &.save {
+      background: linear-gradient(135deg, #4cd964, #3cb371);
+
+      &:active {
+        opacity: 0.9;
+      }
+    }
   }
 }
 </style>

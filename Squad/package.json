@@ -32,6 +32,7 @@
         "dotenv": "^16.4.5",
         "firstui-uni": "^2.4.0",
         "markdown-it": "^14.1.0",
-        "marked": "^14.1.4"
+        "marked": "^14.1.4",
+        "uni-app-fetch": "^0.0.3"
     }
 }
