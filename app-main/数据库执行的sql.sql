@@ -1,6 +1,6 @@
 -- 1. 数据库创建和初始化
-CREATE DATABASE my_database;
-USE my_database;
+CREATE DATABASE Squad_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE Squad_db;
 
 -- 2. 用户相关表
 -- 2.1 用户主表
@@ -104,7 +104,7 @@ CREATE TABLE goal (
     `运动类型` VARCHAR(100),
     `时间` INT,
     `image_url` varchar(255) NOT NULL,
-    `video_url` varchar(255) NOT NULL
+    `video_url` varchar(255) NOT NULL DEFAULT 'https://www.bilibili.com'
 );
 
 -- 4.2 食物记录表
@@ -121,7 +121,13 @@ CREATE TABLE food_records (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
+-- 记录运动时长
+CREATE TABLE exercise_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  exercise_duration INT DEFAULT 0
+);
 -- 5. 创建索引
 CREATE INDEX idx_sender_receiver ON messages(sender_id, receiver_id);
 CREATE INDEX idx_timestamp ON messages(timestamp);

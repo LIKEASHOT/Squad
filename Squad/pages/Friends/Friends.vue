@@ -753,7 +753,7 @@ const closeSidebar = () => {
 
 // 修改其他打开弹窗的方法
 const showAddFriendDialog = () => {
-  closeSidebar();
+  sidebarPopup.value.close();
   // 隐藏导航栏
   uni.hideTabBar({
     animation: true,
@@ -765,7 +765,7 @@ const showAddFriendDialog = () => {
 
 // 修改显示好友列表的方法
 const showFriendsList = () => {
-  closeSidebar();
+  sidebarPopup.value.close();
   // 隐藏导航栏
   uni.hideTabBar({
     animation: true,
@@ -792,21 +792,7 @@ const handleMaskClick = () => {
   closeSidebar();
 };
 
-// 添加一个统一的关闭函数
-const closeAllMenus = () => {
-  // 关闭所有弹窗
-  sidebarPopup.value.close();
-  addFriendPopup.value.close();
-  friendsListPopup.value.close();
-  
-  // 延时恢复侧边栏按钮和导航栏
-  setTimeout(() => {
-    isSidebarOpen.value = false;
-    uni.showTabBar({
-      animation: true
-    });
-  }, 300);
-};
+
 </script>
 
 <style lang="scss">
@@ -1403,13 +1389,16 @@ const closeAllMenus = () => {
   background: #fff;
   border-radius: 20rpx 20rpx 0 0;
   padding: 30rpx;
-  max-height: 70vh;
+  height: 70vh; // 固定高度为屏幕高度的70%
+  display: flex;
+  flex-direction: column; // 使用flex布局
 
   .popup-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30rpx;
+    padding-bottom: 20rpx;
+    border-bottom: 1rpx solid #eee;
 
     .popup-title {
       font-size: 32rpx;
@@ -1418,7 +1407,10 @@ const closeAllMenus = () => {
   }
 
   .friends-scroll {
-    max-height: calc(70vh - 100rpx);
+    flex: 1; // 占据剩余空间
+    overflow-y: auto; // 允许垂直滚动
+    padding: 20rpx 0;
+    -webkit-overflow-scrolling: touch; // 优化iOS滚动
   }
 
   .friend-manage-item {
