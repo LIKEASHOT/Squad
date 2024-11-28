@@ -1,6 +1,10 @@
 // 引入依赖
+// 加载环境变量
+
+// nodemon --inspect app.js 用于调试
 const express = require("express");
 const mysql = require("mysql");
+const mysql2 = require("mysql2/promise"); // 使用 mysql2/promise 以支持 async/await
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken"); // 引入 JWT 库
 const session = require("express-session");
@@ -9,120 +13,17 @@ const axios = require("axios");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const dayjs = require('dayjs');
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
+require("dotenv").config();
 const config = {
   // 获取本地IP地址
-  localIP: "192.168.56.1",
-  port: 3000,
-};
-require("dotenv").config();
-const WebSocket = require("ws");
-
-// 在 app 创建后添加 WebSocket 服务器
-const wss = new WebSocket.Server({ port: 3001 });
-
-// 存储在线用户的 WebSocket 连接
-const clients = new Map();
-
-// WebSocket 连接处理
-wss.on("connection", (ws) => {
-  let userId = null;
-
-  ws.on("message", async (message) => {
-    try {
-      const data = JSON.parse(message);
-
-      switch (data.type) {
-        case "auth":
-          // 用户认证，存储连接
-          userId = data.username;
-          clients.set(userId, ws);
-          // 广播用户在线状态
-          broadcastStatus(userId, "online");
-          break;
-
-        case "text":
-          // 处理普通文本消息
-          await handleTextMessage(data);
-          // 转发消息给接收者
-          forwardMessage(data);
-          break;
-
-        case "invitation":
-          // 处理打卡邀请
-          await handleInvitation(data);
-          // 转发邀请给接收者
-          forwardMessage(data);
-          break;
-
-        case "invitation_response":
-          // 处理邀请响应
-          await handleInvitationResponse(data);
-          // 转发响应给发送者
-          forwardMessage(data);
-          break;
-
-        case "checkin":
-          // 处理打卡记录
-          await handleCheckin(data);
-          // 广播打卡进度
-          broadcastProgress(data);
-          break;
-      }
-    } catch (error) {
-      console.error("WebSocket消息处理错误:", error);
-    }
-  });
-
-  ws.on("close", () => {
-    if (userId) {
-      clients.delete(userId);
-      // 广播用户离线状态
-      broadcastStatus(userId, "offline");
-    }
-  });
-});
-
-// 消息转发函数
-const forwardMessage = (message) => {
-  const receiverWs = clients.get(message.receiver);
-  if (receiverWs) {
-    receiverWs.send(JSON.stringify(message));
-  }
-};
-
-// 广播状态函数
-const broadcastStatus = (userId, status) => {
-  const statusMessage = {
-    type: "status",
-    username: userId,
-    status: status,
-  };
-
-  for (const ws of clients.values()) {
-    ws.send(JSON.stringify(statusMessage));
-  }
-};
-
-// 广播进度函数
-const broadcastProgress = (data) => {
-  const progressMessage = {
-    type: "progress_update",
-    challengeId: data.challengeId,
-    userId: data.userId,
-    progress: data.progress,
-  };
-
-  for (const ws of clients.values()) {
-    ws.send(JSON.stringify(progressMessage));
-  }
+  localIP: process.env.SERVER_HOST,
+  port: process.env.SERVER_PORT,
 };
 
 // 创建应用实例
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 // 配置 CORS
 app.use(
   cors({
@@ -139,30 +40,23 @@ app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请�
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // 创建数据库连接
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "123456",
-  database: "my_database",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
+// 创建数据库连接池
+const pool = mysql2.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
 const JWT_SECRET = "your_jwt_secret"; // 替换为你的密钥
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (token == null) {
-    return res.status(401).json({ error: "Unauthorized: No token provided" }); // 没有提供 token
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: "Forbidden: Invalid token" }); // token 无效
-    }
-    req.user = user; // 将用户信息存入 req.user
-    next(); // 继续执行下一个中间件
-  });
-}
 
 app.use(
   session({
@@ -172,6 +66,452 @@ app.use(
     cookie: { secure: false },
   })
 );
+require("dotenv").config();
+const WebSocket = require("ws");
+
+// 在 app 创建后添加 WebSocket 服务器
+const wss = new WebSocket.Server({ port: 3001 });
+
+// 存储在线用户的 WebSocket 连接
+const clients = new Map();
+
+// WebSocket 连接处理
+wss.on("connection", (ws) => {
+  ws.username = null;
+  ws.userId = null;
+  ws.on("message", async (message) => {
+    try {
+      const data = JSON.parse(message);
+      console.log("收到WebSocket消息:", data);
+
+      switch (data.type) {
+        case "auth":
+          ws.username = data.username;
+          console.log("用户认证:", ws.username);
+          ws.userId = await getUserIdByUsername(ws.username);
+          clients.set(ws.userId, ws);
+
+          // 更新用户在线状态
+          await updateUserStatus(ws.userId, ws.username, true);
+          // 广播在线状态
+          broadcastStatus(ws.userId, ws.username, "online");
+
+          // 获取并发送离线消息
+          try {
+            const offlineMessages = await getOfflineMessages(ws.userId);
+            console.log("获取到的离线消息:", offlineMessages);
+
+            if (offlineMessages.length > 0) {
+              // 将每条离线消息发送给用户
+              for (const msg of offlineMessages) {
+                const messageData = {
+                  type: msg.type,
+                  id: msg.id,
+                  sender: msg.sender,
+                  receiver: msg.receiver,
+                  content: msg.content,
+                  time: msg.time,
+                  user_id: msg.sender_id,
+                };
+
+                // 如果消息包含额外数据，解析并添加
+                if (msg.message_data) {
+                  try {
+                    const extraData = JSON.parse(msg.message_data);
+                    Object.assign(messageData, extraData);
+                  } catch (e) {
+                    console.error("解析消息数据失败:", e);
+                  }
+                }
+
+                ws.send(JSON.stringify(messageData));
+              }
+
+              // 不再需要更新消息状态，因为消息已经被删除
+              console.log("所有离线消息已发送并删除");
+            }
+          } catch (error) {
+            console.error("处理离线消息失败:", error);
+          }
+
+          // 获取该用户的所有好友当前状态并发送
+          try {
+            const friendsList = await getFriendsList(ws.userId);
+            const friendsStatus = [];
+
+            for (const friendId of friendsList) {
+              // 查询每个好友的在线状态
+              const query = `
+                SELECT u.name, us.is_online, us.last_active
+                FROM users u
+                LEFT JOIN user_status us ON u.id = us.user_id
+                WHERE u.id = ?
+              `;
+              const [rows] = await pool.query(query, [friendId]);
+              console.log("好友状态:", rows);
+              if (rows.length > 0) {
+                friendsStatus.push({
+                  type: "status",
+                  username: rows[0].name,
+                  status: rows[0].is_online ? "online" : "offline",
+                  timestamp: rows[0].last_active,
+                });
+              }
+            }
+
+            // 发送所有好友的状态
+            if (friendsStatus.length > 0) {
+              ws.send(
+                JSON.stringify({
+                  type: "friends_status",
+                  statuses: friendsStatus,
+                })
+              );
+            }
+          } catch (error) {
+            console.error("获取好友状态失败:", error);
+          }
+          break;
+
+        case "text":
+          // 保存消息到数据库
+          // console.log("收到消息:", data);
+          const messageId = await saveMessage(data);
+          // await updateUnread(data);
+          // 转发消息
+          forwardMessage({ ...data, id: messageId, user_id: ws.userId });
+          break;
+
+        case "read_ack":
+          // 处理已读回执
+          const friendId_response = await getUserIdByUsername(data.receiver);
+          const success = await notifyMessageRead(
+            ws.userId,
+            friendId_response,
+            data
+          );
+          if (!success) {
+            console.error("处理已读回执失败");
+          }
+          break;
+      }
+    } catch (error) {
+      console.error("处理WebSocket消息失败:", error);
+    }
+  });
+
+  ws.on("close", async () => {
+    console.log("WebSocket 连接关闭");
+    console.log("用户名称:", ws.username);
+    if (ws.userId) {
+      // 更新用户离线状态
+      await updateUserStatus(ws.userId, ws.username, false);
+      clients.delete(ws.userId);
+      // console.log(clients);
+      broadcastStatus(ws.userId, ws.username, "offline");
+    }
+  });
+});
+
+// 数据库操作函数
+const updateUserStatus = async (userId, username, isOnline) => {
+  console.log(`用户 ${username} 状态更新为 ${isOnline ? "在线" : "离线"}`);
+  const query = `
+    INSERT INTO user_status (user_id, is_online, last_active)
+    VALUES (?, ?, NOW())
+    ON DUPLICATE KEY UPDATE
+    is_online = ?, last_active = NOW()
+  `;
+  await pool.query(query, [userId, isOnline, isOnline]);
+};
+
+const saveMessage = async (message) => {
+  // 首先查询发送者和接收者的用户ID
+  const getUsersQuery = `
+    SELECT id, name FROM users 
+    WHERE name IN (?, ?)
+  `;
+
+  try {
+    const [users] = await new Promise((resolve, reject) => {
+      connection.query(
+        getUsersQuery,
+        [message.sender, message.receiver],
+        (err, results) => {
+          if (err) reject(err);
+          else resolve([results]);
+        }
+      );
+    });
+
+    if (!users || users.length !== 2) {
+      throw new Error("发送者或接收者不存在");
+    }
+
+    const sender = users.find((u) => u.name === message.sender);
+    const receiver = users.find((u) => u.name === message.receiver);
+    console.log("发送者:", sender);
+    console.log("接收者:", receiver);
+    // 然后使用实际的用户ID插入消息
+    const insertQuery = `
+      INSERT INTO messages (sender_id, receiver_id, sender, receiver, content, type)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    const result = await new Promise((resolve, reject) => {
+      connection.query(
+        insertQuery,
+        [
+          sender.id,
+          receiver.id,
+          sender.name,
+          receiver.name,
+          message.content,
+          message.type,
+        ],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+    console.log("消息已保存:");
+    return result.insertId;
+  } catch (error) {
+    console.error("保存消息失败:", error);
+    throw error;
+  }
+};
+const getUserIdByUsername = async (username) => {
+  const query = `
+    SELECT id
+    FROM users
+    WHERE name = ?
+  `;
+  try {
+    const [rows] = await pool.query(query, [username]);
+    if (rows.length > 0) {
+      return rows[0].id;
+    } else {
+      throw new Error("用户不存在");
+    }
+  } catch (error) {
+    console.error("查询用户ID失败:", error);
+    throw error;
+  }
+};
+const updateofflineMessage = async (message) => {
+  var sender = null;
+  var receiver = null;
+  // 首先查询发送者和接收者的用户ID
+  const getUsersQuery = `
+  SELECT id, name FROM users 
+  WHERE name IN (?, ?)
+  `;
+
+  try {
+    const [users] = await new Promise((resolve, reject) => {
+      connection.query(
+        getUsersQuery,
+        [message.sender, message.receiver],
+        (err, results) => {
+          if (err) reject(err);
+          else resolve([results]);
+        }
+      );
+    });
+
+    if (!users || users.length !== 2) {
+      throw new Error("发送者或接收者不存在");
+    }
+
+    sender = users.find((u) => u.name === message.sender);
+    receiver = users.find((u) => u.name === message.receiver);
+    console.log("发送者:", sender);
+    console.log("接收者:", receiver);
+  } catch (error) {
+    console.error("获取用户id失败:", error);
+    throw error;
+  }
+  const userId = receiver.id;
+  const senderId = sender.id;
+  const query = `
+    INSERT INTO offline_messages (user_id, sender_id, receiver_id, sender, receiver, type, content, timestamp)
+    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+    ON DUPLICATE KEY UPDATE
+    content = VALUES(content),
+    timestamp = NOW()
+  `;
+  try {
+    await pool.query(query, [
+      userId,
+      senderId,
+      userId,
+      sender.name,
+      receiver.name,
+      message.type,
+      message.content,
+    ]);
+    console.log("离线消息已保存", message);
+  } catch (error) {
+    console.error("更新离线消息失败:", error);
+    throw error;
+  }
+};
+
+// 消息转发函数
+const forwardMessage = async (message) => {
+  console.log("接收者名称:", message.receiver);
+  const receiverId = await getUserIdByUsername(message.receiver);
+  const senderId = message.user_id;
+  const receiverWs = clients.get(receiverId);
+  console.log("接收者:", receiverId);
+  console.log("发送者:", senderId);
+  // const receiverWs = clients.get(message.receiver);
+  if (receiverWs && receiverWs.readyState === WebSocket.OPEN) {
+    // 转发消息给接收者
+    receiverWs.send(
+      JSON.stringify({
+        ...message,
+        id: message.id,
+      })
+    );
+    console.log(`消息已转发给 ${message.receiver}`);
+  } else {
+    console.log(`用户 ${message.receiver} 不在线`);
+    await updateofflineMessage(message);
+  }
+};
+const getUsernamesByIds = async (userIds) => {
+  if (userIds.length === 0) return [];
+
+  const query = `
+    SELECT id, name
+    FROM users
+    WHERE id IN (?)
+  `;
+  try {
+    const [rows] = await pool.query(query, [userIds]);
+    return rows;
+  } catch (error) {
+    console.error("查询用户名失败:", error);
+    throw error;
+  }
+};
+// 查询好友列表函数
+const getFriendsList = async (userId) => {
+  const query = `
+    SELECT friend_id AS friendId
+    FROM friendships
+    WHERE user_id = ? AND status = 'accepted'
+    UNION
+    SELECT user_id AS friendId
+    FROM friendships
+    WHERE friend_id = ? AND status = 'accepted'
+  `;
+  try {
+    const [friends] = await pool.query(query, [userId, userId]);
+    return friends.map((friend) => friend.friendId);
+  } catch (error) {
+    console.error("查询好友列表失败:", error);
+    throw error;
+  }
+};
+// 广播状态函数
+const broadcastStatus = async (userId, username, status) => {
+  const statusMessage = {
+    type: "status",
+    username: username,
+    status: status,
+    timestamp: new Date().getTime(),
+  };
+
+  try {
+    // 获取好友列表
+    const friendsList = await getFriendsList(userId);
+    // 获取好友的用户名
+    const friends = await getUsernamesByIds(friendsList);
+    console.log(`用户 ${username} 的好友列表:`, friends);
+    // 广播给所有在线好友
+    friendsList.forEach((friendId) => {
+      const ws = clients.get(friendId);
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify(statusMessage));
+          console.log(`已向 ${friendId} 发送 ${username} 的状态更新:`, status);
+        } catch (error) {
+          console.error(`向 ${friendId} 发送状态更新失败:`, error);
+        }
+      }
+    });
+  } catch (error) {
+    console.error("广播状态更新失败:", error);
+  }
+};
+
+// 添加心跳检测和状态广播
+const heartbeatInterval = 10000; // 10秒一次心跳
+const statusBroadcastInterval = 5000; // 5秒一次状态广播
+
+// 心跳检测
+setInterval(() => {
+  clients.forEach((ws, userId) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.ping();
+    } else {
+      clients.delete(userId);
+      broadcastStatus(userId, "offline");
+    }
+  });
+}, heartbeatInterval);
+
+// 定期广播在线状态
+setInterval(() => {
+  clients.forEach((ws, userId) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      // 查询该用户的所有好友
+      const getFriendsQuery = `
+        SELECT DISTINCT 
+          CASE 
+            WHEN f.user_id = (SELECT id FROM users WHERE name = ?) THEN f.friend_id
+            ELSE f.user_id 
+          END as friend_id,
+          u.name as friend_name
+        FROM friendships f
+        JOIN users u ON (
+          CASE 
+            WHEN f.user_id = (SELECT id FROM users WHERE name = ?) THEN f.friend_id = u.id
+            ELSE f.user_id = u.id
+          END
+        )
+        WHERE (f.user_id = (SELECT id FROM users WHERE name = ?) OR f.friend_id = (SELECT id FROM users WHERE name = ?))
+        AND f.status = 'accepted'
+      `;
+
+      connection.query(
+        getFriendsQuery,
+        [userId, userId, userId, userId],
+        (err, friends) => {
+          if (!err && friends) {
+            friends.forEach((friend) => {
+              const friendWs = clients.get(friend.friend_name);
+              if (friendWs && friendWs.readyState === WebSocket.OPEN) {
+                friendWs.send(
+                  JSON.stringify({
+                    type: "status",
+                    username: userId,
+                    status: "online",
+                    timestamp: new Date().getTime(),
+                  })
+                );
+              }
+            });
+          }
+        }
+      );
+    }
+  });
+}, statusBroadcastInterval);
 
 // 注册 API
 app.post("/register", (req, res) => {
@@ -269,37 +609,65 @@ app.post("/register-admin", (req, res) => {
 
 //登录API，输入值：账号密码，返回值有（登陆成功信号和对应用户的权限）
 app.post("/login", (req, res) => {
-  const { username, password } = req.body; // 从请求体中获取用户名和密码
+  const { username, password } = req.body;
 
   const query = "SELECT * FROM users WHERE name = ? AND password = ?";
-
   connection.query(query, [username, password], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: "Database error" });
+      return res.status(500).json({ message: "服务器错误" });
     }
+
     if (results.length > 0) {
-      const user = results[0];
+      // 登录成功后，查询该用户的所有好友
+      const getFriendsQuery = `
+        SELECT DISTINCT 
+          CASE 
+            WHEN f.user_id = ? THEN f.friend_id
+            ELSE f.user_id 
+          END as friend_id,
+          u.name as friend_name
+        FROM friendships f
+        JOIN users u ON (
+          CASE 
+            WHEN f.user_id = ? THEN f.friend_id = u.id
+            ELSE f.user_id = u.id
+          END
+        )
+        WHERE (f.user_id = ? OR f.friend_id = ?)
+        AND f.status = 'accepted'
+      `;
 
-      // 登录成功，更新 lastLogin
-      const updateLoginTimeQuery =
-        "UPDATE users SET lastLogin = NOW() WHERE name = ?";
-      connection.query(updateLoginTimeQuery, [username], (updateErr) => {
-        if (updateErr) {
-          return res.status(500).json({ error: "Database error" });
+      connection.query(
+        getFriendsQuery,
+        [results[0].id, results[0].id, results[0].id, results[0].id],
+        (err, friends) => {
+          if (err) {
+            console.error("查询好友失败:", err);
+          } else {
+            // 向所有在线好友广播该用户的在线状态
+            friends.forEach((friend) => {
+              const friendWs = clients.get(friend.friend_name);
+              if (friendWs && friendWs.readyState === WebSocket.OPEN) {
+                friendWs.send(
+                  JSON.stringify({
+                    type: "status",
+                    username: username,
+                    status: "online",
+                    timestamp: new Date().getTime(),
+                  })
+                );
+              }
+            });
+          }
         }
+      );
 
-        // 生成 JWT
-        const token = jwt.sign({ username: username }, JWT_SECRET);
-
-        // 返回登录成功消息、token 和用户的权限
-        res.json({
-          message: "Login successful",
-          token,
-          permission: user.Permission,
-        });
+      res.json({
+        message: "登录成功",
+        data: results[0],
       });
     } else {
-      res.status(401).json({ error: "Invalid credentials" });
+      res.status(401).json({ message: "用户名或密码错误" });
     }
   });
 });
@@ -406,7 +774,7 @@ app.get("/last-login", (req, res) => {
   });
 });
 
-//AI成健身计划
+//AI生成健身计划
 app.post("/generateFitnessPlan", async (req, res) => {
   const { aiInput, username } = req.body;
   // 验证输入
@@ -561,7 +929,7 @@ app.post("/foodCalorie", upload.single("file"), async (req, res) => {
               {
                 type: "text",
                 text:
-                  "识别��个食物的热量，热量要用准确数值表示，取一个你认为恰当的值即可，前面不需要加上大约等字样，并且严格按照以下JSON格式输出,如果有多种食物，一定要依次输出仅输出JSON，不要添加其他内容：\n" +
+                  "请识别这个食物的热量，热量要用准确数值表示，取一个你认为恰当的值即可，前面不需要加上大约等字样，并且严格按照以下JSON格式输出,如果有多种食物，一定要依次输出，仅输出JSON，不要添加其他内容：\n" +
                   "{\n" +
                   '  "食物名称": "xxx",\n' +
                   '  "热量": "yyy kcal/100g"\n' +
@@ -759,8 +1127,7 @@ app.get("/goals", (req, res) => {
       卡路里 AS calorie, 
       CONCAT('http://${config.localIP}:${config.port}/', image_url) AS image_url, 
       目标 AS goal, 
-      运动类型 AS type,
-      B站连接 as videoUrl
+      运动类型 AS type 
     FROM goal
   `;
 
@@ -784,6 +1151,10 @@ const API_KEY = process.env.API_KEY;
 async function getDailyCalories(height, weight, age, activityType, goal) {
   const question = `
     请根据以下信息计算每日所需热量摄取量：
+    身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型：${activityType.replace(
+    ",",
+    " "
+  )}，运动目标：${goal.replace(",", " ")}。
     身高：${height} cm，体重：${weight} kg，年龄：${age} 岁，运动类型${activityType.replace(
     ",",
     " "
@@ -832,7 +1203,6 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
       }
       throw new Error("AI 任务超时");
     };
-
     // 获取最终 AI 结果
     const dailyCalories = await getAIResult(taskId);
     console.log("AI 计算结果:", dailyCalories);
@@ -853,7 +1223,7 @@ app.post("/api/calculateCalories", async (req, res) => {
     return res.status(400).json({ error: "用户名未提供" });
   }
 
-  // 从数据库获用户信息
+  // 从数据库获取用户信息
   connection.query(
     "SELECT * FROM users WHERE name = ?",
     [username],
@@ -1402,14 +1772,14 @@ app.get("/friends", (req, res) => {
           friendshipSince: friend.friendshipSince,
         }));
 
-        console.log("返回的好友列表:", formattedFriends); // 添加日志
+        // console.log("返回的好友列表:", formattedFriends); // 添加日志
         res.json(formattedFriends);
       }
     );
   });
 });
 
-// 添加好友接���
+// 添加好友接口
 app.post("/friends/add", (req, res) => {
   const { userId, friendUsername } = req.body;
   console.log("收到添加好友请求:", req.body); // 添加日志
@@ -1522,200 +1892,6 @@ app.post("/friends/add", (req, res) => {
   });
 });
 
-// 获取聊天历史记录
-app.post("/chat/history", (req, res) => {
-  const { userId, friendId } = req.body;
-
-  if (!userId || !friendId) {
-    return res.status(400).json({
-      status: "error",
-      message: "Missing userId or friendId",
-    });
-  }
-
-  const query = `
-    SELECT * FROM messages 
-    WHERE (sender_id = ? AND receiver_id = ?) 
-    OR (sender_id = ? AND receiver_id = ?) 
-    ORDER BY timestamp DESC
-  `;
-
-  connection.query(
-    query,
-    [userId, friendId, friendId, userId],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({
-          status: "error",
-          message: "Database error",
-        });
-      }
-
-      res.json({
-        status: "success",
-        data: { messages: results },
-      });
-    }
-  );
-});
-
-// 修改发送消息接口
-app.post("/chat/send", (req, res) => {
-  const { senderId, receiverId, content } = req.body;
-  console.log('收到发送消息请求:', { senderId, receiverId, content }); // 添加请求日志
-
-  if (!senderId || !receiverId || !content) {
-    console.log('缺少必要参数');
-    return res.status(400).json({
-      status: "error",
-      message: "Missing required parameters"
-    });
-  }
-
-  // 先查询发送者ID
-  const senderQuery = "SELECT id FROM users WHERE name = ?";
-  connection.query(senderQuery, [senderId], (err, senderResults) => {
-    if (err) {
-      console.error('查询发送者失败:', err);
-      return res.status(500).json({
-        status: "error",
-        message: "Failed to find sender"
-      });
-    }
-
-    if (senderResults.length === 0) {
-      return res.status(404).json({
-        status: "error",
-        message: "Sender not found"
-      });
-    }
-
-    const senderDbId = senderResults[0].id;
-
-    // 查询接收者ID
-    connection.query(senderQuery, [receiverId], (err, receiverResults) => {
-      if (err) {
-        console.error('查询接收者失败:', err);
-        return res.status(500).json({
-          status: "error",
-          message: "Failed to find receiver"
-        });
-      }
-
-      if (receiverResults.length === 0) {
-        return res.status(404).json({
-          status: "error",
-          message: "Receiver not found"
-        });
-      }
-
-      const receiverDbId = receiverResults[0].id;
-
-      // 插入消息
-      const insertQuery = `
-        INSERT INTO messages (sender_id, receiver_id, content, is_read) 
-        VALUES (?, ?, ?, FALSE)
-      `;
-
-      connection.query(insertQuery, [senderDbId, receiverDbId, content], (err, result) => {
-        if (err) {
-          console.error('插入消息失败:', err);
-          return res.status(500).json({
-            status: "error",
-            message: "Failed to send message"
-          });
-        }
-
-        // 插入未读消息记录
-        const unreadQuery = `
-          INSERT INTO unread_messages (user_id, sender_id, content)
-          VALUES (?, ?, ?)
-        `;
-
-        connection.query(unreadQuery, [receiverDbId, senderDbId, content], (err) => {
-          if (err) {
-            console.error('插入未读消息失败:', err);
-            return res.status(500).json({
-              status: "error",
-              message: "Failed to create unread message"
-            });
-          }
-
-          console.log('消息发送成功:', result.insertId);
-          res.json({
-            status: "success",
-            messageId: result.insertId
-          });
-        });
-      });
-    });
-  });
-});
-
-// 获取未读消息数
-app.get("/chat/unread", (req, res) => {
-  const { userId } = req.query;
-
-  if (!userId) {
-    return res.status(400).json({
-      status: "error",
-      message: "Missing userId",
-    });
-  }
-
-  const query = `
-    SELECT sender_id, COUNT(*) as count 
-    FROM messages 
-    WHERE receiver_id = ? AND is_read = FALSE 
-    GROUP BY sender_id
-  `;
-
-  connection.query(query, [userId], (err, results) => {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Database error",
-      });
-    }
-
-    res.json({
-      status: "success",
-      unreadMessages: results,
-    });
-  });
-});
-
-// 标记消息为已读
-app.post("/chat/mark-read", (req, res) => {
-  const { userId, friendId } = req.body;
-
-  if (!userId || !friendId) {
-    return res.status(400).json({
-      status: "error",
-      message: "Missing parameters",
-    });
-  }
-
-  const query = `
-    UPDATE messages 
-    SET is_read = TRUE 
-    WHERE sender_id = ? AND receiver_id = ? AND is_read = FALSE
-  `;
-
-  connection.query(query, [friendId, userId], (err) => {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Database error",
-      });
-    }
-
-    res.json({
-      status: "success",
-      message: "Messages marked as read",
-    });
-  });
-});
 app.post("/getTargets", async (req, res) => {
   const { username } = req.body;
 
@@ -1751,6 +1927,141 @@ app.post("/getTargets", async (req, res) => {
   });
 });
 
+// 更新用户目标
+app.post("/updateTargets", (req, res) => {
+  const { username, calories_goal, sport_time_goal } = req.body;
+
+  if (!username || calories_goal == null || sport_time_goal == null) {
+    return res.json({ success: false, message: "参数缺失" });
+  }
+
+  const query =
+    "UPDATE users SET calories_goal = ?, sport_time_goal = ? WHERE name = ?";
+  connection.query(
+    query,
+    [calories_goal, sport_time_goal, username],
+    (err, results) => {
+      if (err) {
+        console.error("更新用户目标失败:", err);
+        return res.json({ success: false, message: "服务器错误" });
+      }
+
+      if (results.affectedRows > 0) {
+        res.json({ success: true });
+      } else {
+        res.json({ success: false, message: "用户目标更新失败" });
+      }
+    }
+  );
+});
+app.post("/updateAvatar", (req, res) => {
+  const { username, avatar } = req.body;
+
+  if (!username || !avatar) {
+    return res.status(400).json({ success: false, message: "参数不完整" });
+  }
+
+  const query = `
+    UPDATE users 
+    SET avatar = ? 
+    WHERE name = ?;
+  `;
+
+  connection.query(query, [avatar, username], (error, results) => {
+    if (error) {
+      console.error("更新头像失败:", error);
+      return res.status(500).json({ success: false, message: "服务器错误" });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: "用户不存在" });
+    }
+
+    res.json({ success: true, message: "头像更新成功" });
+  });
+});
+
+
+// 添加标记消息已读的函数
+const notifyMessageRead = async (userId, friendId, message) => {
+  try {
+    // 更新数据库中的消息状态
+    const query = `
+      UPDATE messages 
+      SET is_read = true 
+      WHERE sender_id = ? AND receiver_id = ? AND is_read = false
+    `;
+
+    await pool.query(query, [friendId, userId]);
+
+    // 获取在线用户的WebSocket连接
+    const senderSocket = clients.get(friendId);
+
+    // 如果发送者在线，发送已读回执
+    if (senderSocket) {
+      senderSocket.send(
+        JSON.stringify({
+          type: "read_ack",
+          sender: message.sender,
+          receiver: message.receiver,
+          time: Date.now(),
+        })
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error("标记消息已读失败:", error);
+    return false;
+  }
+};
+
+// 添加获取离线消息的函数
+const getOfflineMessages = async (userId) => {
+  try {
+    // 查询所有未读的离线消息
+    const query = `
+      SELECT 
+        m.id,
+        m.sender_id,
+        m.receiver_id,
+        m.sender,
+        m.receiver,
+        m.content,
+        m.type,
+        m.timestamp as time,
+        u.name as sender,
+        u2.name as receiver
+      FROM offline_messages m
+      JOIN users u ON m.sender_id = u.id
+      JOIN users u2 ON m.user_id = u2.id
+      WHERE m.user_id = ?
+      ORDER BY m.timestamp ASC
+    `;
+
+    const [messages] = await pool.query(query, [userId]);
+
+    if (messages.length > 0) {
+      // 删除已发送的离线消息
+      const deleteQuery = `
+        DELETE FROM offline_messages 
+        WHERE user_id = ?
+      `;
+
+      try {
+        await pool.query(deleteQuery, [userId]);
+        console.log(`已删除 ${messages.length} 条离线消息`);
+      } catch (deleteError) {
+        console.error("删除离线消息失败:", deleteError);
+      }
+    }
+
+    return messages;
+  } catch (error) {
+    console.error("获取离线消息失败:", error);
+    return [];
+  }
+};
 // 更新用户目标
 app.post("/updateTargets", (req, res) => {
   const { username, calories_goal, sport_time_goal } = req.body;

@@ -66,13 +66,15 @@
     	"path" : "pages/InviteFriends/InviteFriends",
     	"style" : 
     	{
-    		"navigationBarTitleText" : "邀请好友"
+			"navigationStyle": "custom",
+    		"navigationBarTitleText" : ""
     	}
     },
 	{
 	  "path": "pages/Chat/Chat",
 	  "style": {
-	    "navigationBarTitleText": "聊天",
+	    "navigationStyle": "custom",
+	    "navigationBarTitleText": "",
 	    "enablePullDownRefresh": false
 	  }
 	},
