@@ -1,31 +1,8 @@
 {
-  "hash": "4a0ef944",
+  "hash": "7a06391d",
   "configHash": "43d2a32c",
-  "lockfileHash": "40c75dc8",
-  "browserHash": "8ee72807",
-  "optimized": {
-    "markdown-it": {
-      "src": "../../../../../node_modules/markdown-it/index.mjs",
-      "file": "markdown-it.js",
-      "fileHash": "c0e230cf",
-      "needsInterop": false
-    },
-    "axios": {
-      "src": "../../../../../node_modules/axios/index.js",
-      "file": "axios.js",
-      "fileHash": "e339a49d",
-      "needsInterop": false
-    },
-    "dotenv": {
-      "src": "../../../../../node_modules/dotenv/lib/main.js",
-      "file": "dotenv.js",
-      "fileHash": "5cd10bf5",
-      "needsInterop": true
-    }
-  },
-  "chunks": {
-    "chunk-P2LSHJDD": {
-      "file": "chunk-P2LSHJDD.js"
-    }
-  }
+  "lockfileHash": "c3f2ad8b",
+  "browserHash": "21981605",
+  "optimized": {},
+  "chunks": {}
 }
