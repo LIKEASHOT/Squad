@@ -31,7 +31,8 @@ CREATE TABLE exercise_logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
-  exercise_duration INT DEFAULT 0
+  exercise_duration INT DEFAULT 0,
+  daily_calories INT DEFAULT 0
 );
 
 CREATE TABLE messages (
