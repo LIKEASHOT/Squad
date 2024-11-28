@@ -252,36 +252,12 @@ const currentTab = ref("friends");
 const searchQuery = ref("");
 const currentLetter = ref("");
 const showLetterTip = ref(false);
-const defaultAvatar = "/static/avatar/default.png";
+const defaultAvatar = "/static/default-avatar.png";
 const serverUrl = uni.getStorageSync("serverUrl");
 
 const letters = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "W",
-  "X",
-  "Y",
-  "Z",
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+  'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','#'
 ];
 
 const friendsList = ref([
@@ -342,12 +318,36 @@ const groupedFriends = computed(() => {
   );
 
   const grouped = {};
-  letters.forEach((letter) => {
-    const friends = filtered.filter((friend) =>
-      friend.username.toUpperCase().startsWith(letter)
-    );
-    if (friends.length > 0) {
-      grouped[letter] = friends;
+  
+
+  
+  // 初始化字母分组
+  letters.forEach(letter => {
+    grouped[letter] = [];
+  });
+  // 初始化 # 分组
+  grouped['#'] = [];
+  filtered.forEach((friend) => {
+    // 获取好友名称的首字符
+    const firstChar = friend.username.charAt(0).toUpperCase();
+    
+    // 判断首字符是否是字母
+    if (/[A-Z]/.test(firstChar)) {
+      // 如果是字母，添加到对应字母分组
+      if (!grouped[firstChar]) {
+        grouped[firstChar] = [];
+      }
+      grouped[firstChar].push(friend);
+    } else {
+      // 如果不是字母，添加到 # 分组
+      grouped['#'].push(friend);
+    }
+  });
+
+  // 删除空分组
+  Object.keys(grouped).forEach(key => {
+    if (grouped[key].length === 0) {
+      delete grouped[key];
     }
   });
 
@@ -541,7 +541,7 @@ const loadFriendsList = async () => {
 };
 
 // 修改加载未读消息数的函数
-const loadUnreadCounts = () => {
+const loadUnreadCounts = async () => {
   const currentUser = uni.getStorageSync("username");
 
   friendsList.value = friendsList.value.map((friend) => {
@@ -580,7 +580,11 @@ onMounted(async () => {
 onPullDownRefresh(async () => {
   console.log("refresh");
   await loadFriendsList();
-  uni.stopPullDownRefresh();
+  await loadUnreadCounts();
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  }, 1000);
+
 });
 onUnmounted(() => {
   // 清除定时器

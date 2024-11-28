@@ -770,7 +770,10 @@ onMounted(() => {
 onPullDownRefresh(async () => {
   console.log("refresh");
   await fetchPlansFromBackend();
-  uni.stopPullDownRefresh();
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  }, 1000);
+
 });
 // 初始化WebSocket连接
 // store.initWebSocket();
