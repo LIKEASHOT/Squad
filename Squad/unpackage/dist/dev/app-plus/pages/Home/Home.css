@@ -2031,11 +2031,42 @@ uni-button[data-v-7ffebbf4] {
   justify-content: center;
 }
 .op_bar[data-v-7ffebbf4] {
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* 使按钮垂直排列 */
+  gap: 1px;
+  /* 按钮之间的间距 */
   justify-content: center;
+  align-items: center;
+}
+.modify-button[data-v-7ffebbf4],
+.delete-button[data-v-7ffebbf4] {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  /* 移除多余的内边距 */
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  margin-right: 11px;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4);
+  /* 添加边界阴影 */
+  /* 使用flexbox让文字居中 */
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: center;
+  /* 水平居中 */
+}
+.modify-button[data-v-7ffebbf4] {
+  background-color: #4caf50;
+  /* 绿色 */
+  color: white;
+}
+.delete-button[data-v-7ffebbf4] {
+  background-color: #f44336;
+  /* 红色 */
+  color: white;
 }
 .add_icon[data-v-7ffebbf4] {
   width: 3.125rem;
@@ -2050,37 +2081,6 @@ uni-button[data-v-7ffebbf4] {
   position: relative;
   width: 2px;
   background-color: #ccc;
-}
-.modify-button[data-v-7ffebbf4] {
-  /* 保持原有属性 */
-  border: none;
-  border-radius: 5px;
-  background-color: #641013;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-left: 5px;
-  margin-right: 5px;
-  /* 新增垂直排列相关样式 */
-  -webkit-writing-mode: vertical-lr;
-          writing-mode: vertical-lr;
-  /* 使文字垂直排列，从左到右 */
-  text-orientation: upright;
-  /* 保持文字正向 */
-  padding: 15px 8px;
-  /* 调整内边距：上下15px，左右8px */
-  height: 80px;
-  /* 设置按钮高度 */
-  width: 30px;
-  /* 设置按钮宽度 */
-  display: flex;
-  /* 使用flex布 */
-  align-items: center;
-  /* 水平居中 */
-  justify-content: center;
-  /* 垂直居中 */
-  letter-spacing: 2px;
-  /* 文字间距 */
 }
 .popup-content[data-v-7ffebbf4] {
   background-color: #fff;
