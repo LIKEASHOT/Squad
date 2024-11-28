@@ -24681,19 +24681,19 @@ This will fail in production.`);
           ))
         ]),
         vue.createCommentVNode(" 字母导航条 "),
-        vue.createCommentVNode(` <view class="letter-nav">
-        <text
-          v-for="letter in letters"
-          :key="letter"
-          :class="['letter', currentLetter === letter ? 'letter-active' : '']"
-          @touchstart="touchLetter(letter)"
-          @touchend="endTouchLetter"
-        >
-          {{ letter }}
-        </text>
+        vue.createCommentVNode(` <view class="letter-nav">\r
+        <text\r
+          v-for="letter in letters"\r
+          :key="letter"\r
+          :class="['letter', currentLetter === letter ? 'letter-active' : '']"\r
+          @touchstart="touchLetter(letter)"\r
+          @touchend="endTouchLetter"\r
+        >\r
+          {{ letter }}\r
+        </text>\r
       </view> `),
         vue.createCommentVNode(" 字母提示框 "),
-        vue.createCommentVNode(' <view v-if="showLetterTip" class="letter-tip">\n        {{ currentLetter }}\n      </view> '),
+        vue.createCommentVNode(' <view v-if="showLetterTip" class="letter-tip">\r\n        {{ currentLetter }}\r\n      </view> '),
         vue.createCommentVNode(" 添加好友弹窗 "),
         vue.createVNode(
           _component_uni_popup,
