@@ -1127,7 +1127,8 @@ app.get("/goals", (req, res) => {
       卡路里 AS calorie, 
       CONCAT('http://${config.localIP}:${config.port}/', image_url) AS image_url, 
       目标 AS goal, 
-      运动类型 AS type 
+      运动类型 AS type,
+      B站连接 as videoUrl
     FROM goal
   `;
 

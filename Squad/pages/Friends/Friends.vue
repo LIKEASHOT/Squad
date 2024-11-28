@@ -446,7 +446,7 @@ const confirmAddFriend = async () => {
 
     if (res.statusCode === 200 && res.data.status === "success") {
       uni.showToast({
-        title: "��加成功",
+        title: "添加成功",
         icon: "success",
       });
       closeAddFriend();

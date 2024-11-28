@@ -1,31 +1,32 @@
 <template>
-  <!-- 每日运动时长 -->
-  <view class="top_bar_sport">
-    <view class="sportbar">
-      <l-circle
-        v-model="modelVale"
-        :percent="target"
-        :size="String(50)"
-        class="circle_process"
-        strokeColor="#69c27d"
-        trailWidth="12"
-        strokeWidth="12"
-        lineCap="butt"
-      >
-      </l-circle>
-      <div class="exercise-duration">
-        <span>今日运动时长</span>
-        <span>{{ currentExercise }} / {{ planExercise }} 分钟</span>
-      </div>
-    </view>
-    <view>
-       <!-- 点击按钮打开弹窗 -->
+  <div class="sports-container">
+    <!-- 每日运动时长 -->
+    <view class="top_bar_sport">
+      <view class="sportbar">
+        <l-circle
+          v-model="modelVale"
+          :percent="target"
+          :size="String(50)"
+          class="circle_process"
+          strokeColor="#69c27d"
+          trailWidth="12"
+          strokeWidth="12"
+          lineCap="butt"
+        >
+        </l-circle>
+        <div class="exercise-duration">
+          <span>今日运动时长</span>
+          <span>{{ currentExercise }} / {{ planExercise }} 分钟</span>
+        </div>
+      </view>
+      <view>
+         <!-- 点击按钮打开弹窗 -->
           <image 
             src="../../static/icon/shot_sport.png"  
             class="shot_icon" 
             @tap="openEditModal" 
           />
-      
+        
           <!-- 编辑弹窗 -->
           <view v-if="isEditing" class="modal">
             <view class="modal-content">
@@ -53,69 +54,70 @@
               </view>
             </view>
           </view>
-    </view>
-  </view>
-  <div class="container">
-  <!-- 我的课程与自由训练切换 -->
-  <div class="tab-container">
-    <span :class="{ active: tab === 'myExercise' }" 
-	@click="switchTab('myExercise')"
-      >我的课程</span
-    >
-    <span
-      :class="{ active: tab === 'freeExercise' }"
-      @click="switchTab('freeExercise')"
-      >自由训练</span
-    >
-  </div>
-  <!-- 我的课程展示 -->
-  <view v-if="tab === 'myExercise'" class = "plan-section">
-    <div class="plan-list">
-      <div
-        v-for="(item, index) in myPlans"
-        :key="index"
-        class="plan-item"
-      >
-        <image :src="item.imageUrl" class="plan-image" />
-        <div class="plan-info">
-          <span class="plan-title">{{ item.title }}</span>
-          <span class="plan-times">运动次数：{{ item.times }}</span>
-          <span class="plan-duration">时间：{{ item.duration }}</span>
-          <span class="plan-difficulties">难度：{{ item.difficulties }}</span>
-          <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
-        </div>
-        <div class="vertical-line"></div>
-         <!-- 播放按钮 -->
-         <div class="play-button" @click="playPlan(item)"></div>
-      </div>
-    </div>
-  </view>
-   <!-- 视频弹窗 -->
-    <view v-if="isModalVisible" class="video-modal-overlay" @click="closeVideo">
-      <view class="video-modal" @click.stop>
-        <!-- 实时计时显示 -->
-        <view class="video-timer-header">
-          当前运动时长：{{ Math.floor(elapsedTime / 60) }}分{{ elapsedTime % 60 }}秒
-        </view>
-        <!-- 视频播放器 -->
-        <iframe
-          v-if="currentVideoUrl"
-          :src="currentVideoUrl"
-          class="video-iframe"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-        <!-- 关闭按钮 -->
-        <view class="video-modal-footer">
-          <button class="video-close-btn" @click="closeVideo">关闭</button>
-        </view>
       </view>
     </view>
-</div> 
-  <!-- 自由训练展示 -->
-  <view v-if="tab === 'freeExercise'" class = "plan-section">
-    
-  </view>
+    <div class="container">
+    <!-- 我的课程与自由训练切换 -->
+    <div class="tab-container">
+      <span :class="{ active: tab === 'myExercise' }" 
+	@click="switchTab('myExercise')"
+      >我的课程</span
+      >
+      <span
+        :class="{ active: tab === 'freeExercise' }"
+        @click="switchTab('freeExercise')"
+        >自由训练</span
+      >
+    </div>
+    <!-- 我的课程展示 -->
+    <view v-if="tab === 'myExercise'" class = "plan-section">
+      <div class="plan-list">
+        <div
+          v-for="(item, index) in myPlans"
+          :key="index"
+          class="plan-item"
+        >
+          <image :src="item.imageUrl" class="plan-image" />
+          <div class="plan-info">
+            <span class="plan-title">{{ item.title }}</span>
+            <span class="plan-times">运动次数：{{ item.times }}</span>
+            <span class="plan-duration">时间：{{ item.duration }}</span>
+            <span class="plan-difficulties">难度：{{ item.difficulties }}</span>
+            <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
+          </div>
+          <div class="vertical-line"></div>
+           <!-- 播放按钮 -->
+           <div class="play-button" @click="playPlan(item)"></div>
+        </div>
+      </div>
+    </view>
+     <!-- 视频弹窗 -->
+      <view v-if="isModalVisible" class="video-modal-overlay" @click="closeVideo">
+        <view class="video-modal" @click.stop>
+          <!-- 实时计时显示 -->
+          <view class="video-timer-header">
+            当前运动时长：{{ Math.floor(elapsedTime / 60) }}分{{ elapsedTime % 60 }}秒
+          </view>
+          <!-- 视频播放器 -->
+          <iframe
+            v-if="currentVideoUrl"
+            :src="currentVideoUrl"
+            class="video-iframe"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>
+          <!-- 关闭按钮 -->
+          <view class="video-modal-footer">
+            <button class="video-close-btn" @click="closeVideo">关闭</button>
+          </view>
+        </view>
+      </view>
+  </div> 
+    <!-- 自由训练展示 -->
+    <view v-if="tab === 'freeExercise'" class = "plan-section">
+      
+    </view>
+  </div>
 </template>	 
 
 <script setup>
