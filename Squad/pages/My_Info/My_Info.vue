@@ -67,7 +67,7 @@
 <script setup>
 import { ref, computed,onMounted } from "vue";
 
-const serverUrl = "http://192.168.56.1:3000";
+const serverUrl = uni.getStorageSync("serverUrl"); // 服务器地址
 const defaultAvatar = "/static/default-avatar.jpg";
 const isEditing = ref(false);
 const editDuration = ref(null);
