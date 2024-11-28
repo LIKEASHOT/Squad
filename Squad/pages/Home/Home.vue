@@ -793,6 +793,7 @@ const foodName = ref("");
 const calories = ref("");
 const popup = ref(null);
 const dialogTitle = ref("添加计划");
+
 const goals = ref([
   { value: "全部", text: "全部" },
   { value: "减脂", text: "减脂" },
@@ -831,6 +832,96 @@ const plans = ref([]);
 const foodList = ref([]);
 const manualFoodList = ref([]);
 const errorMessage = ref("");
+// 页面加载时调用
+onMounted(() => {
+  fetchPlansFromBackend();
+  judgeManager();
+  loadMyPlans();
+  fetchDailyCalories(username.value);
+  loadExerciseDurations(); // 加载每日运动时长
+  fetchPlanExercise(); // 获取计划运动时长
+  // 监听添加计划的通知 
+  uni.$on("handleAdd", loadMyPlans);
+  // 监听删除计划的通知
+  uni.$on("handleRemove", loadMyPlans);
+  //监听更新目标的通知
+  uni.$on("updateUserTargets",fetchPlanExercise);
+  // 监听来自 Search 页面更新计划的通知
+  uni.$on("plansUpdated", loadMyPlans);
+  // 监听删除食物的通知
+  uni.$on("foodDeleted", initializeRemainingCalories);
+  // 监听编辑食物的通知
+  uni.$on("foodEdit", initializeRemainingCalories);
+  //监听保存运动时间的通知
+   uni.$on("saveExerciseDuration",loadExerciseDurations);
+  // 每分钟检查一次是否到了0点
+  const checkMidnight = setInterval(() => {
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+      console.log("已到0点，重新获取每日热量");
+      fetchDailyCalories(username.value);
+      resetRemainingCalories();
+    }  
+  }, 60000); // 每分钟检查一次
+  username = uni.getStorageSync("username");
+  // 页面加载时初始化数据
+  initializeRemainingCalories();
+});
+
+// 从后端加载计划运动时长
+const fetchPlanExercise = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  uni.request({
+    url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(username)}`, // 拼接 username 参数
+    method: "GET",
+    header: {
+      "Content-Type": "application/json", 
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        planExercise.value = res.data.data.sport_time_goal || 60; // 更新计划运动时长
+      } else {
+        console.error("获取计划运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
+// 加载运动时长
+const loadExerciseDurations = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  uni.request({
+    url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(username)}`, // 传递 username
+    method: "GET",
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        currentExercise.value = res.data.data.exercise_duration || 0; // 更新当前运动时长
+		// 计算当前显示运动时长占计划运动时长的百分比
+		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+      } else {
+        console.error("获取今日运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
 const totalCalories = computed(() => {
   const autoCalories = foodList.value.reduce((sum, food) => {
     const calories = Number(food.currentCalories);
@@ -1252,8 +1343,8 @@ async function fetchDailyCalories(username) {
 const aiInput = ref(""); // AI 输入内容
 const customPlan = ref(""); // 定制计划
 const exerciseProgress = ref(50); // 运动进度百分比
-const currentExercise = ref(30); // 当前运动时长
-const planExercise = ref(60); // 计划运动时长
+const currentExercise = ref(0); // 当前运动时长
+const planExercise = ref(20); // 计划运动时长
 
 const weekDays = ref([
   { date: "周一", progress: 70 },
@@ -1394,34 +1485,6 @@ const judgeManager = () => {
     IsManager.value = true;
   }
 };
-// 页面加载时调用
-onMounted(() => {
-  fetchPlansFromBackend();
-  judgeManager();
-  loadMyPlans();
-  fetchDailyCalories(username.value);
-  // 监听来自 Search 页面更新计划的通知
-  uni.$on("plansUpdated", loadMyPlans);
-  // 监听删除食物的通知
-  uni.$on("foodDeleted", initializeRemainingCalories);
-  // 监听编辑食物的通知
-  uni.$on("foodEdit", initializeRemainingCalories);
-  // 每分钟检查一次是否到了0点
-  const checkMidnight = setInterval(() => {
-    const now = new Date();
-    if (now.getHours() === 0 && now.getMinutes() === 0) {
-      console.log("已到0点，重新获取每日热量");
-      fetchDailyCalories(username.value);
-      resetRemainingCalories();
-    }
-  }, 60000); // 每分钟检查一次
-  username = uni.getStorageSync("username");
-  // 页面加载时初始化数据
-  initializeRemainingCalories();
-  // 如果需要，可以检查连接状态
-
-
-});
 // 初始化剩余热量
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
