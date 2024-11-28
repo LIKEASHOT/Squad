@@ -742,13 +742,40 @@ import {
   watch,
   provide,
   reactive,
+  onUnmounted,
 } from "vue";
 import MarkdownIt from "markdown-it";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
+import { useWebSocketStore } from '@/store/websocket';
+import{onPullDownRefresh} from '@dcloudio/uni-app';
+// 使用 store
+const store = useWebSocketStore();
+onMounted(() => {
+  // 初始化WebSocket连接
+  console.log(store.isConnected);
+  if (!store.isConnected) {
+    store.initWebSocket();
+    console.log("连接初始化..."); 
+  }
+  // 设置一个定时器，每隔一段时间检查一次连接状态
+  setInterval(() => {
+    if (!store.isConnected) {
+      store.initWebSocket(); 
+      console.log("连接初始化..."); 
+    }
+  }, 5000);
+});
+onPullDownRefresh(async () => {
+  console.log("refresh");
+  await fetchPlansFromBackend();
+  uni.stopPullDownRefresh();
+});
+// 初始化WebSocket连接
+// store.initWebSocket();
 // const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
-const serverUrl =uni.getStorageSync("serverUrl");
+const serverUrl = uni.getStorageSync("serverUrl");
 const target = ref(1);
 const modelVale = ref(0);
 const target_eat_percent = ref(100);
@@ -759,7 +786,7 @@ const selectedType = ref("全部"); // 选中的类型筛选项
 const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const showMyplan = ref(true);
-const showMyeat = ref(false); 
+const showMyeat = ref(false);
 // const today_left_eat =  = uni.getStorageSync(`today_left_eat_${username}`);
 const today_left_eat = ref(2000);
 const totalConsumedCalories = ref(0);
@@ -921,7 +948,6 @@ const totalCalories = computed(() => {
   return total;
 });
 
-
 // 计算单个食物的热量
 const calculateFoodCalories = (food) => {
   if (food.amount && food.baseCalories) {
@@ -937,7 +963,7 @@ const calculateManualFoodCalories = (food) => {
 };
 
 // 添加手动食物
-const addManualFood = async() => {
+const addManualFood = async () => {
   manualFoodList.value.push({
     食物名称: "",
     baseCalories: 0,
@@ -956,7 +982,7 @@ const removeFood = (index, type) => {
 };
 
 // 提交食物列表
-const submitFoodList = async() => {
+const submitFoodList = async () => {
   let username = uni.getStorageSync("username"); // 获取当前登录用户
   if (foodList.value.length === 0) {
     uni.showToast({
@@ -980,7 +1006,7 @@ const submitFoodList = async() => {
   const newFoods = [...foodList.value, ...manualFoodList.value].map((food) => ({
     食物名称: food.食物名称,
     amount: food.amount,
-    baseCalories: food.baseCalories, 
+    baseCalories: food.baseCalories,
     currentCalories: food.currentCalories,
     imageUrl: food.imageUrl || "",
     time: new Date().toLocaleTimeString(),
@@ -1033,39 +1059,39 @@ const submitFoodList = async() => {
   //   url: '/pages/DietRecord/DietRecord'
   // });
   try {
-      // 向后端发送数据
-      const res = await uni.request({
-        url: serverUrl + "/submitDailyFoods",
-        method: "POST",
-        data: {
-          username: username,
-          date: today,
-          foods: newFoods,
-        },
-      });
-  
-      if (res.statusCode === 200 && res.data.success) {
-        uni.showToast({
-          title: "上传成功",
-          icon: "success",
-        });
-         
-        // 清空食物列表
-        foodList.value = [];
-        manualFoodList.value = []; 
-      } else {
-        throw new Error(res.data.message || "上传失败，请稍后重试");
-      }
-    } catch (error) {
-      console.error("上传失败:", error);
+    // 向后端发送数据
+    const res = await uni.request({
+      url: serverUrl + "/submitDailyFoods",
+      method: "POST",
+      data: {
+        username: username,
+        date: today,
+        foods: newFoods,
+      },
+    });
+
+    if (res.statusCode === 200 && res.data.success) {
       uni.showToast({
-        title: "上传失败，请稍后重试",
-        icon: "none",
+        title: "上传成功",
+        icon: "success",
       });
+
+      // 清空食物列表
+      foodList.value = [];
+      manualFoodList.value = [];
+    } else {
+      throw new Error(res.data.message || "上传失败，请稍后重试");
     }
+  } catch (error) {
+    console.error("上传失败:", error);
+    uni.showToast({
+      title: "上传失败，请稍后重试",
+      icon: "none",
+    });
+  }
 };
 const takePicture = async () => {
-  try {  
+  try {
     // 选择图片
     const res = await uni.chooseImage();
     if (res.errMsg === "chooseImage:fail User cancelled") {
@@ -1193,7 +1219,7 @@ const processRecognitionResult = (resultData, imageUrl = null) => {
     foodList.value = [...foodList.value, ...newFoodItems];
 
     // 显示添加成功提示
-    uni.showToast({ 
+    uni.showToast({
       title: `成功添加${newFoodItems.length}个食物`,
       icon: "success",
     });
@@ -1206,9 +1232,8 @@ const processRecognitionResult = (resultData, imageUrl = null) => {
   }
 };
 
-
 // 从后端获取计划数据
-const fetchPlansFromBackend = () => {
+const fetchPlansFromBackend = async () => {
   uni.request({
     url: serverUrl + "/goals", // 替换为你的实际后端地址
     method: "GET",
@@ -1465,21 +1490,20 @@ const judgeManager = () => {
     IsManager.value = true;
   }
 };
-
 // 初始化剩余热量
-const initializeRemainingCalories = () => { 
+const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
   today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
-  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);//获取每日热量
-  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0;//获取剩余热量
-  if(remainingCalories >dailyCalories){
-	  remainingCalories = dailyCalories;  
-  } 
-  uni.setStorageSync(`today_left_eat_${username}`, remainingCalories); 
+  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`); //获取每日热量
+  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0; //获取剩余热量
+  if (remainingCalories > dailyCalories) {
+    remainingCalories = dailyCalories;
+  }
+  uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
   today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
-  //更新圆环 
+  //更新圆环
   target_eat_percent.value = dailyCalories
-    ? Math.round((remainingCalories / dailyCalories) * 100) 
+    ? Math.round((remainingCalories / dailyCalories) * 100)
     : 0;
 };
 
@@ -1492,7 +1516,7 @@ const resetRemainingCalories = () => {
   target_eat_percent.value = 100; // 重置进度条
   console.log("已重置剩余热量为每日热量");
 };
-// 添加计划到“我的计划”
+// 添加计划到"我的计划"
 const handleAdd = (plan) => {
   // 先加载现有的计划
   let currentPlans = uni.getStorageSync(`myPlans_${username}`);
@@ -1522,7 +1546,7 @@ const handleAdd = (plan) => {
   loadMyPlans();
 };
 
-// 从“我的计划”中删
+// 从"我的计划"中删
 const handleRemove = (plan) => {
   // 先加载现有的计划
   let currentPlans = uni.getStorageSync(`myPlans_${username}`);
@@ -1685,10 +1709,10 @@ const uploadImage = (filePath) => {
             uni.showToast({
               title: "上传成功",
               icon: "success",
-              duration: 2000, 
+              duration: 2000,
             });
           } else {
-            console.error("上传失败，返回错误:", response); 
+            console.error("上传失败，返回错误:", response);
             uni.showToast({
               title: "上传失败，请重试",
               icon: "none",
@@ -1699,7 +1723,7 @@ const uploadImage = (filePath) => {
           uni.showToast({
             title: "响应数据解析失败",
             icon: "none",
-          }); 
+          });
         }
       },
       fail: (err) => {
@@ -1812,7 +1836,7 @@ const addCheckIn = () => {
   refreshCalendar();
 };
 
-// 添加签到记录 
+// 添加签到记录
 const addSignIn = () => {
   const newDate = currentday.value;
   info.value.selected.push({
@@ -1922,8 +1946,10 @@ const confirmAddFood = () => {
 
 // 添加加载状态变量
 const isRecognizing = ref(false);
-
-
+onUnmounted(() => {
+  // WebSocket 的关闭现在由 store 管理
+  // 如果需要，可以调用 store.closeWebSocket()
+});
 </script>
 
 <style scoped lang="scss">
@@ -2608,9 +2634,9 @@ button {
     height: 80rpx;
     line-height: 80rpx;
     text-align: center;
-    border-radius: 8rpx; 
+    border-radius: 8rpx;
     font-size: 28rpx;
-  } 
+  }
 
   .cancel-btn {
     background: #f5f5f5;

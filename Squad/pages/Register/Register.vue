@@ -100,7 +100,16 @@ const changepwd_vis_confirm = () => {
   password_confirm.value = !password_confirm.value;
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+// const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+// const websocketUrl = "ws://10.133.80.141:3001";
+// Login.vue
+// 读取环境变量
+const serverUrl = import.meta.env.VITE_APP_SERVER_URL;
+const websocketUrl = import.meta.env.VITE_APP_WEBSOCKET_URL;
+console.log(serverUrl, websocketUrl);
+uni.setStorageSync("serverUrl", serverUrl);
+uni.setStorageSync("websocketUrl", websocketUrl);
+
 const form = ref({
   username: "",
   password: "",

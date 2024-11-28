@@ -50,7 +50,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 
-const serverUrl = "http://192.168.56.1:3000"; // 后端接口地址
+const serverUrl = uni.getStorageSync("serverUrl"); // 服务器地址
 
 const goalOptions = ref([
   { value: "减脂", name: "减脂", checked: false },

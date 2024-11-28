@@ -66,7 +66,7 @@
 
 <script setup>
 import { ref,onMounted } from "vue";
-const serverUrl = "http://192.168.56.1:3000"; 
+const serverUrl = uni.getStorageSync("serverUrl"); // 服务器地址
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 const userInfo = ref({
   username: username,

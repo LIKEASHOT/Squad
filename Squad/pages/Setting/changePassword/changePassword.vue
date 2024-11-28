@@ -44,8 +44,7 @@
 <script setup>
 import { ref } from "vue";
 
-const serverUrl = "http://192.168.56.1:3000"; // 后端服务器地址
-
+const serverUrl = uni.getStorageSync("serverUrl"); // 服务器地址
 const form = ref({
   oldPassword: "",
   newPassword: "",
