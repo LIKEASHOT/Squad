@@ -86,7 +86,7 @@
           
           <text class="status-tag" :class="record.status">
             {{ record.status === 'completed' ? '已完成' : '未完成' }}
-          </text>
+          </text> 
         </view>
       </scroll-view>
     </view>
