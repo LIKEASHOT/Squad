@@ -2062,303 +2062,103 @@ const getOfflineMessages = async (userId) => {
     return [];
   }
 };
-// 更新用户目标
-app.post("/updateTargets", (req, res) => {
-  const { username, calories_goal, sport_time_goal } = req.body;
 
-  if (!username || calories_goal == null || sport_time_goal == null) {
-    return res.json({ success: false, message: "参数缺失" });
-  }
+// 添加删除好友接口
+app.post("/friends/delete", async (req, res) => {
+  const { userId, friendUsername } = req.body;
+  console.log("收到删除好友请求:", req.body);
 
-  const query =
-    "UPDATE users SET calories_goal = ?, sport_time_goal = ? WHERE name = ?";
-  connection.query(
-    query,
-    [calories_goal, sport_time_goal, username],
-    (err, results) => {
-      if (err) {
-        console.error("更新用户目标失败:", err);
-        return res.json({ success: false, message: "服务器错误" });
-      }
-
-      if (results.affectedRows > 0) {
-        res.json({ success: true });
-      } else {
-        res.json({ success: false, message: "用户目标更新失败" });
-      }
-    }
-  );
-});
-app.post("/updateAvatar", (req, res) => {
-  const { username, avatar } = req.body;
-
-  if (!username || !avatar) {
-    return res.status(400).json({ success: false, message: "参数不完整" });
-  }
-
-  const query = `
-    UPDATE users 
-    SET avatar = ? 
-    WHERE name = ?;
-  `;
-
-  connection.query(query, [avatar, username], (error, results) => {
-    if (error) {
-      console.error("更新头像失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
-
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "用户不存在" });
-    }
-
-    res.json({ success: true, message: "头像更新成功" });
-  });
-});
-// 新增接口：获取用户信息
-app.post("/getUserInfo", (req, res) => {
-  const { username } = req.body;
-
-  if (!username) {
-    return res.status(400).json({ success: false, message: "用户名不能为空" });
-  }
-
-  const query = "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
-  connection.query(query, [username], (error, results) => {
-    if (error) {
-      console.error("获取用户信息失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
-
-    if (results.length > 0) {
-      res.json({ success: true, data: results[0] });
-    } else {
-      res.status(404).json({ success: false, message: "用户不存在" });
-    }
-  });
-});
-// 更新用户信息接口
-app.post("/updateUserInfo", (req, res) => {
-  const { oldUsername, username, height, weight, age, gender } = req.body;
-
-  // 检查旧用户名是否存在
-  if (!oldUsername || !username) {
-    return res.status(400).json({ success: false, message: "用户名不能为空" });
-  }
-
-  // 定义 SQL 语句
-  const query = `
-    UPDATE users 
-    SET name = ?, height = ?, weight = ?, age = ?, gender = ?
-    WHERE name = ?
-  `;
-
-  // 执行 SQL 更新语句
-  connection.query(
-    query,
-    [username, height, weight, age, gender, oldUsername],
-    (error, results) => {
-      if (error) {
-        console.error("更新用户信息失败:", error);
-        return res.status(500).json({ success: false, message: "服务器错误" });
-      }
-
-      if (results.affectedRows > 0) {
-        res.json({ success: true, message: "用户信息更新成功" });
-      } else {
-        res.status(404).json({ success: false, message: "用户不存在" });
-      }
-    }
-  );
-});
-
-app.post("/changePassword", (req, res) => {
-  const { username, oldPassword, newPassword } = req.body;
-
-  if (!username || !oldPassword || !newPassword) {
-    return res.status(400).json({ success: false, message: "参数不完整" });
-  }
-
-  const querySelect = "SELECT password FROM users WHERE name = ?";
-  const queryUpdate = "UPDATE users SET password = ? WHERE name = ?";
-
-  connection.query(querySelect, [username], (error, results) => {
-    if (error) {
-      console.error("查询用户密码失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
-
-    if (results.length === 0) {
-      return res.status(404).json({ success: false, message: "用户不存在" });
-    }
-
-    const currentPassword = results[0].password;
-
-    if (currentPassword !== oldPassword) {
-      return res.status(400).json({ success: false, message: "原密码错误" });
-    }
-
-    // 更新密码
-    connection.query(queryUpdate, [newPassword, username], (err, updateResults) => {
-      if (err) {
-        console.error("更新密码失败:", err);
-        return res.status(500).json({ success: false, message: "服务器错误" });
-      }
-
-      if (updateResults.affectedRows > 0) {
-        res.json({ success: true, message: "密码修改成功" });
-      } else {
-        res.status(500).json({ success: false, message: "密码修改失败" });
-      }
+  if (!userId || !friendUsername) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing required parameters"
     });
-  });
-});
-// 获取用户运动数据
-app.post("/getSportData", (req, res) => {
-  const { username } = req.body;
-
-  const query = `SELECT fitnessGoal, exerciseType FROM users WHERE name = ?`;
-
-  connection.query(query, [username], (error, results) => {
-    if (error) {
-      console.error("获取运动数据失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
-
-    if (results.length > 0) {
-      const data = results[0];
-      res.json({ success: true, data });
-    } else {
-      res.status(404).json({ success: false, message: "用户不存在" });
-    }
-  });
-});
-
-// 更新用户运动数据
-app.post("/updateSportData", (req, res) => {
-  const { username, fitnessGoal, exerciseType } = req.body;
-
-  const query = `
-    UPDATE users 
-    SET fitnessGoal = ?, exerciseType = ?
-    WHERE name = ?
-  `;
-
-  connection.query(query, [fitnessGoal, exerciseType, username], (error, results) => {
-    if (error) {
-      console.error("更新运动数据失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
-
-    if (results.affectedRows > 0) {
-      res.json({ success: true, message: "数据更新成功" });
-    } else {
-      res.status(404).json({ success: false, message: "用户不存在" });
-    }
-  });
-});
-//获取目标运动时长
-app.get("/sport-time-goal", (req, res) => {
-  const username = req.query.username; // 前端传递用户名
-  if (!username) {
-    return res.status(400).json({ success: false, message: "用户名缺失" });
   }
 
-  // 数据库查询
-  const query = `SELECT sport_time_goal FROM users WHERE name = ?`;
-  connection.query(query, [username], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
-    }
+  try {
+    // 先查询要删除的好友的用户ID
+    const [friendResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [friendUsername]
+    );
 
-    if (results.length > 0) {
-      res.json({
-        success: true,
-        data: { sport_time_goal: results[0].sport_time_goal },
+    if (friendResults.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "Friend not found"
       });
-    } else {
-      res.status(404).json({ success: false, message: "用户未找到" });
-    }
-  });
-});
-//获取用户的今日运动时长
-app.get("/exercise-duration", (req, res) => {
-  const username = req.query.username; // 获取前端传递的用户名
-  const today = dayjs().format("YYYY-MM-DD"); // 获取今天的日期
-
-  if (!username) {
-    return res.status(400).json({ success: false, message: "用户名缺失" });
-  }
-
-  const query = `
-    SELECT exercise_duration FROM exercise_logs WHERE username = ? AND date = ?
-  `;
-  connection.query(query, [username, today], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
     }
 
-    if (results.length > 0) {
-      res.json({
-        success: true,
-        data: { exercise_duration: results[0].exercise_duration },
+    // 查询发起删除的用户ID
+    const [userResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [userId]
+    );
+
+    if (userResults.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found"
       });
-    } else {
-      res.json({ success: true, data: { exercise_duration: 0 } }); // 没有记录时返回0
-    }
-  });
-});
-//保存运动时长
-app.post("/save-exercise-duration", (req, res) => {
-  const { username, date, exercise_duration } = req.body;
-
-  // 检查必需的参数
-  if (!username || !date || exercise_duration == null) {
-    return res.status(400).json({ success: false, message: "缺少必要参数" });
-  }
-
-  // 查询是否已存在当天的记录
-  const checkQuery = `SELECT * FROM exercise_logs WHERE username = ? AND date = ?`;
-
-  connection.query(checkQuery, [username, date], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
     }
 
-    if (results.length > 0) {
-      // 如果当天已有记录，执行更新操作
-      const updateQuery = `UPDATE exercise_logs SET exercise_duration = ? WHERE username = ? AND date = ?`;
-      connection.query(updateQuery, [exercise_duration, username, date], (err, updateResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "更新数据失败" });
-        }
+    const requesterId = userResults[0].id;
+    const friendId = friendResults[0].id;
 
-        res.json({ success: true, message: "运动时长更新成功" });
-      });
-    } else {
-      // 如果当天没有记录，执行插入操作
-      const insertQuery = `
-        INSERT INTO exercise_logs (username, date, exercise_duration)
-        VALUES (?, ?, ?)
+    // 开始事务
+    await pool.query('START TRANSACTION');
+
+    try {
+      // 删除好友关系（双向删除）
+      const deleteQuery = `
+        DELETE FROM friendships 
+        WHERE (user_id = ? AND friend_id = ?) 
+        OR (user_id = ? AND friend_id = ?)
       `;
-      connection.query(insertQuery, [username, date, exercise_duration], (err, insertResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "插入数据失败" });
-        }
+      await pool.query(deleteQuery, [requesterId, friendId, friendId, requesterId]);
 
-        res.json({ success: true, message: "运动时长保存成功" });
+      // 删除相关的聊天记录
+      const deleteMessagesQuery = `
+        DELETE FROM messages 
+        WHERE (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)
+      `;
+      await pool.query(deleteMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+
+      // 删除离线消息
+      const deleteOfflineMessagesQuery = `
+        DELETE FROM offline_messages 
+        WHERE (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)
+      `;
+      await pool.query(deleteOfflineMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+
+      // 提交事务
+      await pool.query('COMMIT');
+
+      // 如果好友在线，发送通知
+      const friendSocket = clients.get(friendId);
+      if (friendSocket) {
+        friendSocket.send(JSON.stringify({
+          type: 'friend_deleted',
+          username: userId
+        }));
+      }
+
+      res.json({
+        status: "success",
+        message: "Friend deleted successfully"
       });
+    } catch (error) {
+      // 如果出错，回滚事务
+      await pool.query('ROLLBACK');
+      throw error;
     }
-  });
+  } catch (error) {
+    console.error("删除好友失败:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to delete friend"
+    });
+  }
 });
-
-// 启动服务器
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
