@@ -252,13 +252,16 @@ const invitationPopup = ref(null);
 
 // 用户信息
 const userInfo = ref({
-  username: "",
-  avatar: "",
+  username: uni.getStorageSync("username"),
+  avatar:
+    uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
 });
 const friendInfo = ref({
   username: "",
   avatar: "/static/default-avatar.jpg",
   online: false,
+  level: 1,
+  exp: 0,
 });
 
 const old_scrollTop = ref(0);
