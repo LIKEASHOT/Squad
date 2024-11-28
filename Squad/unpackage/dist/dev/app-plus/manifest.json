@@ -127,7 +127,7 @@
           "selectedIconPath": "/static/icon/sport.png"
         },
         {
-          "pagePath": "pages/My_info/My_info",
+          "pagePath": "pages/My_Info/My_Info",
           "text": "我的",
           "iconPath": "/static/icon/my_info.png",
           "selectedIconPath": "/static/icon/my_info.png"
