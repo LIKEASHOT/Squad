@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 if (typeof Promise !== "undefined" && !Promise.prototype.finally) {
   Promise.prototype.finally = function(callback) {
     const promise = this.constructor;
@@ -27270,3 +27271,5 @@ This will fail in production.`);
   };
   __app__.mount("#app");
 })(Vue);
+=======
+>>>>>>> 91ffa68ba43a7fdea7a9405f8e34a9822b741c7b

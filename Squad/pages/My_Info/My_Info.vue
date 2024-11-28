@@ -2,13 +2,20 @@
   <view class="container">
     <!-- 头部信息卡片 -->
     <view class="info-card">
+		<!-- 添加设置按钮 -->
+		<view class="header">
+		  <text class="header-title">个人信息</text>
+		  <button class="settings-btn" @click="goToSettings">
+		    ⚙️
+		  </button>
+		</view>
       <view class="avatar-section">
         <image :src="userInfo.avatar || defaultAvatar" class="avatar" @click="changeAvatar"></image>
         <text class="username">{{ userInfo.username || '未登录' }}</text>
       </view>
     </view>
-
-     <view class="info-section">
+	
+     <view class="info-section"> 
         <view class="section-header">
           <text class="section-title">我的数据</text>
           <button class="edit-btn" @click="openEditModal">编辑</button>
@@ -49,6 +56,7 @@
              <button class="cancel-btn" @click="cancelEdit">取消</button>
              <button class="save-btn" @click="saveEdit">保存</button>
            </view>
+			
          </view>
        </view>
       </view>
@@ -68,13 +76,19 @@ const targetDuration = ref(20); // 目标运动时间，初始值为 20min
 const targetCalories = ref(100); // 目标热量，初始值为 100卡
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 onMounted(() => {
+	const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
     fetchUserTargets();
+	// 监听保存编辑的通知
+	uni.$on("saveEdit",fetchUserTargets);
 });
 // 获取用户目标数据和头像
 const fetchUserTargets = async () => {
-  try {
+  try {  
+	  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+	  uni.setStorageSync(`username`, username);
+	  console.log(`username: ${username}`);
     const res = await uni.request({
-      url: `${serverUrl}/getTargets`, 
+      url: `${serverUrl}/getTargets`,  
       method: "POST", 
       data: { username }, // 向后端发送用户名 
     });
@@ -82,7 +96,7 @@ const fetchUserTargets = async () => {
     if (res.data.success) {
       // 更新目标数据
       targetDuration.value = res.data.data.sport_time_goal;
-      targetCalories.value = res.data.data.calories_goal;
+      targetCalories.value = res.data.data.calories_goal; 
      if(res.data.data.avatar!=null){
 		   userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}` ;// 拼接完整 URL 
 	 }
@@ -101,6 +115,7 @@ const fetchUserTargets = async () => {
 
 // 更新用户目标
 const updateUserTargets = async (calories, duration) => {
+	const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   try {
     const res = await uni.request({
       url: `${serverUrl}/updateTargets`,
@@ -132,7 +147,12 @@ const saveEdit = () => {
   updateUserTargets(editCalories.value, editDuration.value);
   isEditing.value = false;
 };
-
+//跳转设置
+const goToSettings = () =>{
+	uni.navigateTo({
+	  url: '/pages/Setting/Setting'
+	});
+}
 // 取消编辑
 const cancelEdit = () => {
   isEditing.value = false;
@@ -147,25 +167,7 @@ const userInfo = ref({
   age: "",
   goals: [],
   sportTypes: [],
-});
-
-// 选项数据
-const genderOptions = ["男", "女"];
-const goalOptions = [
-  { value: "减脂", name: "减脂" },
-  { value: "增肌", name: "增肌" },
-  { value: "耐力", name: "耐力" },
-  { value: "柔韧性", name: "柔韧性" },
-  { value: "综合健身", name: "综合健身" },
-];
-const sportTypeOptions = [
-  { value: "跑步", text: "跑步" },
-  { value: "徒手", text: "徒手" },
-  { value: "撸铁", text: "撸铁" },
-  { value: "瑜伽", text: "瑜伽" },
-  { value: "篮球", text: "篮球" },
-];
-
+}); 
 
 // 更换头像
 const changeAvatar = async () => {
@@ -174,7 +176,8 @@ const changeAvatar = async () => {
     count: 1,
     success: async (chooseResult) => {
       const filePath = chooseResult.tempFilePaths[0];
-
+	  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+		console.log(`username: ${username}`);
       try {
         // 上传文件到后端
         const uploadRes = await uni.uploadFile({
@@ -232,7 +235,7 @@ const changeAvatar = async () => {
   background-color: white;
   border-radius: 24rpx;
   padding: 40rpx;
-  margin-bottom: 30rpx;
+  margin-bottom: 30rpx;	
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
   text-align: center;
 }
@@ -245,6 +248,7 @@ const changeAvatar = async () => {
 }
 
 .avatar {
+  margin-top: 15px;
   width: 160rpx;
   height: 160rpx;
   border-radius: 50%;
@@ -450,6 +454,45 @@ const changeAvatar = async () => {
     opacity: 1;
     transform: scale(1);
   }
+}
+.header {
+  margin-top:0px ;
+  position: relative; /* 相对定位，方便调整子元素 */
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: center; /* 标题完全居中 */
+  padding: 20rpx;
+  border-bottom: 1rpx solid #e0e0e0; /* 下划线分隔 */
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.settings-btn {
+  position: absolute; /* 绝对定位 */
+  right: 20rpx; /* 靠右边距 */
+  top: 50%; /* 垂直居中 */
+  transform: translateY(-50%); /* 修正垂直居中偏移 */
+  // background-color: #f5f5f5; /* 按钮背景 */
+  border: none;
+  margin-right: 1px;
+  width: 60rpx;
+  height: 60rpx; /* 方形按钮 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  font-size: 36rpx; /* 设置符号大小 */
+  color: #ffffff; /* 设置符号颜色 */
+  border-radius: 10rpx; /* 圆角边框 */
+  box-shadow: 0 4rpx 6rpx rgba(0, 0, 0, 0.1); /* 添加阴影 */
+  transition: all 0.3s ease; /* 动画效果 */
+}
+.settings-btn:active {
+  transform: translateY(-50%) scale(0.95); /* 点击时缩小效果 */
 }
 
 

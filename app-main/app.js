@@ -1981,10 +1981,6 @@ app.post("/updateAvatar", (req, res) => {
   });
 });
 
-// 启动服务器
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
 
 // 添加标记消息已读的函数
 const notifyMessageRead = async (userId, friendId, message) => {

@@ -36,18 +36,18 @@
           @click="selectButton('custom')"
           :class="{ active: activeButton === 'custom' }"
         >
-          智能定制
+          智能定制 
         </button>
       </div>
 
       <view v-if="activeButton === 'all'">
         <div class="filter-bar">
-          <div class="filter">
+          <div class="filter"> 
             <uni-section
               title="目标"
               type="line"
-              style="background-color: #f5f5f5"
-            >
+              style="background-color: #f5f5f5" 
+            > 
               <uni-data-select
                 v-model="selectedGoal"
                 :localdata="goals"
@@ -1154,6 +1154,7 @@ const fetchPlansFromBackend = () => {
           calorie: item.calorie,
           goal: item.goal ? item.goal.split(",").map((g) => g.trim()) : [], // 将 goal 字符串按号拆分并去除空格
           type: item.type,
+		  videoUrl:item.videoUrl,
         }));
         // 在获取数据后，根据筛选条件过滤数据
         filterPlans();
@@ -1471,11 +1472,12 @@ const handleAdd = (plan) => {
 
   // 如果计划不存在，则添加新计划
   currentPlans.push(plan);
-
+  
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
   console.log("计划已添加:", plan.title);
-
+  // 通知 添加计划
+  uni.$emit("handleAdd");
   // 重新加载计划
   loadMyPlans();
 };
@@ -1492,7 +1494,9 @@ const handleRemove = (plan) => {
   // 存储回本地
   uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
   console.log("计划已删除:", plan.title);
-
+  // 通知 删除计划
+  uni.$emit("handleRemove");
+  
   // 重新加载计划
   loadMyPlans();
 };

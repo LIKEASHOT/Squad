@@ -225,6 +225,7 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted, onUnmounted, nextTick, computed, watch } from "vue";
 import { useWebSocketStore } from "@/store/websocket";
 const input_status = ref(true);
@@ -232,6 +233,7 @@ const input_status = ref(true);
 const serverUrl = uni.getStorageSync("serverUrl");
 // const websocketUrl = 'ws://10.133.80.141:3001';
 const websocketUrl = uni.getStorageSync("websocketUrl");
+
 const messageText = ref("");
 const messages = ref([]);
 const scrollTop = ref(0);
