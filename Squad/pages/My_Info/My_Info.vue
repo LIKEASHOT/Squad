@@ -80,6 +80,7 @@ onMounted(() => {
     fetchUserTargets();
 	// 监听保存编辑的通知
 	uni.$on("saveEdit",fetchUserTargets);
+	uni.$on("updateUserTargets",fetchUserTargets);
 });
 // 获取用户目标数据和头像
 const fetchUserTargets = async () => {
@@ -103,7 +104,7 @@ const fetchUserTargets = async () => {
 	else{
 		userInfo.value.avatar = defaultAvatar;
 	}
-	  console.log(`1: ${userInfo.value.avatar}`);
+	  // console.log(`1: ${userInfo.value.avatar}`);
     } else {
       uni.showToast({ title: "加载用户数据失败", icon: "none" });
     }
@@ -126,6 +127,8 @@ const updateUserTargets = async (calories, duration) => {
     if (res.data.success) {
       targetCalories.value = calories;
       targetDuration.value = duration;
+	  //通知更新目标
+	  uni.$emit("updateUserTargets");
       uni.showToast({ title: "更新成功", icon: "success" });
     } else {
       uni.showToast({ title: "更新失败", icon: "none" });
