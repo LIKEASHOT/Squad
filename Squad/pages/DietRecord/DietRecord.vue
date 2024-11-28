@@ -106,7 +106,7 @@ const loadDailyFoods = async () => {
         date: formattedDate, // 使用格式化后的日期
       },
     });
-
+	console.log(`1: ${formattedDate} `)
     if (res.statusCode === 200 && res.data.success) {
       dailyFoods.value = res.data.foods.map((food) => ({
         食物名称: food.食物名称,
