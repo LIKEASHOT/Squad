@@ -5,7 +5,7 @@
       <l-circle
         v-model="modelVale"
         :percent="target"
-        :size="50"
+        :size="String(50)"
         class="circle_process"
         strokeColor="#69c27d"
         trailWidth="12"
@@ -19,7 +19,40 @@
       </div>
     </view>
     <view>
-      <image src="../../static/icon/shot_sport.png" class="shot_icon" />
+       <!-- 点击按钮打开弹窗 -->
+          <image 
+            src="../../static/icon/shot_sport.png"  
+            class="shot_icon" 
+            @tap="openEditModal" 
+          />
+      
+          <!-- 编辑弹窗 -->
+          <view v-if="isEditing" class="modal">
+            <view class="modal-content">
+              <!-- 弹窗头部 -->
+              <view class="modal-header">
+                <text class="modal-title">编辑目标</text>
+              </view>
+      
+              <!-- 弹窗内容 -->
+              <view class="modal-body">
+                <view class="input-group">
+                  <text class="label">目标时长 (分钟)</text>
+                  <input v-model="editDuration" type="number" class="input" placeholder="请输入目标时长" />
+                </view>
+                <view class="input-group">
+                  <text class="label">目标热量 (kcal)</text>
+                  <input v-model="editCalories" type="number" class="input" placeholder="请输入目标热量" />
+                </view>
+              </view>
+      
+              <!-- 弹窗底部 -->
+              <view class="modal-footer">
+                <button class="cancel-btn" @click="cancelEdit">取消</button>
+                <button class="save-btn" @click="saveEdit">保存</button>
+              </view>
+            </view>
+          </view>
     </view>
   </view>
   <div class="container">
@@ -57,23 +90,27 @@
       </div>
     </div>
   </view>
-  <!-- 视频弹窗 -->
-   <view v-if="isModalVisible" class="modal-overlay" @click="closeVideo">
-     <view class="modal" @click.stop>
-       <!-- 实时计时显示 -->
-       <div class="timer-header">
-         当前运动时长：{{ Math.floor(elapsedTime / 60) }}分{{ elapsedTime % 60 }}秒
-       </div>
-       <iframe
-         v-if="currentVideoUrl"
-         :src="currentVideoUrl"
-         class="video-iframe"
-         frameborder="0"
-         allowfullscreen
-       ></iframe>
-       <button class="close-btn" @click="closeVideo">关闭</button>
-     </view>
-   </view>
+   <!-- 视频弹窗 -->
+    <view v-if="isModalVisible" class="video-modal-overlay" @click="closeVideo">
+      <view class="video-modal" @click.stop>
+        <!-- 实时计时显示 -->
+        <view class="video-timer-header">
+          当前运动时长：{{ Math.floor(elapsedTime / 60) }}分{{ elapsedTime % 60 }}秒
+        </view>
+        <!-- 视频播放器 -->
+        <iframe
+          v-if="currentVideoUrl"
+          :src="currentVideoUrl"
+          class="video-iframe"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+        <!-- 关闭按钮 -->
+        <view class="video-modal-footer">
+          <button class="video-close-btn" @click="closeVideo">关闭</button>
+        </view>
+      </view>
+    </view>
 </div> 
   <!-- 自由训练展示 -->
   <view v-if="tab === 'freeExercise'" class = "plan-section">
@@ -92,7 +129,7 @@ const exerciseDurations = ref({}); // 存储所有日期的运动时长
 const currentExercise = ref(0); // 当前显示的运动时长
 const planExercise = ref(20); // 计划运动时长
 const modelVale = ref(0);
-const target = ref(50);
+const target = ref(0);
 const tab = ref("myExercise"); // 当前选中的标签
 const myPlans = ref([]); // 存储我的课程数据
 const currentVideoUrl = ref(""); // 当前播放视频的 URL
@@ -102,17 +139,97 @@ const startTime = ref(0); // 视频播放开始的时间戳
 const elapsedTime = ref(0); // 当前累计的运动时间
 const timerInterval = ref(null); // 定时器的引用
 const serverUrl =uni.getStorageSync("serverUrl");
+const isEditing = ref(false); // 控制弹窗显示
+const editDuration = ref(0); // 编辑中的目标时长
+const editCalories = ref(0); // 编辑中的目标热量
+const targetDuration = ref(20); // 目标运动时间，初始值为 20min
+const targetCalories = ref(100); // 目标热量，初始值为 100
 // 页面加载时调用
 onMounted(() => { 
   loadMyPlans();
   loadExerciseDurations(); // 加载每日运动时长
   fetchPlanExercise(); // 获取计划运动时长
+  fetchUserTargets();
+  // 计算当前显示运动时长占计划运动时长的百分比
+  target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
   // 监听添加计划的通知 
   uni.$on("handleAdd", loadMyPlans);
   // 监听删除计划的通知
   uni.$on("handleRemove", loadMyPlans);
-});
+  //监听更新目标的通知
+  uni.$on("updateUserTargets",fetchPlanExercise);
+  uni.$on("updateUserTargets",fetchUserTargets);
+}); 
 
+// 打开编辑弹窗
+const openEditModal = () => {
+  editDuration.value = targetDuration.value;
+  editCalories.value = targetCalories.value;
+  isEditing.value = true;
+};
+// 获取用户目标数据和头像
+const fetchUserTargets = async () => {
+  try {  
+	  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+	  uni.setStorageSync(`username`, username);
+	  console.log(`username: ${username}`);
+    const res = await uni.request({
+      url: `${serverUrl}/getTargets`,  
+      method: "POST", 
+      data: { username }, // 向后端发送用户名 
+    });
+
+    if (res.data.success) {
+      // 更新目标数据
+      targetDuration.value = res.data.data.sport_time_goal;
+      targetCalories.value = res.data.data.calories_goal; 
+	  // 计算当前显示运动时长占计划运动时长的百分比
+	  target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+    } else {
+      uni.showToast({ title: "加载用户数据失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("获取用户目标失败:", error); 
+    uni.showToast({ title: "服务器错误", icon: "none" }); 
+  }
+};
+
+// 保存编辑
+const saveEdit = async () => {
+  const username = uni.getStorageSync("username"); // 获取用户名
+  try {
+    const res = await uni.request({
+      url: `${serverUrl}/updateTargets`,
+      method: "POST",
+      data: {
+        username,
+        calories_goal: editCalories.value,
+        sport_time_goal: editDuration.value,
+      },
+    });
+
+    if (res.data.success) {
+      // 更新页面目标
+      targetCalories.value = editCalories.value;
+      targetDuration.value = editDuration.value;
+      // 计算当前显示运动时长占计划运动时长的百分比
+      target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
+      uni.$emit("updateUserTargets"); // 通知其他组件更新
+      uni.showToast({ title: "更新成功", icon: "success" });
+    } else {
+      uni.showToast({ title: "更新失败", icon: "none" });
+    }
+  } catch (error) {
+    console.error("更新用户目标失败:", error);
+    uni.showToast({ title: "服务器错误", icon: "none" });
+  }
+  isEditing.value = false;
+};
+
+// 取消编辑
+const cancelEdit = () => {
+  isEditing.value = false;
+};
 // 从后端加载计划运动时长
 const fetchPlanExercise = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户
@@ -130,6 +247,8 @@ const fetchPlanExercise = () => {
     success: (res) => {
       if (res.statusCode === 200 && res.data.success) {
         planExercise.value = res.data.data.sport_time_goal || 60; // 更新计划运动时长
+		// 计算当前显示运动时长占计划运动时长的百分比
+		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
       } else {
         console.error("获取计划运动时长失败：", res.data.message || "未知错误");
       }
@@ -157,6 +276,8 @@ const loadExerciseDurations = () => {
     success: (res) => {
       if (res.statusCode === 200 && res.data.success) {
         currentExercise.value = res.data.data.exercise_duration || 0; // 更新当前运动时长
+		// 计算当前显示运动时长占计划运动时长的百分比
+		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
       } else {
         console.error("获取今日运动时长失败：", res.data.message || "未知错误");
       }
@@ -191,6 +312,10 @@ const saveExerciseDuration = () => {
     success: (res) => {
       if (res.statusCode === 200 && res.data.success) {
         console.log("今日运动时长已保存");
+		//通知保存运动时长
+		uni.$emit("saveExerciseDuration");
+		// 计算当前显示运动时长占计划运动时长的百分比
+		target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
       } else {
         console.error("保存今日运动时长失败：", res.data.message || "未知错误");
       }
@@ -272,7 +397,20 @@ const closeVideo = () => {
 
   elapsedTime.value = 0; // 重置计时器
 };
-
+//跳转设置
+const goToMy_Info = () =>{
+	 console.log("跳转到我的信息页面");
+	uni.navigateTo({
+	   url: "/pages/My_Info/My_Info",
+	 });
+	 
+const goToSearchPage = () => {
+  // 跳转到搜索页面逻辑
+  uni.navigateTo({
+    url: "/pages/Search/Search",
+  });
+};
+}
 </script>
 
 <style scoped lang="scss">
@@ -485,5 +623,194 @@ const closeVideo = () => {
   padding: 10px;
   border-radius: 8px;
 }
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.modal-content {
+  width: 80%;
+  max-width: 600rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #6e7ff3, #5c6df3);
+  padding: 20rpx;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.input-group {
+  margin-bottom: 50rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+  text-align: left;
+}
+
+.input {
+  width: 100%;
+  padding: 10rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  text-align: left; /* 文本左对齐 */
+  // box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #5c6df3;
+  outline: none;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-top: 1rpx solid #e5e5e5;
+}
+.cancel-btn,
+.save-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  padding: 12rpx 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: 2rpx ;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.cancel-btn:active {
+  background-color: #e0e0e0;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #5c6df3, #6e7ff3);
+  color: #fff;
+  box-shadow: 0 4rpx 8rpx rgba(92, 109, 243, 0.3);
+}
+
+.save-btn:active {
+  box-shadow: 0 2rpx 6rpx rgba(92, 109, 243, 0.4);
+  transform: scale(0.98);
+}
+
+/* 弹窗动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* 背景遮罩 */
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 弹窗容器 */
+.video-modal {
+  width: 90%;
+  max-width: 700px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 计时头部 */
+.video-timer-header {
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 视频播放器 */
+.video-iframe {
+  width: 90%;
+  height: 200px;
+  max-height: 360px;
+  background-color: #000;
+  border: none;
+  margin-left: 15px;
+}
+
+/* 弹窗底部 */
+.video-modal-footer {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* 关闭按钮 */
+.video-close-btn {
+  background-color: #dc3545;
+  color: #ffffff;
+  border: none;
+  padding: 8px 100px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+}
+
+.video-close-btn:hover {
+  background-color: #c82333;
+}
 </style>
