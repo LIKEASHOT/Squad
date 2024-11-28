@@ -45,14 +45,14 @@
       "path": "pages/Sports/Sports",
       "style": {
         "navigationBarTitleText": "运动",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/My_Info/My_Info",
       "style": {
         "navigationBarTitleText": "我的",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": true
       }
     },
     {
