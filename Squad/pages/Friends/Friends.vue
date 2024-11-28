@@ -403,7 +403,7 @@ const deleteFriend = async (friendUsername) => {
 const addFriendPopup = ref(null);
 const newFriendUsername = ref("");
 
-// 显示添加好���弹窗
+// 显示添加好友弹窗
 const showAddFriend = () => {
   addFriendPopup.value.open();
 };
@@ -501,7 +501,7 @@ const loadFriendsList = async () => {
     //   return;
     // }
 
-    // 如果本地没有数据，才从服务���获取
+    // 如果本地没有数据，才从服务器获取
     const res = await uni.request({
       url: `${serverUrl}/friends`,
       method: "GET",
