@@ -256,8 +256,33 @@ const defaultAvatar = "/static/default-avatar.png";
 const serverUrl = uni.getStorageSync("serverUrl");
 
 const letters = [
-  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-  'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','#'
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+  "#",
 ];
 
 const friendsList = ref([
@@ -296,9 +321,12 @@ const switchTab = (tab) => {
 
 // 进入聊天
 const enterChat = (friend) => {
-  uni.setStorageSync("friendInfo_" + userInfo.value.username + "_" + friend.username, friend);
+  uni.setStorageSync(
+    "friendInfo_" + userInfo.value.username + "_" + friend.username,
+    friend
+  );
   console.log("friendInfo_" + userInfo.value.username + "_" + friend.username);
-  console.log("friend: ",friend);
+  console.log("friend: ", friend);
   uni.navigateTo({
     url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
     success: () => {
@@ -321,19 +349,17 @@ const groupedFriends = computed(() => {
   );
 
   const grouped = {};
-  
 
-  
   // 初始化字母分组
-  letters.forEach(letter => {
+  letters.forEach((letter) => {
     grouped[letter] = [];
   });
   // 初始化 # 分组
-  grouped['#'] = [];
+  grouped["#"] = [];
   filtered.forEach((friend) => {
     // 获取好友名称的首字符
     const firstChar = friend.username.charAt(0).toUpperCase();
-    
+
     // 判断首字符是否是字母
     if (/[A-Z]/.test(firstChar)) {
       // 如果是字母，添加到对应字母分组
@@ -343,12 +369,12 @@ const groupedFriends = computed(() => {
       grouped[firstChar].push(friend);
     } else {
       // 如果不是字母，添加到 # 分组
-      grouped['#'].push(friend);
+      grouped["#"].push(friend);
     }
   });
 
   // 删除空分组
-  Object.keys(grouped).forEach(key => {
+  Object.keys(grouped).forEach((key) => {
     if (grouped[key].length === 0) {
       delete grouped[key];
     }
@@ -587,7 +613,6 @@ onPullDownRefresh(async () => {
   setTimeout(() => {
     uni.stopPullDownRefresh();
   }, 1000);
-
 });
 onUnmounted(() => {
   // 清除定时器
@@ -654,7 +679,8 @@ const joinTeam = (team) => {
 // 用户信息
 const userInfo = ref({
   username: uni.getStorageSync("username"),
-  avatar: uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
+  avatar:
+    uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
 });
 
 // 更新打卡状态数据
@@ -797,8 +823,6 @@ const closeFriendsList = () => {
 const handleMaskClick = () => {
   closeSidebar();
 };
-
-
 </script>
 
 <style lang="scss">
