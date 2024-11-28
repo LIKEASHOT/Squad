@@ -1335,7 +1335,11 @@ const getCustomPlan = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
   // 发送请求到后端获取定制的运动计划
   uni.request({
+<<<<<<< Updated upstream
     url: serverUrl + "/generateFitnessPlan", // 请根据实际情况调整 IP 地址和端口
+=======
+    url: serverUrl+"/generateFitnessPlan",
+>>>>>>> Stashed changes
     method: "POST",
     data: {
       aiInput: aiInput.value.trim(), // 将用户输入的数据发送到后端
