@@ -582,7 +582,7 @@
             <span class="plan-calorie">卡路里：{{ item.calorie }}</span>
           </div>
           <div class="vertical-line"></div>
-          <!-- 修改按钮 -->
+          <!-- 修改和删除按钮 -->
           <div class="op_bar">
             <button
               class="modify-button"
@@ -591,9 +591,17 @@
             >
               修改
             </button>
+            <button
+              class="delete-button"
+              type="warn"
+              @click="handleDelete(item, index)"
+            >
+              删除
+            </button>
           </div>
         </div>
       </div>
+
       <!-- 添加/编辑计划的弹窗 -->
     </view>
     <view v-if="tab === 'add_change_plan'" class="modboard">
@@ -1591,11 +1599,18 @@ const handleAddPlan_board = () => {
     imageUrl: "",
     videoUrl: "",
   };
+   currentEditIndex.value = -1; // 设置为添加模式
   openPopup();
 };
 // 保存计划
 const savePlan = () => {
   const isEditing = currentEditIndex.value !== -1;
+
+  // 确保图片 URL 包含服务器地址
+  const serverAddress = "http://121.37.195.13:3000/";
+  if (planForm.value.imageUrl && !planForm.value.imageUrl.startsWith(serverAddress)) {
+    planForm.value.imageUrl = serverAddress + planForm.value.imageUrl;
+  }
 
   // 准备提交到后端的数据（只保留必要的字段）
   const planData = {
@@ -1607,22 +1622,20 @@ const savePlan = () => {
     目标: planForm.value.goal.join(",") || "", // 如果 `goal` 是数组，转换为字符串
     难度: planForm.value.difficulties || "",
     image_url: planForm.value.imageUrl || "",
-    video_url: planForm.value.videoUrl || "",
+    B站连接: planForm.value.videoUrl || "",
   };
 
   // 检查传入的数据
   console.log("前端提交的计划数据:", planData);
 
-  // 如果是编辑模式
   if (isEditing) {
-    // 调用后端API更新已有计划
+    // 编辑模式
     uni.request({
-      url: `${serverUrl}/goals`, // 假设后端PUT API地址
+      url: `${serverUrl}/goals`,
       method: "PUT",
       data: planData,
       success: (res) => {
         if (res.data.message === "更新成功") {
-          // 更新前端的 plans 数组
           plans.value.splice(currentEditIndex.value, 1, { ...planData });
           uni.showToast({ title: "修改成功", icon: "success" });
           closePopup();
@@ -1639,9 +1652,9 @@ const savePlan = () => {
       },
     });
   } else {
-    // 添加新的计划
+    // 添加模式
     uni.request({
-      url: `${serverUrl}/goals/add`, // 假设后端POST API地址
+      url: `${serverUrl}/goals/add`,
       method: "POST",
       data: planData,
       success: (res) => {
@@ -1663,6 +1676,7 @@ const savePlan = () => {
     });
   }
 };
+
 // 选择封面图片
 const chooseCoverImage = async () => {
   try {
@@ -1708,7 +1722,7 @@ const uploadImage = (filePath) => {
             console.log("上传成功，返回的图片URL:", imageUrl);
 
             // 更新表单中的 imageUrl
-            planForm.value.imageUrl = imageUrl;
+            planForm.value.imageUrl = "http://121.37.195.13:3000/"+imageUrl;
             uni.showToast({
               title: "上传成功",
               icon: "success",
@@ -1739,6 +1753,40 @@ const uploadImage = (filePath) => {
     });
   });
 };
+// 处理删除
+const handleDelete = (item, index) => {
+  uni.showModal({
+    title: "提示",
+    content: `确认删除计划 "${item.title}" 吗？`,
+    success: (res) => {
+      if (res.confirm) {
+        // 调用后端API删除计划，使用title而非id
+        uni.request({
+          url: `${serverUrl}/goals/delete`,
+          method: "POST",
+          data: { title: item.title }, // 传递title而非id
+          success: (response) => {
+            if (response.data.message === "删除成功") {
+              plans.value.splice(index, 1); // 从前端列表中移除
+			  fetchPlansFromBackend();
+              uni.showToast({ title: "删除成功", icon: "success" });
+            } else {
+              uni.showToast({
+                title: response.data.message || "删除失败",
+                icon: "none",
+              });
+            }
+          },
+          fail: (error) => {
+            console.error("删除失败：", error);
+            uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
+          },
+        });
+      }
+    },
+  });
+};
+
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
   currentEditIndex.value = index;
@@ -2085,6 +2133,7 @@ uni-button {
   margin-right: auto;
   display: flex;
   flex-direction: column;
+
 }
 
 .plan-title {
@@ -2344,11 +2393,38 @@ uni-button {
   justify-content: center;
 }
 .op_bar {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column; /* 使按钮垂直排列 */
+  gap: 1px; /* 按钮之间的间距 */
   justify-content: center;
+  align-items: center;
+}
+.modify-button,
+.delete-button {
+  width: 40px;
+  height: 40px;
+  padding: 0; /* 移除多余的内边距 */
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  margin-right: 11px;
+  box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4); /* 添加边界阴影 */
+  
+  /* 使用flexbox让文字居中 */
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+}
+
+
+.modify-button {
+  background-color: #4caf50; /* 绿色 */
+  color: white;
+}
+
+.delete-button {
+  background-color: #f44336; /* 红色 */
+  color: white;
 }
 .add_icon {
   width: 100rpx;
@@ -2365,27 +2441,27 @@ uni-button {
   width: 2px;
   background-color: #ccc;
 }
-.modify-button {
-  /* 保持原有属性 */
-  border: none;
-  border-radius: 5px;
-  background-color: #641013;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-left: 5px;
-  margin-right: 5px;
-  /* 新增垂直排列相关样式 */
-  writing-mode: vertical-lr; /* 使文字垂直排列，从左到右 */
-  text-orientation: upright; /* 保持文字正向 */
-  padding: 15px 8px; /* 调整内边距：上下15px，左右8px */
-  height: 80px; /* 设置按钮高度 */
-  width: 30px; /* 设置按钮宽度 */
-  display: flex; /* 使用flex布 */
-  align-items: center; /* 水平居中 */
-  justify-content: center; /* 垂直居中 */
-  letter-spacing: 2px; /* 文字间距 */
-}
+// .modify-button {
+//   /* 保持原有属性 */
+//   border: none;
+//   border-radius: 5px;
+//   background-color: #641013;
+//   color: white;
+//   cursor: pointer;
+//   transition: background-color 0.3s;
+//   margin-left: 5px;
+//   margin-right: 5px;
+//   /* 新增垂直排列相关样式 */
+//   writing-mode: vertical-lr; /* 使文字垂直排列，从左到右 */
+//   text-orientation: upright; /* 保持文字正向 */
+//   padding: 15px 8px; /* 调整内边距：上下15px，左右8px */
+//   height: 80px; /* 设置按钮高度 */
+//   width: 30px; /* 设置按钮宽度 */
+//   display: flex; /* 使用flex布 */
+//   align-items: center; /* 水平居中 */
+//   justify-content: center; /* 垂直居中 */
+//   letter-spacing: 2px; /* 文字间距 */
+// }
 .popup-content {
   background-color: #fff;
   padding: 20px;
