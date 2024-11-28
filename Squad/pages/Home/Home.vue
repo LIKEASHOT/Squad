@@ -749,7 +749,7 @@ import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
 import { useWebSocketStore } from '@/store/websocket';
-
+import{onPullDownRefresh} from '@dcloudio/uni-app';
 // 使用 store
 const store = useWebSocketStore();
 onMounted(() => {
@@ -766,6 +766,11 @@ onMounted(() => {
       console.log("连接初始化...");
     }
   }, 5000);
+});
+onPullDownRefresh(async () => {
+  console.log("refresh");
+  await fetchPlansFromBackend();
+  uni.stopPullDownRefresh();
 });
 // 初始化WebSocket连接
 // store.initWebSocket();
@@ -1228,7 +1233,7 @@ const processRecognitionResult = (resultData, imageUrl = null) => {
 };
 
 // 从后端获取计划数据
-const fetchPlansFromBackend = () => {
+const fetchPlansFromBackend = async () => {
   uni.request({
     url: serverUrl + "/goals", // 替换为你的实际后端地址
     method: "GET",
