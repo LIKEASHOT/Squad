@@ -66,23 +66,54 @@
         登录
       </button>
       <view class="spacing"></view>
-      <!-- 注册按钮 -->
-      <text class="register-text" @click="goRegister">注册</text>
+      <view class="b_bar">
+        <!-- 注册按钮 -->
+        <text class="register-text" @click="goRegister">注册</text>
+        <!-- 添加记住我选项 -->
+        <view class="remember-me">
+          <checkbox-group @change="handleRememberMe">
+            <checkbox :checked="rememberMe" style="transform: scale(0.7)" />
+            <text>记住我</text>
+          </checkbox-group>
+        </view>
+      </view>
     </view>
-
+ 
     <!-- 底部协议 -->
     <view class="agreement">
       登录/注册表示您已同意
       <text class="link">《用户协议》</text> 和
       <text class="link">《隐私政策》</text>
-    </view>
+    </view> 
   </view>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+
 const isPressed = ref(false); // 响应式变量，记录按钮是否被按下
 const password = ref(true); // 密码是否可见
+const rememberMe = ref(false);
+
+// 检查是否有保存的登录状态
+onMounted(() => {
+  const savedCredentials = uni.getStorageSync("savedCredentials");
+  if (savedCredentials) {
+    form.value.username = savedCredentials.username;
+    form.value.password = savedCredentials.password;
+    rememberMe.value = true;
+
+    // 可选：自动登录
+    if (savedCredentials.autoLogin) {
+      // submitLogin();
+    }
+  }
+});
+
+// 处理记住我选项变化
+const handleRememberMe = (e) => {
+  rememberMe.value = e.detail.value.length > 0;
+};
 
 const inputpwd = (e) => {
   console.log(e);
@@ -99,13 +130,21 @@ const onButtonRelease = () => {
   isPressed.value = false; // 松开时恢复为 false
 };
 const logo = "/static/Squad1.png"; // Logo 图片路径
-const serverUrl = "http://10.133.80.141:3000";
+// const serverUrl = "http://10.133.80.141:3000";
+// const websocketUrl = "ws://10.133.80.141:3001";
+// Login.vue
+// 读取环境变量
+const serverUrl = import.meta.env.VITE_APP_SERVER_URL;
+const websocketUrl = import.meta.env.VITE_APP_WEBSOCKET_URL;
+console.log(serverUrl, websocketUrl);
+uni.setStorageSync("websocketUrl", websocketUrl);
 // 服务器地址存储在本地
 uni.setStorageSync("serverUrl", serverUrl);
 const form = ref({
   username: "",
   password: "",
 });
+
 const submitLogin = () => {
   if (!form.value.username || !form.value.password) {
     uni.showToast({
@@ -114,7 +153,7 @@ const submitLogin = () => {
     });
     return;
   }
-  console.log("提交登录表单", form.value);
+
   uni.request({
     url: serverUrl + "/login",
     method: "POST",
@@ -122,15 +161,31 @@ const submitLogin = () => {
       username: form.value.username,
       password: form.value.password,
     },
-    success: (res) => {
+    success: (res) => { 
       if (res.statusCode === 200) {
+        // 保存登录信息
+        uni.setStorageSync("token", res.data.token);
+        uni.setStorageSync("username", form.value.username);
+        uni.setStorageSync("Level", res.data.Level);
+
+        // 如果选择了记住我，保存登录凭证
+        if (rememberMe.value) {
+          uni.setStorageSync("savedCredentials", {
+            username: form.value.username,
+            password: form.value.password,
+            autoLogin: true,
+          });
+        } else {
+          // 如果取消了记住我，清除保存的凭证
+          uni.removeStorageSync("savedCredentials");
+        }
+
         uni.showToast({
           title: "登录成功",
           icon: "success",
         });
-        uni.setStorageSync("token", res.data.token);
-        uni.setStorageSync("username", form.value.username);
-        uni.setStorageSync("Level", res.data.Level);
+
+        // 跳转到首页
         uni.switchTab({
           url: "/pages/Home/Home",
         });
@@ -148,7 +203,6 @@ const goRegister = () => {
   console.log("前往注册页面");
   // 跳转到注册页面逻辑
   uni.navigateTo({ url: "/pages/Register/Register" });
-  
 };
 </script>
 
@@ -234,5 +288,29 @@ const goRegister = () => {
 .link {
   color: #007bff;
   cursor: pointer;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 0;
+
+  checkbox-group {
+    display: flex;
+    align-items: center;
+  }
+
+  text {
+    font-size: 28rpx;
+    color: #666;
+    margin-left: 10rpx;
+  }
+}
+.b_bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+
 }
 </style>

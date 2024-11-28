@@ -31,6 +31,10 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
+  const ON_SHOW = "onShow";
+  const ON_HIDE = "onHide";
+  const ON_LAUNCH = "onLaunch";
+  const ON_PULL_DOWN_REFRESH = "onPullDownRefresh";
   function formatAppLog(type2, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type2, filename, ...args);
@@ -41,6 +45,13 @@ if (uni.restoreGlobal) {
   function resolveEasycom(component, easycom2) {
     return typeof component === "string" ? easycom2 : component;
   }
+  const createHook = (lifecycle) => (hook, target = vue.getCurrentInstance()) => {
+    !vue.isInSSRComponentSetup && vue.injectHook(lifecycle, hook, target);
+  };
+  const onShow = /* @__PURE__ */ createHook(ON_SHOW);
+  const onHide = /* @__PURE__ */ createHook(ON_HIDE);
+  const onLaunch = /* @__PURE__ */ createHook(ON_LAUNCH);
+  const onPullDownRefresh = /* @__PURE__ */ createHook(ON_PULL_DOWN_REFRESH);
   const _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
     for (const [key, val] of props) {
@@ -820,15 +831,28 @@ if (uni.restoreGlobal) {
   }
   const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
-  const serverUrl$3 = "http://10.133.80.141:3000";
   const _sfc_main$u = {
     __name: "Login",
     setup(__props, { expose: __expose }) {
       __expose();
       const isPressed = vue.ref(false);
       const password = vue.ref(true);
+      const rememberMe = vue.ref(false);
+      vue.onMounted(() => {
+        const savedCredentials = uni.getStorageSync("savedCredentials");
+        if (savedCredentials) {
+          form.value.username = savedCredentials.username;
+          form.value.password = savedCredentials.password;
+          rememberMe.value = true;
+          if (savedCredentials.autoLogin)
+            ;
+        }
+      });
+      const handleRememberMe = (e2) => {
+        rememberMe.value = e2.detail.value.length > 0;
+      };
       const inputpwd = (e2) => {
-        formatAppLog("log", "at pages/Login/Login.vue:88", e2);
+        formatAppLog("log", "at pages/Login/Login.vue:119", e2);
       };
       const changepwd_vis = () => {
         password.value = !password.value;
@@ -839,7 +863,11 @@ if (uni.restoreGlobal) {
       const onButtonRelease = () => {
         isPressed.value = false;
       };
-      uni.setStorageSync("serverUrl", serverUrl$3);
+      const serverUrl2 = "http://124.71.107.192:3000";
+      const websocketUrl = "ws://124.71.107.192:3001";
+      formatAppLog("log", "at pages/Login/Login.vue:139", serverUrl2, websocketUrl);
+      uni.setStorageSync("websocketUrl", websocketUrl);
+      uni.setStorageSync("serverUrl", serverUrl2);
       const form = vue.ref({
         username: "",
         password: ""
@@ -852,9 +880,8 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/Login/Login.vue:117", "提交登录表单", form.value);
         uni.request({
-          url: serverUrl$3 + "/login",
+          url: serverUrl2 + "/login",
           method: "POST",
           data: {
             username: form.value.username,
@@ -862,13 +889,22 @@ if (uni.restoreGlobal) {
           },
           success: (res) => {
             if (res.statusCode === 200) {
+              uni.setStorageSync("token", res.data.token);
+              uni.setStorageSync("username", form.value.username);
+              uni.setStorageSync("Level", res.data.Level);
+              if (rememberMe.value) {
+                uni.setStorageSync("savedCredentials", {
+                  username: form.value.username,
+                  password: form.value.password,
+                  autoLogin: true
+                });
+              } else {
+                uni.removeStorageSync("savedCredentials");
+              }
               uni.showToast({
                 title: "登录成功",
                 icon: "success"
               });
-              uni.setStorageSync("token", res.data.token);
-              uni.setStorageSync("username", form.value.username);
-              uni.setStorageSync("Level", res.data.Level);
               uni.switchTab({
                 url: "/pages/Home/Home"
               });
@@ -882,10 +918,10 @@ if (uni.restoreGlobal) {
         });
       };
       const goRegister = () => {
-        formatAppLog("log", "at pages/Login/Login.vue:148", "前往注册页面");
+        formatAppLog("log", "at pages/Login/Login.vue:203", "前往注册页面");
         uni.navigateTo({ url: "/pages/Register/Register" });
       };
-      const __returned__ = { isPressed, password, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl$3, form, submitLogin, goRegister, ref: vue.ref };
+      const __returned__ = { isPressed, password, rememberMe, handleRememberMe, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl: serverUrl2, websocketUrl, form, submitLogin, goRegister, ref: vue.ref, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -955,11 +991,29 @@ if (uni.restoreGlobal) {
           /* CLASS, NEED_HYDRATION */
         ),
         vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 注册按钮 "),
-        vue.createElementVNode("text", {
-          class: "register-text",
-          onClick: $setup.goRegister
-        }, "注册")
+        vue.createElementVNode("view", { class: "b_bar" }, [
+          vue.createCommentVNode(" 注册按钮 "),
+          vue.createElementVNode("text", {
+            class: "register-text",
+            onClick: $setup.goRegister
+          }, "注册"),
+          vue.createCommentVNode(" 添加记住我选项 "),
+          vue.createElementVNode("view", { class: "remember-me" }, [
+            vue.createElementVNode(
+              "checkbox-group",
+              { onChange: $setup.handleRememberMe },
+              [
+                vue.createElementVNode("checkbox", {
+                  checked: $setup.rememberMe,
+                  style: { "transform": "scale(0.7)" }
+                }, null, 8, ["checked"]),
+                vue.createElementVNode("text", null, "记住我")
+              ],
+              32
+              /* NEED_HYDRATION */
+            )
+          ])
+        ])
       ]),
       vue.createCommentVNode(" 底部协议 "),
       vue.createElementVNode("view", { class: "agreement" }, [
@@ -1656,7 +1710,6 @@ if (uni.restoreGlobal) {
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
-  const serverUrl$2 = "http://10.133.80.141:3000";
   const _sfc_main$o = {
     __name: "Register",
     setup(__props, { expose: __expose }) {
@@ -1675,7 +1728,11 @@ if (uni.restoreGlobal) {
       const changepwd_vis_confirm = () => {
         password_confirm.value = !password_confirm.value;
       };
-      uni.setStorageSync("serverUrl", serverUrl$2);
+      const serverUrl2 = "http://124.71.107.192:3000";
+      const websocketUrl = "ws://124.71.107.192:3001";
+      formatAppLog("log", "at pages/Register/Register.vue:109", serverUrl2, websocketUrl);
+      uni.setStorageSync("serverUrl", serverUrl2);
+      uni.setStorageSync("websocketUrl", websocketUrl);
       const form = vue.ref({
         username: "",
         password: "",
@@ -1696,9 +1753,9 @@ if (uni.restoreGlobal) {
           });
           return;
         }
-        formatAppLog("log", "at pages/Register/Register.vue:131", "提交注册表单", form.value);
+        formatAppLog("log", "at pages/Register/Register.vue:138", "提交注册表单", form.value);
         uni.request({
-          url: serverUrl$2 + "/register",
+          url: serverUrl2 + "/register",
           method: "POST",
           data: {
             username: form.value.username,
@@ -1706,7 +1763,7 @@ if (uni.restoreGlobal) {
             confirmPassword: form.value.confirmPassword
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Register/Register.vue:142", "注册请求返回：", res);
+            formatAppLog("log", "at pages/Register/Register.vue:149", "注册请求返回：", res);
             if (res.statusCode === 201 && res.data.success) {
               uni.showToast({
                 title: "注册成功",
@@ -1716,13 +1773,13 @@ if (uni.restoreGlobal) {
                 key: "username",
                 data: form.value.username,
                 success: function() {
-                  formatAppLog("log", "at pages/Register/Register.vue:153", "success");
+                  formatAppLog("log", "at pages/Register/Register.vue:160", "success");
                 }
               });
               uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" }).then(() => {
-                formatAppLog("log", "at pages/Register/Register.vue:159", "跳转成功");
+                formatAppLog("log", "at pages/Register/Register.vue:166", "跳转成功");
               }).catch((err) => {
-                formatAppLog("error", "at pages/Register/Register.vue:162", "跳转失败：", err);
+                formatAppLog("error", "at pages/Register/Register.vue:169", "跳转失败：", err);
               });
             } else {
               uni.showToast({
@@ -1736,11 +1793,11 @@ if (uni.restoreGlobal) {
               title: "网络请求失败",
               icon: "none"
             });
-            formatAppLog("error", "at pages/Register/Register.vue:176", "注册请求失败：", err);
+            formatAppLog("error", "at pages/Register/Register.vue:183", "注册请求失败：", err);
           }
         });
       };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl$2, form, submitRegister, ref: vue.ref };
+      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl: serverUrl2, websocketUrl, form, submitRegister, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -3606,7 +3663,7 @@ if (uni.restoreGlobal) {
       path: "pages/Friends/Friends",
       style: {
         navigationBarTitleText: "好友",
-        enablePullDownRefresh: false
+        enablePullDownRefresh: true
       }
     },
     {
@@ -3633,13 +3690,15 @@ if (uni.restoreGlobal) {
     {
       path: "pages/InviteFriends/InviteFriends",
       style: {
-        navigationBarTitleText: "邀请好友"
+        navigationStyle: "custom",
+        navigationBarTitleText: ""
       }
     },
     {
       path: "pages/Chat/Chat",
       style: {
-        navigationBarTitleText: "聊天",
+        navigationStyle: "custom",
+        navigationBarTitleText: "",
         enablePullDownRefresh: false
       }
     },
@@ -10347,8 +10406,8 @@ ${i3}
           }
         }
         if (rule.validateExpr) {
-          let now = Date.now();
-          let resultExpr = rule.validateExpr(value, allData, now);
+          let now2 = Date.now();
+          let resultExpr = rule.validateExpr(value, allData, now2);
           if (resultExpr === false) {
             result = this._getMessage(rule, rule.errorMessage || this._message["default"]);
             break;
@@ -11872,7 +11931,7 @@ ${i3}
   function has(object, key) {
     return _hasOwnProperty.call(object, key);
   }
-  function assign$1(obj) {
+  function assign$3(obj) {
     const sources = Array.prototype.slice.call(arguments, 1);
     sources.forEach(function(source) {
       if (!source) {
@@ -12063,7 +12122,7 @@ ${i3}
   const utils$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     arrayReplaceAt,
-    assign: assign$1,
+    assign: assign$3,
     escapeHtml,
     escapeRE: escapeRE$1,
     fromCodePoint,
@@ -12309,7 +12368,7 @@ ${i3}
     return tokens[idx].content;
   };
   function Renderer() {
-    this.rules = assign$1({}, default_rules);
+    this.rules = assign$3({}, default_rules);
   }
   Renderer.prototype.renderAttrs = function renderAttrs(token) {
     let i2, l2, result;
@@ -15386,7 +15445,7 @@ ${i3}
     "(^|(?![.:/\\-_@])(?:[$+<=>^`|｜]|" + re2.src_ZPCc + "))((?![$+<=>^`|｜])" + re2.tpl_host_port_no_ip_fuzzy_strict + re2.src_path + ")";
     return re2;
   }
-  function assign(obj) {
+  function assign$2(obj) {
     const sources = Array.prototype.slice.call(arguments, 1);
     sources.forEach(function(source) {
       if (!source) {
@@ -15600,12 +15659,12 @@ ${i3}
         schemas = {};
       }
     }
-    this.__opts__ = assign({}, defaultOptions, options);
+    this.__opts__ = assign$2({}, defaultOptions, options);
     this.__index__ = -1;
     this.__last_index__ = -1;
     this.__schema__ = "";
     this.__text_cache__ = "";
-    this.__schemas__ = assign({}, defaultSchemas, schemas);
+    this.__schemas__ = assign$2({}, defaultSchemas, schemas);
     this.__compiled__ = {};
     this.__tlds__ = tlds_default;
     this.__tlds_replaced__ = false;
@@ -15617,8 +15676,8 @@ ${i3}
     compile(this);
     return this;
   };
-  LinkifyIt.prototype.set = function set(options) {
-    this.__opts__ = assign(this.__opts__, options);
+  LinkifyIt.prototype.set = function set2(options) {
+    this.__opts__ = assign$2(this.__opts__, options);
     return this;
   };
   LinkifyIt.prototype.test = function test2(text2) {
@@ -16193,7 +16252,7 @@ ${i3}
     this.normalizeLink = normalizeLink;
     this.normalizeLinkText = normalizeLinkText;
     this.utils = utils$2;
-    this.helpers = assign$1({}, helpers);
+    this.helpers = assign$3({}, helpers);
     this.options = {};
     this.configure(presetName);
     if (options) {
@@ -16201,7 +16260,7 @@ ${i3}
     }
   }
   MarkdownIt.prototype.set = function(options) {
-    assign$1(this.options, options);
+    assign$3(this.options, options);
     return this;
   };
   MarkdownIt.prototype.configure = function(presets) {
@@ -16733,13 +16792,13 @@ ${i3}
       let startTime = Date.now();
       this[PAUSE_TIME] = 0;
       this[TICK] = () => {
-        let now = Date.now();
+        let now2 = Date.now();
         this[ANIMATIONS].forEach((animation) => {
           let t2;
           if (this[START_TIMES].get(animation) < startTime) {
-            t2 = now - startTime - animation.delay - this[PAUSE_TIME];
+            t2 = now2 - startTime - animation.delay - this[PAUSE_TIME];
           } else {
-            t2 = now - this[START_TIMES].get(animation) - animation.delay - this[PAUSE_TIME];
+            t2 = now2 - this[START_TIMES].get(animation) - animation.delay - this[PAUSE_TIME];
           }
           if (t2 > animation.duration) {
             this[ANIMATIONS].delete(animation);
@@ -17117,7 +17176,7 @@ ${i3}
   const isNumber = typeOfTest("number");
   const isObject = (thing) => thing !== null && typeof thing === "object";
   const isBoolean = (thing) => thing === true || thing === false;
-  const isPlainObject = (val) => {
+  const isPlainObject$1 = (val) => {
     if (kindOf(val) !== "object") {
       return false;
     }
@@ -17173,20 +17232,20 @@ ${i3}
     }
     return null;
   }
-  const _global = (() => {
+  const _global$1 = (() => {
     if (typeof globalThis !== "undefined")
       return globalThis;
     return typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
   })();
-  const isContextDefined = (context) => !isUndefined(context) && context !== _global;
+  const isContextDefined = (context) => !isUndefined(context) && context !== _global$1;
   function merge() {
     const { caseless } = isContextDefined(this) && this || {};
     const result = {};
     const assignValue = (val, key) => {
       const targetKey = caseless && findKey(result, key) || key;
-      if (isPlainObject(result[targetKey]) && isPlainObject(val)) {
+      if (isPlainObject$1(result[targetKey]) && isPlainObject$1(val)) {
         result[targetKey] = merge(result[targetKey], val);
-      } else if (isPlainObject(val)) {
+      } else if (isPlainObject$1(val)) {
         result[targetKey] = merge({}, val);
       } else if (isArray(val)) {
         result[targetKey] = val.slice();
@@ -17342,7 +17401,7 @@ ${i3}
     isArray(arrayOrString) ? define(arrayOrString) : define(String(arrayOrString).split(delimiter2));
     return obj;
   };
-  const noop = () => {
+  const noop$1 = () => {
   };
   const toFiniteNumber = (value, defaultValue) => {
     return value != null && Number.isFinite(value = +value) ? value : defaultValue;
@@ -17394,21 +17453,21 @@ ${i3}
       return setImmediate;
     }
     return postMessageSupported ? ((token, callbacks) => {
-      _global.addEventListener("message", ({ source, data }) => {
-        if (source === _global && data === token) {
+      _global$1.addEventListener("message", ({ source, data }) => {
+        if (source === _global$1 && data === token) {
           callbacks.length && callbacks.shift()();
         }
       }, false);
       return (cb) => {
         callbacks.push(cb);
-        _global.postMessage(token, "*");
+        _global$1.postMessage(token, "*");
       };
     })(`axios@${Math.random()}`, []) : (cb) => setTimeout(cb);
   })(
     typeof setImmediate === "function",
-    isFunction(_global.postMessage)
+    isFunction(_global$1.postMessage)
   );
-  const asap = typeof queueMicrotask !== "undefined" ? queueMicrotask.bind(_global) : typeof process !== "undefined" && process.nextTick || _setImmediate;
+  const asap = typeof queueMicrotask !== "undefined" ? queueMicrotask.bind(_global$1) : typeof process !== "undefined" && process.nextTick || _setImmediate;
   const utils$1 = {
     isArray,
     isArrayBuffer,
@@ -17419,7 +17478,7 @@ ${i3}
     isNumber,
     isBoolean,
     isObject,
-    isPlainObject,
+    isPlainObject: isPlainObject$1,
     isReadableStream,
     isRequest,
     isResponse,
@@ -17455,10 +17514,10 @@ ${i3}
     freezeMethods,
     toObjectSet,
     toCamelCase,
-    noop,
+    noop: noop$1,
     toFiniteNumber,
     findKey,
-    global: _global,
+    global: _global$1,
     isContextDefined,
     ALPHABET,
     generateString,
@@ -17787,8 +17846,8 @@ ${i3}
     protocols: ["http", "https", "file", "blob", "url", "data"]
   };
   const hasBrowserEnv = typeof window !== "undefined" && typeof document !== "undefined";
-  const _navigator = typeof navigator === "object" && navigator || void 0;
-  const hasStandardBrowserEnv = hasBrowserEnv && (!_navigator || ["ReactNative", "NativeScript", "NS"].indexOf(_navigator.product) < 0);
+  const _navigator$1 = typeof navigator === "object" && navigator || void 0;
+  const hasStandardBrowserEnv = hasBrowserEnv && (!_navigator$1 || ["ReactNative", "NativeScript", "NS"].indexOf(_navigator$1.product) < 0);
   const hasStandardBrowserWebWorkerEnv = (() => {
     return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
     self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
@@ -17799,7 +17858,7 @@ ${i3}
     hasBrowserEnv,
     hasStandardBrowserEnv,
     hasStandardBrowserWebWorkerEnv,
-    navigator: _navigator,
+    navigator: _navigator$1,
     origin
   }, Symbol.toStringTag, { value: "Module" }));
   const platform = {
@@ -18286,13 +18345,13 @@ ${i3}
     let firstSampleTS;
     min = min !== void 0 ? min : 1e3;
     return function push(chunkLength) {
-      const now = Date.now();
+      const now2 = Date.now();
       const startedAt = timestamps[tail];
       if (!firstSampleTS) {
-        firstSampleTS = now;
+        firstSampleTS = now2;
       }
       bytes[head] = chunkLength;
-      timestamps[head] = now;
+      timestamps[head] = now2;
       let i2 = tail;
       let bytesCount = 0;
       while (i2 !== head) {
@@ -18303,10 +18362,10 @@ ${i3}
       if (head === tail) {
         tail = (tail + 1) % samplesCount;
       }
-      if (now - firstSampleTS < min) {
+      if (now2 - firstSampleTS < min) {
         return;
       }
-      const passed = startedAt && now - startedAt;
+      const passed = startedAt && now2 - startedAt;
       return passed ? Math.round(bytesCount * 1e3 / passed) : void 0;
     };
   }
@@ -18315,8 +18374,8 @@ ${i3}
     let threshold = 1e3 / freq;
     let lastArgs;
     let timer;
-    const invoke = (args, now = Date.now()) => {
-      timestamp = now;
+    const invoke = (args, now2 = Date.now()) => {
+      timestamp = now2;
       lastArgs = null;
       if (timer) {
         clearTimeout(timer);
@@ -18325,10 +18384,10 @@ ${i3}
       fn.apply(null, args);
     };
     const throttled = (...args) => {
-      const now = Date.now();
-      const passed = now - timestamp;
+      const now2 = Date.now();
+      const passed = now2 - timestamp;
       if (passed >= threshold) {
-        invoke(args, now);
+        invoke(args, now2);
       } else {
         lastArgs = args;
         if (!timer) {
@@ -19482,6 +19541,1632 @@ ${i3}
   axios.HttpStatusCode = HttpStatusCode$1;
   axios.default = axios;
   const axios$1 = axios;
+  var isVue2 = false;
+  function set(target, key, val) {
+    if (Array.isArray(target)) {
+      target.length = Math.max(target.length, key);
+      target.splice(key, 1, val);
+      return val;
+    }
+    target[key] = val;
+    return val;
+  }
+  function del(target, key) {
+    if (Array.isArray(target)) {
+      target.splice(key, 1);
+      return;
+    }
+    delete target[key];
+  }
+  function getDevtoolsGlobalHook() {
+    return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
+  }
+  function getTarget() {
+    return typeof navigator !== "undefined" && typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
+  }
+  const isProxyAvailable = typeof Proxy === "function";
+  const HOOK_SETUP = "devtools-plugin:setup";
+  const HOOK_PLUGIN_SETTINGS_SET = "plugin:settings:set";
+  let supported;
+  let perf;
+  function isPerformanceSupported() {
+    var _a2;
+    if (supported !== void 0) {
+      return supported;
+    }
+    if (typeof window !== "undefined" && window.performance) {
+      supported = true;
+      perf = window.performance;
+    } else if (typeof global !== "undefined" && ((_a2 = global.perf_hooks) === null || _a2 === void 0 ? void 0 : _a2.performance)) {
+      supported = true;
+      perf = global.perf_hooks.performance;
+    } else {
+      supported = false;
+    }
+    return supported;
+  }
+  function now() {
+    return isPerformanceSupported() ? perf.now() : Date.now();
+  }
+  class ApiProxy {
+    constructor(plugin, hook) {
+      this.target = null;
+      this.targetQueue = [];
+      this.onQueue = [];
+      this.plugin = plugin;
+      this.hook = hook;
+      const defaultSettings = {};
+      if (plugin.settings) {
+        for (const id in plugin.settings) {
+          const item = plugin.settings[id];
+          defaultSettings[id] = item.defaultValue;
+        }
+      }
+      const localSettingsSaveId = `__vue-devtools-plugin-settings__${plugin.id}`;
+      let currentSettings = Object.assign({}, defaultSettings);
+      try {
+        const raw = localStorage.getItem(localSettingsSaveId);
+        const data = JSON.parse(raw);
+        Object.assign(currentSettings, data);
+      } catch (e2) {
+      }
+      this.fallbacks = {
+        getSettings() {
+          return currentSettings;
+        },
+        setSettings(value) {
+          try {
+            localStorage.setItem(localSettingsSaveId, JSON.stringify(value));
+          } catch (e2) {
+          }
+          currentSettings = value;
+        },
+        now() {
+          return now();
+        }
+      };
+      if (hook) {
+        hook.on(HOOK_PLUGIN_SETTINGS_SET, (pluginId, value) => {
+          if (pluginId === this.plugin.id) {
+            this.fallbacks.setSettings(value);
+          }
+        });
+      }
+      this.proxiedOn = new Proxy({}, {
+        get: (_target, prop) => {
+          if (this.target) {
+            return this.target.on[prop];
+          } else {
+            return (...args) => {
+              this.onQueue.push({
+                method: prop,
+                args
+              });
+            };
+          }
+        }
+      });
+      this.proxiedTarget = new Proxy({}, {
+        get: (_target, prop) => {
+          if (this.target) {
+            return this.target[prop];
+          } else if (prop === "on") {
+            return this.proxiedOn;
+          } else if (Object.keys(this.fallbacks).includes(prop)) {
+            return (...args) => {
+              this.targetQueue.push({
+                method: prop,
+                args,
+                resolve: () => {
+                }
+              });
+              return this.fallbacks[prop](...args);
+            };
+          } else {
+            return (...args) => {
+              return new Promise((resolve) => {
+                this.targetQueue.push({
+                  method: prop,
+                  args,
+                  resolve
+                });
+              });
+            };
+          }
+        }
+      });
+    }
+    async setRealTarget(target) {
+      this.target = target;
+      for (const item of this.onQueue) {
+        this.target.on[item.method](...item.args);
+      }
+      for (const item of this.targetQueue) {
+        item.resolve(await this.target[item.method](...item.args));
+      }
+    }
+  }
+  function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
+    const descriptor = pluginDescriptor;
+    const target = getTarget();
+    const hook = getDevtoolsGlobalHook();
+    const enableProxy = isProxyAvailable && descriptor.enableEarlyProxy;
+    if (hook && (target.__VUE_DEVTOOLS_PLUGIN_API_AVAILABLE__ || !enableProxy)) {
+      hook.emit(HOOK_SETUP, pluginDescriptor, setupFn);
+    } else {
+      const proxy = enableProxy ? new ApiProxy(descriptor, hook) : null;
+      const list2 = target.__VUE_DEVTOOLS_PLUGINS__ = target.__VUE_DEVTOOLS_PLUGINS__ || [];
+      list2.push({
+        pluginDescriptor: descriptor,
+        setupFn,
+        proxy
+      });
+      if (proxy)
+        setupFn(proxy.proxiedTarget);
+    }
+  }
+  /*!
+   * pinia v2.1.7
+   * (c) 2023 Eduardo San Martin Morote
+   * @license MIT
+   */
+  let activePinia;
+  const setActivePinia = (pinia) => activePinia = pinia;
+  const piniaSymbol = Symbol("pinia");
+  function isPlainObject(o2) {
+    return o2 && typeof o2 === "object" && Object.prototype.toString.call(o2) === "[object Object]" && typeof o2.toJSON !== "function";
+  }
+  var MutationType;
+  (function(MutationType2) {
+    MutationType2["direct"] = "direct";
+    MutationType2["patchObject"] = "patch object";
+    MutationType2["patchFunction"] = "patch function";
+  })(MutationType || (MutationType = {}));
+  const IS_CLIENT = typeof window !== "undefined";
+  const USE_DEVTOOLS = IS_CLIENT;
+  const _global = /* @__PURE__ */ (() => typeof window === "object" && window.window === window ? window : typeof self === "object" && self.self === self ? self : typeof global === "object" && global.global === global ? global : typeof globalThis === "object" ? globalThis : { HTMLElement: null })();
+  function bom(blob, { autoBom = false } = {}) {
+    if (autoBom && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+      return new Blob([String.fromCharCode(65279), blob], { type: blob.type });
+    }
+    return blob;
+  }
+  function download(url, name, opts) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+    xhr.onload = function() {
+      saveAs(xhr.response, name, opts);
+    };
+    xhr.onerror = function() {
+      console.error("could not download file");
+    };
+    xhr.send();
+  }
+  function corsEnabled(url) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("HEAD", url, false);
+    try {
+      xhr.send();
+    } catch (e2) {
+    }
+    return xhr.status >= 200 && xhr.status <= 299;
+  }
+  function click(node) {
+    try {
+      node.dispatchEvent(new MouseEvent("click"));
+    } catch (e2) {
+      const evt = document.createEvent("MouseEvents");
+      evt.initMouseEvent("click", true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
+      node.dispatchEvent(evt);
+    }
+  }
+  const _navigator = typeof navigator === "object" ? navigator : { userAgent: "" };
+  const isMacOSWebView = /* @__PURE__ */ (() => /Macintosh/.test(_navigator.userAgent) && /AppleWebKit/.test(_navigator.userAgent) && !/Safari/.test(_navigator.userAgent))();
+  const saveAs = !IS_CLIENT ? () => {
+  } : (
+    // Use download attribute first if possible (#193 Lumia mobile) unless this is a macOS WebView or mini program
+    typeof HTMLAnchorElement !== "undefined" && "download" in HTMLAnchorElement.prototype && !isMacOSWebView ? downloadSaveAs : (
+      // Use msSaveOrOpenBlob as a second approach
+      "msSaveOrOpenBlob" in _navigator ? msSaveAs : (
+        // Fallback to using FileReader and a popup
+        fileSaverSaveAs
+      )
+    )
+  );
+  function downloadSaveAs(blob, name = "download", opts) {
+    const a2 = document.createElement("a");
+    a2.download = name;
+    a2.rel = "noopener";
+    if (typeof blob === "string") {
+      a2.href = blob;
+      if (a2.origin !== location.origin) {
+        if (corsEnabled(a2.href)) {
+          download(blob, name, opts);
+        } else {
+          a2.target = "_blank";
+          click(a2);
+        }
+      } else {
+        click(a2);
+      }
+    } else {
+      a2.href = URL.createObjectURL(blob);
+      setTimeout(function() {
+        URL.revokeObjectURL(a2.href);
+      }, 4e4);
+      setTimeout(function() {
+        click(a2);
+      }, 0);
+    }
+  }
+  function msSaveAs(blob, name = "download", opts) {
+    if (typeof blob === "string") {
+      if (corsEnabled(blob)) {
+        download(blob, name, opts);
+      } else {
+        const a2 = document.createElement("a");
+        a2.href = blob;
+        a2.target = "_blank";
+        setTimeout(function() {
+          click(a2);
+        });
+      }
+    } else {
+      navigator.msSaveOrOpenBlob(bom(blob, opts), name);
+    }
+  }
+  function fileSaverSaveAs(blob, name, opts, popup) {
+    popup = popup || open("", "_blank");
+    if (popup) {
+      popup.document.title = popup.document.body.innerText = "downloading...";
+    }
+    if (typeof blob === "string")
+      return download(blob, name, opts);
+    const force = blob.type === "application/octet-stream";
+    const isSafari = /constructor/i.test(String(_global.HTMLElement)) || "safari" in _global;
+    const isChromeIOS = /CriOS\/[\d]+/.test(navigator.userAgent);
+    if ((isChromeIOS || force && isSafari || isMacOSWebView) && typeof FileReader !== "undefined") {
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        let url = reader.result;
+        if (typeof url !== "string") {
+          popup = null;
+          throw new Error("Wrong reader.result type");
+        }
+        url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, "data:attachment/file;");
+        if (popup) {
+          popup.location.href = url;
+        } else {
+          location.assign(url);
+        }
+        popup = null;
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      const url = URL.createObjectURL(blob);
+      if (popup)
+        popup.location.assign(url);
+      else
+        location.href = url;
+      popup = null;
+      setTimeout(function() {
+        URL.revokeObjectURL(url);
+      }, 4e4);
+    }
+  }
+  function toastMessage(message, type2) {
+    const piniaMessage = "🍍 " + message;
+    if (typeof __VUE_DEVTOOLS_TOAST__ === "function") {
+      __VUE_DEVTOOLS_TOAST__(piniaMessage, type2);
+    } else if (type2 === "error") {
+      console.error(piniaMessage);
+    } else if (type2 === "warn") {
+      console.warn(piniaMessage);
+    } else {
+      console.log(piniaMessage);
+    }
+  }
+  function isPinia(o2) {
+    return "_a" in o2 && "install" in o2;
+  }
+  function checkClipboardAccess() {
+    if (!("clipboard" in navigator)) {
+      toastMessage(`Your browser doesn't support the Clipboard API`, "error");
+      return true;
+    }
+  }
+  function checkNotFocusedError(error2) {
+    if (error2 instanceof Error && error2.message.toLowerCase().includes("document is not focused")) {
+      toastMessage('You need to activate the "Emulate a focused page" setting in the "Rendering" panel of devtools.', "warn");
+      return true;
+    }
+    return false;
+  }
+  async function actionGlobalCopyState(pinia) {
+    if (checkClipboardAccess())
+      return;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(pinia.state.value));
+      toastMessage("Global state copied to clipboard.");
+    } catch (error2) {
+      if (checkNotFocusedError(error2))
+        return;
+      toastMessage(`Failed to serialize the state. Check the console for more details.`, "error");
+      console.error(error2);
+    }
+  }
+  async function actionGlobalPasteState(pinia) {
+    if (checkClipboardAccess())
+      return;
+    try {
+      loadStoresState(pinia, JSON.parse(await navigator.clipboard.readText()));
+      toastMessage("Global state pasted from clipboard.");
+    } catch (error2) {
+      if (checkNotFocusedError(error2))
+        return;
+      toastMessage(`Failed to deserialize the state from clipboard. Check the console for more details.`, "error");
+      console.error(error2);
+    }
+  }
+  async function actionGlobalSaveState(pinia) {
+    try {
+      saveAs(new Blob([JSON.stringify(pinia.state.value)], {
+        type: "text/plain;charset=utf-8"
+      }), "pinia-state.json");
+    } catch (error2) {
+      toastMessage(`Failed to export the state as JSON. Check the console for more details.`, "error");
+      console.error(error2);
+    }
+  }
+  let fileInput;
+  function getFileOpener() {
+    if (!fileInput) {
+      fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".json";
+    }
+    function openFile() {
+      return new Promise((resolve, reject) => {
+        fileInput.onchange = async () => {
+          const files = fileInput.files;
+          if (!files)
+            return resolve(null);
+          const file = files.item(0);
+          if (!file)
+            return resolve(null);
+          return resolve({ text: await file.text(), file });
+        };
+        fileInput.oncancel = () => resolve(null);
+        fileInput.onerror = reject;
+        fileInput.click();
+      });
+    }
+    return openFile;
+  }
+  async function actionGlobalOpenStateFile(pinia) {
+    try {
+      const open2 = getFileOpener();
+      const result = await open2();
+      if (!result)
+        return;
+      const { text: text2, file } = result;
+      loadStoresState(pinia, JSON.parse(text2));
+      toastMessage(`Global state imported from "${file.name}".`);
+    } catch (error2) {
+      toastMessage(`Failed to import the state from JSON. Check the console for more details.`, "error");
+      console.error(error2);
+    }
+  }
+  function loadStoresState(pinia, state) {
+    for (const key in state) {
+      const storeState = pinia.state.value[key];
+      if (storeState) {
+        Object.assign(storeState, state[key]);
+      } else {
+        pinia.state.value[key] = state[key];
+      }
+    }
+  }
+  function formatDisplay(display) {
+    return {
+      _custom: {
+        display
+      }
+    };
+  }
+  const PINIA_ROOT_LABEL = "🍍 Pinia (root)";
+  const PINIA_ROOT_ID = "_root";
+  function formatStoreForInspectorTree(store) {
+    return isPinia(store) ? {
+      id: PINIA_ROOT_ID,
+      label: PINIA_ROOT_LABEL
+    } : {
+      id: store.$id,
+      label: store.$id
+    };
+  }
+  function formatStoreForInspectorState(store) {
+    if (isPinia(store)) {
+      const storeNames = Array.from(store._s.keys());
+      const storeMap = store._s;
+      const state2 = {
+        state: storeNames.map((storeId) => ({
+          editable: true,
+          key: storeId,
+          value: store.state.value[storeId]
+        })),
+        getters: storeNames.filter((id) => storeMap.get(id)._getters).map((id) => {
+          const store2 = storeMap.get(id);
+          return {
+            editable: false,
+            key: id,
+            value: store2._getters.reduce((getters, key) => {
+              getters[key] = store2[key];
+              return getters;
+            }, {})
+          };
+        })
+      };
+      return state2;
+    }
+    const state = {
+      state: Object.keys(store.$state).map((key) => ({
+        editable: true,
+        key,
+        value: store.$state[key]
+      }))
+    };
+    if (store._getters && store._getters.length) {
+      state.getters = store._getters.map((getterName) => ({
+        editable: false,
+        key: getterName,
+        value: store[getterName]
+      }));
+    }
+    if (store._customProperties.size) {
+      state.customProperties = Array.from(store._customProperties).map((key) => ({
+        editable: true,
+        key,
+        value: store[key]
+      }));
+    }
+    return state;
+  }
+  function formatEventData(events) {
+    if (!events)
+      return {};
+    if (Array.isArray(events)) {
+      return events.reduce((data, event) => {
+        data.keys.push(event.key);
+        data.operations.push(event.type);
+        data.oldValue[event.key] = event.oldValue;
+        data.newValue[event.key] = event.newValue;
+        return data;
+      }, {
+        oldValue: {},
+        keys: [],
+        operations: [],
+        newValue: {}
+      });
+    } else {
+      return {
+        operation: formatDisplay(events.type),
+        key: formatDisplay(events.key),
+        oldValue: events.oldValue,
+        newValue: events.newValue
+      };
+    }
+  }
+  function formatMutationType(type2) {
+    switch (type2) {
+      case MutationType.direct:
+        return "mutation";
+      case MutationType.patchFunction:
+        return "$patch";
+      case MutationType.patchObject:
+        return "$patch";
+      default:
+        return "unknown";
+    }
+  }
+  let isTimelineActive = true;
+  const componentStateTypes = [];
+  const MUTATIONS_LAYER_ID = "pinia:mutations";
+  const INSPECTOR_ID = "pinia";
+  const { assign: assign$1 } = Object;
+  const getStoreType = (id) => "🍍 " + id;
+  function registerPiniaDevtools(app, pinia) {
+    setupDevtoolsPlugin({
+      id: "dev.esm.pinia",
+      label: "Pinia 🍍",
+      logo: "https://pinia.vuejs.org/logo.svg",
+      packageName: "pinia",
+      homepage: "https://pinia.vuejs.org",
+      componentStateTypes,
+      app
+    }, (api) => {
+      if (typeof api.now !== "function") {
+        toastMessage("You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.");
+      }
+      api.addTimelineLayer({
+        id: MUTATIONS_LAYER_ID,
+        label: `Pinia 🍍`,
+        color: 15064968
+      });
+      api.addInspector({
+        id: INSPECTOR_ID,
+        label: "Pinia 🍍",
+        icon: "storage",
+        treeFilterPlaceholder: "Search stores",
+        actions: [
+          {
+            icon: "content_copy",
+            action: () => {
+              actionGlobalCopyState(pinia);
+            },
+            tooltip: "Serialize and copy the state"
+          },
+          {
+            icon: "content_paste",
+            action: async () => {
+              await actionGlobalPasteState(pinia);
+              api.sendInspectorTree(INSPECTOR_ID);
+              api.sendInspectorState(INSPECTOR_ID);
+            },
+            tooltip: "Replace the state with the content of your clipboard"
+          },
+          {
+            icon: "save",
+            action: () => {
+              actionGlobalSaveState(pinia);
+            },
+            tooltip: "Save the state as a JSON file"
+          },
+          {
+            icon: "folder_open",
+            action: async () => {
+              await actionGlobalOpenStateFile(pinia);
+              api.sendInspectorTree(INSPECTOR_ID);
+              api.sendInspectorState(INSPECTOR_ID);
+            },
+            tooltip: "Import the state from a JSON file"
+          }
+        ],
+        nodeActions: [
+          {
+            icon: "restore",
+            tooltip: 'Reset the state (with "$reset")',
+            action: (nodeId) => {
+              const store = pinia._s.get(nodeId);
+              if (!store) {
+                toastMessage(`Cannot reset "${nodeId}" store because it wasn't found.`, "warn");
+              } else if (typeof store.$reset !== "function") {
+                toastMessage(`Cannot reset "${nodeId}" store because it doesn't have a "$reset" method implemented.`, "warn");
+              } else {
+                store.$reset();
+                toastMessage(`Store "${nodeId}" reset.`);
+              }
+            }
+          }
+        ]
+      });
+      api.on.inspectComponent((payload, ctx) => {
+        const proxy = payload.componentInstance && payload.componentInstance.proxy;
+        if (proxy && proxy._pStores) {
+          const piniaStores = payload.componentInstance.proxy._pStores;
+          Object.values(piniaStores).forEach((store) => {
+            payload.instanceData.state.push({
+              type: getStoreType(store.$id),
+              key: "state",
+              editable: true,
+              value: store._isOptionsAPI ? {
+                _custom: {
+                  value: vue.toRaw(store.$state),
+                  actions: [
+                    {
+                      icon: "restore",
+                      tooltip: "Reset the state of this store",
+                      action: () => store.$reset()
+                    }
+                  ]
+                }
+              } : (
+                // NOTE: workaround to unwrap transferred refs
+                Object.keys(store.$state).reduce((state, key) => {
+                  state[key] = store.$state[key];
+                  return state;
+                }, {})
+              )
+            });
+            if (store._getters && store._getters.length) {
+              payload.instanceData.state.push({
+                type: getStoreType(store.$id),
+                key: "getters",
+                editable: false,
+                value: store._getters.reduce((getters, key) => {
+                  try {
+                    getters[key] = store[key];
+                  } catch (error2) {
+                    getters[key] = error2;
+                  }
+                  return getters;
+                }, {})
+              });
+            }
+          });
+        }
+      });
+      api.on.getInspectorTree((payload) => {
+        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+          let stores = [pinia];
+          stores = stores.concat(Array.from(pinia._s.values()));
+          payload.rootNodes = (payload.filter ? stores.filter((store) => "$id" in store ? store.$id.toLowerCase().includes(payload.filter.toLowerCase()) : PINIA_ROOT_LABEL.toLowerCase().includes(payload.filter.toLowerCase())) : stores).map(formatStoreForInspectorTree);
+        }
+      });
+      api.on.getInspectorState((payload) => {
+        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+          const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
+          if (!inspectedStore) {
+            return;
+          }
+          if (inspectedStore) {
+            payload.state = formatStoreForInspectorState(inspectedStore);
+          }
+        }
+      });
+      api.on.editInspectorState((payload, ctx) => {
+        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+          const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
+          if (!inspectedStore) {
+            return toastMessage(`store "${payload.nodeId}" not found`, "error");
+          }
+          const { path } = payload;
+          if (!isPinia(inspectedStore)) {
+            if (path.length !== 1 || !inspectedStore._customProperties.has(path[0]) || path[0] in inspectedStore.$state) {
+              path.unshift("$state");
+            }
+          } else {
+            path.unshift("state");
+          }
+          isTimelineActive = false;
+          payload.set(inspectedStore, path, payload.state.value);
+          isTimelineActive = true;
+        }
+      });
+      api.on.editComponentState((payload) => {
+        if (payload.type.startsWith("🍍")) {
+          const storeId = payload.type.replace(/^🍍\s*/, "");
+          const store = pinia._s.get(storeId);
+          if (!store) {
+            return toastMessage(`store "${storeId}" not found`, "error");
+          }
+          const { path } = payload;
+          if (path[0] !== "state") {
+            return toastMessage(`Invalid path for store "${storeId}":
+${path}
+Only state can be modified.`);
+          }
+          path[0] = "$state";
+          isTimelineActive = false;
+          payload.set(store, path, payload.state.value);
+          isTimelineActive = true;
+        }
+      });
+    });
+  }
+  function addStoreToDevtools(app, store) {
+    if (!componentStateTypes.includes(getStoreType(store.$id))) {
+      componentStateTypes.push(getStoreType(store.$id));
+    }
+    setupDevtoolsPlugin({
+      id: "dev.esm.pinia",
+      label: "Pinia 🍍",
+      logo: "https://pinia.vuejs.org/logo.svg",
+      packageName: "pinia",
+      homepage: "https://pinia.vuejs.org",
+      componentStateTypes,
+      app,
+      settings: {
+        logStoreChanges: {
+          label: "Notify about new/deleted stores",
+          type: "boolean",
+          defaultValue: true
+        }
+        // useEmojis: {
+        //   label: 'Use emojis in messages ⚡️',
+        //   type: 'boolean',
+        //   defaultValue: true,
+        // },
+      }
+    }, (api) => {
+      const now2 = typeof api.now === "function" ? api.now.bind(api) : Date.now;
+      store.$onAction(({ after, onError, name, args }) => {
+        const groupId = runningActionId++;
+        api.addTimelineEvent({
+          layerId: MUTATIONS_LAYER_ID,
+          event: {
+            time: now2(),
+            title: "🛫 " + name,
+            subtitle: "start",
+            data: {
+              store: formatDisplay(store.$id),
+              action: formatDisplay(name),
+              args
+            },
+            groupId
+          }
+        });
+        after((result) => {
+          activeAction = void 0;
+          api.addTimelineEvent({
+            layerId: MUTATIONS_LAYER_ID,
+            event: {
+              time: now2(),
+              title: "🛬 " + name,
+              subtitle: "end",
+              data: {
+                store: formatDisplay(store.$id),
+                action: formatDisplay(name),
+                args,
+                result
+              },
+              groupId
+            }
+          });
+        });
+        onError((error2) => {
+          activeAction = void 0;
+          api.addTimelineEvent({
+            layerId: MUTATIONS_LAYER_ID,
+            event: {
+              time: now2(),
+              logType: "error",
+              title: "💥 " + name,
+              subtitle: "end",
+              data: {
+                store: formatDisplay(store.$id),
+                action: formatDisplay(name),
+                args,
+                error: error2
+              },
+              groupId
+            }
+          });
+        });
+      }, true);
+      store._customProperties.forEach((name) => {
+        vue.watch(() => vue.unref(store[name]), (newValue, oldValue) => {
+          api.notifyComponentUpdate();
+          api.sendInspectorState(INSPECTOR_ID);
+          if (isTimelineActive) {
+            api.addTimelineEvent({
+              layerId: MUTATIONS_LAYER_ID,
+              event: {
+                time: now2(),
+                title: "Change",
+                subtitle: name,
+                data: {
+                  newValue,
+                  oldValue
+                },
+                groupId: activeAction
+              }
+            });
+          }
+        }, { deep: true });
+      });
+      store.$subscribe(({ events, type: type2 }, state) => {
+        api.notifyComponentUpdate();
+        api.sendInspectorState(INSPECTOR_ID);
+        if (!isTimelineActive)
+          return;
+        const eventData = {
+          time: now2(),
+          title: formatMutationType(type2),
+          data: assign$1({ store: formatDisplay(store.$id) }, formatEventData(events)),
+          groupId: activeAction
+        };
+        if (type2 === MutationType.patchFunction) {
+          eventData.subtitle = "⤵️";
+        } else if (type2 === MutationType.patchObject) {
+          eventData.subtitle = "🧩";
+        } else if (events && !Array.isArray(events)) {
+          eventData.subtitle = events.type;
+        }
+        if (events) {
+          eventData.data["rawEvent(s)"] = {
+            _custom: {
+              display: "DebuggerEvent",
+              type: "object",
+              tooltip: "raw DebuggerEvent[]",
+              value: events
+            }
+          };
+        }
+        api.addTimelineEvent({
+          layerId: MUTATIONS_LAYER_ID,
+          event: eventData
+        });
+      }, { detached: true, flush: "sync" });
+      const hotUpdate = store._hotUpdate;
+      store._hotUpdate = vue.markRaw((newStore) => {
+        hotUpdate(newStore);
+        api.addTimelineEvent({
+          layerId: MUTATIONS_LAYER_ID,
+          event: {
+            time: now2(),
+            title: "🔥 " + store.$id,
+            subtitle: "HMR update",
+            data: {
+              store: formatDisplay(store.$id),
+              info: formatDisplay(`HMR update`)
+            }
+          }
+        });
+        api.notifyComponentUpdate();
+        api.sendInspectorTree(INSPECTOR_ID);
+        api.sendInspectorState(INSPECTOR_ID);
+      });
+      const { $dispose } = store;
+      store.$dispose = () => {
+        $dispose();
+        api.notifyComponentUpdate();
+        api.sendInspectorTree(INSPECTOR_ID);
+        api.sendInspectorState(INSPECTOR_ID);
+        api.getSettings().logStoreChanges && toastMessage(`Disposed "${store.$id}" store 🗑`);
+      };
+      api.notifyComponentUpdate();
+      api.sendInspectorTree(INSPECTOR_ID);
+      api.sendInspectorState(INSPECTOR_ID);
+      api.getSettings().logStoreChanges && toastMessage(`"${store.$id}" store installed 🆕`);
+    });
+  }
+  let runningActionId = 0;
+  let activeAction;
+  function patchActionForGrouping(store, actionNames, wrapWithProxy) {
+    const actions = actionNames.reduce((storeActions, actionName) => {
+      storeActions[actionName] = vue.toRaw(store)[actionName];
+      return storeActions;
+    }, {});
+    for (const actionName in actions) {
+      store[actionName] = function() {
+        const _actionId = runningActionId;
+        const trackedStore = wrapWithProxy ? new Proxy(store, {
+          get(...args) {
+            activeAction = _actionId;
+            return Reflect.get(...args);
+          },
+          set(...args) {
+            activeAction = _actionId;
+            return Reflect.set(...args);
+          }
+        }) : store;
+        activeAction = _actionId;
+        const retValue = actions[actionName].apply(trackedStore, arguments);
+        activeAction = void 0;
+        return retValue;
+      };
+    }
+  }
+  function devtoolsPlugin({ app, store, options }) {
+    if (store.$id.startsWith("__hot:")) {
+      return;
+    }
+    store._isOptionsAPI = !!options.state;
+    patchActionForGrouping(store, Object.keys(options.actions), store._isOptionsAPI);
+    const originalHotUpdate = store._hotUpdate;
+    vue.toRaw(store)._hotUpdate = function(newStore) {
+      originalHotUpdate.apply(this, arguments);
+      patchActionForGrouping(store, Object.keys(newStore._hmrPayload.actions), !!store._isOptionsAPI);
+    };
+    addStoreToDevtools(
+      app,
+      // FIXME: is there a way to allow the assignment from Store<Id, S, G, A> to StoreGeneric?
+      store
+    );
+  }
+  function createPinia() {
+    const scope = vue.effectScope(true);
+    const state = scope.run(() => vue.ref({}));
+    let _p = [];
+    let toBeInstalled = [];
+    const pinia = vue.markRaw({
+      install(app) {
+        setActivePinia(pinia);
+        {
+          pinia._a = app;
+          app.provide(piniaSymbol, pinia);
+          app.config.globalProperties.$pinia = pinia;
+          if (USE_DEVTOOLS) {
+            registerPiniaDevtools(app, pinia);
+          }
+          toBeInstalled.forEach((plugin) => _p.push(plugin));
+          toBeInstalled = [];
+        }
+      },
+      use(plugin) {
+        if (!this._a && !isVue2) {
+          toBeInstalled.push(plugin);
+        } else {
+          _p.push(plugin);
+        }
+        return this;
+      },
+      _p,
+      // it's actually undefined here
+      // @ts-expect-error
+      _a: null,
+      _e: scope,
+      _s: /* @__PURE__ */ new Map(),
+      state
+    });
+    if (USE_DEVTOOLS && typeof Proxy !== "undefined") {
+      pinia.use(devtoolsPlugin);
+    }
+    return pinia;
+  }
+  function patchObject(newState, oldState) {
+    for (const key in oldState) {
+      const subPatch = oldState[key];
+      if (!(key in newState)) {
+        continue;
+      }
+      const targetValue = newState[key];
+      if (isPlainObject(targetValue) && isPlainObject(subPatch) && !vue.isRef(subPatch) && !vue.isReactive(subPatch)) {
+        newState[key] = patchObject(targetValue, subPatch);
+      } else {
+        {
+          newState[key] = subPatch;
+        }
+      }
+    }
+    return newState;
+  }
+  const noop = () => {
+  };
+  function addSubscription(subscriptions, callback, detached, onCleanup = noop) {
+    subscriptions.push(callback);
+    const removeSubscription = () => {
+      const idx = subscriptions.indexOf(callback);
+      if (idx > -1) {
+        subscriptions.splice(idx, 1);
+        onCleanup();
+      }
+    };
+    if (!detached && vue.getCurrentScope()) {
+      vue.onScopeDispose(removeSubscription);
+    }
+    return removeSubscription;
+  }
+  function triggerSubscriptions(subscriptions, ...args) {
+    subscriptions.slice().forEach((callback) => {
+      callback(...args);
+    });
+  }
+  const fallbackRunWithContext = (fn) => fn();
+  function mergeReactiveObjects(target, patchToApply) {
+    if (target instanceof Map && patchToApply instanceof Map) {
+      patchToApply.forEach((value, key) => target.set(key, value));
+    }
+    if (target instanceof Set && patchToApply instanceof Set) {
+      patchToApply.forEach(target.add, target);
+    }
+    for (const key in patchToApply) {
+      if (!patchToApply.hasOwnProperty(key))
+        continue;
+      const subPatch = patchToApply[key];
+      const targetValue = target[key];
+      if (isPlainObject(targetValue) && isPlainObject(subPatch) && target.hasOwnProperty(key) && !vue.isRef(subPatch) && !vue.isReactive(subPatch)) {
+        target[key] = mergeReactiveObjects(targetValue, subPatch);
+      } else {
+        target[key] = subPatch;
+      }
+    }
+    return target;
+  }
+  const skipHydrateSymbol = Symbol("pinia:skipHydration");
+  function shouldHydrate(obj) {
+    return !isPlainObject(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
+  }
+  const { assign } = Object;
+  function isComputed(o2) {
+    return !!(vue.isRef(o2) && o2.effect);
+  }
+  function createOptionsStore(id, options, pinia, hot) {
+    const { state, actions, getters } = options;
+    const initialState = pinia.state.value[id];
+    let store;
+    function setup() {
+      if (!initialState && !hot) {
+        {
+          pinia.state.value[id] = state ? state() : {};
+        }
+      }
+      const localState = hot ? (
+        // use ref() to unwrap refs inside state TODO: check if this is still necessary
+        vue.toRefs(vue.ref(state ? state() : {}).value)
+      ) : vue.toRefs(pinia.state.value[id]);
+      return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+        if (name in localState) {
+          console.warn(`[🍍]: A getter cannot have the same name as another state property. Rename one of them. Found with "${name}" in store "${id}".`);
+        }
+        computedGetters[name] = vue.markRaw(vue.computed(() => {
+          setActivePinia(pinia);
+          const store2 = pinia._s.get(id);
+          return getters[name].call(store2, store2);
+        }));
+        return computedGetters;
+      }, {}));
+    }
+    store = createSetupStore(id, setup, options, pinia, hot, true);
+    return store;
+  }
+  function createSetupStore($id, setup, options = {}, pinia, hot, isOptionsStore) {
+    let scope;
+    const optionsForPlugin = assign({ actions: {} }, options);
+    if (!pinia._e.active) {
+      throw new Error("Pinia destroyed");
+    }
+    const $subscribeOptions = {
+      deep: true
+      // flush: 'post',
+    };
+    {
+      $subscribeOptions.onTrigger = (event) => {
+        if (isListening) {
+          debuggerEvents = event;
+        } else if (isListening == false && !store._hotUpdating) {
+          if (Array.isArray(debuggerEvents)) {
+            debuggerEvents.push(event);
+          } else {
+            console.error("🍍 debuggerEvents should be an array. This is most likely an internal Pinia bug.");
+          }
+        }
+      };
+    }
+    let isListening;
+    let isSyncListening;
+    let subscriptions = [];
+    let actionSubscriptions = [];
+    let debuggerEvents;
+    const initialState = pinia.state.value[$id];
+    if (!isOptionsStore && !initialState && !hot) {
+      {
+        pinia.state.value[$id] = {};
+      }
+    }
+    const hotState = vue.ref({});
+    let activeListener;
+    function $patch(partialStateOrMutator) {
+      let subscriptionMutation;
+      isListening = isSyncListening = false;
+      {
+        debuggerEvents = [];
+      }
+      if (typeof partialStateOrMutator === "function") {
+        partialStateOrMutator(pinia.state.value[$id]);
+        subscriptionMutation = {
+          type: MutationType.patchFunction,
+          storeId: $id,
+          events: debuggerEvents
+        };
+      } else {
+        mergeReactiveObjects(pinia.state.value[$id], partialStateOrMutator);
+        subscriptionMutation = {
+          type: MutationType.patchObject,
+          payload: partialStateOrMutator,
+          storeId: $id,
+          events: debuggerEvents
+        };
+      }
+      const myListenerId = activeListener = Symbol();
+      vue.nextTick().then(() => {
+        if (activeListener === myListenerId) {
+          isListening = true;
+        }
+      });
+      isSyncListening = true;
+      triggerSubscriptions(subscriptions, subscriptionMutation, pinia.state.value[$id]);
+    }
+    const $reset = isOptionsStore ? function $reset2() {
+      const { state } = options;
+      const newState = state ? state() : {};
+      this.$patch(($state) => {
+        assign($state, newState);
+      });
+    } : (
+      /* istanbul ignore next */
+      () => {
+        throw new Error(`🍍: Store "${$id}" is built using the setup syntax and does not implement $reset().`);
+      }
+    );
+    function $dispose() {
+      scope.stop();
+      subscriptions = [];
+      actionSubscriptions = [];
+      pinia._s.delete($id);
+    }
+    function wrapAction(name, action) {
+      return function() {
+        setActivePinia(pinia);
+        const args = Array.from(arguments);
+        const afterCallbackList = [];
+        const onErrorCallbackList = [];
+        function after(callback) {
+          afterCallbackList.push(callback);
+        }
+        function onError(callback) {
+          onErrorCallbackList.push(callback);
+        }
+        triggerSubscriptions(actionSubscriptions, {
+          args,
+          name,
+          store,
+          after,
+          onError
+        });
+        let ret;
+        try {
+          ret = action.apply(this && this.$id === $id ? this : store, args);
+        } catch (error2) {
+          triggerSubscriptions(onErrorCallbackList, error2);
+          throw error2;
+        }
+        if (ret instanceof Promise) {
+          return ret.then((value) => {
+            triggerSubscriptions(afterCallbackList, value);
+            return value;
+          }).catch((error2) => {
+            triggerSubscriptions(onErrorCallbackList, error2);
+            return Promise.reject(error2);
+          });
+        }
+        triggerSubscriptions(afterCallbackList, ret);
+        return ret;
+      };
+    }
+    const _hmrPayload = /* @__PURE__ */ vue.markRaw({
+      actions: {},
+      getters: {},
+      state: [],
+      hotState
+    });
+    const partialStore = {
+      _p: pinia,
+      // _s: scope,
+      $id,
+      $onAction: addSubscription.bind(null, actionSubscriptions),
+      $patch,
+      $reset,
+      $subscribe(callback, options2 = {}) {
+        const removeSubscription = addSubscription(subscriptions, callback, options2.detached, () => stopWatcher());
+        const stopWatcher = scope.run(() => vue.watch(() => pinia.state.value[$id], (state) => {
+          if (options2.flush === "sync" ? isSyncListening : isListening) {
+            callback({
+              storeId: $id,
+              type: MutationType.direct,
+              events: debuggerEvents
+            }, state);
+          }
+        }, assign({}, $subscribeOptions, options2)));
+        return removeSubscription;
+      },
+      $dispose
+    };
+    const store = vue.reactive(assign(
+      {
+        _hmrPayload,
+        _customProperties: vue.markRaw(/* @__PURE__ */ new Set())
+        // devtools custom properties
+      },
+      partialStore
+      // must be added later
+      // setupStore
+    ));
+    pinia._s.set($id, store);
+    const runWithContext = pinia._a && pinia._a.runWithContext || fallbackRunWithContext;
+    const setupStore = runWithContext(() => pinia._e.run(() => (scope = vue.effectScope()).run(setup)));
+    for (const key in setupStore) {
+      const prop = setupStore[key];
+      if (vue.isRef(prop) && !isComputed(prop) || vue.isReactive(prop)) {
+        if (hot) {
+          set(hotState.value, key, vue.toRef(setupStore, key));
+        } else if (!isOptionsStore) {
+          if (initialState && shouldHydrate(prop)) {
+            if (vue.isRef(prop)) {
+              prop.value = initialState[key];
+            } else {
+              mergeReactiveObjects(prop, initialState[key]);
+            }
+          }
+          {
+            pinia.state.value[$id][key] = prop;
+          }
+        }
+        {
+          _hmrPayload.state.push(key);
+        }
+      } else if (typeof prop === "function") {
+        const actionValue = hot ? prop : wrapAction(key, prop);
+        {
+          setupStore[key] = actionValue;
+        }
+        {
+          _hmrPayload.actions[key] = prop;
+        }
+        optionsForPlugin.actions[key] = prop;
+      } else {
+        if (isComputed(prop)) {
+          _hmrPayload.getters[key] = isOptionsStore ? (
+            // @ts-expect-error
+            options.getters[key]
+          ) : prop;
+          if (IS_CLIENT) {
+            const getters = setupStore._getters || // @ts-expect-error: same
+            (setupStore._getters = vue.markRaw([]));
+            getters.push(key);
+          }
+        }
+      }
+    }
+    {
+      assign(store, setupStore);
+      assign(vue.toRaw(store), setupStore);
+    }
+    Object.defineProperty(store, "$state", {
+      get: () => hot ? hotState.value : pinia.state.value[$id],
+      set: (state) => {
+        if (hot) {
+          throw new Error("cannot set hotState");
+        }
+        $patch(($state) => {
+          assign($state, state);
+        });
+      }
+    });
+    {
+      store._hotUpdate = vue.markRaw((newStore) => {
+        store._hotUpdating = true;
+        newStore._hmrPayload.state.forEach((stateKey) => {
+          if (stateKey in store.$state) {
+            const newStateTarget = newStore.$state[stateKey];
+            const oldStateSource = store.$state[stateKey];
+            if (typeof newStateTarget === "object" && isPlainObject(newStateTarget) && isPlainObject(oldStateSource)) {
+              patchObject(newStateTarget, oldStateSource);
+            } else {
+              newStore.$state[stateKey] = oldStateSource;
+            }
+          }
+          set(store, stateKey, vue.toRef(newStore.$state, stateKey));
+        });
+        Object.keys(store.$state).forEach((stateKey) => {
+          if (!(stateKey in newStore.$state)) {
+            del(store, stateKey);
+          }
+        });
+        isListening = false;
+        isSyncListening = false;
+        pinia.state.value[$id] = vue.toRef(newStore._hmrPayload, "hotState");
+        isSyncListening = true;
+        vue.nextTick().then(() => {
+          isListening = true;
+        });
+        for (const actionName in newStore._hmrPayload.actions) {
+          const action = newStore[actionName];
+          set(store, actionName, wrapAction(actionName, action));
+        }
+        for (const getterName in newStore._hmrPayload.getters) {
+          const getter = newStore._hmrPayload.getters[getterName];
+          const getterValue = isOptionsStore ? (
+            // special handling of options api
+            vue.computed(() => {
+              setActivePinia(pinia);
+              return getter.call(store, store);
+            })
+          ) : getter;
+          set(store, getterName, getterValue);
+        }
+        Object.keys(store._hmrPayload.getters).forEach((key) => {
+          if (!(key in newStore._hmrPayload.getters)) {
+            del(store, key);
+          }
+        });
+        Object.keys(store._hmrPayload.actions).forEach((key) => {
+          if (!(key in newStore._hmrPayload.actions)) {
+            del(store, key);
+          }
+        });
+        store._hmrPayload = newStore._hmrPayload;
+        store._getters = newStore._getters;
+        store._hotUpdating = false;
+      });
+    }
+    if (USE_DEVTOOLS) {
+      const nonEnumerable = {
+        writable: true,
+        configurable: true,
+        // avoid warning on devtools trying to display this property
+        enumerable: false
+      };
+      ["_p", "_hmrPayload", "_getters", "_customProperties"].forEach((p2) => {
+        Object.defineProperty(store, p2, assign({ value: store[p2] }, nonEnumerable));
+      });
+    }
+    pinia._p.forEach((extender) => {
+      if (USE_DEVTOOLS) {
+        const extensions = scope.run(() => extender({
+          store,
+          app: pinia._a,
+          pinia,
+          options: optionsForPlugin
+        }));
+        Object.keys(extensions || {}).forEach((key) => store._customProperties.add(key));
+        assign(store, extensions);
+      } else {
+        assign(store, scope.run(() => extender({
+          store,
+          app: pinia._a,
+          pinia,
+          options: optionsForPlugin
+        })));
+      }
+    });
+    if (store.$state && typeof store.$state === "object" && typeof store.$state.constructor === "function" && !store.$state.constructor.toString().includes("[native code]")) {
+      console.warn(`[🍍]: The "state" must be a plain object. It cannot be
+	state: () => new MyClass()
+Found in store "${store.$id}".`);
+    }
+    if (initialState && isOptionsStore && options.hydrate) {
+      options.hydrate(store.$state, initialState);
+    }
+    isListening = true;
+    isSyncListening = true;
+    return store;
+  }
+  function defineStore(idOrOptions, setup, setupOptions) {
+    let id;
+    let options;
+    const isSetupStore = typeof setup === "function";
+    if (typeof idOrOptions === "string") {
+      id = idOrOptions;
+      options = isSetupStore ? setupOptions : setup;
+    } else {
+      options = idOrOptions;
+      id = idOrOptions.id;
+      if (typeof id !== "string") {
+        throw new Error(`[🍍]: "defineStore()" must be passed a store id as its first argument.`);
+      }
+    }
+    function useStore(pinia, hot) {
+      const hasContext = vue.hasInjectionContext();
+      pinia = // in test mode, ignore the argument provided as we can always retrieve a
+      // pinia instance with getActivePinia()
+      pinia || (hasContext ? vue.inject(piniaSymbol, null) : null);
+      if (pinia)
+        setActivePinia(pinia);
+      if (!activePinia) {
+        throw new Error(`[🍍]: "getActivePinia()" was called but there was no active Pinia. Are you trying to use a store before calling "app.use(pinia)"?
+See https://pinia.vuejs.org/core-concepts/outside-component-usage.html for help.
+This will fail in production.`);
+      }
+      pinia = activePinia;
+      if (!pinia._s.has(id)) {
+        if (isSetupStore) {
+          createSetupStore(id, setup, options, pinia);
+        } else {
+          createOptionsStore(id, options, pinia);
+        }
+        {
+          useStore._pinia = pinia;
+        }
+      }
+      const store = pinia._s.get(id);
+      if (hot) {
+        const hotId = "__hot:" + id;
+        const newStore = isSetupStore ? createSetupStore(hotId, setup, options, pinia, true) : createOptionsStore(hotId, assign({}, options), pinia, true);
+        hot._hotUpdate(newStore);
+        delete pinia.state.value[hotId];
+        pinia._s.delete(hotId);
+      }
+      if (IS_CLIENT) {
+        const currentInstance = vue.getCurrentInstance();
+        if (currentInstance && currentInstance.proxy && // avoid adding stores that are just built for hot module replacement
+        !hot) {
+          const vm = currentInstance.proxy;
+          const cache = "_pStores" in vm ? vm._pStores : vm._pStores = {};
+          cache[id] = store;
+        }
+      }
+      return store;
+    }
+    useStore.$id = id;
+    return useStore;
+  }
+  const useWebSocketStore = defineStore("websocket", {
+    state: () => ({
+      websocket: null,
+      isConnected: false,
+      reconnectAttempts: 0,
+      maxReconnectAttempts: 5,
+      friendsStatus: /* @__PURE__ */ new Map()
+      // 存储好友在线状态
+    }),
+    actions: {
+      initWebSocket() {
+        try {
+          const websocketUrl = uni.getStorageSync("websocketUrl");
+          const username = uni.getStorageSync("username");
+          if (!username) {
+            formatAppLog("error", "at store/websocket.js:20", "未找到用户信息，无法建立WebSocket连接");
+            return;
+          }
+          this.websocket = uni.connectSocket({
+            url: websocketUrl,
+            success: () => {
+              formatAppLog("log", "at store/websocket.js:27", "WebSocket连接成功");
+              this.reconnectAttempts = 0;
+            }
+          });
+          this.websocket.onOpen(() => {
+            formatAppLog("log", "at store/websocket.js:33", "WebSocket连接已打开");
+            this.isConnected = true;
+            this.websocket.send({
+              data: JSON.stringify({
+                type: "auth",
+                username
+              })
+            });
+          });
+          this.websocket.onClose(() => {
+            formatAppLog("log", "at store/websocket.js:45", "WebSocket连接已关闭");
+            this.isConnected = false;
+            if (this.reconnectAttempts < this.maxReconnectAttempts) {
+              setTimeout(() => {
+                formatAppLog("log", "at store/websocket.js:50", `尝试第 ${this.reconnectAttempts + 1} 次重连...`);
+                this.reconnectAttempts++;
+                this.initWebSocket();
+              }, 3e3);
+            }
+          });
+          this.websocket.onError((error2) => {
+            formatAppLog("error", "at store/websocket.js:58", "WebSocket错误:", error2);
+            this.isConnected = false;
+          });
+          this.websocket.onMessage((res) => {
+            try {
+              const data = JSON.parse(res.data);
+              formatAppLog("log", "at store/websocket.js:65", "收到WebSocket消息:", data);
+              switch (data.type) {
+                case "text":
+                  this.saveMessageToLocal({
+                    ...data,
+                    isRead: false,
+                    sendFailed: false
+                  });
+                  this.updateUnreadCounts();
+                  uni.$emit("websocketMessage", data);
+                  break;
+                case "read_ack":
+                  uni.$emit("websocketMessage", data);
+                  break;
+                case "status":
+                  this.handleStatusMessage(data);
+                  break;
+                case "friends_status":
+                  if (Array.isArray(data.statuses)) {
+                    data.statuses.forEach((status) => {
+                      this.handleStatusMessage(status);
+                    });
+                  }
+                  break;
+                case "offline_messages":
+                  if (Array.isArray(data.messages)) {
+                    data.messages.forEach((msg) => {
+                      this.saveMessageToLocal({
+                        ...msg,
+                        isRead: false,
+                        sendFailed: false
+                      });
+                    });
+                    this.updateUnreadCounts();
+                  }
+                  break;
+              }
+            } catch (error2) {
+              formatAppLog("error", "at store/websocket.js:114", "处理WebSocket消息失败:", error2);
+            }
+          });
+        } catch (error2) {
+          formatAppLog("error", "at store/websocket.js:118", "初始化WebSocket失败:", error2);
+        }
+      },
+      closeWebSocket() {
+        if (this.websocket) {
+          this.websocket.close();
+          this.websocket = null;
+          this.isConnected = false;
+          this.reconnectAttempts = 0;
+        }
+      },
+      // 添加处理状态消息的方法
+      handleStatusMessage(data) {
+        formatAppLog("log", "at store/websocket.js:133", "处理状态消息:", data);
+        this.friendsStatus.set(data.username, {
+          isOnline: data.status === "online",
+          lastActive: data.timestamp
+        });
+        uni.$emit("friendStatusChanged", {
+          username: data.username,
+          status: data.status
+        });
+      },
+      // 获取好友在线状态
+      getFriendStatus(username) {
+        return this.friendsStatus.get(username) || { isOnline: false };
+      },
+      // 修改保存消息到本地的函数
+      saveMessageToLocal(message) {
+        if (!message)
+          return;
+        const currentUser = uni.getStorageSync("username");
+        if (message.receiver !== currentUser && message.sender !== currentUser) {
+          return;
+        }
+        try {
+          const key = `chat_history_${message.receiver}_${message.sender}`;
+          formatAppLog("log", "at store/websocket.js:166", "保存消息使用的key:", key);
+          let history = uni.getStorageSync(key) || [];
+          if (!history.some((msg) => msg.id === message.id)) {
+            const newMessage = {
+              ...message,
+              isRead: message.receiver !== currentUser,
+              // 如果是发送的消息，标记为已读
+              sendFailed: false,
+              time: message.time || message.timestamp || Date.now()
+            };
+            history.push(newMessage);
+            formatAppLog("log", "at store/websocket.js:182", "添加新消息:", newMessage);
+            history.sort((a2, b2) => (a2.time || 0) - (b2.time || 0));
+            uni.setStorageSync(key, history);
+            if (message.receiver === currentUser) {
+              formatAppLog("log", "at store/websocket.js:192", "触发未读消息计数更新");
+              this.updateUnreadCounts();
+            }
+          }
+        } catch (error2) {
+          formatAppLog("error", "at store/websocket.js:197", "保存消息到本地失败:", error2, message);
+        }
+      },
+      // 修改更新未读消息计数的函数
+      updateUnreadCounts() {
+        try {
+          const username = uni.getStorageSync("username");
+          const friends = uni.getStorageSync("friendsList") || [];
+          let updated = false;
+          formatAppLog("log", "at store/websocket.js:207", "当前好友列表:", friends);
+          friends.forEach((friend) => {
+            const key = `chat_history_${username}_${friend.username}`;
+            const history = uni.getStorageSync(key) || [];
+            const unreadCount = history.filter(
+              (msg) => msg && msg.sender === friend.username && !msg.isRead
+            ).length;
+            if (friend.unreadCount !== unreadCount) {
+              friend.unreadCount = unreadCount;
+              updated = true;
+              formatAppLog("log", "at store/websocket.js:221", "更新未读消息计数:", friend.username, unreadCount);
+            }
+          });
+          if (updated) {
+            uni.setStorageSync("friendsList", friends);
+            uni.$emit("updateUnreadCounts");
+          }
+        } catch (error2) {
+          formatAppLog("error", "at store/websocket.js:231", "更新未读消息计数失败:", error2);
+        }
+      }
+    }
+  });
   const _imports_0 = "/static/icon/shot_sport.png";
   const _imports_1 = "/static/icon/dropdown.png";
   const add_icon$1 = "/static/icon/add.png";
@@ -19491,6 +21176,20 @@ ${i3}
     __name: "Home",
     setup(__props, { expose: __expose }) {
       __expose();
+      const store = useWebSocketStore();
+      vue.onMounted(() => {
+        formatAppLog("log", "at pages/Home/Home.vue:757", store.isConnected);
+        if (!store.isConnected) {
+          store.initWebSocket();
+          formatAppLog("log", "at pages/Home/Home.vue:760", "连接初始化...");
+        }
+        setInterval(() => {
+          if (!store.isConnected) {
+            store.initWebSocket();
+            formatAppLog("log", "at pages/Home/Home.vue:766", "连接初始化...");
+          }
+        }, 5e3);
+      });
       const serverUrl2 = uni.getStorageSync("serverUrl");
       const target = vue.ref(1);
       const modelVale = vue.ref(0);
@@ -19550,16 +21249,16 @@ ${i3}
       const totalCalories = vue.computed(() => {
         const autoCalories = foodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:816", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:838", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const manualCalories = manualFoodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:823", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:845", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const total = Math.round(autoCalories + manualCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:829", `总热量 (自动 + 手动): ${total} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:851", `总热量 (自动 + 手动): ${total} 千卡`);
         return total;
       });
       const calculateFoodCalories = (food) => {
@@ -19613,14 +21312,14 @@ ${i3}
         dailyFoods = [...dailyFoods, ...newFoods];
         uni.setStorageSync(storageKey, dailyFoods);
         const totalConsumedCalories2 = totalCalories.value;
-        formatAppLog("log", "at pages/Home/Home.vue:904", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:925", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
         const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
         let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-        formatAppLog("log", "at pages/Home/Home.vue:908", `1: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:929", `1: ${remainingCalories} 千卡`);
         remainingCalories = isNaN(remainingCalories) ? dailyCalories || 2e3 : remainingCalories;
-        formatAppLog("log", "at pages/Home/Home.vue:913", `3: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:934", `3: ${remainingCalories} 千卡`);
         remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories2);
-        formatAppLog("log", "at pages/Home/Home.vue:917", `4: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:938", `4: ${remainingCalories} 千卡`);
         today_left_eat.value = remainingCalories;
         target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
         uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
@@ -19630,8 +21329,8 @@ ${i3}
           title: "已更新每日摄入",
           icon: "success"
         });
-        formatAppLog("log", "at pages/Home/Home.vue:937", `总消耗: ${totalConsumedCalories2} 千卡`);
-        formatAppLog("log", "at pages/Home/Home.vue:938", `剩余可摄入热量: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:958", `总消耗: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:959", `剩余可摄入热量: ${remainingCalories} 千卡`);
         try {
           const res = await uni.request({
             url: serverUrl2 + "/submitDailyFoods",
@@ -19653,7 +21352,7 @@ ${i3}
             throw new Error(res.data.message || "上传失败，请稍后重试");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:969", "上传失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:990", "上传失败:", error2);
           uni.showToast({
             title: "上传失败，请稍后重试",
             icon: "none"
@@ -19732,7 +21431,7 @@ ${i3}
           });
           errorMessage.value = "";
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1065", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1086", error2);
           errorMessage.value = error2;
         } finally {
           isRecognizing.value = false;
@@ -19766,7 +21465,7 @@ ${i3}
             icon: "success"
           });
         } catch (err) {
-          formatAppLog("error", "at pages/Home/Home.vue:1110", "处理识别结果错误:", err);
+          formatAppLog("error", "at pages/Home/Home.vue:1131", "处理识别结果错误:", err);
           uni.showToast({
             title: "数据格式错误",
             icon: "none"
@@ -19779,7 +21478,7 @@ ${i3}
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1125", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:1145", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -19791,15 +21490,16 @@ ${i3}
                 calorie: item.calorie,
                 goal: item.goal ? item.goal.split(",").map((g2) => g2.trim()) : [],
                 // 将 goal 字符串按号拆分并去除空格
-                type: item.type
+                type: item.type,
+                videoUrl: item.videoUrl
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1141", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1162", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1145", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1166", "请求失败:", err);
           }
         });
       };
@@ -19809,9 +21509,9 @@ ${i3}
           const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username2}`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
-            formatAppLog("log", "at pages/Home/Home.vue:1158", "今日已获取过热量数据");
+            formatAppLog("log", "at pages/Home/Home.vue:1179", "今日已获取过热量数据");
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1167", `剩余热量: ${today_left_eat.value} 千卡`);
+            formatAppLog("log", "at pages/Home/Home.vue:1188", `剩余热量: ${today_left_eat.value} 千卡`);
             const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
             target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
@@ -19828,7 +21528,7 @@ ${i3}
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1189", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1210", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -19840,7 +21540,7 @@ ${i3}
               let remainingCalories = uni.getStorageSync(
                 `today_left_eat_${username2}`
               );
-              formatAppLog("log", "at pages/Home/Home.vue:1205", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1226", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -19858,7 +21558,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1223", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1244", "请求失败:", error2);
         }
       }
       const aiInput = vue.ref("");
@@ -19899,7 +21599,7 @@ ${i3}
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1285", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1306", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -19935,7 +21635,7 @@ ${i3}
             "Content-Type": "application/json"
           },
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1328", "服务器响应:", res);
+            formatAppLog("log", "at pages/Home/Home.vue:1349", "服务器响应:", res);
             if (res.statusCode === 200 && res.data.fitnessPlan) {
               const md = new MarkdownIt();
               customPlan.value = md.render(res.data.fitnessPlan);
@@ -19951,7 +21651,7 @@ ${i3}
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1345", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1366", "请求失败:", err);
             uni.showToast({
               title: "网络请求失败，请稍后重试",
               icon: "none"
@@ -19983,9 +21683,9 @@ ${i3}
         uni.$on("foodDeleted", initializeRemainingCalories);
         uni.$on("foodEdit", initializeRemainingCalories);
         setInterval(() => {
-          const now = /* @__PURE__ */ new Date();
-          if (now.getHours() === 0 && now.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1392", "已到0点，重新获取每日热量");
+          const now2 = /* @__PURE__ */ new Date();
+          if (now2.getHours() === 0 && now2.getMinutes() === 0) {
+            formatAppLog("log", "at pages/Home/Home.vue:1413", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -20011,14 +21711,14 @@ ${i3}
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1425", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1449", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1437", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1461", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -20027,7 +21727,8 @@ ${i3}
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1450", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1474", "计划已添加:", plan.title);
+        uni.$emit("handleAdd");
         loadMyPlans();
       };
       const handleRemove = (plan) => {
@@ -20035,7 +21736,8 @@ ${i3}
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1467", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1492", "计划已删除:", plan.title);
+        uni.$emit("handleRemove");
         loadMyPlans();
       };
       const openPopup = () => {
@@ -20072,7 +21774,7 @@ ${i3}
           image_url: planForm.value.imageUrl || "",
           video_url: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1516", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1543", "前端提交的计划数据:", planData);
         if (isEditing) {
           uni.request({
             url: `${serverUrl2}/goals`,
@@ -20092,7 +21794,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1539", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1566", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20115,7 +21817,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1562", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1589", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -20123,7 +21825,7 @@ ${i3}
       };
       const chooseCoverImage = async () => {
         try {
-          formatAppLog("log", "at pages/Home/Home.vue:1571", "选择图片按钮被点击");
+          formatAppLog("log", "at pages/Home/Home.vue:1598", "选择图片按钮被点击");
           const res = await uni.chooseImage({
             count: 1,
             // 选择一张图片
@@ -20132,22 +21834,22 @@ ${i3}
           });
           if (res.errMsg === "chooseImage:ok") {
             const filePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/Home/Home.vue:1579", "选择的图片路径：", filePath);
+            formatAppLog("log", "at pages/Home/Home.vue:1606", "选择的图片路径：", filePath);
             const uploadRes = await uploadImage(filePath);
             if (uploadRes && uploadRes.imageUrl) {
               planForm.value.imageUrl = uploadRes.imageUrl;
-              formatAppLog("log", "at pages/Home/Home.vue:1585", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+              formatAppLog("log", "at pages/Home/Home.vue:1612", "图片上传成功，图片 URL:", uploadRes.imageUrl);
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1587", "图片上传失败");
+              formatAppLog("error", "at pages/Home/Home.vue:1614", "图片上传失败");
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1591", "选择图片失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1618", "选择图片失败:", error2);
         }
       };
       const uploadImage = (filePath) => {
         return new Promise((resolve, reject) => {
-          formatAppLog("log", "at pages/Home/Home.vue:1598", "开始上传图片，路径:", filePath);
+          formatAppLog("log", "at pages/Home/Home.vue:1625", "开始上传图片，路径:", filePath);
           uni.uploadFile({
             url: serverUrl2 + "/upload",
             // 假设上传接口的URL
@@ -20158,7 +21860,7 @@ ${i3}
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200 && response.success) {
                   const imageUrl = response.imageUrl;
-                  formatAppLog("log", "at pages/Home/Home.vue:1610", "上传成功，返回的图片URL:", imageUrl);
+                  formatAppLog("log", "at pages/Home/Home.vue:1637", "上传成功，返回的图片URL:", imageUrl);
                   planForm.value.imageUrl = imageUrl;
                   uni.showToast({
                     title: "上传成功",
@@ -20166,14 +21868,14 @@ ${i3}
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:1620", "上传失败，返回错误:", response);
+                  formatAppLog("error", "at pages/Home/Home.vue:1647", "上传失败，返回错误:", response);
                   uni.showToast({
                     title: "上传失败，请重试",
                     icon: "none"
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:1627", "解析响应数据失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:1654", "解析响应数据失败:", err);
                 uni.showToast({
                   title: "响应数据解析失败",
                   icon: "none"
@@ -20181,7 +21883,7 @@ ${i3}
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1635", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1662", "上传失败", err);
               uni.showToast({
                 title: "上传失败，请检查网络连接",
                 icon: "none"
@@ -20192,8 +21894,8 @@ ${i3}
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1647", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1648", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:1674", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1675", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -20214,7 +21916,7 @@ ${i3}
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1672", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:1699", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -20261,9 +21963,9 @@ ${i3}
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1729", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:1756", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1732", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:1759", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -20356,12 +22058,16 @@ ${i3}
         });
       };
       const isRecognizing = vue.ref(false);
-      const __returned__ = { serverUrl: serverUrl2, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, get MarkdownIt() {
+      vue.onUnmounted(() => {
+      });
+      const __returned__ = { store, serverUrl: serverUrl2, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, onUnmounted: vue.onUnmounted, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
       }, get axios() {
         return axios$1;
+      }, get useWebSocketStore() {
+        return useWebSocketStore;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -22361,6 +24067,8 @@ ${i3}
     __name: "Friends",
     setup(__props, { expose: __expose }) {
       __expose();
+      const websocketUrl = uni.getStorageSync("websocketUrl");
+      const store = useWebSocketStore();
       const tabs = [
         { key: "friends", name: "好友" },
         { key: "team", name: "组队打卡" }
@@ -22413,7 +24121,6 @@ ${i3}
           avatar: "",
           signature: "让运动成为习惯"
         }
-        // ... 更多好友数据
       ]);
       const touchLetter = (letter) => {
         currentLetter.value = letter;
@@ -22432,10 +24139,10 @@ ${i3}
         uni.navigateTo({
           url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
           success: () => {
-            formatAppLog("log", "at pages/Friends/Friends.vue:256", "进入聊天页面");
+            formatAppLog("log", "at pages/Friends/Friends.vue:326", "进入聊天页面");
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Friends/Friends.vue:259", "打开聊天页面失败:", err);
+            formatAppLog("error", "at pages/Friends/Friends.vue:329", "打开聊天页面失败:", err);
             uni.showToast({
               title: "打开聊天失败",
               icon: "none"
@@ -22471,32 +24178,31 @@ ${i3}
           }
         });
       };
-      const deleteFriend = async (friend) => {
+      const deleteFriend = async (friendUsername) => {
         try {
-          const res = await uni.showModal({
-            title: "提示",
-            content: `确定要删除好友 ${friend.username} 吗？`
+          const res = await uni.request({
+            url: `${serverUrl2}/friends/delete`,
+            method: "POST",
+            data: {
+              userId: uni.getStorageSync("username"),
+              friendUsername
+            }
           });
-          if (res.confirm) {
-            friendsList.value = friendsList.value.filter((f2) => f2.id !== friend.id);
+          if (res.statusCode === 200) {
+            uni.removeStorageSync("friendsList");
+            await loadFriendsList();
             uni.showToast({
               title: "删除成功",
               icon: "success"
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:318", "删除好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:395", "删除好友失败:", error2);
           uni.showToast({
-            title: "操作失败",
+            title: "删除失败",
             icon: "none"
           });
         }
-      };
-      const chatWithFriend = (friend) => {
-        uni.showToast({
-          title: "聊天功能开发中",
-          icon: "none"
-        });
       };
       const addFriendPopup = vue.ref(null);
       const newFriendUsername = vue.ref("");
@@ -22506,6 +24212,12 @@ ${i3}
       const closeAddFriend = () => {
         newFriendUsername.value = "";
         addFriendPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
       };
       const confirmAddFriend = async () => {
         if (!newFriendUsername.value) {
@@ -22529,10 +24241,11 @@ ${i3}
           });
           if (res.statusCode === 200 && res.data.status === "success") {
             uni.showToast({
-              title: "添加成功",
+              title: "��加成功",
               icon: "success"
             });
             closeAddFriend();
+            uni.removeStorageSync("friendsList");
             await loadFriendsList();
           } else {
             let errorMessage = "添加失败";
@@ -22549,7 +24262,7 @@ ${i3}
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:395", "添加好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:472", "添加好友失败:", error2);
           uni.showToast({
             title: "网络请求失败",
             icon: "none"
@@ -22570,31 +24283,61 @@ ${i3}
             }
           });
           if (res.statusCode === 200) {
-            friendsList.value = res.data;
-            formatAppLog("log", "at pages/Friends/Friends.vue:422", "更新后的好友列表:", friendsList.value);
+            const formattedFriends = res.data.map((friend) => ({
+              ...friend,
+              online: store.getFriendStatus(friend.username).isOnline,
+              unreadCount: 0
+              // 初始化未读消息数
+            }));
+            uni.setStorageSync("friendsList", formattedFriends);
+            friendsList.value = formattedFriends;
+            loadUnreadCounts();
+            formatAppLog("log", "at pages/Friends/Friends.vue:530", "从服务器更新的好友列表:", friendsList.value);
           } else {
             throw new Error(res.data.message || "获取好友列表失败");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:427", "获取好友列表失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:535", "获取好友列表失败:", error2);
           uni.showToast({
             title: "获取好友列表失败",
             icon: "none"
           });
         }
       };
+      const loadUnreadCounts = () => {
+        const currentUser = uni.getStorageSync("username");
+        friendsList.value = friendsList.value.map((friend) => {
+          const key = `chat_history_${currentUser}_${friend.username}`;
+          const history = uni.getStorageSync(key) || [];
+          const unreadCount = history.filter(
+            (msg) => msg.sender === friend.username && !msg.isRead
+          ).length;
+          formatAppLog("log", "at pages/Friends/Friends.vue:556", `好友 ${friend.username} 的未读消息数:`, unreadCount);
+          formatAppLog("log", "at pages/Friends/Friends.vue:557", `聊天历史:`, history);
+          return {
+            ...friend,
+            unreadCount
+          };
+        });
+      };
       vue.onMounted(async () => {
         await loadFriendsList();
+        if (!store.isConnected) {
+          formatAppLog("log", "at pages/Friends/Friends.vue:570", "websocket未连接，尝试新连接");
+          store.initWebSocket();
+        }
+        uni.$on("updateUnreadCounts", () => {
+          formatAppLog("log", "at pages/Friends/Friends.vue:576", "收到未读消息更新事件");
+          loadUnreadCounts();
+        });
       });
-      let refreshInterval;
-      vue.onMounted(async () => {
+      onPullDownRefresh(async () => {
+        formatAppLog("log", "at pages/Friends/Friends.vue:581", "refresh");
         await loadFriendsList();
-        refreshInterval = setInterval(loadFriendsList, 6e4);
+        uni.stopPullDownRefresh();
       });
       vue.onUnmounted(() => {
-        if (refreshInterval) {
-          clearInterval(refreshInterval);
-        }
+        uni.$off("updateUnreadCounts");
       });
       const teamList = vue.ref([
         {
@@ -22662,11 +24405,115 @@ ${i3}
           url: "/pages/InviteFriends/InviteFriends"
         });
       };
-      const __returned__ = { tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl: serverUrl2, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, chatWithFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, get refreshInterval() {
-        return refreshInterval;
-      }, set refreshInterval(v2) {
-        refreshInterval = v2;
-      }, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted };
+      uni.$on("friendStatusChanged", ({ username, status }) => {
+        const friendIndex = friendsList.value.findIndex(
+          (f2) => f2.username === username
+        );
+        if (friendIndex !== -1) {
+          friendsList.value[friendIndex].online = status === "online";
+        }
+      });
+      const handleDelete = (friend) => {
+        uni.showModal({
+          title: "删除好友",
+          content: `确定要删除好友 ${friend.username} 吗？`,
+          success: async (res) => {
+            if (res.confirm) {
+              try {
+                const result = await uni.request({
+                  url: `${serverUrl2}/friends/delete`,
+                  method: "POST",
+                  data: {
+                    userId: uni.getStorageSync("username"),
+                    friendUsername: friend.username
+                  }
+                });
+                if (result.statusCode === 200) {
+                  uni.removeStorageSync("friendsList");
+                  await loadFriendsList();
+                  uni.showToast({
+                    title: "删除成功",
+                    icon: "success"
+                  });
+                } else {
+                  throw new Error("删除失败");
+                }
+              } catch (error2) {
+                formatAppLog("error", "at pages/Friends/Friends.vue:713", "删除好友失败:", error2);
+                uni.showToast({
+                  title: "删除失败",
+                  icon: "none"
+                });
+              }
+            }
+          }
+        });
+      };
+      const sidebarPopup = vue.ref(null);
+      const friendsListPopup = vue.ref(null);
+      const isSidebarOpen = vue.ref(false);
+      const showSidebar = () => {
+        isSidebarOpen.value = true;
+        uni.hideTabBar({
+          animation: true
+        });
+        sidebarPopup.value.open();
+      };
+      const closeSidebar = () => {
+        sidebarPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
+      };
+      const showAddFriendDialog = () => {
+        closeSidebar();
+        uni.hideTabBar({
+          animation: true
+        });
+        setTimeout(() => {
+          addFriendPopup.value.open();
+        }, 300);
+      };
+      const showFriendsList = () => {
+        closeSidebar();
+        uni.hideTabBar({
+          animation: true
+        });
+        setTimeout(() => {
+          friendsListPopup.value.open();
+        }, 300);
+      };
+      const closeFriendsList = () => {
+        friendsListPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
+      };
+      const handleMaskClick = () => {
+        closeSidebar();
+      };
+      const closeAllMenus = () => {
+        sidebarPopup.value.close();
+        addFriendPopup.value.close();
+        friendsListPopup.value.close();
+        setTimeout(() => {
+          isSidebarOpen.value = false;
+          uni.showTabBar({
+            animation: true
+          });
+        }, 300);
+      };
+      const __returned__ = { websocketUrl, store, tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl: serverUrl2, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, loadUnreadCounts, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, handleDelete, sidebarPopup, friendsListPopup, isSidebarOpen, showSidebar, closeSidebar, showAddFriendDialog, showFriendsList, closeFriendsList, handleMaskClick, closeAllMenus, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, get useWebSocketStore() {
+        return useWebSocketStore;
+      }, get onPullDownRefresh() {
+        return onPullDownRefresh;
+      } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -22711,6 +24558,21 @@ ${i3}
           /* STYLE */
         )
       ]),
+      vue.createCommentVNode(" 添加新的侧边栏触发按钮 "),
+      vue.createElementVNode(
+        "view",
+        {
+          class: vue.normalizeClass(["sidebar-trigger", { hidden: $setup.isSidebarOpen }]),
+          onClick: $setup.showSidebar
+        },
+        [
+          vue.createElementVNode("view", { class: "trigger-line" }),
+          vue.createElementVNode("view", { class: "trigger-line" }),
+          vue.createElementVNode("view", { class: "trigger-line" })
+        ],
+        2
+        /* CLASS */
+      ),
       vue.createCommentVNode(" 好友列表页面 "),
       $setup.currentTab === "friends" ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
@@ -22749,49 +24611,65 @@ ${i3}
             null,
             vue.renderList($setup.groupedFriends, (group, letter) => {
               return vue.openBlock(), vue.createElementBlock("view", { key: letter }, [
-                vue.createCommentVNode(" 字母索引 "),
                 vue.createElementVNode("view", {
                   class: "index-letter",
                   id: `letter-${letter}`
                 }, vue.toDisplayString(letter), 9, ["id"]),
-                vue.createCommentVNode(" 好友项 "),
                 (vue.openBlock(true), vue.createElementBlock(
                   vue.Fragment,
                   null,
                   vue.renderList(group, (friend) => {
                     return vue.openBlock(), vue.createElementBlock("view", {
                       key: friend.id,
-                      class: "friend-item",
-                      "hover-class": "friend-item-hover",
-                      onClick: ($event) => $setup.enterChat(friend)
+                      class: "friend-item"
                     }, [
-                      vue.createElementVNode("view", { class: "avatar-box" }, [
-                        vue.createElementVNode("image", {
-                          src: friend.avatar || $setup.defaultAvatar,
-                          class: "avatar"
-                        }, null, 8, ["src"]),
-                        friend.status === "在线" ? (vue.openBlock(), vue.createElementBlock("view", {
-                          key: 0,
-                          class: "online-dot"
-                        })) : vue.createCommentVNode("v-if", true)
-                      ]),
-                      vue.createElementVNode("view", { class: "info" }, [
-                        vue.createElementVNode(
-                          "text",
-                          { class: "name" },
-                          vue.toDisplayString(friend.username),
+                      vue.createElementVNode("view", {
+                        class: "friend-content",
+                        onClick: ($event) => $setup.enterChat(friend)
+                      }, [
+                        vue.createElementVNode("view", { class: "avatar-box" }, [
+                          vue.createElementVNode("image", {
+                            src: friend.avatar || $setup.defaultAvatar,
+                            class: "avatar"
+                          }, null, 8, ["src"]),
+                          vue.createElementVNode(
+                            "view",
+                            {
+                              class: vue.normalizeClass(["status-dot", { online: friend.online, offline: !friend.online }])
+                            },
+                            null,
+                            2
+                            /* CLASS */
+                          )
+                        ]),
+                        vue.createElementVNode("view", { class: "info" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "name" },
+                            vue.toDisplayString(friend.username),
+                            1
+                            /* TEXT */
+                          ),
+                          vue.createElementVNode(
+                            "text",
+                            { class: "signature" },
+                            vue.toDisplayString(friend.signature || "这个人很懒，什么都没写~"),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        friend.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
+                          "view",
+                          {
+                            key: 0,
+                            class: "unread-badge"
+                          },
+                          vue.toDisplayString(friend.unreadCount > 99 ? "99+" : friend.unreadCount),
                           1
                           /* TEXT */
-                        ),
-                        vue.createElementVNode(
-                          "text",
-                          { class: "signature" },
-                          vue.toDisplayString(friend.signature || "这个人很懒，什么都没写~"),
-                          1
-                          /* TEXT */
-                        )
-                      ])
-                    ], 8, ["onClick"]);
+                        )) : vue.createCommentVNode("v-if", true)
+                      ], 8, ["onClick"])
+                    ]);
                   }),
                   128
                   /* KEYED_FRAGMENT */
@@ -22803,39 +24681,26 @@ ${i3}
           ))
         ]),
         vue.createCommentVNode(" 字母导航条 "),
-        vue.createElementVNode("view", { class: "letter-nav" }, [
-          (vue.openBlock(), vue.createElementBlock(
-            vue.Fragment,
-            null,
-            vue.renderList($setup.letters, (letter) => {
-              return vue.createElementVNode("text", {
-                key: letter,
-                class: vue.normalizeClass(["letter", $setup.currentLetter === letter ? "letter-active" : ""]),
-                onTouchstart: ($event) => $setup.touchLetter(letter),
-                onTouchend: $setup.endTouchLetter
-              }, vue.toDisplayString(letter), 43, ["onTouchstart"]);
-            }),
-            64
-            /* STABLE_FRAGMENT */
-          ))
-        ]),
+        vue.createCommentVNode(` <view class="letter-nav">\r
+        <text\r
+          v-for="letter in letters"\r
+          :key="letter"\r
+          :class="['letter', currentLetter === letter ? 'letter-active' : '']"\r
+          @touchstart="touchLetter(letter)"\r
+          @touchend="endTouchLetter"\r
+        >\r
+          {{ letter }}\r
+        </text>\r
+      </view> `),
         vue.createCommentVNode(" 字母提示框 "),
-        $setup.showLetterTip ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 0,
-            class: "letter-tip"
-          },
-          vue.toDisplayString($setup.currentLetter),
-          1
-          /* TEXT */
-        )) : vue.createCommentVNode("v-if", true),
+        vue.createCommentVNode(' <view v-if="showLetterTip" class="letter-tip">\r\n        {{ currentLetter }}\r\n      </view> '),
         vue.createCommentVNode(" 添加好友弹窗 "),
         vue.createVNode(
           _component_uni_popup,
           {
             ref: "addFriendPopup",
-            type: "dialog"
+            type: "dialog",
+            onMaskClick: $setup.closeAddFriend
           },
           {
             default: vue.withCtx(() => [
@@ -22870,7 +24735,7 @@ ${i3}
                   vue.createElementVNode("button", {
                     class: "confirm-btn",
                     onClick: $setup.confirmAddFriend
-                  }, "确认添加")
+                  }, " 确认添加 ")
                 ])
               ])
             ]),
@@ -22879,17 +24744,7 @@ ${i3}
           },
           512
           /* NEED_PATCH */
-        ),
-        vue.createCommentVNode(" 添加好友按钮 "),
-        vue.createElementVNode("view", {
-          class: "floating-btn",
-          onClick: $setup.showAddFriend
-        }, [
-          vue.createElementVNode("view", { class: "btn-content" }, [
-            vue.createElementVNode("text", { class: "plus-icon" }, "+")
-          ]),
-          vue.createElementVNode("view", { class: "btn-ripple" })
-        ])
+        )
       ])) : (vue.openBlock(), vue.createElementBlock(
         vue.Fragment,
         { key: 1 },
@@ -22988,21 +24843,766 @@ ${i3}
         ],
         2112
         /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-      ))
+      )),
+      vue.createCommentVNode(" 侧边栏 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "sidebarPopup",
+          type: "left",
+          onMaskClick: $setup.handleMaskClick
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "sidebar" }, [
+              vue.createElementVNode("view", { class: "sidebar-header" }, [
+                vue.createElementVNode("text", { class: "sidebar-title" }, "好友管理"),
+                vue.createVNode(_component_uni_icons, {
+                  type: "close",
+                  size: "24",
+                  color: "#333",
+                  onClick: $setup.closeSidebar
+                })
+              ]),
+              vue.createElementVNode("view", { class: "sidebar-content" }, [
+                vue.createElementVNode("view", {
+                  class: "sidebar-item",
+                  onClick: $setup.showAddFriendDialog
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "personadd-filled",
+                    size: "24",
+                    color: "#4cd964"
+                  }),
+                  vue.createElementVNode("text", null, "添加好友")
+                ]),
+                vue.createElementVNode("view", {
+                  class: "sidebar-item",
+                  onClick: $setup.showFriendsList
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "staff-filled",
+                    size: "24",
+                    color: "#007aff"
+                  }),
+                  vue.createElementVNode("text", null, "好友列表")
+                ])
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      ),
+      vue.createCommentVNode(" 好友列表弹窗 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "friendsListPopup",
+          type: "bottom",
+          onMaskClick: $setup.closeFriendsList
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "friends-manage-list" }, [
+              vue.createElementVNode("view", { class: "popup-header" }, [
+                vue.createElementVNode("text", { class: "popup-title" }, "好友列表"),
+                vue.createVNode(_component_uni_icons, {
+                  type: "close",
+                  size: "24",
+                  color: "#333",
+                  onClick: $setup.closeFriendsList
+                })
+              ]),
+              vue.createElementVNode("scroll-view", {
+                class: "friends-scroll",
+                "scroll-y": ""
+              }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList($setup.friendsList, (friend) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: friend.id,
+                      class: "friend-manage-item"
+                    }, [
+                      vue.createElementVNode("view", { class: "friend-info" }, [
+                        vue.createElementVNode("image", {
+                          src: friend.avatar || $setup.defaultAvatar,
+                          class: "friend-avatar"
+                        }, null, 8, ["src"]),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "friend-name" },
+                          vue.toDisplayString(friend.username),
+                          1
+                          /* TEXT */
+                        )
+                      ]),
+                      vue.createElementVNode("button", {
+                        class: "delete-btn",
+                        onClick: vue.withModifiers(($event) => $setup.handleDelete(friend), ["stop"])
+                      }, " 删除 ", 8, ["onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      )
     ]);
   }
   const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Friends/Friends.vue"]]);
+  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+  }
+  var dayjs_min = { exports: {} };
+  (function(module, exports) {
+    !function(t2, e2) {
+      module.exports = e2();
+    }(commonjsGlobal, function() {
+      var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i2 = "second", s2 = "minute", u2 = "hour", a2 = "day", o2 = "week", c2 = "month", f2 = "quarter", h2 = "year", d2 = "date", l2 = "Invalid Date", $2 = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y2 = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
+        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
+        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
+      } }, m2 = function(t3, e3, n3) {
+        var r3 = String(t3);
+        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
+      }, v2 = { s: m2, z: function(t3) {
+        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
+        return (e3 <= 0 ? "+" : "-") + m2(r3, 2, "0") + ":" + m2(i3, 2, "0");
+      }, m: function t3(e3, n3) {
+        if (e3.date() < n3.date())
+          return -t3(n3, e3);
+        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c2), s3 = n3 - i3 < 0, u3 = e3.clone().add(r3 + (s3 ? -1 : 1), c2);
+        return +(-(r3 + (n3 - i3) / (s3 ? i3 - u3 : u3 - i3)) || 0);
+      }, a: function(t3) {
+        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
+      }, p: function(t3) {
+        return { M: c2, y: h2, w: o2, d: a2, D: d2, h: u2, m: s2, s: i2, ms: r2, Q: f2 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
+      }, u: function(t3) {
+        return void 0 === t3;
+      } }, g2 = "en", D2 = {};
+      D2[g2] = M2;
+      var p2 = "$isDayjsObject", S2 = function(t3) {
+        return t3 instanceof _2 || !(!t3 || !t3[p2]);
+      }, w2 = function t3(e3, n3, r3) {
+        var i3;
+        if (!e3)
+          return g2;
+        if ("string" == typeof e3) {
+          var s3 = e3.toLowerCase();
+          D2[s3] && (i3 = s3), n3 && (D2[s3] = n3, i3 = s3);
+          var u3 = e3.split("-");
+          if (!i3 && u3.length > 1)
+            return t3(u3[0]);
+        } else {
+          var a3 = e3.name;
+          D2[a3] = e3, i3 = a3;
+        }
+        return !r3 && i3 && (g2 = i3), i3 || !r3 && g2;
+      }, O2 = function(t3, e3) {
+        if (S2(t3))
+          return t3.clone();
+        var n3 = "object" == typeof e3 ? e3 : {};
+        return n3.date = t3, n3.args = arguments, new _2(n3);
+      }, b2 = v2;
+      b2.l = w2, b2.i = S2, b2.w = function(t3, e3) {
+        return O2(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
+      };
+      var _2 = function() {
+        function M3(t3) {
+          this.$L = w2(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p2] = true;
+        }
+        var m3 = M3.prototype;
+        return m3.parse = function(t3) {
+          this.$d = function(t4) {
+            var e3 = t4.date, n3 = t4.utc;
+            if (null === e3)
+              return /* @__PURE__ */ new Date(NaN);
+            if (b2.u(e3))
+              return /* @__PURE__ */ new Date();
+            if (e3 instanceof Date)
+              return new Date(e3);
+            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
+              var r3 = e3.match($2);
+              if (r3) {
+                var i3 = r3[2] - 1 || 0, s3 = (r3[7] || "0").substring(0, 3);
+                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3);
+              }
+            }
+            return new Date(e3);
+          }(t3), this.init();
+        }, m3.init = function() {
+          var t3 = this.$d;
+          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
+        }, m3.$utils = function() {
+          return b2;
+        }, m3.isValid = function() {
+          return !(this.$d.toString() === l2);
+        }, m3.isSame = function(t3, e3) {
+          var n3 = O2(t3);
+          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
+        }, m3.isAfter = function(t3, e3) {
+          return O2(t3) < this.startOf(e3);
+        }, m3.isBefore = function(t3, e3) {
+          return this.endOf(e3) < O2(t3);
+        }, m3.$g = function(t3, e3, n3) {
+          return b2.u(t3) ? this[e3] : this.set(n3, t3);
+        }, m3.unix = function() {
+          return Math.floor(this.valueOf() / 1e3);
+        }, m3.valueOf = function() {
+          return this.$d.getTime();
+        }, m3.startOf = function(t3, e3) {
+          var n3 = this, r3 = !!b2.u(e3) || e3, f3 = b2.p(t3), l3 = function(t4, e4) {
+            var i3 = b2.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
+            return r3 ? i3 : i3.endOf(a2);
+          }, $3 = function(t4, e4) {
+            return b2.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
+          }, y3 = this.$W, M4 = this.$M, m4 = this.$D, v3 = "set" + (this.$u ? "UTC" : "");
+          switch (f3) {
+            case h2:
+              return r3 ? l3(1, 0) : l3(31, 11);
+            case c2:
+              return r3 ? l3(1, M4) : l3(0, M4 + 1);
+            case o2:
+              var g3 = this.$locale().weekStart || 0, D3 = (y3 < g3 ? y3 + 7 : y3) - g3;
+              return l3(r3 ? m4 - D3 : m4 + (6 - D3), M4);
+            case a2:
+            case d2:
+              return $3(v3 + "Hours", 0);
+            case u2:
+              return $3(v3 + "Minutes", 1);
+            case s2:
+              return $3(v3 + "Seconds", 2);
+            case i2:
+              return $3(v3 + "Milliseconds", 3);
+            default:
+              return this.clone();
+          }
+        }, m3.endOf = function(t3) {
+          return this.startOf(t3, false);
+        }, m3.$set = function(t3, e3) {
+          var n3, o3 = b2.p(t3), f3 = "set" + (this.$u ? "UTC" : ""), l3 = (n3 = {}, n3[a2] = f3 + "Date", n3[d2] = f3 + "Date", n3[c2] = f3 + "Month", n3[h2] = f3 + "FullYear", n3[u2] = f3 + "Hours", n3[s2] = f3 + "Minutes", n3[i2] = f3 + "Seconds", n3[r2] = f3 + "Milliseconds", n3)[o3], $3 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
+          if (o3 === c2 || o3 === h2) {
+            var y3 = this.clone().set(d2, 1);
+            y3.$d[l3]($3), y3.init(), this.$d = y3.set(d2, Math.min(this.$D, y3.daysInMonth())).$d;
+          } else
+            l3 && this.$d[l3]($3);
+          return this.init(), this;
+        }, m3.set = function(t3, e3) {
+          return this.clone().$set(t3, e3);
+        }, m3.get = function(t3) {
+          return this[b2.p(t3)]();
+        }, m3.add = function(r3, f3) {
+          var d3, l3 = this;
+          r3 = Number(r3);
+          var $3 = b2.p(f3), y3 = function(t3) {
+            var e3 = O2(l3);
+            return b2.w(e3.date(e3.date() + Math.round(t3 * r3)), l3);
+          };
+          if ($3 === c2)
+            return this.set(c2, this.$M + r3);
+          if ($3 === h2)
+            return this.set(h2, this.$y + r3);
+          if ($3 === a2)
+            return y3(1);
+          if ($3 === o2)
+            return y3(7);
+          var M4 = (d3 = {}, d3[s2] = e2, d3[u2] = n2, d3[i2] = t2, d3)[$3] || 1, m4 = this.$d.getTime() + r3 * M4;
+          return b2.w(m4, this);
+        }, m3.subtract = function(t3, e3) {
+          return this.add(-1 * t3, e3);
+        }, m3.format = function(t3) {
+          var e3 = this, n3 = this.$locale();
+          if (!this.isValid())
+            return n3.invalidDate || l2;
+          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b2.z(this), s3 = this.$H, u3 = this.$m, a3 = this.$M, o3 = n3.weekdays, c3 = n3.months, f3 = n3.meridiem, h3 = function(t4, n4, i4, s4) {
+            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s4);
+          }, d3 = function(t4) {
+            return b2.s(s3 % 12 || 12, t4, "0");
+          }, $3 = f3 || function(t4, e4, n4) {
+            var r4 = t4 < 12 ? "AM" : "PM";
+            return n4 ? r4.toLowerCase() : r4;
+          };
+          return r3.replace(y2, function(t4, r4) {
+            return r4 || function(t5) {
+              switch (t5) {
+                case "YY":
+                  return String(e3.$y).slice(-2);
+                case "YYYY":
+                  return b2.s(e3.$y, 4, "0");
+                case "M":
+                  return a3 + 1;
+                case "MM":
+                  return b2.s(a3 + 1, 2, "0");
+                case "MMM":
+                  return h3(n3.monthsShort, a3, c3, 3);
+                case "MMMM":
+                  return h3(c3, a3);
+                case "D":
+                  return e3.$D;
+                case "DD":
+                  return b2.s(e3.$D, 2, "0");
+                case "d":
+                  return String(e3.$W);
+                case "dd":
+                  return h3(n3.weekdaysMin, e3.$W, o3, 2);
+                case "ddd":
+                  return h3(n3.weekdaysShort, e3.$W, o3, 3);
+                case "dddd":
+                  return o3[e3.$W];
+                case "H":
+                  return String(s3);
+                case "HH":
+                  return b2.s(s3, 2, "0");
+                case "h":
+                  return d3(1);
+                case "hh":
+                  return d3(2);
+                case "a":
+                  return $3(s3, u3, true);
+                case "A":
+                  return $3(s3, u3, false);
+                case "m":
+                  return String(u3);
+                case "mm":
+                  return b2.s(u3, 2, "0");
+                case "s":
+                  return String(e3.$s);
+                case "ss":
+                  return b2.s(e3.$s, 2, "0");
+                case "SSS":
+                  return b2.s(e3.$ms, 3, "0");
+                case "Z":
+                  return i3;
+              }
+              return null;
+            }(t4) || i3.replace(":", "");
+          });
+        }, m3.utcOffset = function() {
+          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
+        }, m3.diff = function(r3, d3, l3) {
+          var $3, y3 = this, M4 = b2.p(d3), m4 = O2(r3), v3 = (m4.utcOffset() - this.utcOffset()) * e2, g3 = this - m4, D3 = function() {
+            return b2.m(y3, m4);
+          };
+          switch (M4) {
+            case h2:
+              $3 = D3() / 12;
+              break;
+            case c2:
+              $3 = D3();
+              break;
+            case f2:
+              $3 = D3() / 3;
+              break;
+            case o2:
+              $3 = (g3 - v3) / 6048e5;
+              break;
+            case a2:
+              $3 = (g3 - v3) / 864e5;
+              break;
+            case u2:
+              $3 = g3 / n2;
+              break;
+            case s2:
+              $3 = g3 / e2;
+              break;
+            case i2:
+              $3 = g3 / t2;
+              break;
+            default:
+              $3 = g3;
+          }
+          return l3 ? $3 : b2.a($3);
+        }, m3.daysInMonth = function() {
+          return this.endOf(c2).$D;
+        }, m3.$locale = function() {
+          return D2[this.$L];
+        }, m3.locale = function(t3, e3) {
+          if (!t3)
+            return this.$L;
+          var n3 = this.clone(), r3 = w2(t3, e3, true);
+          return r3 && (n3.$L = r3), n3;
+        }, m3.clone = function() {
+          return b2.w(this.$d, this);
+        }, m3.toDate = function() {
+          return new Date(this.valueOf());
+        }, m3.toJSON = function() {
+          return this.isValid() ? this.toISOString() : null;
+        }, m3.toISOString = function() {
+          return this.$d.toISOString();
+        }, m3.toString = function() {
+          return this.$d.toUTCString();
+        }, M3;
+      }(), k = _2.prototype;
+      return O2.prototype = k, [["$ms", r2], ["$s", i2], ["$m", s2], ["$H", u2], ["$W", a2], ["$M", c2], ["$y", h2], ["$D", d2]].forEach(function(t3) {
+        k[t3[1]] = function(e3) {
+          return this.$g(e3, t3[0], t3[1]);
+        };
+      }), O2.extend = function(t3, e3) {
+        return t3.$i || (t3(e3, _2, O2), t3.$i = true), O2;
+      }, O2.locale = w2, O2.isDayjs = S2, O2.unix = function(t3) {
+        return O2(1e3 * t3);
+      }, O2.en = D2[g2], O2.Ls = D2, O2.p = {}, O2;
+    });
+  })(dayjs_min);
+  var dayjs_minExports = dayjs_min.exports;
+  const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
   const _sfc_main$7 = {
-    data() {
-      return {};
-    },
-    methods: {}
+    __name: "Sports",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const today = dayjs().format("YYYY-MM-DD");
+      const exerciseDurations = vue.ref({});
+      const currentExercise = vue.ref(0);
+      const planExercise = vue.ref(20);
+      const modelVale = vue.ref(0);
+      const target = vue.ref(50);
+      const tab = vue.ref("myExercise");
+      const myPlans = vue.ref([]);
+      const currentVideoUrl = vue.ref("");
+      const isModalVisible = vue.ref(false);
+      const username = uni.getStorageSync("username");
+      const startTime = vue.ref(0);
+      const elapsedTime = vue.ref(0);
+      const timerInterval = vue.ref(null);
+      const serverUrl2 = uni.getStorageSync("serverUrl");
+      vue.onMounted(() => {
+        loadMyPlans();
+        loadExerciseDurations();
+        fetchPlanExercise();
+        uni.$on("handleAdd", loadMyPlans);
+        uni.$on("handleRemove", loadMyPlans);
+      });
+      const fetchPlanExercise = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:120", "用户未登录");
+          return;
+        }
+        uni.request({
+          url: `${serverUrl2}/sport-time-goal?username=${encodeURIComponent(username2)}`,
+          // 拼接 username 参数
+          method: "GET",
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              planExercise.value = res.data.data.sport_time_goal || 60;
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:134", "获取计划运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:138", "请求失败：", err);
+          }
+        });
+      };
+      const loadExerciseDurations = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:147", "用户未登录");
+          return;
+        }
+        uni.request({
+          url: `${serverUrl2}/exercise-duration?username=${encodeURIComponent(username2)}`,
+          // 传递 username
+          method: "GET",
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              currentExercise.value = res.data.data.exercise_duration || 0;
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:161", "获取今日运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:165", "请求失败：", err);
+          }
+        });
+      };
+      const saveExerciseDuration = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:173", "用户未登录");
+          return;
+        }
+        const today2 = dayjs().format("YYYY-MM-DD");
+        const exerciseDuration = currentExercise.value;
+        uni.request({
+          url: `${serverUrl2}/save-exercise-duration`,
+          method: "POST",
+          data: {
+            username: username2,
+            date: today2,
+            exercise_duration: exerciseDuration
+          },
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              formatAppLog("log", "at pages/Sports/Sports.vue:193", "今日运动时长已保存");
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:195", "保存今日运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:199", "请求失败：", err);
+          }
+        });
+      };
+      const switchTab = (selectedTab) => {
+        tab.value = selectedTab;
+      };
+      const planForm = vue.ref({
+        title: "",
+        duration: "",
+        imageUrl: "",
+        times: "",
+        difficulties: "",
+        calorie: "",
+        goal: "",
+        type: "",
+        videoUrl: ""
+      });
+      const currentEditIndex = vue.ref(-1);
+      const loadMyPlans = () => {
+        const storedPlans = uni.getStorageSync(`myPlans_${username}`);
+        if (storedPlans) {
+          myPlans.value = JSON.parse(storedPlans);
+        } else {
+          myPlans.value = [];
+        }
+      };
+      let videoStartTime = null;
+      const playPlan = (plan) => {
+        formatAppLog("log", "at pages/Sports/Sports.vue:234", "BV数据:", plan.videoUrl);
+        if (plan.videoUrl) {
+          currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}&quality=120`;
+          isModalVisible.value = true;
+          startTime.value = Date.now();
+          timerInterval.value = setInterval(() => {
+            elapsedTime.value = Math.floor((Date.now() - startTime.value) / 1e3);
+          }, 1e3);
+        } else {
+          uni.showToast({
+            title: "该课程没有视频",
+            icon: "none"
+          });
+        }
+      };
+      const closeVideo = () => {
+        isModalVisible.value = false;
+        currentVideoUrl.value = "";
+        if (timerInterval.value) {
+          clearInterval(timerInterval.value);
+          timerInterval.value = null;
+          const addedMinutes = Math.floor(elapsedTime.value / 60);
+          currentExercise.value += addedMinutes;
+          exerciseDurations.value[today] = currentExercise.value;
+          saveExerciseDuration();
+        }
+        elapsedTime.value = 0;
+      };
+      const __returned__ = { today, exerciseDurations, currentExercise, planExercise, modelVale, target, tab, myPlans, currentVideoUrl, isModalVisible, username, startTime, elapsedTime, timerInterval, serverUrl: serverUrl2, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
+        return videoStartTime;
+      }, set videoStartTime(v2) {
+        videoStartTime = v2;
+      }, playPlan, closeVideo, ref: vue.ref, onMounted: vue.onMounted, LCircle, uniPopup: __easycom_1, get dayjs() {
+        return dayjs;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
   };
   function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view");
+    return vue.openBlock(), vue.createElementBlock(
+      vue.Fragment,
+      null,
+      [
+        vue.createCommentVNode(" 每日运动时长 "),
+        vue.createElementVNode("view", { class: "top_bar_sport" }, [
+          vue.createElementVNode("view", { class: "sportbar" }, [
+            vue.createVNode($setup["LCircle"], {
+              modelValue: $setup.modelVale,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.modelVale = $event),
+              percent: $setup.target,
+              size: 50,
+              class: "circle_process",
+              strokeColor: "#69c27d",
+              trailWidth: "12",
+              strokeWidth: "12",
+              lineCap: "butt"
+            }, null, 8, ["modelValue", "percent"]),
+            vue.createElementVNode("div", { class: "exercise-duration" }, [
+              vue.createElementVNode("span", null, "今日运动时长"),
+              vue.createElementVNode(
+                "span",
+                null,
+                vue.toDisplayString($setup.currentExercise) + " / " + vue.toDisplayString($setup.planExercise) + " 分钟",
+                1
+                /* TEXT */
+              )
+            ])
+          ]),
+          vue.createElementVNode("view", null, [
+            vue.createElementVNode("image", {
+              src: _imports_0,
+              class: "shot_icon"
+            })
+          ])
+        ]),
+        vue.createElementVNode("div", { class: "container" }, [
+          vue.createCommentVNode(" 我的课程与自由训练切换 "),
+          vue.createElementVNode("div", { class: "tab-container" }, [
+            vue.createElementVNode(
+              "span",
+              {
+                class: vue.normalizeClass({ active: $setup.tab === "myExercise" }),
+                onClick: _cache[1] || (_cache[1] = ($event) => $setup.switchTab("myExercise"))
+              },
+              "我的课程",
+              2
+              /* CLASS */
+            ),
+            vue.createElementVNode(
+              "span",
+              {
+                class: vue.normalizeClass({ active: $setup.tab === "freeExercise" }),
+                onClick: _cache[2] || (_cache[2] = ($event) => $setup.switchTab("freeExercise"))
+              },
+              "自由训练",
+              2
+              /* CLASS */
+            )
+          ]),
+          vue.createCommentVNode(" 我的课程展示 "),
+          $setup.tab === "myExercise" ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "plan-section"
+          }, [
+            vue.createElementVNode("div", { class: "plan-list" }, [
+              (vue.openBlock(true), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList($setup.myPlans, (item, index) => {
+                  return vue.openBlock(), vue.createElementBlock("div", {
+                    key: index,
+                    class: "plan-item"
+                  }, [
+                    vue.createElementVNode("image", {
+                      src: item.imageUrl,
+                      class: "plan-image"
+                    }, null, 8, ["src"]),
+                    vue.createElementVNode("div", { class: "plan-info" }, [
+                      vue.createElementVNode(
+                        "span",
+                        { class: "plan-title" },
+                        vue.toDisplayString(item.title),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "span",
+                        { class: "plan-times" },
+                        "运动次数：" + vue.toDisplayString(item.times),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "span",
+                        { class: "plan-duration" },
+                        "时间：" + vue.toDisplayString(item.duration),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "span",
+                        { class: "plan-difficulties" },
+                        "难度：" + vue.toDisplayString(item.difficulties),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "span",
+                        { class: "plan-calorie" },
+                        "卡路里：" + vue.toDisplayString(item.calorie),
+                        1
+                        /* TEXT */
+                      )
+                    ]),
+                    vue.createElementVNode("div", { class: "vertical-line" }),
+                    vue.createCommentVNode(" 播放按钮 "),
+                    vue.createElementVNode("div", {
+                      class: "play-button",
+                      onClick: ($event) => $setup.playPlan(item)
+                    }, null, 8, ["onClick"])
+                  ]);
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              ))
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
+          vue.createCommentVNode(" 视频弹窗 "),
+          $setup.isModalVisible ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 1,
+            class: "modal-overlay",
+            onClick: $setup.closeVideo
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal",
+              onClick: _cache[3] || (_cache[3] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createCommentVNode(" 实时计时显示 "),
+              vue.createElementVNode(
+                "div",
+                { class: "timer-header" },
+                " 当前运动时长：" + vue.toDisplayString(Math.floor($setup.elapsedTime / 60)) + "分" + vue.toDisplayString($setup.elapsedTime % 60) + "秒 ",
+                1
+                /* TEXT */
+              ),
+              $setup.currentVideoUrl ? (vue.openBlock(), vue.createElementBlock("iframe", {
+                key: 0,
+                src: $setup.currentVideoUrl,
+                class: "video-iframe",
+                frameborder: "0",
+                allowfullscreen: ""
+              }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true),
+              vue.createElementVNode("button", {
+                class: "close-btn",
+                onClick: $setup.closeVideo
+              }, "关闭")
+            ])
+          ])) : vue.createCommentVNode("v-if", true)
+        ]),
+        vue.createCommentVNode(" 自由训练展示 "),
+        $setup.tab === "freeExercise" ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "plan-section"
+        })) : vue.createCommentVNode("v-if", true)
+      ],
+      64
+      /* STABLE_FRAGMENT */
+    );
   }
-  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Sports/Sports.vue"]]);
-  const serverUrl$1 = "http://192.168.56.1:3000";
+  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-ec372f74"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Sports/Sports.vue"]]);
+  const serverUrl = "http://192.168.56.1:3000";
   const defaultAvatar$1 = "/static/default-avatar.jpg";
   const _sfc_main$6 = {
     __name: "My_info",
@@ -23015,39 +25615,45 @@ ${i3}
       const targetCalories = vue.ref(100);
       const username = uni.getStorageSync("username");
       vue.onMounted(() => {
+        uni.getStorageSync("username");
         fetchUserTargets();
+        uni.$on("saveEdit", fetchUserTargets);
       });
       const fetchUserTargets = async () => {
         try {
+          const username2 = uni.getStorageSync("username");
+          uni.setStorageSync(`username`, username2);
+          formatAppLog("log", "at pages/My_info/My_info.vue:89", `username: ${username2}`);
           const res = await uni.request({
-            url: `${serverUrl$1}/getTargets`,
+            url: `${serverUrl}/getTargets`,
             method: "POST",
-            data: { username }
+            data: { username: username2 }
             // 向后端发送用户名 
           });
           if (res.data.success) {
             targetDuration.value = res.data.data.sport_time_goal;
             targetCalories.value = res.data.data.calories_goal;
             if (res.data.data.avatar != null) {
-              userInfo2.value.avatar = `${serverUrl$1}/${res.data.data.avatar}`;
+              userInfo2.value.avatar = `${serverUrl}/${res.data.data.avatar}`;
             } else {
               userInfo2.value.avatar = defaultAvatar$1;
             }
-            formatAppLog("log", "at pages/My_info/My_info.vue:92", `1: ${userInfo2.value.avatar}`);
+            formatAppLog("log", "at pages/My_info/My_info.vue:106", `1: ${userInfo2.value.avatar}`);
           } else {
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_info/My_info.vue:97", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_info/My_info.vue:111", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
       const updateUserTargets = async (calories, duration) => {
+        const username2 = uni.getStorageSync("username");
         try {
           const res = await uni.request({
-            url: `${serverUrl$1}/updateTargets`,
+            url: `${serverUrl}/updateTargets`,
             method: "POST",
-            data: { username, calories_goal: calories, sport_time_goal: duration }
+            data: { username: username2, calories_goal: calories, sport_time_goal: duration }
             // 向后端发送修改数据
           });
           if (res.data.success) {
@@ -23058,7 +25664,7 @@ ${i3}
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_info/My_info.vue:119", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_info/My_info.vue:134", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -23070,6 +25676,11 @@ ${i3}
       const saveEdit = () => {
         updateUserTargets(editCalories.value, editDuration.value);
         isEditing.value = false;
+      };
+      const goToSettings = () => {
+        uni.navigateTo({
+          url: "/pages/Setting/Setting"
+        });
       };
       const cancelEdit = () => {
         isEditing.value = false;
@@ -23084,29 +25695,16 @@ ${i3}
         goals: [],
         sportTypes: []
       });
-      const genderOptions = ["男", "女"];
-      const goalOptions = [
-        { value: "减脂", name: "减脂" },
-        { value: "增肌", name: "增肌" },
-        { value: "耐力", name: "耐力" },
-        { value: "柔韧性", name: "柔韧性" },
-        { value: "综合健身", name: "综合健身" }
-      ];
-      const sportTypeOptions = [
-        { value: "跑步", text: "跑步" },
-        { value: "徒手", text: "徒手" },
-        { value: "撸铁", text: "撸铁" },
-        { value: "瑜伽", text: "瑜伽" },
-        { value: "篮球", text: "篮球" }
-      ];
       const changeAvatar = async () => {
         uni.chooseImage({
           count: 1,
           success: async (chooseResult) => {
             const filePath = chooseResult.tempFilePaths[0];
+            const username2 = uni.getStorageSync("username");
+            formatAppLog("log", "at pages/My_info/My_info.vue:180", `username: ${username2}`);
             try {
               const uploadRes = await uni.uploadFile({
-                url: `${serverUrl$1}/upload`,
+                url: `${serverUrl}/upload`,
                 // 上传 API
                 filePath,
                 name: "file"
@@ -23115,10 +25713,10 @@ ${i3}
               if (uploadData.success) {
                 const newAvatarUrl = uploadData.imageUrl;
                 const updateRes = await uni.request({
-                  url: `${serverUrl$1}/updateAvatar`,
+                  url: `${serverUrl}/updateAvatar`,
                   method: "POST",
                   data: {
-                    username,
+                    username: username2,
                     avatar: newAvatarUrl
                   }
                 });
@@ -23133,7 +25731,7 @@ ${i3}
                 uni.showToast({ title: "上传失败", icon: "none" });
               }
             } catch (error2) {
-              formatAppLog("error", "at pages/My_info/My_info.vue:211", "更换头像失败:", error2);
+              formatAppLog("error", "at pages/My_info/My_info.vue:214", "更换头像失败:", error2);
               uni.showToast({ title: "服务器错误", icon: "none" });
             }
           },
@@ -23141,7 +25739,7 @@ ${i3}
           }
         });
       };
-      const __returned__ = { serverUrl: serverUrl$1, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, cancelEdit, userInfo: userInfo2, genderOptions, goalOptions, sportTypeOptions, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
+      const __returned__ = { serverUrl, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, goToSettings, cancelEdit, userInfo: userInfo2, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -23150,6 +25748,14 @@ ${i3}
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 头部信息卡片 "),
       vue.createElementVNode("view", { class: "info-card" }, [
+        vue.createCommentVNode(" 添加设置按钮 "),
+        vue.createElementVNode("view", { class: "header" }, [
+          vue.createElementVNode("text", { class: "header-title" }, "个人信息"),
+          vue.createElementVNode("button", {
+            class: "settings-btn",
+            onClick: $setup.goToSettings
+          }, " ⚙️ ")
+        ]),
         vue.createElementVNode("view", { class: "avatar-section" }, [
           vue.createElementVNode("image", {
             src: $setup.userInfo.avatar || $setup.defaultAvatar,
@@ -23497,7 +26103,7 @@ ${i3}
     ]);
   }
   const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-a9e5e983"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Search/Search.vue"]]);
-  const defaultAvatar = "/static/avatar/default.png";
+  const defaultAvatar = "/static/default-avatar.png";
   const _sfc_main$4 = {
     __name: "InviteFriends",
     setup(__props, { expose: __expose }) {
@@ -23660,12 +26266,14 @@ ${i3}
     ]);
   }
   const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-446afbc7"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/InviteFriends/InviteFriends.vue"]]);
-  const serverUrl = "http://10.133.80.141:3000";
   const _sfc_main$3 = {
     __name: "Chat",
     setup(__props, { expose: __expose }) {
       var _a2;
       __expose();
+      const input_status = vue.ref(true);
+      const serverUrl2 = uni.getStorageSync("serverUrl");
+      const websocketUrl = uni.getStorageSync("websocketUrl");
       const messageText = vue.ref("");
       const messages2 = vue.ref([]);
       const scrollTop = vue.ref(0);
@@ -23682,6 +26290,7 @@ ${i3}
         avatar: "/static/avatar/default.png",
         online: false
       });
+      const old_scrollTop = vue.ref(0);
       const unreadCount = vue.ref(0);
       const showNewMessageTip = vue.ref(false);
       const isLoading = vue.ref(false);
@@ -23699,213 +26308,67 @@ ${i3}
         });
         return groups;
       });
-      const initWebSocket = () => {
-        try {
-          websocket.value = uni.connectSocket({
-            url: `ws://10.133.80.141:3001/chat`,
-            complete: () => {
-              formatAppLog("log", "at pages/Chat/Chat.vue:279", "WebSocket连接尝试完成");
-            }
-          });
-          websocket.value.onOpen(() => {
-            formatAppLog("log", "at pages/Chat/Chat.vue:285", "WebSocket连接成功");
-            sendWebSocketMessage({
-              type: "auth",
-              username: userInfo2.value.username
-            });
-          });
-          websocket.value.onError((error2) => {
-            formatAppLog("error", "at pages/Chat/Chat.vue:295", "WebSocket连接错误:", error2);
-            uni.showToast({
-              title: "连接失败，请重试",
-              icon: "none"
-            });
-          });
-          websocket.value.onMessage((res) => {
-            try {
-              const data = JSON.parse(res.data);
-              handleWebSocketMessage(data);
-            } catch (error2) {
-              formatAppLog("error", "at pages/Chat/Chat.vue:308", "解析消息失败:", error2);
-            }
-          });
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:312", "初始化WebSocket失败:", error2);
+      const store = useWebSocketStore();
+      uni.$on("friendStatusChanged", ({ username, status }) => {
+        if (username === friendInfo.value.username) {
+          friendInfo.value.online = status === "online";
         }
-      };
-      const sendWebSocketMessage = (message) => {
-        if (!websocket.value) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:319", "WebSocket未连接");
-          return false;
-        }
-        try {
-          websocket.value.send({
-            data: JSON.stringify(message),
-            success: () => {
-              formatAppLog("log", "at pages/Chat/Chat.vue:327", "消息发送成功:", message);
-              return true;
-            },
-            fail: (error2) => {
-              formatAppLog("error", "at pages/Chat/Chat.vue:331", "消息发送失败:", error2);
-              return false;
-            }
-          });
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:336", "发送消息时出错:", error2);
-          return false;
-        }
-      };
-      const handleWebSocketMessage = (data) => {
-        switch (data.type) {
-          case "text":
-          case "invitation":
-            if (data.sender === friendInfo.value.username) {
-              messages2.value.push(data);
-              saveMessageToLocal(data);
-              if (!isAtBottom.value) {
-                unreadCount.value++;
-                showNewMessageTip.value = true;
-              } else {
-                scrollToBottom();
-              }
-            }
-            break;
-          case "status":
-            if (data.username === friendInfo.value.username) {
-              friendInfo.value.online = data.status === "online";
-            }
-            break;
-          case "invitation_response":
-            handleInvitationResponse(data);
-            break;
-        }
-      };
-      const getLocalStorageKey = (friendId) => {
-        return `chat_history_${userInfo2.value.username}_${friendId}`;
-      };
-      const saveMessageToLocal = (message) => {
-        const key = getLocalStorageKey(friendInfo.value.username);
-        let history = uni.getStorageSync(key) || [];
-        history.push(message);
-        uni.setStorageSync(key, history);
-      };
-      const getLocalMessages = (friendId) => {
-        const key = getLocalStorageKey(friendId);
-        return uni.getStorageSync(key) || [];
-      };
-      const loadChatHistory = async (friendId) => {
-        try {
-          const result = await uni.request({
-            url: `${serverUrl}/chat/history`,
-            method: "POST",
-            data: {
-              userId: userInfo2.value.username,
-              friendId
-            }
-          });
-          const [err, res] = result;
-          if (err) {
-            throw err;
-          }
-          if (res.statusCode === 200 && res.data.status === "success") {
-            const { messages: serverMessages } = res.data.data;
-            if (serverMessages && serverMessages.length > 0) {
-              messages2.value = serverMessages;
-              uni.setStorageSync(getLocalStorageKey(friendId), serverMessages);
-              scrollToBottom();
-            }
-          } else {
-            throw new Error(res.data.message || "Failed to load chat history");
-          }
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:419", "获取聊天历史失败:", error2);
-          uni.showToast({
-            title: "获取聊天记录失败",
-            icon: "none"
-          });
-        }
-      };
-      const loadUnreadMessages = async () => {
-        try {
-          const result = await uni.request({
-            url: `${serverUrl}/chat/unread`,
-            method: "GET",
-            data: {
-              userId: userInfo2.value.username
-            }
-          });
-          const [err, res] = result;
-          if (err) {
-            throw err;
-          }
-          if (res.statusCode === 200 && res.data.status === "success") {
-            const unreadMessages = res.data.unreadMessages;
-            const friendUnread = unreadMessages.find(
-              (m2) => m2.sender_id === friendInfo.value.username
-            );
-            unreadCount.value = friendUnread ? friendUnread.unreadCount : 0;
-          } else {
-            throw new Error(res.data.message || "Failed to load unread messages");
-          }
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:455", "获取未读消息失败:", error2);
-          uni.showToast({
-            title: "获取未读消息失败",
-            icon: "none"
-          });
-        }
-      };
+      });
       const sendMessage = async () => {
         if (!messageText.value.trim())
           return;
         const newMessage = {
           type: "text",
+          id: Date.now().toString(),
           sender: userInfo2.value.username,
           receiver: friendInfo.value.username,
-          content: messageText.value,
+          content: messageText.value.trim(),
           time: (/* @__PURE__ */ new Date()).getTime(),
           isRead: false,
-          id: Date.now().toString()
+          sendFailed: false
         };
-        messages2.value.push(newMessage);
-        saveMessageToLocal(newMessage);
-        messageText.value = "";
-        scrollToBottom();
         try {
-          const res = await uni.request({
-            url: `${serverUrl}/chat/send`,
-            method: "POST",
-            data: {
-              senderId: newMessage.sender,
-              receiverId: newMessage.receiver,
-              content: newMessage.content
-            }
-          });
-          if (res.statusCode !== 200) {
-            throw new Error(res.data.message || "发送失败");
-          }
-          const msgIndex = messages2.value.findIndex((m2) => m2.id === newMessage.id);
-          if (msgIndex !== -1) {
-            messages2.value[msgIndex].sent = true;
+          messages2.value.push(newMessage);
+          saveMessageToLocal(newMessage);
+          messageText.value = "";
+          if (store.isConnected) {
+            store.websocket.send({
+              data: JSON.stringify(newMessage),
+              success: () => formatAppLog("log", "at pages/Chat/Chat.vue:311", "消息发送成功:", newMessage),
+              fail: (error2) => {
+                formatAppLog("error", "at pages/Chat/Chat.vue:313", "发送消息失败:", error2);
+                markMessageAsFailed(newMessage.id);
+              }
+            });
+          } else {
+            formatAppLog("warn", "at pages/Chat/Chat.vue:318", "WebSocket未连接");
+            store.initWebSocket();
+            markMessageAsFailed(newMessage.id);
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:506", "发送消息失败:", error2);
-          const msgIndex = messages2.value.findIndex((m2) => m2.id === newMessage.id);
-          if (msgIndex !== -1) {
-            messages2.value[msgIndex].sendFailed = true;
-            const key = getLocalStorageKey(friendInfo.value.username);
-            let history = uni.getStorageSync(key) || [];
-            const historyIndex = history.findIndex((m2) => m2.id === newMessage.id);
-            if (historyIndex !== -1) {
-              history[historyIndex].sendFailed = true;
-              uni.setStorageSync(key, history);
-            }
-          }
-          uni.showToast({
-            title: "发送失败",
-            icon: "none"
-          });
+          formatAppLog("error", "at pages/Chat/Chat.vue:323", "发送消息失败:", error2);
+          markMessageAsFailed(newMessage.id);
         }
+        vue.nextTick(() => {
+          scrollTop.value = 9999999;
+        });
+      };
+      const markMessageAsFailed = (messageId) => {
+        const msgIndex = messages2.value.findIndex((m2) => m2.id === messageId);
+        if (msgIndex !== -1) {
+          messages2.value[msgIndex].sendFailed = true;
+          const key = getLocalStorageKey(friendInfo.value.username);
+          let history = uni.getStorageSync(key) || [];
+          const historyIndex = history.findIndex((m2) => m2.id === messageId);
+          if (historyIndex !== -1) {
+            history[historyIndex].sendFailed = true;
+            uni.setStorageSync(key, history);
+          }
+        }
+        uni.showToast({
+          title: "发送失败",
+          icon: "none"
+        });
       };
       const showInvitationDialog = () => {
         invitationPopup.value.open();
@@ -23913,6 +26376,7 @@ ${i3}
       const closeInvitationDialog = () => {
         invitationPopup.value.close();
         invitationContent.value = "";
+        input_status.value = true;
       };
       const sendInvitation = async () => {
         if (!invitationContent.value.trim()) {
@@ -23946,7 +26410,7 @@ ${i3}
         scrollToBottom();
         try {
           const [err, res] = await uni.request({
-            url: `${serverUrl}/chat/send`,
+            url: `${serverUrl2}/chat/send`,
             method: "POST",
             data: {
               senderId: invitation.sender,
@@ -23965,7 +26429,7 @@ ${i3}
             icon: "success"
           });
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:599", "发送邀请失败:", error2);
+          formatAppLog("error", "at pages/Chat/Chat.vue:424", "发送邀请失败:", error2);
           const msgIndex = messages2.value.findIndex((m2) => m2.id === invitation.id);
           if (msgIndex !== -1) {
             messages2.value[msgIndex].sendFailed = true;
@@ -24018,63 +26482,67 @@ ${i3}
         const currentPage2 = pages2[pages2.length - 1];
         const { id, name } = currentPage2.$page.options;
         friendInfo.value.username = name;
-        await initWebSocket();
-        await loadChatHistory(id);
-        await loadUnreadMessages();
+        const localMessages = getLocalMessages(name);
+        if (localMessages.length > 0) {
+          messages2.value = localMessages;
+          scrollToBottom();
+        }
       };
       const handleScroll = (e2) => {
-        const { scrollTop: scrollTop2, scrollHeight, clientHeight } = e2.detail;
-        isAtBottom.value = scrollHeight - scrollTop2 <= clientHeight + 50;
-        if (!isAtBottom.value && unreadCount.value > 0) {
-          showNewMessageTip.value = true;
-        } else {
-          showNewMessageTip.value = false;
-        }
+        markAllMessagesAsRead();
+        old_scrollTop.value = e2.detail.scrollTop;
       };
-      const loadMoreMessages = async () => {
-        if (!hasMore.value || isLoading.value)
+      const lastReadTimestamp = vue.ref(0);
+      const markAllMessagesAsRead = () => {
+        const key = `chat_history_${userInfo2.value.username}_${friendInfo.value.username}`;
+        let history = uni.getStorageSync(key) || [];
+        const latestUnreadMessage = history.filter((msg) => msg.sender === friendInfo.value.username && !msg.isRead).reduce(
+          (latest, current) => !latest || current.time > latest.time ? current : latest,
+          null
+        );
+        if (!latestUnreadMessage || latestUnreadMessage.time <= lastReadTimestamp.value) {
           return;
-        isLoading.value = true;
-        try {
-          const [error2, res] = await uni.request({
-            url: `${serverUrl}/chat/history`,
-            method: "POST",
-            data: {
-              userId: userInfo2.value.username,
-              friendId: friendInfo.value.username,
-              page: currentPage.value + 1
-            }
-          });
-          if (error2)
-            throw error2;
-          if (res.statusCode === 200) {
-            const { messages: newMessages, pagination } = res.data.data;
-            messages2.value = [...newMessages, ...messages2.value];
-            currentPage.value = pagination.page;
-            hasMore.value = currentPage.value * pagination.limit < pagination.total;
-          }
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:713", "加载更多消息失败:", error2);
-        } finally {
-          isLoading.value = false;
         }
+        lastReadTimestamp.value = latestUnreadMessage.time;
+        uni.setStorageSync(key, history.map((msg) => {
+          if (msg.sender === friendInfo.value.username && !msg.isRead) {
+            return { ...msg, isRead: true };
+          }
+          return msg;
+        }));
+        if (store.isConnected) {
+          store.websocket.send({
+            data: JSON.stringify({
+              type: "read_ack",
+              sender: userInfo2.value.username,
+              receiver: friendInfo.value.username,
+              time: lastReadTimestamp.value
+            })
+          });
+        }
+        uni.$emit("updateUnreadCounts");
+      };
+      vue.onMounted(() => {
+        initPage();
+        vue.nextTick(() => {
+          scrollToBottom(false);
+          markAllMessagesAsRead();
+        });
+        const status = store.getFriendStatus(friendInfo.value.username);
+        friendInfo.value.online = status.isOnline;
+      });
+      const scrollToBottom = (smooth = true) => {
+        scrollTop.value = old_scrollTop.value;
+        vue.nextTick(() => {
+          scrollTop.value = 999999;
+          markAllMessagesAsRead();
+        });
       };
       const formatTime = (timestamp) => {
         const date = new Date(timestamp);
         const hours = date.getHours().toString().padStart(2, "0");
         const minutes = date.getMinutes().toString().padStart(2, "0");
         return `${hours}:${minutes}`;
-      };
-      const scrollToBottom = () => {
-        vue.nextTick(() => {
-          const query = uni.createSelectorQuery();
-          query.select(".message-list").boundingClientRect();
-          query.exec((res) => {
-            if (res[0]) {
-              scrollTop.value = res[0].height;
-            }
-          });
-        });
       };
       const goBack = () => {
         uni.navigateBack();
@@ -24090,17 +26558,6 @@ ${i3}
             });
           }
         });
-      };
-      const updateChallengeProgress = (data) => {
-        const msgIndex = messages2.value.findIndex((m2) => m2.id === data.invitationId);
-        if (msgIndex !== -1) {
-          const msg = messages2.value[msgIndex];
-          if (data.sender === userInfo2.value.username) {
-            msg.challengeData.progress.self = data.progress;
-          } else {
-            msg.challengeData.progress.friend = data.progress;
-          }
-        }
       };
       const goalMinutes = vue.ref(10);
       const goalCalories = vue.ref(80);
@@ -24124,40 +26581,231 @@ ${i3}
       const resendMessage = async (message) => {
         message.sendFailed = false;
         try {
-          const res = await uni.request({
-            url: `${serverUrl}/chat/send`,
-            method: "POST",
-            data: {
-              senderId: message.sender,
-              receiverId: message.receiver,
-              content: message.type === "invitation" ? JSON.stringify(message) : message.content
-            }
-          });
-          if (res[1].statusCode !== 200) {
-            message.sendFailed = true;
+          if (store.isConnected) {
+            store.websocket.send({
+              data: JSON.stringify({
+                ...message,
+                time: Date.now()
+                // 更新发送时间
+              }),
+              success: () => {
+                const key = getLocalStorageKey(friendInfo.value.username);
+                let history = uni.getStorageSync(key) || [];
+                history = history.map((msg) => {
+                  if (msg.id === message.id) {
+                    return {
+                      ...msg,
+                      sendFailed: false,
+                      time: message.time
+                    };
+                  }
+                  return msg;
+                });
+                uni.setStorageSync(key, history);
+                const msgIndex = messages2.value.findIndex((m2) => m2.id === message.id);
+                if (msgIndex !== -1) {
+                  messages2.value[msgIndex].sendFailed = false;
+                  messages2.value[msgIndex].time = message.time;
+                }
+                formatAppLog("log", "at pages/Chat/Chat.vue:669", "消息重发成功:", message);
+              },
+              fail: (error2) => {
+                formatAppLog("error", "at pages/Chat/Chat.vue:672", "重发消息失败:", error2);
+                markMessageAsFailed(message.id);
+                uni.showToast({
+                  title: "重发失败",
+                  icon: "none"
+                });
+              }
+            });
+          } else {
+            formatAppLog("warn", "at pages/Chat/Chat.vue:681", "WebSocket未连接");
+            store.initWebSocket();
+            markMessageAsFailed(message.id);
             uni.showToast({
-              title: "重发失败",
+              title: "网络未连接",
               icon: "none"
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:826", "重发消息失败:", error2);
-          message.sendFailed = true;
+          formatAppLog("error", "at pages/Chat/Chat.vue:690", "重发消息失败:", error2);
+          markMessageAsFailed(message.id);
           uni.showToast({
             title: "重发失败",
             icon: "none"
           });
         }
       };
-      vue.onMounted(() => {
-        initPage();
-      });
-      vue.onUnmounted(() => {
-        if (websocket.value) {
-          websocket.value.close();
+      const handleMessageClick = (message) => {
+        if (message.sendFailed && message.sender === userInfo2.value.username) {
+          uni.showModal({
+            title: "重发消息",
+            content: "是否重新发送该消息？",
+            success: (res) => {
+              if (res.confirm) {
+                resendMessage(message);
+              }
+            }
+          });
+        }
+      };
+      const handleReadAck = (data) => {
+        formatAppLog("log", "at pages/Chat/Chat.vue:716", "处理已读回执:", data);
+        messages2.value = messages2.value.map((msg) => {
+          if (msg.sender === userInfo2.value.username && msg.receiver === data.sender && !msg.isRead && msg.time <= data.time) {
+            return { ...msg, isRead: true };
+          }
+          return msg;
+        });
+        const key = getLocalStorageKey(friendInfo.value.username);
+        let history = uni.getStorageSync(key) || [];
+        history = history.map((msg) => {
+          if (msg.sender === userInfo2.value.username && msg.receiver === data.sender && !msg.isRead && msg.time <= data.time) {
+            return { ...msg, isRead: true };
+          }
+          return msg;
+        });
+        uni.setStorageSync(key, history);
+      };
+      const clearHistory = () => {
+        uni.showModal({
+          title: "清除聊天记录",
+          content: "确定要清除与该好友的所有聊天记录吗？",
+          success: (res) => {
+            if (res.confirm) {
+              const key = getLocalStorageKey(friendInfo.value.username);
+              uni.removeStorageSync(key);
+              messages2.value = [];
+              uni.showToast({
+                title: "聊天记录已清除",
+                icon: "success"
+              });
+            }
+          }
+        });
+        input_status.value = true;
+      };
+      const moreMenuPopup = vue.ref(null);
+      const showMoreMenu = () => {
+        moreMenuPopup.value.open();
+        input_status.value = false;
+      };
+      const handleMenuClick = (action) => {
+        moreMenuPopup.value.close();
+        setTimeout(() => {
+          switch (action) {
+            case "clearHistory":
+              clearHistory();
+              break;
+            case "sendInvitation":
+              showInvitationDialog();
+              break;
+            case "resetChatBox":
+              input_status.value = true;
+              break;
+            default:
+              formatAppLog("warn", "at pages/Chat/Chat.vue:795", `未知的操作: ${action}`);
+          }
+        }, 100);
+      };
+      vue.watch(
+        () => messages2.value.length,
+        () => {
+          if (isAtBottom.value) {
+            scrollToBottom();
+          }
+        }
+      );
+      const getLocalStorageKey = (friendUsername) => {
+        const currentUser = uni.getStorageSync("username");
+        return `chat_history_${currentUser}_${friendUsername}`;
+      };
+      const saveMessageToLocal = (message) => {
+        const key = getLocalStorageKey(friendInfo.value.username);
+        let history = uni.getStorageSync(key) || [];
+        if (!history.some((msg) => msg.id === message.id)) {
+          history.push(message);
+          uni.setStorageSync(key, history);
+        }
+      };
+      const getLocalMessages = (friendUsername) => {
+        const key = getLocalStorageKey(friendUsername);
+        return uni.getStorageSync(key) || [];
+      };
+      uni.$on("websocketMessage", (data) => {
+        try {
+          formatAppLog("log", "at pages/Chat/Chat.vue:837", "收到WebSocket消息:", data);
+          switch (data.type) {
+            case "text":
+              if (data.sender === friendInfo.value.username && data.receiver === userInfo2.value.username || data.sender === userInfo2.value.username && data.receiver === friendInfo.value.username) {
+                const isUnread = data.sender === friendInfo.value.username && data.time > lastReadTimestamp.value;
+                messages2.value.push({
+                  ...data,
+                  isRead: !isUnread
+                });
+                saveMessageToLocal({
+                  ...data,
+                  isRead: !isUnread
+                });
+                vue.nextTick(() => {
+                  scrollTop.value = 99999;
+                });
+              }
+              break;
+            case "read_ack":
+              if (data.sender === friendInfo.value.username) {
+                handleReadAck(data);
+              }
+              break;
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/Chat/Chat.vue:878", "处理WebSocket消息失败:", error2);
         }
       });
-      const __returned__ = { serverUrl, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, initWebSocket, sendWebSocketMessage, handleWebSocketMessage, getLocalStorageKey, saveMessageToLocal, getLocalMessages, loadChatHistory, loadUnreadMessages, sendMessage, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, loadMoreMessages, formatTime, scrollToBottom, goBack, enterChallenge, updateChallengeProgress, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed };
+      vue.onUnmounted(() => {
+        uni.$off("websocketMessage");
+      });
+      const observeMessageVisibility = () => {
+        const observer = uni.createIntersectionObserver();
+        observer.relativeTo(".message-list").observe(".message-item", (entries) => {
+          entries.forEach((entry) => {
+            if (entry.intersectionRatio > 0) {
+              const messageId = entry.dataset.id;
+              markMessageAsRead(messageId);
+            }
+          });
+        });
+        return observer;
+      };
+      const markMessageAsRead = (messageId) => {
+        const key = `chat_history_${userInfo2.value.username}_${friendInfo.value.username}`;
+        let history = uni.getStorageSync(key) || [];
+        const message = history.find((msg) => msg.id === messageId);
+        if (message && message.sender === friendInfo.value.username && !message.isRead) {
+          history = history.map((msg) => {
+            if (msg.id === messageId) {
+              return { ...msg, isRead: true };
+            }
+            return msg;
+          });
+          uni.setStorageSync(key, history);
+          if (store.isConnected) {
+            store.websocket.send({
+              data: JSON.stringify({
+                type: "read_ack",
+                sender: userInfo2.value.username,
+                receiver: friendInfo.value.username,
+                messageId,
+                time: message.time
+              })
+            });
+          }
+          uni.$emit("updateUnreadCounts");
+        }
+      };
+      const __returned__ = { input_status, serverUrl: serverUrl2, websocketUrl, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, old_scrollTop, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, hasMore, groupedMessages, store, sendMessage, markMessageAsFailed, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, lastReadTimestamp, markAllMessagesAsRead, scrollToBottom, formatTime, goBack, enterChallenge, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, handleMessageClick, handleReadAck, clearHistory, moreMenuPopup, showMoreMenu, handleMenuClick, getLocalStorageKey, saveMessageToLocal, getLocalMessages, observeMessageVisibility, markMessageAsRead, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get useWebSocketStore() {
+        return useWebSocketStore;
+      } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -24166,19 +26814,19 @@ ${i3}
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$3);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-container" }, [
-      vue.createCommentVNode(" 顶部栏 "),
-      vue.createElementVNode("view", { class: "chat-header" }, [
+      vue.createCommentVNode(" 顶部导航栏 "),
+      vue.createElementVNode("view", { class: "nav-bar" }, [
         vue.createElementVNode("view", {
-          class: "back-btn",
+          class: "nav-left",
           onClick: $setup.goBack
         }, [
           vue.createVNode(_component_uni_icons, {
             type: "left",
-            size: "24",
-            color: "#333"
+            size: "20",
+            color: "#000"
           })
         ]),
-        vue.createElementVNode("view", { class: "friend-info" }, [
+        vue.createElementVNode("view", { class: "nav-title" }, [
           vue.createElementVNode(
             "text",
             { class: "friend-name" },
@@ -24194,73 +26842,35 @@ ${i3}
             vue.toDisplayString($setup.friendInfo.online ? "在线" : "离线"),
             3
             /* TEXT, CLASS */
-          ),
-          $setup.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
-            "view",
-            {
-              key: 0,
-              class: "unread-badge"
-            },
-            vue.toDisplayString($setup.unreadCount),
-            1
-            /* TEXT */
-          )) : vue.createCommentVNode("v-if", true)
+          )
         ]),
         vue.createElementVNode("view", {
-          class: "more-btn",
-          onClick: _cache[0] || (_cache[0] = ($event) => _ctx.showMoreActions = true)
+          class: "nav-right",
+          onClick: $setup.showMoreMenu
         }, [
           vue.createVNode(_component_uni_icons, {
             type: "more-filled",
-            size: "24",
-            color: "#333"
+            size: "20",
+            color: "#000"
           })
         ])
       ]),
-      vue.createCommentVNode(" 添加新消息提醒 "),
-      $setup.showNewMessageTip ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 0,
-        class: "new-message-tip",
-        onClick: $setup.scrollToBottom
-      }, [
-        vue.createElementVNode(
-          "text",
-          null,
-          vue.toDisplayString($setup.unreadCount) + "条新消息",
-          1
-          /* TEXT */
-        ),
-        vue.createVNode(_component_uni_icons, {
-          type: "bottom",
-          size: "12",
-          color: "#fff"
-        })
-      ])) : vue.createCommentVNode("v-if", true),
-      vue.createCommentVNode(" 聊天内容区域 "),
-      vue.createElementVNode("scroll-view", {
-        class: "chat-content",
-        "scroll-y": "true",
-        "scroll-top": $setup.scrollTop,
-        "scroll-with-animation": true,
-        onScrolltoupper: $setup.loadMoreMessages,
-        onScroll: $setup.handleScroll,
-        "scroll-into-view": $setup.lastMessageId
-      }, [
-        vue.createCommentVNode(" 加载更多提示 "),
-        $setup.isLoading ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 0,
-          class: "loading-more"
+      vue.createCommentVNode(" 聊天区域 "),
+      vue.createElementVNode("view", { class: "chat-body" }, [
+        vue.createCommentVNode(" 消息列表 "),
+        vue.createElementVNode("scroll-view", {
+          class: "message-list",
+          "scroll-y": "true",
+          "scroll-top": $setup.scrollTop,
+          onScroll: $setup.handleScroll
         }, [
-          vue.createElementVNode("text", null, "加载中...")
-        ])) : vue.createCommentVNode("v-if", true),
-        vue.createElementVNode("view", { class: "message-list" }, [
-          vue.createCommentVNode(" 日期分割线 "),
           (vue.openBlock(true), vue.createElementBlock(
             vue.Fragment,
             null,
             vue.renderList($setup.groupedMessages, (group, date) => {
               return vue.openBlock(), vue.createElementBlock("view", { key: date }, [
-                vue.createElementVNode("view", { class: "date-divider" }, [
+                vue.createCommentVNode(" 日期分割线 "),
+                vue.createElementVNode("view", { class: "time-divider" }, [
                   vue.createElementVNode(
                     "text",
                     null,
@@ -24269,6 +26879,7 @@ ${i3}
                     /* TEXT */
                   )
                 ]),
+                vue.createCommentVNode(" 消息气泡 "),
                 (vue.openBlock(true), vue.createElementBlock(
                   vue.Fragment,
                   null,
@@ -24276,20 +26887,18 @@ ${i3}
                     return vue.openBlock(), vue.createElementBlock("view", {
                       key: msg.id,
                       id: "msg-" + msg.id,
-                      class: vue.normalizeClass([
-                        "message-item",
-                        msg.sender === $setup.userInfo.username ? "self" : "friend"
-                      ])
+                      class: vue.normalizeClass(["message-item", [msg.sender === $setup.userInfo.username ? "self" : "friend"]])
                     }, [
                       vue.createElementVNode("image", {
-                        src: msg.sender === $setup.userInfo.username ? $setup.userInfo.avatar : $setup.friendInfo.avatar,
-                        class: "avatar"
+                        class: "avatar",
+                        src: msg.sender === $setup.userInfo.username ? $setup.userInfo.avatar : $setup.friendInfo.avatar
                       }, null, 8, ["src"]),
-                      vue.createElementVNode("view", { class: "message-content" }, [
-                        vue.createCommentVNode(" 消息内容 "),
+                      vue.createElementVNode("view", { class: "message-wrapper" }, [
+                        vue.createCommentVNode(" 文本消息 "),
                         msg.type === "text" ? (vue.openBlock(), vue.createElementBlock("view", {
                           key: 0,
-                          class: "message-bubble"
+                          class: "message-bubble",
+                          onClick: ($event) => $setup.handleMessageClick(msg)
                         }, [
                           vue.createElementVNode(
                             "text",
@@ -24298,76 +26907,86 @@ ${i3}
                             1
                             /* TEXT */
                           )
-                        ])) : msg.type === "invitation" ? (vue.openBlock(), vue.createElementBlock(
+                        ], 8, ["onClick"])) : msg.type === "invitation" ? (vue.openBlock(), vue.createElementBlock(
                           vue.Fragment,
                           { key: 1 },
                           [
-                            vue.createCommentVNode(" 打卡邀请消息 "),
-                            vue.createElementVNode("view", { class: "invitation-bubble" }, [
-                              vue.createElementVNode("text", { class: "invitation-title" }, "打卡邀请"),
-                              vue.createElementVNode("view", { class: "invitation-info" }, [
+                            vue.createCommentVNode(" 打卡邀请卡片 "),
+                            vue.createElementVNode("view", { class: "invitation-card" }, [
+                              vue.createElementVNode("view", { class: "card-header" }, [
+                                vue.createVNode(_component_uni_icons, {
+                                  type: "calendar",
+                                  size: "16",
+                                  color: "#4CD964"
+                                }),
+                                vue.createElementVNode("text", { class: "card-title" }, "打卡邀请")
+                              ]),
+                              vue.createElementVNode("view", { class: "card-content" }, [
                                 vue.createElementVNode(
                                   "text",
-                                  { class: "invitation-content" },
+                                  { class: "invitation-text" },
                                   vue.toDisplayString(msg.content),
                                   1
                                   /* TEXT */
                                 ),
-                                vue.createElementVNode("view", { class: "challenge-info" }, [
+                                vue.createElementVNode("view", { class: "challenge-details" }, [
                                   vue.createElementVNode(
                                     "text",
                                     null,
-                                    "挑战时长: " + vue.toDisplayString(msg.challengeData.duration) + "天",
+                                    "🎯 " + vue.toDisplayString(msg.challengeData.duration) + "天挑战",
                                     1
                                     /* TEXT */
                                   ),
                                   vue.createElementVNode(
                                     "text",
                                     null,
-                                    "每日目标: " + vue.toDisplayString(msg.challengeData.goal.minutes) + "分钟",
+                                    "⏱️ " + vue.toDisplayString(msg.challengeData.goal.minutes) + "分钟/天",
                                     1
                                     /* TEXT */
                                   ),
                                   vue.createElementVNode(
                                     "text",
                                     null,
-                                    "或消耗: " + vue.toDisplayString(msg.challengeData.goal.calories) + "千卡",
+                                    "🔥 " + vue.toDisplayString(msg.challengeData.goal.calories) + "千卡/天",
                                     1
                                     /* TEXT */
                                   )
-                                ])
-                              ]),
-                              msg.sender !== $setup.userInfo.username ? (vue.openBlock(), vue.createElementBlock("view", {
-                                key: 0,
-                                class: "invitation-actions"
-                              }, [
-                                !msg.handled ? (vue.openBlock(), vue.createElementBlock("button", {
+                                ]),
+                                msg.sender !== $setup.userInfo.username && !msg.handled ? (vue.openBlock(), vue.createElementBlock("view", {
                                   key: 0,
-                                  class: "accept-btn",
-                                  onClick: ($event) => $setup.handleInvitation(msg, true)
-                                }, " 接受 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true),
-                                !msg.handled ? (vue.openBlock(), vue.createElementBlock("button", {
+                                  class: "card-actions"
+                                }, [
+                                  vue.createElementVNode("button", {
+                                    class: "action-btn accept",
+                                    onClick: ($event) => $setup.handleInvitation(msg, true)
+                                  }, " 接受 ", 8, ["onClick"]),
+                                  vue.createElementVNode("button", {
+                                    class: "action-btn reject",
+                                    onClick: ($event) => $setup.handleInvitation(msg, false)
+                                  }, " 拒绝 ", 8, ["onClick"])
+                                ])) : msg.handled ? (vue.openBlock(), vue.createElementBlock("view", {
                                   key: 1,
-                                  class: "reject-btn",
-                                  onClick: ($event) => $setup.handleInvitation(msg, false)
-                                }, " 拒绝 ", 8, ["onClick"])) : (vue.openBlock(), vue.createElementBlock("view", {
-                                  key: 2,
-                                  class: "handled-status"
+                                  class: "invitation-status"
                                 }, [
                                   vue.createElementVNode(
                                     "text",
-                                    { class: "handled-text" },
+                                    {
+                                      class: vue.normalizeClass([
+                                        "status-text",
+                                        msg.accepted ? "accepted" : "rejected"
+                                      ])
+                                    },
                                     vue.toDisplayString(msg.accepted ? "已接受" : "已拒绝"),
-                                    1
-                                    /* TEXT */
+                                    3
+                                    /* TEXT, CLASS */
                                   ),
                                   msg.accepted ? (vue.openBlock(), vue.createElementBlock("button", {
                                     key: 0,
-                                    class: "enter-challenge-btn",
+                                    class: "enter-btn",
                                     onClick: ($event) => $setup.enterChallenge(msg)
                                   }, " 进入打卡 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
-                                ]))
-                              ])) : vue.createCommentVNode("v-if", true)
+                                ])) : vue.createCommentVNode("v-if", true)
+                              ])
                             ])
                           ],
                           2112
@@ -24377,30 +26996,21 @@ ${i3}
                         vue.createElementVNode("view", { class: "message-status" }, [
                           vue.createElementVNode(
                             "text",
-                            { class: "message-time" },
+                            { class: "time" },
                             vue.toDisplayString($setup.formatTime(msg.time)),
                             1
                             /* TEXT */
                           ),
-                          msg.sender === $setup.userInfo.username ? (vue.openBlock(), vue.createElementBlock("view", {
-                            key: 0,
-                            class: "send-status"
-                          }, [
-                            msg.sendFailed ? (vue.openBlock(), vue.createElementBlock("text", {
+                          msg.sender === $setup.userInfo.username ? (vue.openBlock(), vue.createElementBlock(
+                            "text",
+                            {
                               key: 0,
-                              class: "failed-text",
-                              onClick: ($event) => $setup.resendMessage(msg)
-                            }, " 发送失败，点击重试 ", 8, ["onClick"])) : (vue.openBlock(), vue.createElementBlock(
-                              "text",
-                              {
-                                key: 1,
-                                class: "read-status"
-                              },
-                              vue.toDisplayString(msg.isRead ? "已读" : "未读"),
-                              1
-                              /* TEXT */
-                            ))
-                          ])) : vue.createCommentVNode("v-if", true)
+                              class: vue.normalizeClass(["status", { "read": msg.isRead, "failed": msg.sendFailed }])
+                            },
+                            vue.toDisplayString(msg.sendFailed ? "发送失败" : msg.isRead ? "已读" : "未读"),
+                            3
+                            /* TEXT, CLASS */
+                          )) : vue.createCommentVNode("v-if", true)
                         ])
                       ])
                     ], 10, ["id"]);
@@ -24413,28 +27023,19 @@ ${i3}
             128
             /* KEYED_FRAGMENT */
           ))
-        ])
-      ], 40, ["scroll-top", "scroll-into-view"]),
+        ], 40, ["scroll-top"])
+      ]),
       vue.createCommentVNode(" 底部输入区域 "),
-      vue.createElementVNode("view", { class: "chat-input-area" }, [
-        vue.createElementVNode("view", { class: "input-tools" }, [
-          vue.createElementVNode("button", {
-            class: "tool-btn",
-            onClick: $setup.showInvitationDialog
-          }, [
-            vue.createVNode(_component_uni_icons, {
-              type: "calendar",
-              size: "24",
-              color: "#666"
-            })
-          ])
-        ]),
+      $setup.input_status === true ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 0,
+        class: "chat-footer"
+      }, [
         vue.createElementVNode("view", { class: "input-box" }, [
           vue.withDirectives(vue.createElementVNode(
             "input",
             {
               type: "text",
-              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.messageText = $event),
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.messageText = $event),
               placeholder: "输入消息...",
               onConfirm: $setup.sendMessage
             },
@@ -24444,102 +27045,156 @@ ${i3}
           ), [
             [vue.vModelText, $setup.messageText]
           ]),
-          vue.createElementVNode("view", {
+          vue.createElementVNode("button", {
             class: "send-btn",
             onClick: $setup.sendMessage
-          }, [
-            vue.createElementVNode("text", null, "发送")
-          ])
+          }, "发送")
         ])
-      ]),
+      ])) : vue.createCommentVNode("v-if", true),
       vue.createCommentVNode(" 打卡邀请弹窗 "),
       vue.createVNode(
         _component_uni_popup,
         {
           ref: "invitationPopup",
-          type: "dialog"
+          type: "bottom",
+          onMaskClick: _cache[4] || (_cache[4] = ($event) => $setup.handleMenuClick("resetChatBox"))
         },
         {
           default: vue.withCtx(() => [
             vue.createElementVNode("view", { class: "invitation-form" }, [
-              vue.createElementVNode("text", { class: "form-title" }, "发送打卡邀请"),
-              vue.createCommentVNode(" 邀请内容 "),
-              vue.withDirectives(vue.createElementVNode(
-                "input",
-                {
-                  type: "text",
-                  "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.invitationContent = $event),
-                  placeholder: "请输入邀请内容...",
-                  class: "input-field"
-                },
-                null,
-                512
-                /* NEED_PATCH */
-              ), [
-                [vue.vModelText, $setup.invitationContent]
+              vue.createElementVNode("view", { class: "form-header" }, [
+                vue.createElementVNode("text", { class: "title" }, "发起打卡挑战"),
+                vue.createVNode(_component_uni_icons, {
+                  type: "close",
+                  size: "20",
+                  color: "#999",
+                  onClick: $setup.closeInvitationDialog
+                })
               ]),
-              vue.createCommentVNode(" 运动标设置 "),
-              vue.createElementVNode("view", { class: "goal-setting" }, [
-                vue.createElementVNode("text", { class: "setting-title" }, "运动目标"),
-                vue.createElementVNode("view", { class: "goal-inputs" }, [
-                  vue.createElementVNode("view", { class: "input-group" }, [
-                    vue.withDirectives(vue.createElementVNode(
-                      "input",
-                      {
-                        type: "number",
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.goalMinutes = $event),
-                        class: "goal-input"
-                      },
-                      null,
-                      512
-                      /* NEED_PATCH */
-                    ), [
-                      [vue.vModelText, $setup.goalMinutes]
-                    ]),
-                    vue.createElementVNode("text", { class: "unit" }, "分钟")
-                  ]),
-                  vue.createElementVNode("text", { class: "or" }, "或"),
-                  vue.createElementVNode("view", { class: "input-group" }, [
-                    vue.withDirectives(vue.createElementVNode(
-                      "input",
-                      {
-                        type: "number",
-                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.goalCalories = $event),
-                        class: "goal-input"
-                      },
-                      null,
-                      512
-                      /* NEED_PATCH */
-                    ), [
-                      [vue.vModelText, $setup.goalCalories]
-                    ]),
-                    vue.createElementVNode("text", { class: "unit" }, "千卡")
+              vue.createElementVNode("view", { class: "form-content" }, [
+                vue.createElementVNode("view", { class: "input-group" }, [
+                  vue.createElementVNode("text", { class: "label" }, "邀请内容"),
+                  vue.withDirectives(vue.createElementVNode(
+                    "textarea",
+                    {
+                      "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.invitationContent = $event),
+                      placeholder: "写点什么来邀请好友...",
+                      class: "content-input"
+                    },
+                    null,
+                    512
+                    /* NEED_PATCH */
+                  ), [
+                    [vue.vModelText, $setup.invitationContent]
                   ])
+                ]),
+                vue.createElementVNode("view", { class: "goal-group" }, [
+                  vue.createElementVNode("text", { class: "label" }, "每日目标"),
+                  vue.createElementVNode("view", { class: "goal-inputs" }, [
+                    vue.createElementVNode("view", { class: "input-item" }, [
+                      vue.withDirectives(vue.createElementVNode(
+                        "input",
+                        {
+                          type: "number",
+                          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.goalMinutes = $event),
+                          class: "number-input"
+                        },
+                        null,
+                        512
+                        /* NEED_PATCH */
+                      ), [
+                        [vue.vModelText, $setup.goalMinutes]
+                      ]),
+                      vue.createElementVNode("text", { class: "unit" }, "分钟")
+                    ]),
+                    vue.createElementVNode("text", { class: "divider" }, "或"),
+                    vue.createElementVNode("view", { class: "input-item" }, [
+                      vue.withDirectives(vue.createElementVNode(
+                        "input",
+                        {
+                          type: "number",
+                          "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.goalCalories = $event),
+                          class: "number-input"
+                        },
+                        null,
+                        512
+                        /* NEED_PATCH */
+                      ), [
+                        [vue.vModelText, $setup.goalCalories]
+                      ]),
+                      vue.createElementVNode("text", { class: "unit" }, "千卡")
+                    ])
+                  ])
+                ]),
+                vue.createElementVNode("view", { class: "duration-group" }, [
+                  vue.createElementVNode(
+                    "text",
+                    { class: "label" },
+                    "挑战天数: " + vue.toDisplayString($setup.challengeDuration) + "天",
+                    1
+                    /* TEXT */
+                  ),
+                  vue.createElementVNode("slider", {
+                    min: 1,
+                    max: 30,
+                    value: $setup.challengeDuration,
+                    step: 1,
+                    onChange: $setup.onDurationChange,
+                    activeColor: "#4CD964",
+                    class: "duration-slider"
+                  }, null, 40, ["value"])
                 ])
               ]),
-              vue.createCommentVNode(" 挑战天数设置 "),
-              vue.createElementVNode("view", { class: "duration-setting" }, [
-                vue.createElementVNode("text", { class: "setting-title" }, "挑战天数"),
-                vue.createElementVNode("slider", {
-                  min: 1,
-                  max: 30,
-                  value: $setup.challengeDuration,
-                  step: 1,
-                  onChange: $setup.onDurationChange,
-                  "show-value": "",
-                  class: "duration-slider"
-                }, null, 40, ["value"])
-              ]),
-              vue.createCommentVNode(" 按钮组 "),
-              vue.createElementVNode("view", { class: "button-group" }, [
+              vue.createElementVNode("view", { class: "form-footer" }, [
                 vue.createElementVNode("button", {
                   class: "cancel-btn",
                   onClick: $setup.closeInvitationDialog
                 }, " 取消 "),
                 vue.createElementVNode("button", {
-                  class: "confirm-btn",
+                  class: "submit-btn",
                   onClick: $setup.sendInvitation
                 }, "发送邀请")
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      ),
+      vue.createCommentVNode(" 底部弹出菜单 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "moreMenuPopup",
+          type: "bottom",
+          onMaskClick: _cache[7] || (_cache[7] = ($event) => $setup.handleMenuClick("resetChatBox"))
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "menu-list" }, [
+              vue.createElementVNode("view", {
+                class: "menu-item",
+                onClick: _cache[5] || (_cache[5] = ($event) => $setup.handleMenuClick("clearHistory"))
+              }, [
+                vue.createVNode(_component_uni_icons, {
+                  type: "trash",
+                  size: "20",
+                  color: "#FF4D4F"
+                }),
+                vue.createElementVNode("text", null, "清除聊天记录")
+              ]),
+              vue.createElementVNode("view", {
+                class: "menu-item",
+                onClick: _cache[6] || (_cache[6] = ($event) => $setup.handleMenuClick("sendInvitation"))
+              }, [
+                vue.createVNode(_component_uni_icons, {
+                  type: "calendar",
+                  size: "20",
+                  color: "#4CD964"
+                }),
+                vue.createElementVNode("text", null, "发起打卡挑战")
               ])
             ])
           ]),
@@ -25223,22 +27878,37 @@ ${i3}
   __definePage("pages/DietRecord/DietRecord", PagesDietRecordDietRecord);
   __definePage("pages/Challenge/Challenge", PagesChallengeChallenge);
   const _sfc_main = {
-    onLaunch: function() {
-      formatAppLog("warn", "at App.vue:4", "当前组件仅支持 uni_modules 目录结构 ，请升级 HBuilderX 到 3.1.0 版本以上！");
-      formatAppLog("log", "at App.vue:5", "App Launch");
-    },
-    onShow: function() {
-      formatAppLog("log", "at App.vue:8", "App Show");
-    },
-    onHide: function() {
-      formatAppLog("log", "at App.vue:11", "App Hide");
+    __name: "App",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const store = useWebSocketStore();
+      onLaunch(() => {
+      });
+      onShow(() => {
+      });
+      onHide(() => {
+      });
+      const __returned__ = { store, get useWebSocketStore() {
+        return useWebSocketStore;
+      }, get onLaunch() {
+        return onLaunch;
+      }, get onShow() {
+        return onShow;
+      }, get onHide() {
+        return onHide;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
   };
   const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/coding/sf_enginering/Squad/Squad/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
+    const pinia = createPinia();
+    app.use(pinia);
     return {
-      app
+      app,
+      pinia
     };
   }
   const { app: __app__, Vuex: __Vuex__, Pinia: __Pinia__ } = createApp();

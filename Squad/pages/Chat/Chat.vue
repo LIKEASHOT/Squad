@@ -1,122 +1,103 @@
 <template>
   <view class="chat-container">
-    <!-- 顶部栏 -->
-    <view class="chat-header">
-      <view class="back-btn" @click="goBack">
-        <uni-icons type="left" size="24" color="#333" />
+    <!-- 顶部导航栏 -->
+    <view class="nav-bar">
+      <view class="nav-left" @click="goBack">
+        <uni-icons type="left" size="20" color="#000" />
       </view>
-      <view class="friend-info">
+      <view class="nav-title">
         <text class="friend-name">{{ friendInfo.username }}</text>
         <text class="online-status" :class="{ online: friendInfo.online }">
           {{ friendInfo.online ? "在线" : "离线" }}
         </text>
-        <view v-if="unreadCount > 0" class="unread-badge">
-          {{ unreadCount }}
-        </view>
       </view>
-      <view class="more-btn" @click="showMoreActions = true">
-        <uni-icons type="more-filled" size="24" color="#333" />
+      <view class="nav-right" @click="showMoreMenu">
+        <uni-icons type="more-filled" size="20" color="#000" />
       </view>
     </view>
 
-    <!-- 添加新消息提醒 -->
-    <view
-      v-if="showNewMessageTip"
-      class="new-message-tip"
-      @click="scrollToBottom"
-    >
-      <text>{{ unreadCount }}条新消息</text>
-      <uni-icons type="bottom" size="12" color="#fff" />
-    </view>
-
-    <!-- 聊天内容区域 -->
-    <scroll-view
-      class="chat-content"
-      scroll-y="true"
-      :scroll-top="scrollTop"
-      :scroll-with-animation="true"
-      @scrolltoupper="loadMoreMessages"
-      @scroll="handleScroll"
-      :scroll-into-view="lastMessageId"
-    >
-      <!-- 加载更多提示 -->
-      <view v-if="isLoading" class="loading-more">
-        <text>加载中...</text>
-      </view>
-
-      <view class="message-list">
-        <!-- 日期分割线 -->
+    <!-- 聊天区域 -->
+    <view class="chat-body">
+      <!-- 消息列表 -->
+      <scroll-view
+        class="message-list"
+        scroll-y="true"
+        :scroll-top="scrollTop"
+        @scroll="handleScroll"
+      >
         <view v-for="(group, date) in groupedMessages" :key="date">
-          <view class="date-divider">
+          <!-- 日期分割线 -->
+          <view class="time-divider">
             <text>{{ formatDate(date) }}</text>
           </view>
 
+          <!-- 消息气泡 -->
           <view
             v-for="msg in group"
             :key="msg.id"
             :id="'msg-' + msg.id"
-            :class="[
-              'message-item',
-              msg.sender === userInfo.username ? 'self' : 'friend',
-            ]"
+            class="message-item"
+            :class="[msg.sender === userInfo.username ? 'self' : 'friend']"
           >
             <image
+              class="avatar"
               :src="
                 msg.sender === userInfo.username
                   ? userInfo.avatar
                   : friendInfo.avatar
               "
-              class="avatar"
             />
-            <view class="message-content">
-              <!-- 消息内容 -->
-              <view v-if="msg.type === 'text'" class="message-bubble">
+            <view class="message-wrapper">
+              <!-- 文本消息 -->
+              <view v-if="msg.type === 'text'" class="message-bubble" @click="handleMessageClick(msg)">
                 <text class="message-text">{{ msg.content }}</text>
               </view>
 
-              <!-- 打卡邀请消息 -->
+              <!-- 打卡邀请卡片 -->
               <view
                 v-else-if="msg.type === 'invitation'"
-                class="invitation-bubble"
+                class="invitation-card"
               >
-                <text class="invitation-title">打卡邀请</text>
-                <view class="invitation-info">
-                  <text class="invitation-content">{{ msg.content }}</text>
-                  <view class="challenge-info">
-                    <text>挑战时长: {{ msg.challengeData.duration }}天</text>
-                    <text
-                      >每日目标: {{ msg.challengeData.goal.minutes }}分钟</text
-                    >
-                    <text
-                      >或消耗: {{ msg.challengeData.goal.calories }}千卡</text
-                    >
-                  </view>
+                <view class="card-header">
+                  <uni-icons type="calendar" size="16" color="#4CD964" />
+                  <text class="card-title">打卡邀请</text>
                 </view>
-                <view
-                  v-if="msg.sender !== userInfo.username"
-                  class="invitation-actions"
-                >
-                  <button
-                    class="accept-btn"
-                    @click="handleInvitation(msg, true)"
-                    v-if="!msg.handled"
+                <view class="card-content">
+                  <text class="invitation-text">{{ msg.content }}</text>
+                  <view class="challenge-details">
+                    <text>🎯 {{ msg.challengeData.duration }}天挑战</text>
+                    <text>⏱️ {{ msg.challengeData.goal.minutes }}分钟/天</text>
+                    <text>🔥 {{ msg.challengeData.goal.calories }}千卡/天</text>
+                  </view>
+                  <view
+                    v-if="msg.sender !== userInfo.username && !msg.handled"
+                    class="card-actions"
                   >
-                    接受
-                  </button>
-                  <button
-                    class="reject-btn"
-                    @click="handleInvitation(msg, false)"
-                    v-if="!msg.handled"
-                  >
-                    拒绝
-                  </button>
-                  <view v-else class="handled-status">
-                    <text class="handled-text">{{
-                      msg.accepted ? "已接受" : "已拒绝"
-                    }}</text>
+                    <button
+                      class="action-btn accept"
+                      @click="handleInvitation(msg, true)"
+                    >
+                      接受
+                    </button>
+                    <button
+                      class="action-btn reject"
+                      @click="handleInvitation(msg, false)"
+                    >
+                      拒绝
+                    </button>
+                  </view>
+                  <view v-else-if="msg.handled" class="invitation-status">
+                    <text
+                      :class="[
+                        'status-text',
+                        msg.accepted ? 'accepted' : 'rejected',
+                      ]"
+                    >
+                      {{ msg.accepted ? "已接受" : "已拒绝" }}
+                    </text>
                     <button
                       v-if="msg.accepted"
-                      class="enter-challenge-btn"
+                      class="enter-btn"
                       @click="enterChallenge(msg)"
                     >
                       进入打卡
@@ -127,36 +108,22 @@
 
               <!-- 消息状态 -->
               <view class="message-status">
-                <text class="message-time">{{ formatTime(msg.time) }}</text>
-                <view
+                <text class="time">{{ formatTime(msg.time) }}</text>
+                <text
                   v-if="msg.sender === userInfo.username"
-                  class="send-status"
+                  :class="['status', { 'read': msg.isRead, 'failed': msg.sendFailed }]"
                 >
-                  <text
-                    v-if="msg.sendFailed"
-                    class="failed-text"
-                    @click="resendMessage(msg)"
-                  >
-                    发送失败，点击重试
-                  </text>
-                  <text v-else class="read-status">
-                    {{ msg.isRead ? "已读" : "未读" }}
-                  </text>
-                </view>
+                  {{ msg.sendFailed ? "发送失败" : msg.isRead ? "已读" : "未读" }}
+                </text>
               </view>
             </view>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
+    </view>
 
     <!-- 底部输入区域 -->
-    <view class="chat-input-area">
-      <view class="input-tools">
-        <button class="tool-btn" @click="showInvitationDialog">
-          <uni-icons type="calendar" size="24" color="#666" />
-        </button>
-      </view>
+    <view class="chat-footer" v-if="input_status === true">
       <view class="input-box">
         <input
           type="text"
@@ -164,61 +131,93 @@
           placeholder="输入消息..."
           @confirm="sendMessage"
         />
-        <view class="send-btn" @click="sendMessage">
-          <text>发送</text>
-        </view>
+        <button class="send-btn" @click="sendMessage">发送</button>
       </view>
     </view>
 
     <!-- 打卡邀请弹窗 -->
-    <uni-popup ref="invitationPopup" type="dialog">
+    <uni-popup
+      ref="invitationPopup"
+      type="bottom"
+      @maskClick="handleMenuClick('resetChatBox')"
+    >
       <view class="invitation-form">
-        <text class="form-title">发送打卡邀请</text>
-
-        <!-- 邀请内容 -->
-        <input
-          type="text"
-          v-model="invitationContent"
-          placeholder="请输入邀请内容..."
-          class="input-field"
-        />
-
-        <!-- 运动标设置 -->
-        <view class="goal-setting">
-          <text class="setting-title">运动目标</text>
-          <view class="goal-inputs">
-            <view class="input-group">
-              <input type="number" v-model="goalMinutes" class="goal-input" />
-              <text class="unit">分钟</text>
-            </view>
-            <text class="or">或</text>
-            <view class="input-group">
-              <input type="number" v-model="goalCalories" class="goal-input" />
-              <text class="unit">千卡</text>
-            </view>
-          </view>
-        </view>
-
-        <!-- 挑战天数设置 -->
-        <view class="duration-setting">
-          <text class="setting-title">挑战天数</text>
-          <slider
-            :min="1"
-            :max="30"
-            :value="challengeDuration"
-            :step="1"
-            @change="onDurationChange"
-            show-value
-            class="duration-slider"
+        <view class="form-header">
+          <text class="title">发起打卡挑战</text>
+          <uni-icons
+            type="close"
+            size="20"
+            color="#999"
+            @click="closeInvitationDialog"
           />
         </view>
-
-        <!-- 按钮组 -->
-        <view class="button-group">
+        <view class="form-content">
+          <view class="input-group">
+            <text class="label">邀请内容</text>
+            <textarea
+              v-model="invitationContent"
+              placeholder="写点什么来邀请好友..."
+              class="content-input"
+            />
+          </view>
+          <view class="goal-group">
+            <text class="label">每日目标</text>
+            <view class="goal-inputs">
+              <view class="input-item">
+                <input
+                  type="number"
+                  v-model="goalMinutes"
+                  class="number-input"
+                />
+                <text class="unit">分钟</text>
+              </view>
+              <text class="divider">或</text>
+              <view class="input-item">
+                <input
+                  type="number"
+                  v-model="goalCalories"
+                  class="number-input"
+                />
+                <text class="unit">千卡</text>
+              </view>
+            </view>
+          </view>
+          <view class="duration-group">
+            <text class="label">挑战天数: {{ challengeDuration }}天</text>
+            <slider
+              :min="1"
+              :max="30"
+              :value="challengeDuration"
+              :step="1"
+              @change="onDurationChange"
+              activeColor="#4CD964"
+              class="duration-slider"
+            />
+          </view>
+        </view>
+        <view class="form-footer">
           <button class="cancel-btn" @click="closeInvitationDialog">
             取消
           </button>
-          <button class="confirm-btn" @click="sendInvitation">发送邀请</button>
+          <button class="submit-btn" @click="sendInvitation">发送邀请</button>
+        </view>
+      </view>
+    </uni-popup>
+
+    <!-- 底部弹出菜单 -->
+    <uni-popup
+      ref="moreMenuPopup"
+      type="bottom"
+      @maskClick="handleMenuClick('resetChatBox')"
+    >
+      <view class="menu-list">
+        <view class="menu-item" @click="handleMenuClick('clearHistory')">
+          <uni-icons type="trash" size="20" color="#FF4D4F" />
+          <text>清除聊天记录</text>
+        </view>
+        <view class="menu-item" @click="handleMenuClick('sendInvitation')">
+          <uni-icons type="calendar" size="20" color="#4CD964" />
+          <text>发起打卡挑战</text>
         </view>
       </view>
     </uni-popup>
@@ -226,9 +225,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from "vue";
 
-const serverUrl = "http://10.133.80.141:3000";
+import { ref, onMounted, onUnmounted, nextTick, computed, watch } from "vue";
+import { useWebSocketStore } from "@/store/websocket";
+const input_status = ref(true);
+// const serverUrl = "http://10.133.80.141:3000";
+const serverUrl = uni.getStorageSync("serverUrl");
+// const websocketUrl = 'ws://10.133.80.141:3001';
+const websocketUrl = uni.getStorageSync("websocketUrl");
+
 const messageText = ref("");
 const messages = ref([]);
 const scrollTop = ref(0);
@@ -248,7 +253,7 @@ const friendInfo = ref({
   avatar: "/static/avatar/default.png",
   online: false,
 });
-
+const old_scrollTop = ref(0);
 // 添加新的响应式变量
 const unreadCount = ref(0);
 const showNewMessageTip = ref(false);
@@ -271,257 +276,77 @@ const groupedMessages = computed(() => {
 });
 
 // 初始化WebSocket连接
-const initWebSocket = () => {
-  try {
-    websocket.value = uni.connectSocket({
-      url: `ws://10.133.80.141:3001/chat`,
-      complete: () => {
-        console.log("WebSocket连接尝试完成");
-      },
-    });
+const store = useWebSocketStore();
 
-    // 监听连接成功
-    websocket.value.onOpen(() => {
-      console.log("WebSocket连接成功");
-      // 发送身份验证信息
-      sendWebSocketMessage({
-        type: "auth",
-        username: userInfo.value.username,
-      });
-    });
-
-    // 监听连接失败
-    websocket.value.onError((error) => {
-      console.error("WebSocket连接错误:", error);
-      uni.showToast({
-        title: "连接失败，请重试",
-        icon: "none",
-      });
-    });
-
-    // 监听消息
-    websocket.value.onMessage((res) => {
-      try {
-        const data = JSON.parse(res.data);
-        handleWebSocketMessage(data);
-      } catch (error) {
-        console.error("解析消息失败:", error);
-      }
-    });
-  } catch (error) {
-    console.error("初始化WebSocket失败:", error);
+// 监听好友状态变化
+uni.$on("friendStatusChanged", ({ username, status }) => {
+  if (username === friendInfo.value.username) {
+    friendInfo.value.online = status === "online";
   }
-};
+});
 
-// 添加安全的消息发送函数
-const sendWebSocketMessage = (message) => {
-  if (!websocket.value) {
-    console.error("WebSocket未连接");
-    return false;
-  }
-
-  try {
-    websocket.value.send({
-      data: JSON.stringify(message),
-      success: () => {
-        console.log("消息发送成功:", message);
-        return true;
-      },
-      fail: (error) => {
-        console.error("消息发送失败:", error);
-        return false;
-      },
-    });
-  } catch (error) {
-    console.error("发送消息时出错:", error);
-    return false;
-  }
-};
-
-// 添加消息处理函数
-const handleWebSocketMessage = (data) => {
-  switch(data.type) {
-    case 'text':
-    case 'invitation':
-      if (data.sender === friendInfo.value.username) {
-        messages.value.push(data);
-        // 保存到本地存储
-        saveMessageToLocal(data);
-        if (!isAtBottom.value) {
-          unreadCount.value++;
-          showNewMessageTip.value = true;
-        } else {
-          scrollToBottom();
-        }
-      }
-      break;
-    case 'status':
-      if (data.username === friendInfo.value.username) {
-        friendInfo.value.online = data.status === 'online';
-      }
-      break;
-    case 'invitation_response':
-      handleInvitationResponse(data);
-      break;
-  }
-};
-
-// 添加本地存储相关函数
-const getLocalStorageKey = (friendId) => {
-  return `chat_history_${userInfo.value.username}_${friendId}`;
-};
-
-// 保存消息到本地
-const saveMessageToLocal = (message) => {
-  const key = getLocalStorageKey(friendInfo.value.username);
-  let history = uni.getStorageSync(key) || [];
-  history.push(message);
-  uni.setStorageSync(key, history);
-};
-
-// 从本地获取消息历史
-const getLocalMessages = (friendId) => {
-  const key = getLocalStorageKey(friendId);
-  return uni.getStorageSync(key) || [];
-};
-
-// 修改加载聊天历史的函数
-const loadChatHistory = async (friendId) => {
-  try {
-    const result = await uni.request({
-      url: `${serverUrl}/chat/history`,
-      method: "POST",
-      data: {
-        userId: userInfo.value.username,
-        friendId: friendId,
-      }
-    });
-    
-    // uni.request 返回的是一个数组 [err, res]
-    const [err, res] = result;
-    
-    if (err) {
-      throw err;
-    }
-
-    if (res.statusCode === 200 && res.data.status === 'success') {
-      const { messages: serverMessages } = res.data.data;
-      if (serverMessages && serverMessages.length > 0) {
-        messages.value = serverMessages;
-        // 保存到本地
-        uni.setStorageSync(getLocalStorageKey(friendId), serverMessages);
-        scrollToBottom();
-      }
-    } else {
-      throw new Error(res.data.message || 'Failed to load chat history');
-    }
-  } catch (error) {
-    console.error("获取聊天历史失败:", error);
-    uni.showToast({
-      title: "获取聊天记录失败",
-      icon: "none",
-    });
-  }
-};
-
-// 修改加载未读消息的函数
-const loadUnreadMessages = async () => {
-  try {
-    const result = await uni.request({
-      url: `${serverUrl}/chat/unread`,
-      method: "GET",
-      data: {
-        userId: userInfo.value.username
-      }
-    });
-    
-    // uni.request 返回的是一个数组 [err, res]
-    const [err, res] = result;
-    
-    if (err) {
-      throw err;
-    }
-
-    if (res.statusCode === 200 && res.data.status === 'success') {
-      const unreadMessages = res.data.unreadMessages;
-      const friendUnread = unreadMessages.find(
-        m => m.sender_id === friendInfo.value.username
-      );
-      unreadCount.value = friendUnread ? friendUnread.unreadCount : 0;
-    } else {
-      throw new Error(res.data.message || 'Failed to load unread messages');
-    }
-  } catch (error) {
-    console.error("获取未读消息失败:", error);
-    uni.showToast({
-      title: "获取未读消息失败",
-      icon: "none"
-    });
-  }
-};
-
-// 修改发送消息函数
+// 发送消息
 const sendMessage = async () => {
   if (!messageText.value.trim()) return;
-
+  // console.log("friendInfo:", friendInfo.value);
   const newMessage = {
     type: "text",
+    id: Date.now().toString(),
     sender: userInfo.value.username,
     receiver: friendInfo.value.username,
-    content: messageText.value,
+    content: messageText.value.trim(),
     time: new Date().getTime(),
     isRead: false,
-    id: Date.now().toString()
+    sendFailed: false,
   };
 
-  // 先添加到本地消息列表和存储
-  messages.value.push(newMessage);
-  saveMessageToLocal(newMessage);
-  messageText.value = "";
-  scrollToBottom();
-
   try {
-    const res = await uni.request({
-      url: `${serverUrl}/chat/send`,
-      method: "POST",
-      data: {
-        senderId: newMessage.sender,
-        receiverId: newMessage.receiver,
-        content: newMessage.content
-      }
-    });
-
-    // 检查响应状态
-    if (res.statusCode !== 200) {
-      throw new Error(res.data.message || '发送失败');
+    messages.value.push(newMessage);
+    saveMessageToLocal(newMessage);
+    messageText.value = "";
+    // 使用全局 WebSocket 发送消息
+    if (store.isConnected) {
+      store.websocket.send({
+        data: JSON.stringify(newMessage),
+        success: () => console.log("消息发送成功:", newMessage),
+        fail: (error) => {
+          console.error("发送消息失败:", error);
+          markMessageAsFailed(newMessage.id);
+        },
+      });
+    } else {
+      console.warn("WebSocket未连接");
+      store.initWebSocket();
+      markMessageAsFailed(newMessage.id);
     }
-
-    // 发送成功，更新消息状态
-    const msgIndex = messages.value.findIndex(m => m.id === newMessage.id);
-    if (msgIndex !== -1) {
-      messages.value[msgIndex].sent = true;
-    }
-
   } catch (error) {
     console.error("发送消息失败:", error);
-    // 标记消息发送失败
-    const msgIndex = messages.value.findIndex(m => m.id === newMessage.id);
-    if (msgIndex !== -1) {
-      messages.value[msgIndex].sendFailed = true;
-      // 更新本地存储
-      const key = getLocalStorageKey(friendInfo.value.username);
-      let history = uni.getStorageSync(key) || [];
-      const historyIndex = history.findIndex(m => m.id === newMessage.id);
-      if (historyIndex !== -1) {
-        history[historyIndex].sendFailed = true;
-        uni.setStorageSync(key, history);
-      }
-    }
-    uni.showToast({
-      title: "发送失败",
-      icon: "none"
-    });
+    markMessageAsFailed(newMessage.id);
   }
+  // 使用 uniapp 的滚动方式
+  nextTick(() => {
+    scrollTop.value = 9999999;
+  });
+};
+
+// 添加标记消息失败的函数
+const markMessageAsFailed = (messageId) => {
+  const msgIndex = messages.value.findIndex((m) => m.id === messageId);
+  if (msgIndex !== -1) {
+    messages.value[msgIndex].sendFailed = true;
+    // 更新本地存储
+    const key = getLocalStorageKey(friendInfo.value.username);
+    let history = uni.getStorageSync(key) || [];
+    const historyIndex = history.findIndex((m) => m.id === messageId);
+    if (historyIndex !== -1) {
+      history[historyIndex].sendFailed = true;
+      uni.setStorageSync(key, history);
+    }
+  }
+  uni.showToast({
+    title: "发送失败",
+    icon: "none",
+  });
 };
 
 // 显示打卡邀请弹窗
@@ -533,14 +358,15 @@ const showInvitationDialog = () => {
 const closeInvitationDialog = () => {
   invitationPopup.value.close();
   invitationContent.value = "";
+  input_status.value = true;
 };
 
-// 修改发送打卡邀请函数
+// 修改发送卡邀请函数
 const sendInvitation = async () => {
   if (!invitationContent.value.trim()) {
     uni.showToast({
       title: "请输入邀请内容",
-      icon: "none"
+      icon: "none",
     });
     return;
   }
@@ -558,10 +384,10 @@ const sendInvitation = async () => {
       duration: challengeDuration.value,
       goal: {
         minutes: goalMinutes.value,
-        calories: goalCalories.value
+        calories: goalCalories.value,
       },
-      startTime: new Date().getTime()
-    }
+      startTime: new Date().getTime(),
+    },
   };
 
   // 先添加到本地消息列表
@@ -577,8 +403,8 @@ const sendInvitation = async () => {
       data: {
         senderId: invitation.sender,
         receiverId: invitation.receiver,
-        content: JSON.stringify(invitation)
-      }
+        content: JSON.stringify(invitation),
+      },
     });
 
     if (err) {
@@ -586,25 +412,24 @@ const sendInvitation = async () => {
     }
 
     if (res.statusCode !== 200) {
-      throw new Error(res.data.message || '发送失败');
+      throw new Error(res.data.message || "发送失败");
     }
 
     // 发送成功
     uni.showToast({
       title: "邀请已发送",
-      icon: "success"
+      icon: "success",
     });
-
   } catch (error) {
     console.error("发送邀请失败:", error);
     // 标记消息发送失败
-    const msgIndex = messages.value.findIndex(m => m.id === invitation.id);
+    const msgIndex = messages.value.findIndex((m) => m.id === invitation.id);
     if (msgIndex !== -1) {
       messages.value[msgIndex].sendFailed = true;
       // 更新本地存储
       const key = getLocalStorageKey(friendInfo.value.username);
       let history = uni.getStorageSync(key) || [];
-      const historyIndex = history.findIndex(m => m.id === invitation.id);
+      const historyIndex = history.findIndex((m) => m.id === invitation.id);
       if (historyIndex !== -1) {
         history[historyIndex].sendFailed = true;
         uni.setStorageSync(key, history);
@@ -612,7 +437,7 @@ const sendInvitation = async () => {
     }
     uni.showToast({
       title: "发送失败",
-      icon: "none"
+      icon: "none",
     });
   }
 };
@@ -655,7 +480,7 @@ const handleInvitationResponse = (data) => {
   }
 };
 
-// 获取路由参数并初始化
+// 获取路由数并初始化
 const initPage = async () => {
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1];
@@ -663,57 +488,93 @@ const initPage = async () => {
 
   friendInfo.value.username = name;
 
-  // 先初始化WebSocket
-  await initWebSocket();
+  // 先加载本地消息
+  const localMessages = getLocalMessages(name);
+  if (localMessages.length > 0) {
+    messages.value = localMessages;
+    scrollToBottom();
+  }
 
-  // 再加载聊天历史
-  await loadChatHistory(id);
-
-  // 最后加载未读消息
-  await loadUnreadMessages();
+  // 加载服务器消息和未读消息
+  // await Promise.all([loadChatHistory(name), loadUnreadMessages()]);
 };
 
-// 处理滚动事件
+// 修改处理滚动事件的函数
 const handleScroll = (e) => {
-  const { scrollTop, scrollHeight, clientHeight } = e.detail;
-  isAtBottom.value = scrollHeight - scrollTop <= clientHeight + 50;
-
-  if (!isAtBottom.value && unreadCount.value > 0) {
-    showNewMessageTip.value = true;
-  } else {
-    showNewMessageTip.value = false;
-  }
+  // 只要发生滚动就标记所有消息为已读
+  markAllMessagesAsRead();
+  old_scrollTop.value = e.detail.scrollTop;
 };
 
-// 加载更多消息
-const loadMoreMessages = async () => {
-  if (!hasMore.value || isLoading.value) return;
+// 添加一个变量记录最后标记已读的时间戳
+const lastReadTimestamp = ref(0);
 
-  isLoading.value = true;
-  try {
-    const [error, res] = await uni.request({
-      url: `${serverUrl}/chat/history`,
-      method: "POST",
-      data: {
-        userId: userInfo.value.username,
-        friendId: friendInfo.value.username,
-        page: currentPage.value + 1,
-      },
-    });
-
-    if (error) throw error;
-
-    if (res.statusCode === 200) {
-      const { messages: newMessages, pagination } = res.data.data;
-      messages.value = [...newMessages, ...messages.value];
-      currentPage.value = pagination.page;
-      hasMore.value = currentPage.value * pagination.limit < pagination.total;
-    }
-  } catch (error) {
-    console.error("加载更多消息失败:", error);
-  } finally {
-    isLoading.value = false;
+// 优化后的标记已读函数
+const markAllMessagesAsRead = () => {
+  const key = `chat_history_${userInfo.value.username}_${friendInfo.value.username}`;
+  let history = uni.getStorageSync(key) || [];
+  
+  // 获取最新的未读消息时间戳
+  const latestUnreadMessage = history
+  .filter(msg => msg.sender === friendInfo.value.username && !msg.isRead)
+  .reduce((latest, current) => 
+    !latest || current.time > latest.time ? current : latest
+  , null);
+  
+  // 如果没有新的未读消息，或者时间戳没有变化，直接返回
+  if (!latestUnreadMessage || latestUnreadMessage.time <= lastReadTimestamp.value) {
+    return;
   }
+  
+  // 更新最后已读时间戳
+  lastReadTimestamp.value = latestUnreadMessage.time;
+  
+  // 批量更新所有消息状态
+  uni.setStorageSync(key, history.map(msg => {
+    if (msg.sender === friendInfo.value.username && !msg.isRead) {
+      return { ...msg, isRead: true };
+    }
+    return msg;
+  }));
+  
+  // 发送已读回执
+  if (store.isConnected) {
+    store.websocket.send({
+      data: JSON.stringify({
+        type: "read_ack",
+        sender: userInfo.value.username,
+        receiver: friendInfo.value.username,
+        time: lastReadTimestamp.value
+      })
+    });
+  }
+  
+  // 触发未读消息计数更新
+  uni.$emit('updateUnreadCounts');
+};
+
+// 修改 onMounted 钩子
+onMounted(() => {
+  initPage();
+  nextTick(() => {
+    scrollToBottom(false);
+    // 页面加载完成后标记所有消息为已读
+    markAllMessagesAsRead();
+  });
+
+  // 设置好友在线状态
+  const status = store.getFriendStatus(friendInfo.value.username);
+  friendInfo.value.online = status.isOnline;
+});
+
+// 修改滚动到底部函数
+const scrollToBottom = (smooth = true) => {
+  scrollTop.value = old_scrollTop.value;
+  nextTick(() => {
+    scrollTop.value = 999999;
+    // 标记所有消息为已读
+    markAllMessagesAsRead();
+  });
 };
 
 // 格式化时间
@@ -722,19 +583,6 @@ const formatTime = (timestamp) => {
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
-};
-
-// 滚动到底部
-const scrollToBottom = () => {
-  nextTick(() => {
-    const query = uni.createSelectorQuery();
-    query.select(".message-list").boundingClientRect();
-    query.exec((res) => {
-      if (res[0]) {
-        scrollTop.value = res[0].height;
-      }
-    });
-  });
 };
 
 // 返回上一页
@@ -747,7 +595,7 @@ const enterChallenge = (msg) => {
   uni.navigateTo({
     url: "/pages/Challenge/Challenge",
     success: () => {
-      // 将挑战数传递给打卡页面
+      // 将挑战传递给打卡页面
       uni.$emit("challenge-data", {
         challenger: msg.sender,
         challengeData: msg.challengeData,
@@ -755,19 +603,6 @@ const enterChallenge = (msg) => {
       });
     },
   });
-};
-
-// 添加挑战进度更新函数
-const updateChallengeProgress = (data) => {
-  const msgIndex = messages.value.findIndex((m) => m.id === data.invitationId);
-  if (msgIndex !== -1) {
-    const msg = messages.value[msgIndex];
-    if (data.sender === userInfo.value.username) {
-      msg.challengeData.progress.self = data.progress;
-    } else {
-      msg.challengeData.progress.friend = data.progress;
-    }
-  }
 };
 
 // 添加新的响应式变量
@@ -796,51 +631,311 @@ const formatDate = (dateStr) => {
   }
 };
 
-// 添加重发消息功能
+// 修改重发消息的函数
 const resendMessage = async (message) => {
   // 移除发送失败标记
   message.sendFailed = false;
-
+  
   try {
-    const res = await uni.request({
-      url: `${serverUrl}/chat/send`,
-      method: "POST",
-      data: {
-        senderId: message.sender,
-        receiverId: message.receiver,
-        content:
-          message.type === "invitation"
-            ? JSON.stringify(message)
-            : message.content,
-      },
-    });
-
-    if (res[1].statusCode !== 200) {
-      message.sendFailed = true;
+    if (store.isConnected) {
+      store.websocket.send({
+        data: JSON.stringify({
+          ...message,
+          time: Date.now() // 更新发送时间
+        }),
+        success: () => {
+          // 更新本地消息状态
+          const key = getLocalStorageKey(friendInfo.value.username);
+          let history = uni.getStorageSync(key) || [];
+          history = history.map(msg => {
+            if (msg.id === message.id) {
+              return {
+                ...msg,
+                sendFailed: false,
+                time: message.time
+              };
+            }
+            return msg;
+          });
+          uni.setStorageSync(key, history);
+          
+          // 更新视图中的消息状态
+          const msgIndex = messages.value.findIndex(m => m.id === message.id);
+          if (msgIndex !== -1) {
+            messages.value[msgIndex].sendFailed = false;
+            messages.value[msgIndex].time = message.time;
+          }
+          
+          console.log("消息重发成功:", message);
+        },
+        fail: (error) => {
+          console.error("重发消息失败:", error);
+          markMessageAsFailed(message.id);
+          uni.showToast({
+            title: "重发失败",
+            icon: "none"
+          });
+        }
+      });
+    } else {
+      console.warn("WebSocket未连接");
+      store.initWebSocket();
+      markMessageAsFailed(message.id);
       uni.showToast({
-        title: "重发失败",
-        icon: "none",
+        title: "网络未连接",
+        icon: "none"
       });
     }
   } catch (error) {
     console.error("重发消息失败:", error);
-    message.sendFailed = true;
+    markMessageAsFailed(message.id);
     uni.showToast({
       title: "重发失败",
-      icon: "none",
+      icon: "none"
     });
   }
 };
 
-onMounted(() => {
-  initPage();
-});
+// 添加消息点击事件处理
+const handleMessageClick = (message) => {
+  if (message.sendFailed && message.sender === userInfo.value.username) {
+    uni.showModal({
+      title: "重发消息",
+      content: "是否重新发送该消息？",
+      success: (res) => {
+        if (res.confirm) {
+          resendMessage(message);
+        }
+      }
+    });
+  }
+};
 
-onUnmounted(() => {
-  if (websocket.value) {
-    websocket.value.close();
+// 添加处理已读回执的函数
+const handleReadAck = (data) => {
+  console.log("处理已读回执:", data);
+
+  // 更新所有发送给该接收者且时间早于已读时间的未读消息状态
+  messages.value = messages.value.map((msg) => {
+    if (
+      msg.sender === userInfo.value.username &&
+      msg.receiver === data.sender &&
+      !msg.isRead &&
+      msg.time <= data.time
+    ) {
+      return { ...msg, isRead: true };
+    }
+    return msg;
+  });
+
+  // 更新本地存储
+  const key = getLocalStorageKey(friendInfo.value.username);
+  let history = uni.getStorageSync(key) || [];
+  history = history.map((msg) => {
+    if (
+      msg.sender === userInfo.value.username &&
+      msg.receiver === data.sender &&
+      !msg.isRead &&
+      msg.time <= data.time
+    ) {
+      return { ...msg, isRead: true };
+    }
+    return msg;
+  });
+  uni.setStorageSync(key, history);
+};
+
+// 在 script setup 中添加清除聊天记录函数
+const clearHistory = () => {
+  uni.showModal({
+    title: "清除聊天记录",
+    content: "确定要清除与该好友的所有聊天记录吗？",
+    success: (res) => {
+      if (res.confirm) {
+        // 清除本地存储
+        const key = getLocalStorageKey(friendInfo.value.username);
+        uni.removeStorageSync(key);
+        // 清空消息列表
+        messages.value = [];
+        // 显示提示
+        uni.showToast({
+          title: "聊天记录已清除",
+          icon: "success",
+        });
+      }
+    },
+  });
+  input_status.value = true;
+};
+
+// 添加显示菜单的方法
+const moreMenuPopup = ref(null);
+const showMoreMenu = () => {
+  moreMenuPopup.value.open();
+  input_status.value = false;
+};
+
+const handleMenuClick = (action) => {
+  // 先关闭菜单
+  moreMenuPopup.value.close();
+  // 延迟执行操作，确保菜单已关闭
+  setTimeout(() => {
+    switch (action) {
+      case "clearHistory":
+        clearHistory();
+        break;
+      case "sendInvitation":
+        showInvitationDialog();
+        break;
+      case "resetChatBox":
+        input_status.value = true;
+        break;
+
+      default:
+        console.warn(`未知的操作: ${action}`);
+    }
+  }, 100);
+};
+
+// 添加监听消息列表变化的处理
+watch(
+  () => messages.value.length,
+  () => {
+    if (isAtBottom.value) {
+      scrollToBottom();
+    }
+  }
+);
+
+// 添加获取本地存储key的函数
+const getLocalStorageKey = (friendUsername) => {
+  const currentUser = uni.getStorageSync("username");
+  return `chat_history_${currentUser}_${friendUsername}`;
+};
+
+// 修改保存消息到本地的函数
+const saveMessageToLocal = (message) => {
+  const key = getLocalStorageKey(friendInfo.value.username);
+  let history = uni.getStorageSync(key) || [];
+  
+  // 避免重复消息
+  if (!history.some(msg => msg.id === message.id)) {
+    history.push(message);
+    uni.setStorageSync(key, history);
+  }
+};
+
+// 添加从本地获取消息的函数
+const getLocalMessages = (friendUsername) => {
+  const key = getLocalStorageKey(friendUsername);
+  return uni.getStorageSync(key) || [];
+};
+
+// 修改接收新消息的处理
+uni.$on("websocketMessage", (data) => {
+  try {
+    console.log("收到WebSocket消息:", data);
+
+    switch (data.type) {
+      case "text":
+        // 检查消息是否属于当前聊天
+        if ((data.sender === friendInfo.value.username && 
+             data.receiver === userInfo.value.username) ||
+            (data.sender === userInfo.value.username && 
+             data.receiver === friendInfo.value.username)) {
+          
+          // 如果是接收到的新消息，且时间戳大于最后已读时间戳，则标记为未读
+          const isUnread = data.sender === friendInfo.value.username && 
+                          data.time > lastReadTimestamp.value;
+          
+          // 添加到消息列表
+          messages.value.push({
+            ...data,
+            isRead: !isUnread
+          });
+
+          // 保存到本地
+          saveMessageToLocal({
+            ...data,
+            isRead: !isUnread
+          });
+          
+          // 滚动到底部
+          nextTick(() => {
+            scrollTop.value = 99999;
+          });
+        }
+        break;
+
+      case "read_ack":
+        // 处理已读回执
+        if (data.sender === friendInfo.value.username) {
+          handleReadAck(data);
+        }
+        break;
+    }
+  } catch (error) {
+    console.error("处理WebSocket消息失败:", error);
   }
 });
+
+// 在组件卸载时移除事件监听
+onUnmounted(() => {
+  uni.$off("websocketMessage");
+});
+
+// 添加监听消息可见性的函数
+const observeMessageVisibility = () => {
+  const observer = uni.createIntersectionObserver();
+  
+  observer.relativeTo('.message-list').observe('.message-item', (entries) => {
+    entries.forEach(entry => {
+      if (entry.intersectionRatio > 0) {
+        // 消息进入可视区域
+        const messageId = entry.dataset.id;
+        markMessageAsRead(messageId);
+      }
+    });
+  });
+  
+  return observer;
+};
+
+// 单条消息标记已读
+const markMessageAsRead = (messageId) => {
+  const key = `chat_history_${userInfo.value.username}_${friendInfo.value.username}`;
+  let history = uni.getStorageSync(key) || [];
+  
+  const message = history.find(msg => msg.id === messageId);
+  if (message && message.sender === friendInfo.value.username && !message.isRead) {
+    // 更新本地消息状态
+    history = history.map(msg => {
+      if (msg.id === messageId) {
+        return { ...msg, isRead: true };
+      }
+      return msg;
+    });
+    
+    // 保存更新后的历史记录
+    uni.setStorageSync(key, history);
+    
+    // 发送已读回执
+    if (store.isConnected) {
+      store.websocket.send({
+        data: JSON.stringify({
+          type: "read_ack",
+          sender: userInfo.value.username,
+          receiver: friendInfo.value.username,
+          messageId: messageId,
+          time: message.time
+        })
+      });
+    }
+    
+    // 触发未读消息计数更新
+    uni.$emit('updateUnreadCounts');
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -848,62 +943,105 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background: #f7f7f7;
 }
 
-.chat-header {
-  display: flex;
-  align-items: center;
-  padding: 20rpx 30rpx;
-  background-color: #fff;
-  border-bottom: 1rpx solid #eee;
-  position: sticky;
+// 顶部导航栏
+.nav-bar {
+  position: fixed;
   top: 0;
-  z-index: 100;
-}
-
-.back-btn,
-.more-btn {
-  width: 80rpx;
-  height: 80rpx;
+  left: 0;
+  right: 0;
+  height: 88rpx;
+  background: #ffffff;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 0 30rpx;
+  z-index: 100;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+  .nav-left,
+  .nav-right {
+    width: 80rpx;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-title {
+    flex: 1;
+    text-align: center;
+
+    .friend-name {
+      font-size: 34rpx;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .online-status {
+      font-size: 24rpx;
+      color: #999;
+      margin-left: 10rpx;
+
+      &.online {
+        color: #4cd964;
+      }
+    }
+  }
 }
 
-.friend-name {
-  flex: 1;
-  text-align: center;
-  font-size: 32rpx;
-  font-weight: 500;
-}
-
-.chat-content {
+// 聊天内容区域
+.chat-body {
   flex: 1;
   padding: 20rpx;
-  overflow-y: auto;
+  margin-top: 88rpx; // 顶部导航栏高度
+  margin-bottom: 120rpx; // 底部输入框高度
 }
 
 .message-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
+  height: calc(100vh - 235rpx); // 减去顶部栏和底部栏的高度
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  .time-divider {
+    text-align: center;
+    margin: 20rpx 0;
+
+    text {
+      font-size: 24rpx;
+      color: #999;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 4rpx 16rpx;
+      border-radius: 8rpx;
+    }
+  }
 }
 
 .message-item {
   display: flex;
-  align-items: flex-start;
-  gap: 20rpx;
+  margin-bottom: 30rpx;
 
   &.self {
     flex-direction: row-reverse;
 
     .message-bubble {
-      background-color: #95ec69;
+      background: #95ec69;
+      margin-right: 20rpx;
 
-      &::before {
+      &:before {
         right: -16rpx;
         border-left-color: #95ec69;
+      }
+    }
+  }
+
+  &.friend {
+    .message-bubble {
+      background: #ffffff;
+      margin-left: 20rpx;
+
+      &:before {
+        left: -16rpx;
+        border-right-color: #ffffff;
       }
     }
   }
@@ -912,196 +1050,154 @@ onUnmounted(() => {
 .avatar {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 50%;
-  background-color: #eee;
+  border-radius: 8rpx;
+}
+
+.message-wrapper {
+  max-width: 70%;
 }
 
 .message-bubble {
-  max-width: 60%;
   padding: 20rpx;
-  background-color: #fff;
-  border-radius: 20rpx;
+  border-radius: 8rpx;
   position: relative;
+  word-break: break-all;
 
-  &::before {
+  &:before {
     content: "";
     position: absolute;
     top: 20rpx;
-    left: -16rpx;
     border: 8rpx solid transparent;
-    border-right-color: #fff;
   }
 }
 
-.message-text {
-  font-size: 28rpx;
-  color: #333;
-  word-break: break-all;
-}
-
-.message-time {
+.message-status {
   font-size: 24rpx;
   color: #999;
-  margin-top: 8rpx;
-  display: block;
-}
+  margin-top: 6rpx;
+  text-align: right;
 
-.chat-input-area {
-  padding: 20rpx;
-  background-color: #fff;
-  border-top: 1rpx solid #eee;
-}
-
-.input-box {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-
-  input {
-    flex: 1;
-    height: 80rpx;
-    padding: 0 30rpx;
-    background-color: #f5f5f5;
-    border-radius: 40rpx;
-    font-size: 28rpx;
-  }
-}
-
-.send-btn {
-  width: 120rpx;
-  height: 80rpx;
-  background-color: #07c160;
-  border-radius: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  text {
-    color: #fff;
-    font-size: 28rpx;
-  }
-}
-
-.friend-info {
-  flex: 1;
-  text-align: center;
-
-  .friend-name {
-    font-size: 32rpx;
-    font-weight: 500;
-  }
-
-  .online-status {
-    font-size: 24rpx;
-    color: #999;
+  .status {
     margin-left: 10rpx;
+    color: #999; // 未读状态的颜色
 
-    &.online {
-      color: #07c160;
+    &.read {
+      color: #4cd964; // 已读状态的颜色
+    }
+
+    &.failed {
+      color: #ff4d4f; // 发送失败状态的颜色
     }
   }
 }
 
-.invitation-bubble {
+.chat-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: #fff;
-  padding: 30rpx;
-  border-radius: 20rpx;
-  max-width: 80%;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding: 20rpx;
+  border-top: 1rpx solid #eee;
+  z-index: 100;
 
-  .invitation-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20rpx;
-  }
-
-  .invitation-info {
-    margin: 20rpx 0;
-
-    .invitation-content {
-      font-size: 28rpx;
-      color: #666;
-      margin-bottom: 16rpx;
-      display: block;
-    }
-
-    .challenge-info {
-      background: #f8f8f8;
-      padding: 20rpx;
-      border-radius: 12rpx;
-
-      text {
-        display: block;
-        font-size: 26rpx;
-        color: #666;
-        line-height: 1.8;
-      }
-    }
-  }
-
-  .invitation-actions {
+  .input-box {
     display: flex;
+    align-items: center;
     gap: 20rpx;
-    margin-top: 30rpx;
 
-    button {
+    input {
       flex: 1;
-      height: 80rpx;
-      line-height: 80rpx;
-      border-radius: 40rpx;
+      height: 72rpx;
+      background: #f5f5f5;
+      border-radius: 36rpx;
+      padding: 0 30rpx;
+      font-size: 28rpx;
+    }
+
+    .send-btn {
+      width: 120rpx;
+      height: 72rpx;
+      background: #4cd964;
+      color: #fff;
+      border-radius: 36rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 28rpx;
       border: none;
-
-      &.accept-btn {
-        background: linear-gradient(135deg, #4cd964, #3cb371);
-        color: #fff;
-        box-shadow: 0 4rpx 12rpx rgba(76, 217, 100, 0.3);
-      }
-
-      &.reject-btn {
-        background: #f5f5f5;
-        color: #666;
-      }
     }
+  }
+}
 
-    .handled-status {
+.invitation-card {
+  background: #ffffff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    background: #f8f8f8;
+    padding: 20rpx;
+    display: flex;
+    align-items: center;
+    gap: 10rpx;
+  }
+
+  .card-content {
+    padding: 20rpx;
+  }
+
+  .challenge-details {
+    margin: 20rpx 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 20rpx;
+
+    .action-btn {
+      flex: 1;
+      height: 72rpx;
+      line-height: 72rpx;
       text-align: center;
+      border-radius: 8rpx;
+      font-size: 28rpx;
 
-      .handled-text {
-        font-size: 26rpx;
-        color: #999;
-        margin-bottom: 16rpx;
-        display: block;
+      &.accept {
+        background: #4cd964;
+        color: #ffffff;
       }
 
-      .enter-challenge-btn {
-        display: inline-block;
-        background: #4cd964;
-        color: #fff;
-        font-size: 26rpx;
-        padding: 12rpx 30rpx;
-        border-radius: 30rpx;
-        border: none;
-        box-shadow: 0 4rpx 12rpx rgba(76, 217, 100, 0.3);
-
-        &:active {
-          transform: scale(0.95);
-        }
+      &.reject {
+        background: #f5f5f5;
+        color: #666666;
       }
     }
   }
 }
 
-.input-tools {
-  padding: 20rpx;
-  border-top: 1rpx solid #eee;
+// 修改菜单样式
+.menu-list {
   background: #fff;
+  border-radius: 16rpx 16rpx 0 0;
+  overflow: hidden;
+  padding: 20rpx 0;
 
-  .tool-btn {
-    background: none;
-    padding: 16rpx;
-    border-radius: 12rpx;
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 24rpx 32rpx;
+    margin-bottom: 10rpx;
+
+    text {
+      margin-left: 20rpx;
+      font-size: 32rpx;
+      color: #333;
+    }
 
     &:active {
       background: #f5f5f5;
@@ -1109,227 +1205,114 @@ onUnmounted(() => {
   }
 }
 
+// 修改打卡邀请弹窗样式
 .invitation-form {
-  padding: 40rpx;
   background: #fff;
-  border-radius: 20rpx;
-  width: 600rpx;
+  border-radius: 24rpx 24rpx 0 0;
+  overflow: hidden;
 
-  .form-title {
-    font-size: 36rpx;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 40rpx;
-    color: #333;
-  }
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx;
+    border-bottom: 1rpx solid #eee;
 
-  .input-field {
-    width: 100%;
-    height: 88rpx;
-    padding: 0 30rpx;
-    background: #f8f8f8;
-    border-radius: 44rpx;
-    font-size: 28rpx;
-    margin-bottom: 40rpx;
-    border: none;
-    box-sizing: border-box;
-  }
-
-  .goal-setting,
-  .duration-setting {
-    margin-bottom: 40rpx;
-
-    .setting-title {
-      font-size: 30rpx;
-      color: #333;
+    .title {
+      font-size: 36rpx;
       font-weight: 500;
-      margin-bottom: 20rpx;
+      color: #333;
     }
   }
 
-  .goal-inputs {
-    display: flex;
-    align-items: center;
-    gap: 30rpx;
+  .form-content {
+    padding: 32rpx;
 
-    .input-group {
-      flex: 1;
+    .input-group,
+    .goal-group,
+    .duration-group {
+      margin-bottom: 32rpx;
+
+      .label {
+        font-size: 28rpx;
+        color: #666;
+        margin-bottom: 16rpx;
+        display: block;
+      }
+    }
+
+    .content-input {
+      width: 100%;
+      height: 160rpx;
+      padding: 20rpx;
+      background: #f8f8f8;
+      border-radius: 12rpx;
+      font-size: 28rpx;
+    }
+
+    .goal-inputs {
       display: flex;
       align-items: center;
-      background: #f8f8f8;
-      border-radius: 44rpx;
-      padding: 0 30rpx;
-      height: 88rpx;
+      gap: 20rpx;
 
-      .goal-input {
+      .input-item {
         flex: 1;
-        height: 100%;
-        font-size: 28rpx;
-        background: transparent;
-        border: none;
+        display: flex;
+        align-items: center;
+        background: #f8f8f8;
+        border-radius: 12rpx;
+        padding: 16rpx;
+
+        .number-input {
+          flex: 1;
+          font-size: 28rpx;
+          text-align: center;
+        }
+
+        .unit {
+          font-size: 24rpx;
+          color: #999;
+          margin-left: 8rpx;
+        }
       }
 
-      .unit {
-        font-size: 26rpx;
-        color: #666;
-        margin-left: 10rpx;
-        padding-right: 10rpx;
+      .divider {
+        color: #999;
+        font-size: 24rpx;
       }
     }
 
-    .or {
-      font-size: 28rpx;
-      color: #999;
-      font-weight: 500;
+    .duration-slider {
+      margin-top: 20rpx;
     }
   }
 
-  .duration-slider {
-    margin: 30rpx 0;
-    width: 100%;
-  }
-
-  .button-group {
+  .form-footer {
     display: flex;
-    gap: 30rpx;
-    margin-top: 60rpx;
+    padding: 32rpx;
+    gap: 20rpx;
+    border-top: 1rpx solid #eee;
 
     button {
       flex: 1;
       height: 88rpx;
       line-height: 88rpx;
+      text-align: center;
       border-radius: 44rpx;
       font-size: 32rpx;
-      border: none;
 
       &.cancel-btn {
         background: #f5f5f5;
         color: #666;
       }
 
-      &.confirm-btn {
+      &.submit-btn {
         background: linear-gradient(135deg, #4cd964, #3cb371);
         color: #fff;
-        box-shadow: 0 4rpx 12rpx rgba(76, 217, 100, 0.3);
-      }
-
-      &:active {
-        transform: scale(0.98);
       }
     }
   }
 }
 
-.unread-badge {
-  position: absolute;
-  top: -6rpx;
-  right: -6rpx;
-  min-width: 32rpx;
-  height: 32rpx;
-  padding: 0 6rpx;
-  background: #ff4d4f;
-  border-radius: 16rpx;
-  color: #fff;
-  font-size: 20rpx;
-  line-height: 32rpx;
-  text-align: center;
-}
-
-.new-message-tip {
-  position: fixed;
-  bottom: 120rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10rpx 20rpx;
-  border-radius: 30rpx;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  z-index: 100;
-
-  text {
-    color: #fff;
-    font-size: 24rpx;
-  }
-}
-
-.date-divider {
-  text-align: center;
-  margin: 20rpx 0;
-
-  text {
-    background: rgba(0, 0, 0, 0.1);
-    color: #999;
-    font-size: 24rpx;
-    padding: 4rpx 16rpx;
-    border-radius: 10rpx;
-  }
-}
-
-.message-status {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  margin-top: 6rpx;
-
-  .read-status {
-    font-size: 20rpx;
-    color: #999;
-  }
-}
-
-.loading-more {
-  text-align: center;
-  padding: 20rpx;
-
-  text {
-    font-size: 24rpx;
-    color: #999;
-  }
-}
-
-.send-status {
-  display: flex;
-  align-items: center;
-
-  .failed-text {
-    font-size: 24rpx;
-    color: #ff4d4f;
-    margin-left: 10rpx;
-
-    &:active {
-      opacity: 0.8;
-    }
-  }
-
-  .read-status {
-    font-size: 24rpx;
-    color: #999;
-    margin-left: 10rpx;
-  }
-}
-
-// 修改消息气泡样式，添加发送失败状态
-.message-bubble {
-  &.send-failed {
-    opacity: 0.8;
-
-    &::after {
-      content: "!";
-      position: absolute;
-      right: -40rpx;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32rpx;
-      height: 32rpx;
-      background: #ff4d4f;
-      border-radius: 50%;
-      color: #fff;
-      font-size: 24rpx;
-      line-height: 32rpx;
-      text-align: center;
-    }
-  }
-}
+// ... 其他样式保持不变
 </style>

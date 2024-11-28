@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "axios": "^1.7.7",
+        "dotenv": "^16.4.5",
         "firstui-uni": "^2.4.0",
         "markdown-it": "^14.1.0",
         "marked": "^14.1.4"

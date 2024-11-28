@@ -47,7 +47,7 @@
 import { ref, computed } from "vue";
 
 const searchQuery = ref("");
-const defaultAvatar = "/static/avatar/default.png";
+const defaultAvatar = "/static/default-avatar.png";
 const serverUrl = uni.getStorageSync("serverUrl");
 console.log(serverUrl);
 // 好友列表数据
