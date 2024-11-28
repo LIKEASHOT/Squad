@@ -175,12 +175,12 @@
       <view class="sidebar">
         <view class="sidebar-header">
           <text class="sidebar-title">好友管理</text>
-          <uni-icons
+          <!-- <uni-icons
             type="close"
             size="24"
             color="#333"
             @click="closeSidebar"
-          />
+          /> -->
         </view>
 
         <view class="sidebar-content">
@@ -296,6 +296,9 @@ const switchTab = (tab) => {
 
 // 进入聊天
 const enterChat = (friend) => {
+  uni.setStorageSync("friendInfo_" + userInfo.value.username + "_" + friend.username, friend);
+  console.log("friendInfo_" + userInfo.value.username + "_" + friend.username);
+  console.log("friend: ",friend);
   uni.navigateTo({
     url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
     success: () => {
@@ -650,9 +653,8 @@ const joinTeam = (team) => {
 
 // 用户信息
 const userInfo = ref({
-  avatar: "",
-  level: 1,
-  exp: 45, // 当前等级进度
+  username: uni.getStorageSync("username"),
+  avatar: uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
 });
 
 // 更新打卡状态数据
