@@ -49,7 +49,11 @@
             />
             <view class="message-wrapper">
               <!-- 文本消息 -->
-              <view v-if="msg.type === 'text'" class="message-bubble" @click="handleMessageClick(msg)">
+              <view
+                v-if="msg.type === 'text'"
+                class="message-bubble"
+                @click="handleMessageClick(msg)"
+              >
                 <text class="message-text">{{ msg.content }}</text>
               </view>
 
@@ -111,9 +115,14 @@
                 <text class="time">{{ formatTime(msg.time) }}</text>
                 <text
                   v-if="msg.sender === userInfo.username"
-                  :class="['status', { 'read': msg.isRead, 'failed': msg.sendFailed }]"
+                  :class="[
+                    'status',
+                    { read: msg.isRead, failed: msg.sendFailed },
+                  ]"
                 >
-                  {{ msg.sendFailed ? "发送失败" : msg.isRead ? "已读" : "未读" }}
+                  {{
+                    msg.sendFailed ? "发送失败" : msg.isRead ? "已读" : "未读"
+                  }}
                 </text>
               </view>
             </view>
@@ -225,7 +234,6 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted, onUnmounted, nextTick, computed, watch } from "vue";
 import { useWebSocketStore } from "@/store/websocket";
 const input_status = ref(true);
@@ -246,13 +254,16 @@ const invitationPopup = ref(null);
 const userInfo = ref({
   username: uni.getStorageSync("username"),
   avatar:
-    uni.getStorageSync("userInfo")?.avatar || "/static/avatar/default.png",
+    uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
 });
 const friendInfo = ref({
   username: "",
-  avatar: "/static/avatar/default.png",
+  avatar: "/static/default-avatar.jpg",
   online: false,
+  level: 1,
+  exp: 0,
 });
+
 const old_scrollTop = ref(0);
 // 添加新的响应式变量
 const unreadCount = ref(0);
@@ -513,30 +524,38 @@ const lastReadTimestamp = ref(0);
 const markAllMessagesAsRead = () => {
   const key = `chat_history_${userInfo.value.username}_${friendInfo.value.username}`;
   let history = uni.getStorageSync(key) || [];
-  
+
   // 获取最新的未读消息时间戳
   const latestUnreadMessage = history
-  .filter(msg => msg.sender === friendInfo.value.username && !msg.isRead)
-  .reduce((latest, current) => 
-    !latest || current.time > latest.time ? current : latest
-  , null);
-  
+    .filter((msg) => msg.sender === friendInfo.value.username && !msg.isRead)
+    .reduce(
+      (latest, current) =>
+        !latest || current.time > latest.time ? current : latest,
+      null
+    );
+
   // 如果没有新的未读消息，或者时间戳没有变化，直接返回
-  if (!latestUnreadMessage || latestUnreadMessage.time <= lastReadTimestamp.value) {
+  if (
+    !latestUnreadMessage ||
+    latestUnreadMessage.time <= lastReadTimestamp.value
+  ) {
     return;
   }
-  
+
   // 更新最后已读时间戳
   lastReadTimestamp.value = latestUnreadMessage.time;
-  
+
   // 批量更新所有消息状态
-  uni.setStorageSync(key, history.map(msg => {
-    if (msg.sender === friendInfo.value.username && !msg.isRead) {
-      return { ...msg, isRead: true };
-    }
-    return msg;
-  }));
-  
+  uni.setStorageSync(
+    key,
+    history.map((msg) => {
+      if (msg.sender === friendInfo.value.username && !msg.isRead) {
+        return { ...msg, isRead: true };
+      }
+      return msg;
+    })
+  );
+
   // 发送已读回执
   if (store.isConnected) {
     store.websocket.send({
@@ -544,13 +563,13 @@ const markAllMessagesAsRead = () => {
         type: "read_ack",
         sender: userInfo.value.username,
         receiver: friendInfo.value.username,
-        time: lastReadTimestamp.value
-      })
+        time: lastReadTimestamp.value,
+      }),
     });
   }
-  
+
   // 触发未读消息计数更新
-  uni.$emit('updateUnreadCounts');
+  uni.$emit("updateUnreadCounts");
 };
 
 // 修改 onMounted 钩子
@@ -635,37 +654,37 @@ const formatDate = (dateStr) => {
 const resendMessage = async (message) => {
   // 移除发送失败标记
   message.sendFailed = false;
-  
+
   try {
     if (store.isConnected) {
       store.websocket.send({
         data: JSON.stringify({
           ...message,
-          time: Date.now() // 更新发送时间
+          time: Date.now(), // 更新发送时间
         }),
         success: () => {
           // 更新本地消息状态
           const key = getLocalStorageKey(friendInfo.value.username);
           let history = uni.getStorageSync(key) || [];
-          history = history.map(msg => {
+          history = history.map((msg) => {
             if (msg.id === message.id) {
               return {
                 ...msg,
                 sendFailed: false,
-                time: message.time
+                time: message.time,
               };
             }
             return msg;
           });
           uni.setStorageSync(key, history);
-          
+
           // 更新视图中的消息状态
-          const msgIndex = messages.value.findIndex(m => m.id === message.id);
+          const msgIndex = messages.value.findIndex((m) => m.id === message.id);
           if (msgIndex !== -1) {
             messages.value[msgIndex].sendFailed = false;
             messages.value[msgIndex].time = message.time;
           }
-          
+
           console.log("消息重发成功:", message);
         },
         fail: (error) => {
@@ -673,9 +692,9 @@ const resendMessage = async (message) => {
           markMessageAsFailed(message.id);
           uni.showToast({
             title: "重发失败",
-            icon: "none"
+            icon: "none",
           });
-        }
+        },
       });
     } else {
       console.warn("WebSocket未连接");
@@ -683,7 +702,7 @@ const resendMessage = async (message) => {
       markMessageAsFailed(message.id);
       uni.showToast({
         title: "网络未连接",
-        icon: "none"
+        icon: "none",
       });
     }
   } catch (error) {
@@ -691,7 +710,7 @@ const resendMessage = async (message) => {
     markMessageAsFailed(message.id);
     uni.showToast({
       title: "重发失败",
-      icon: "none"
+      icon: "none",
     });
   }
 };
@@ -706,7 +725,7 @@ const handleMessageClick = (message) => {
         if (res.confirm) {
           resendMessage(message);
         }
-      }
+      },
     });
   }
 };
@@ -817,9 +836,9 @@ const getLocalStorageKey = (friendUsername) => {
 const saveMessageToLocal = (message) => {
   const key = getLocalStorageKey(friendInfo.value.username);
   let history = uni.getStorageSync(key) || [];
-  
+
   // 避免重复消息
-  if (!history.some(msg => msg.id === message.id)) {
+  if (!history.some((msg) => msg.id === message.id)) {
     history.push(message);
     uni.setStorageSync(key, history);
   }
@@ -839,27 +858,29 @@ uni.$on("websocketMessage", (data) => {
     switch (data.type) {
       case "text":
         // 检查消息是否属于当前聊天
-        if ((data.sender === friendInfo.value.username && 
-             data.receiver === userInfo.value.username) ||
-            (data.sender === userInfo.value.username && 
-             data.receiver === friendInfo.value.username)) {
-          
+        if (
+          (data.sender === friendInfo.value.username &&
+            data.receiver === userInfo.value.username) ||
+          (data.sender === userInfo.value.username &&
+            data.receiver === friendInfo.value.username)
+        ) {
           // 如果是接收到的新消息，且时间戳大于最后已读时间戳，则标记为未读
-          const isUnread = data.sender === friendInfo.value.username && 
-                          data.time > lastReadTimestamp.value;
-          
+          const isUnread =
+            data.sender === friendInfo.value.username &&
+            data.time > lastReadTimestamp.value;
+
           // 添加到消息列表
           messages.value.push({
             ...data,
-            isRead: !isUnread
+            isRead: !isUnread,
           });
 
           // 保存到本地
           saveMessageToLocal({
             ...data,
-            isRead: !isUnread
+            isRead: !isUnread,
           });
-          
+
           // 滚动到底部
           nextTick(() => {
             scrollTop.value = 99999;
@@ -887,9 +908,9 @@ onUnmounted(() => {
 // 添加监听消息可见性的函数
 const observeMessageVisibility = () => {
   const observer = uni.createIntersectionObserver();
-  
-  observer.relativeTo('.message-list').observe('.message-item', (entries) => {
-    entries.forEach(entry => {
+
+  observer.relativeTo(".message-list").observe(".message-item", (entries) => {
+    entries.forEach((entry) => {
       if (entry.intersectionRatio > 0) {
         // 消息进入可视区域
         const messageId = entry.dataset.id;
@@ -897,7 +918,7 @@ const observeMessageVisibility = () => {
       }
     });
   });
-  
+
   return observer;
 };
 
@@ -905,20 +926,24 @@ const observeMessageVisibility = () => {
 const markMessageAsRead = (messageId) => {
   const key = `chat_history_${userInfo.value.username}_${friendInfo.value.username}`;
   let history = uni.getStorageSync(key) || [];
-  
-  const message = history.find(msg => msg.id === messageId);
-  if (message && message.sender === friendInfo.value.username && !message.isRead) {
+
+  const message = history.find((msg) => msg.id === messageId);
+  if (
+    message &&
+    message.sender === friendInfo.value.username &&
+    !message.isRead
+  ) {
     // 更新本地消息状态
-    history = history.map(msg => {
+    history = history.map((msg) => {
       if (msg.id === messageId) {
         return { ...msg, isRead: true };
       }
       return msg;
     });
-    
+
     // 保存更新后的历史记录
     uni.setStorageSync(key, history);
-    
+
     // 发送已读回执
     if (store.isConnected) {
       store.websocket.send({
@@ -927,13 +952,13 @@ const markMessageAsRead = (messageId) => {
           sender: userInfo.value.username,
           receiver: friendInfo.value.username,
           messageId: messageId,
-          time: message.time
-        })
+          time: message.time,
+        }),
       });
     }
-    
+
     // 触发未读消息计数更新
-    uni.$emit('updateUnreadCounts');
+    uni.$emit("updateUnreadCounts");
   }
 };
 </script>
