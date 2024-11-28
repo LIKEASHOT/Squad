@@ -240,3 +240,23 @@
   color: #007bff;
   cursor: pointer;
 }
+.remember-me[data-v-461d1d79] {
+  display: flex;
+  align-items: center;
+  margin: 0.625rem 0;
+}
+.remember-me uni-checkbox-group[data-v-461d1d79] {
+  display: flex;
+  align-items: center;
+}
+.remember-me uni-text[data-v-461d1d79] {
+  font-size: 0.875rem;
+  color: #666;
+  margin-left: 0.3125rem;
+}
+.b_bar[data-v-461d1d79] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}

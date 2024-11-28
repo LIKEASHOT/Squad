@@ -1,3 +1,4 @@
+-- Active: 1731423318997@@127.0.0.1@3306@my_database
 CREATE DATABASE my_database;
 
 USE my_database;
@@ -28,16 +29,34 @@ CREATE TABLE users (
 
 
 CREATE TABLE messages (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,      -- 消息唯一标识，主键，自增
-    sender_id INT NOT NULL,                    -- 消息发送者 ID，关联 users.id
-    receiver_id INT NOT NULL,                  -- 消息接收者 ID，关联 users.id
-    content TEXT NOT NULL,                     -- 消息内容
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 消息发送时间，默认当前时间
-    is_read BOOLEAN DEFAULT FALSE,             -- 是否已读，默认为 false
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,   -- 外键约束，指向 users 表的 id
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE  -- 外键约束，指向 users 表的 id
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    sender VARCHAR(50) NOT NULL,
+    receiver VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    type VARCHAR(20) DEFAULT 'text',
+    is_read BOOLEAN DEFAULT FALSE,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_sender_receiver (sender_id, receiver_id),
+    INDEX idx_timestamp (timestamp)
 );
 
+CREATE TABLE food_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,       -- 唯一标识符
+    user_id INT NOT NULL,                    -- 对应 `users` 表的 id
+    record_date DATE NOT NULL,               -- 记录日期
+    food_name VARCHAR(255) NOT NULL,         -- 食物名称
+    base_calories FLOAT NOT NULL,            -- 食物基础热量
+    amount FLOAT NOT NULL DEFAULT 100,       -- 食用量 (默认单位为100g)
+    current_calories FLOAT NOT NULL,         -- 实际摄入热量
+    image_url VARCHAR(255),                  -- 图片路径
+    time TIME NOT NULL,                      -- 食用时间
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 记录创建时间
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 -- 创建索引
 CREATE INDEX idx_sender_receiver ON messages(sender_id, receiver_id);
 CREATE INDEX idx_timestamp ON messages(timestamp);
@@ -58,24 +77,27 @@ CREATE TABLE friendships (
 -- 创建索引
 CREATE INDEX idx_status ON friendships(status);
 
-
-
-CREATE TABLE unread_messages (
+-- 创建一个离线消息表
+CREATE TABLE offline_messages (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,       -- 唯一标识，主键，自增
     user_id INT NOT NULL,                       -- 接收用户 ID，关联 users.id
     sender_id INT NOT NULL,                     -- 发送者 ID，关联 users.id
+    sender VARCHAR(50) NOT NULL,
+    receiver VARCHAR(50) NOT NULL,
+    type VARCHAR(20) DEFAULT 'text',
     content TEXT NOT NULL,                      -- 消息内容
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 消息发送时间，默认当前时间
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  -- 外键约束，关联接收者
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE -- 外键约束，关联发送者
 );
+-- 为 user_id 创建索引
+CREATE INDEX idx_user_id ON offline_messages(user_id);
 
--- 创建索引
-CREATE INDEX idx_user_id ON unread_messages(user_id);
-CREATE INDEX idx_sender_id ON unread_messages(sender_id);
-CREATE INDEX idx_timestamp ON unread_messages(timestamp);
+-- 为 sender_id 创建索引
+CREATE INDEX idx_sender_id ON offline_messages(sender_id);
 
-
+-- 为 timestamp 创建索引
+CREATE INDEX idx_timestamp ON offline_messages(timestamp);
 
 CREATE TABLE goal (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -158,3 +180,11 @@ VALUES
 (28, '脚步训练', '每天一次', '适中', 134, 'BV1Fu4y117YJ', '耐力, 柔韧性, 减脂, 综合健身', '篮球', 11,"uploads/28.jpg"),
 (29, '篮下终结训练', '每天一次', '简单', 43, 'BV1y94y1e7uc', '耐力, 柔韧性, 综合健身', '篮球', 5,"uploads/29.jpg"),
 (30, '精英防守训练', '每天一次', '困难', 167, 'BV1Sh411G746', '耐力, 柔韧性, 减脂, 综合健身', '篮球', 15,"uploads/30.jpg");
+
+-- 添加在线状态表
+CREATE TABLE user_status (
+    user_id INT PRIMARY KEY,
+    is_online BOOLEAN DEFAULT FALSE,
+    last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

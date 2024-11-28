@@ -50,6 +50,10 @@
             <view class="avatar-box">
               <image :src="friend.avatar || defaultAvatar" class="avatar" />
               <view v-if="friend.status === '在线'" class="online-dot" />
+              <view
+                class="status-dot"
+                :class="{ online: friend.online, offline: !friend.online }"
+              ></view>
             </view>
             <view class="info">
               <text class="name">{{ friend.username }}</text>
@@ -57,12 +61,15 @@
                 friend.signature || "这个人很懒，什么都没写~"
               }}</text>
             </view>
+            <view v-if="friend.unreadCount > 0" class="unread-badge">
+              {{ friend.unreadCount > 99 ? '99+' : friend.unreadCount }}
+            </view>
           </view>
         </view>
       </scroll-view>
 
       <!-- 字母导航条 -->
-      <view class="letter-nav">
+      <!-- <view class="letter-nav">
         <text
           v-for="letter in letters"
           :key="letter"
@@ -72,16 +79,41 @@
         >
           {{ letter }}
         </text>
-      </view>
+      </view> -->
 
       <!-- 字母提示框 -->
-      <view v-if="showLetterTip" class="letter-tip">
+      <!-- <view v-if="showLetterTip" class="letter-tip">
         {{ currentLetter }}
-      </view>
+      </view> -->
+
+      <!-- 添加好友弹窗 -->
+      <uni-popup ref="addFriendPopup" type="dialog">
+        <view class="add-friend-form">
+          <text class="form-title">添加好友</text>
+          <view class="input-wrapper">
+            <uni-icons type="person-add" size="20" color="#999" />
+            <input
+              type="text"
+              v-model="newFriendUsername"
+              placeholder="请输入好友用户名"
+              class="input-field"
+            />
+          </view>
+          <view class="button-group">
+            <button class="cancel-btn" @click="closeAddFriend">取消</button>
+            <button class="confirm-btn" @click="confirmAddFriend">
+              确认添加
+            </button>
+          </view>
+        </view>
+      </uni-popup>
 
       <!-- 添加好友按钮 -->
-      <view class="add-btn" @click="showAddFriend" hover-class="btn-hover">
-        <uni-icons type="plus" size="24" color="#fff" />
+      <view class="floating-btn" @click="showAddFriend">
+        <view class="btn-content">
+          <text class="plus-icon">+</text>
+        </view>
+        <view class="btn-ripple"></view>
       </view>
     </view>
 
@@ -143,9 +175,9 @@
     </view>
   </view>
 </template>
-
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useWebSocketStore } from "@/store/websocket";
 
 const tabs = [
   { key: "friends", name: "好友" },
@@ -157,8 +189,8 @@ const searchQuery = ref("");
 const currentLetter = ref("");
 const showLetterTip = ref(false);
 const defaultAvatar = "/static/avatar/default.png";
+const serverUrl = uni.getStorageSync("serverUrl");
 
-// 字母表
 const letters = [
   "A",
   "B",
@@ -188,7 +220,6 @@ const letters = [
   "Z",
 ];
 
-// 模拟好友数据
 const friendsList = ref([
   {
     id: 1,
@@ -204,10 +235,8 @@ const friendsList = ref([
     avatar: "",
     signature: "让运动成为习惯",
   },
-  // ... 更多好友数据
 ]);
 
-// 处理字母导航触摸
 const touchLetter = (letter) => {
   currentLetter.value = letter;
   showLetterTip.value = true;
@@ -277,36 +306,38 @@ const scrollToLetter = (letter) => {
 };
 
 // 删除好友
-const deleteFriend = async (friend) => {
+const deleteFriend = async (friendUsername) => {
   try {
-    const res = await uni.showModal({
-      title: "提示",
-      content: `确定要删除好友 ${friend.username} 吗？`,
+    const res = await uni.request({
+      url: `${serverUrl}/friends/delete`,
+      method: "POST",
+      data: {
+        userId: uni.getStorageSync("username"),
+        friendUsername
+      }
     });
 
-    if (res.confirm) {
-      friendsList.value = friendsList.value.filter((f) => f.id !== friend.id);
+    if (res.statusCode === 200) {
+      // 清除本地好友列表缓存，强制从服务器重新获取
+      uni.removeStorageSync("friendsList");
+      await loadFriendsList();
+      
       uni.showToast({
         title: "删除成功",
-        icon: "success",
+        icon: "success"
       });
     }
   } catch (error) {
     console.error("删除好友失败:", error);
     uni.showToast({
-      title: "操作失败",
-      icon: "none",
+      title: "删除失败",
+      icon: "none"
     });
   }
 };
-
-// 打开聊天
-const chatWithFriend = (friend) => {
-  uni.showToast({
-    title: "聊天功能开发中",
-    icon: "none",
-  });
-};
+// 添加新的响应式变量
+const addFriendPopup = ref(null);
+const newFriendUsername = ref("");
 
 // 显示添加好友弹窗
 const showAddFriend = () => {
@@ -320,7 +351,7 @@ const closeAddFriend = () => {
 };
 
 // 确认添加好友
-const confirmAddFriend = () => {
+const confirmAddFriend = async () => {
   if (!newFriendUsername.value) {
     uni.showToast({
       title: "请输入用户名",
@@ -329,21 +360,161 @@ const confirmAddFriend = () => {
     return;
   }
 
-  // 模拟添加好友
-  const newFriend = {
-    id: friendsList.value.length + 1,
-    username: newFriendUsername.value,
-    status: "在线",
-    avatar: defaultAvatar,
-  };
+  try {
+    const res = await uni.request({
+      url: `${serverUrl}/friends/add`,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        userId: uni.getStorageSync("username"),
+        friendUsername: newFriendUsername.value,
+      },
+    });
 
-  friendsList.value.push(newFriend);
-  uni.showToast({
-    title: "添加成功",
-    icon: "success",
-  });
-  closeAddFriend();
+    if (res.statusCode === 200 && res.data.status === "success") {
+      uni.showToast({
+        title: "添加成功",
+        icon: "success",
+      });
+      closeAddFriend();
+      
+      // 清除本地好友列表缓存，强制从服务器重新获取
+      uni.removeStorageSync("friendsList");
+      await loadFriendsList();
+    } else {
+      let errorMessage = "添加失败";
+      if (res.data.message === "Friend not found") {
+        errorMessage = "用户不存在";
+      } else if (res.data.message === "Already friends") {
+        errorMessage = "已经是好友了";
+      } else if (res.data.message === "Cannot add yourself as friend") {
+        errorMessage = "不能添加自己为好友";
+      }
+      uni.showToast({
+        title: errorMessage,
+        icon: "none",
+      });
+    }
+  } catch (error) {
+    console.error("添加好友失败:", error);
+    uni.showToast({
+      title: "网络请求失败",
+      icon: "none",
+    });
+  }
 };
+
+// 修改加载好友列表函数
+const loadFriendsList = async () => {
+  try {
+    const username = uni.getStorageSync("username");
+    if (!username) {
+      throw new Error("用户未登录");
+    }
+
+    // 先尝试从本地获取好友列表
+    const localFriends = uni.getStorageSync("friendsList");
+    
+    if (localFriends && localFriends.length > 0) {
+      // 使用本地数据，只更新在线状态
+      friendsList.value = localFriends.map(friend => ({
+        ...friend,
+        online: store.getFriendStatus(friend.username).isOnline
+      }));
+      
+      // 加载未读消息数
+      loadUnreadCounts();
+      console.log("从本地加载的好友列表:", friendsList.value);
+      return;
+    }
+
+    // 如果本地没有数据，才从服务器获取
+    const res = await uni.request({
+      url: `${serverUrl}/friends`,
+      method: "GET",
+      data: {
+        userId: username,
+      },
+    });
+
+    if (res.statusCode === 200) {
+      // 格式化好友列表数据
+      const formattedFriends = res.data.map(friend => ({
+        ...friend,
+        online: store.getFriendStatus(friend.username).isOnline,
+        unreadCount: 0 // 初始化未读消息数
+      }));
+      
+      // 保存到本地存储
+      uni.setStorageSync("friendsList", formattedFriends);
+      
+      // 更新响应式数据
+      friendsList.value = formattedFriends;
+      
+      // 立即加载未读消息数
+      loadUnreadCounts();
+      
+      console.log("从服务器更新的好友列表:", friendsList.value);
+    } else {
+      throw new Error(res.data.message || "获取好友列表失败");
+    }
+  } catch (error) {
+    console.error("获取好友列表失败:", error);
+    uni.showToast({
+      title: "获取好友列表失败",
+      icon: "none",
+    });
+  }
+};
+
+// 修改加载未读消息数的函数
+const loadUnreadCounts = () => {
+  const currentUser = uni.getStorageSync("username");
+  
+  friendsList.value = friendsList.value.map(friend => {
+    const key = `chat_history_${currentUser}_${friend.username}`;
+    const history = uni.getStorageSync(key) || [];
+    
+    // 计算未读消息数
+    const unreadCount = history.filter(msg => 
+      msg.sender === friend.username && !msg.isRead
+    ).length;
+    
+    console.log(`好友 ${friend.username} 的未读消息数:`, unreadCount);
+    console.log(`聊天历史:`, history);
+    
+    return {
+      ...friend,
+      unreadCount
+    };
+  });
+};
+
+onMounted(async () => {
+  await loadFriendsList();
+  // 每600秒刷新一次好友列表
+  
+  if(!store.isConnected){
+    console.log('websocket未连接，尝试重新连接');
+    store.initWebSocket();
+  }
+  
+  // 监听未读消息更新事件
+  uni.$on('updateUnreadCounts', () => {
+    console.log('收到未读消息更新事件');
+    loadUnreadCounts();
+  });
+});
+
+onUnmounted(() => {
+  // 清除定时器
+  // if (refreshInterval) {
+  //   clearInterval(refreshInterval);
+  // }
+  uni.$off('updateUnreadCounts');
+});
 
 // 组队打卡相关数据
 const teamList = ref([
@@ -423,9 +594,25 @@ const navigateToInvite = () => {
     url: "/pages/InviteFriends/InviteFriends",
   });
 };
+
+// 添加 WebSocket 连接
+const websocketUrl = uni.getStorageSync("websocketUrl");
+const store = useWebSocketStore();
+
+// 监听好友状态变化
+uni.$on("friendStatusChanged", ({ username, status }) => {
+  // 更新好友列表中的状态
+  const friendIndex = friendsList.value.findIndex(
+    (f) => f.username === username
+  );
+  if (friendIndex !== -1) {
+    friendsList.value[friendIndex].online = status === "online";
+  }
+});
+
 </script>
 
-<style>
+<style lang="scss">
 .container {
   height: 100vh;
   background: #f8f8f8;
@@ -487,6 +674,7 @@ const navigateToInvite = () => {
 }
 
 .friends-list {
+  width:92%;
   height: calc(100% - 120rpx);
   padding: 0 30rpx;
 }
@@ -498,14 +686,99 @@ const navigateToInvite = () => {
 }
 
 .friend-item {
+  position: relative;
+  background: #fff;
+  padding: 30rpx;
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
   display: flex;
   align-items: center;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  background: #fff;
-  border-radius: 20rpx;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
+  transition: all 0.3s;
+
+  .avatar-box {
+    position: relative;
+    margin-right: 20rpx;
+
+    .avatar {
+      width: 100rpx;
+      height: 100rpx;
+      border-radius: 50%;
+      background: #f0f0f0;
+    }
+
+    .online-dot {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 20rpx;
+      height: 20rpx;
+      background: #4cd964;
+      border: 4rpx solid #fff;
+      border-radius: 50%;
+    }
+
+    .status-dot {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 20rpx;
+      height: 20rpx;
+      border-radius: 50%;
+      border: 4rpx solid #fff;
+      box-shadow: 0 0 4rpx rgba(0, 0, 0, 0.2);
+
+      &.online {
+        background-color: #4cd964; // 在线状态为绿色
+      }
+
+      &.offline {
+        background-color: #ff3b30; // 离线状态为红色
+      }
+    }
+  }
+
+  .info {
+    flex: 1;
+
+    .name {
+      font-size: 32rpx;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8rpx;
+    }
+
+    .signature {
+      font-size: 24rpx;
+      color: #999;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+    background: #f9f9f9;
+  }
+
+  .unread-badge {
+    position: absolute;
+    right: 20rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 40rpx;
+    height: 40rpx;
+    padding: 0 12rpx;
+    background: #ff4d4f;
+    border-radius: 20rpx;
+    color: #fff;
+    font-size: 24rpx;
+    line-height: 40rpx;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 2rpx 8rpx rgba(255, 77, 79, 0.3);
+    
+    // 添加动画效果
+    animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
 }
 
 .friend-item-hover {
@@ -513,105 +786,102 @@ const navigateToInvite = () => {
   background: #f5f5f5;
 }
 
-.avatar-box {
-  position: relative;
-}
+// .letter-nav {
+//   position: fixed;
+//   right: 20rpx;
+//   top: 65%;
+//   transform: translateY(-50%);
+//   background: rgba(255, 255, 255, 0.9);
+//   padding: 20rpx 10rpx;
+//   border-radius: 30rpx;
+//   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 
-.avatar {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: #f0f0f0;
-}
+//   .letter {
+//     display: block;
+//     width: 40rpx;
+//     height: 40rpx;
+//     line-height: 40rpx;
+//     text-align: center;
+//     font-size: 24rpx;
+//     color: #666;
 
-.online-dot {
-  position: absolute;
-  right: 4rpx;
-  bottom: 4rpx;
-  width: 16rpx;
-  height: 16rpx;
-  background: #07c160;
-  border: 4rpx solid #fff;
-  border-radius: 50%;
-}
+//     &.letter-active {
+//       color: #4cd964;
+//       font-weight: bold;
+//       background: #e8f7eb;
+//       border-radius: 20rpx;
+//     }
+//   }
+// }
 
-.info {
-  flex: 1;
-  margin-left: 24rpx;
-}
+// .letter-tip {
+//   position: fixed;
+//   left: 50%;
+//   top: 50%;
+//   transform: translate(-50%, -50%);
+//   width: 160rpx;
+//   height: 160rpx;
+//   background: rgba(0, 0, 0, 0.7);
+//   border-radius: 20rpx;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: 80rpx;
+//   color: #fff;
+//   font-weight: bold;
+// }
 
-.name {
-  font-size: 32rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.signature {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 8rpx;
-}
-
-.letter-nav {
-  position: fixed;
-  right: 20rpx;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  padding: 20rpx 10rpx;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 30rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
-}
-
-.letter {
-  padding: 8rpx;
-  font-size: 24rpx;
-  color: #666;
-  transition: all 0.2s;
-}
-
-.letter-active {
-  color: #12b7f5;
-  font-weight: 500;
-  transform: scale(1.2);
-}
-
-.letter-tip {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 160rpx;
-  height: 160rpx;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 80rpx;
-  color: #fff;
-}
-
-.add-btn {
+.floating-btn {
   position: fixed;
   right: 40rpx;
   bottom: 120rpx;
-  width: 100rpx;
-  height: 100rpx;
-  background: linear-gradient(135deg, #12b7f5, #0e9bd4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4rpx 20rpx rgba(18, 183, 245, 0.3);
-  transition: all 0.2s;
+  z-index: 100;
+
+  .btn-content {
+    width: 140rpx;
+    height: 140rpx;
+    background: linear-gradient(135deg, #4cd964, #3cb371);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4rpx 20rpx rgba(76, 217, 100, 0.3);
+    position: relative;
+    z-index: 2;
+
+    .plus-icon {
+      font-size: 60rpx;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .btn-ripple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #4cd964, #3cb371);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: ripple 1.5s ease-out infinite;
+  }
 }
 
-.btn-hover {
-  transform: scale(0.95);
-  box-shadow: 0 2rpx 10rpx rgba(18, 183, 245, 0.2);
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 .team-content {
@@ -762,5 +1032,152 @@ const navigateToInvite = () => {
 .btn-hover {
   transform: scale(0.98);
   opacity: 0.9;
+}
+
+.add-friend-form {
+  padding: 40rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  width: 600rpx;
+
+  .form-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40rpx;
+    color: #333;
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #f8f8f8;
+    border-radius: 44rpx;
+    padding: 0 30rpx;
+    margin-bottom: 40rpx;
+
+    .input-field {
+      flex: 1;
+      height: 88rpx;
+      font-size: 28rpx;
+      margin-left: 20rpx;
+      background: transparent;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 30rpx;
+
+    button {
+      flex: 1;
+      height: 88rpx;
+      line-height: 88rpx;
+      border-radius: 44rpx;
+      font-size: 32rpx;
+      border: none;
+
+      &.cancel-btn {
+        background: #f5f5f5;
+        color: #666;
+      }
+
+      &.confirm-btn {
+        background: linear-gradient(135deg, #4cd964, #3cb371);
+        color: #fff;
+        box-shadow: 0 4rpx 12rpx rgba(76, 217, 100, 0.3);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+// 添加新好友动画
+.friend-item-enter-active {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.friend-item {
+  // ... 其他样式保持不变 ...
+
+  .friend-avatar {
+    position: relative;
+
+    .online-indicator {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 16rpx;
+      height: 16rpx;
+      border-radius: 50%;
+      background: #999;
+      border: 2rpx solid #fff;
+
+      &.is-online {
+        background: #4cd964;
+      }
+    }
+  }
+
+  .friend-info {
+    position: relative;
+
+    .unread-badge {
+      position: absolute;
+      right: -10rpx;
+      top: -10rpx;
+      min-width: 32rpx;
+      height: 32rpx;
+      padding: 0 6rpx;
+      background: #ff4d4f;
+      border-radius: 16rpx;
+      color: #fff;
+      font-size: 20rpx;
+      line-height: 32rpx;
+      text-align: center;
+    }
+  }
+}
+
+.unread-badge {
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  min-width: 40rpx;
+  height: 40rpx;
+  padding: 0 10rpx;
+  background: #ff4d4f;
+  border-radius: 20rpx;
+  color: #fff;
+  font-size: 24rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+
+// 添加弹出动画
+@keyframes badge-pop {
+  0% {
+    transform: translateY(-50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
 }
 </style>

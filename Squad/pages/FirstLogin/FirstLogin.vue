@@ -152,7 +152,8 @@
 
 <script setup>
 import { ref } from "vue";
-const serverUrl = "http://10.133.80.141:3000"; // 服务器地址
+// const serverUrl = "http://192.168.56.1:3000"; // 服务器地址
+const serverUrl = uni.getStorageSync("serverUrl");
 const logo = "/static/Squad1.png";
 const step = ref(1);
 const username = uni.getStorageSync("username");
