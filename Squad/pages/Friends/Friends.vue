@@ -19,9 +19,9 @@
     </view>
 
     <!-- 添加新的侧边栏触发按钮 -->
-    <view 
-      class="sidebar-trigger" 
-      :class="{ 'hidden': isSidebarOpen }"
+    <view
+      class="sidebar-trigger"
+      :class="{ hidden: isSidebarOpen }"
       @click="showSidebar"
     >
       <view class="trigger-line"></view>
@@ -198,7 +198,11 @@
     </uni-popup>
 
     <!-- 好友列表弹窗 -->
-    <uni-popup ref="friendsListPopup" type="bottom" @maskClick="closeFriendsList">
+    <uni-popup
+      ref="friendsListPopup"
+      type="bottom"
+      @maskClick="closeFriendsList"
+    >
       <view class="friends-manage-list">
         <view class="popup-header">
           <text class="popup-title">好友列表</text>
@@ -399,7 +403,7 @@ const deleteFriend = async (friendUsername) => {
 const addFriendPopup = ref(null);
 const newFriendUsername = ref("");
 
-// 显示添加好友弹窗
+// 显示添加好���弹窗
 const showAddFriend = () => {
   addFriendPopup.value.open();
 };
@@ -412,7 +416,7 @@ const closeAddFriend = () => {
   setTimeout(() => {
     isSidebarOpen.value = false;
     uni.showTabBar({
-      animation: true
+      animation: true,
     });
   }, 300);
 };
@@ -442,7 +446,7 @@ const confirmAddFriend = async () => {
 
     if (res.statusCode === 200 && res.data.status === "success") {
       uni.showToast({
-        title: "添加成功",
+        title: "��加成功",
         icon: "success",
       });
       closeAddFriend();
@@ -497,7 +501,7 @@ const loadFriendsList = async () => {
     //   return;
     // }
 
-    // 如果本地没有数据，才从服务器获取
+    // 如果本地没有数据，才从服务���获取
     const res = await uni.request({
       url: `${serverUrl}/friends`,
       method: "GET",
@@ -729,7 +733,7 @@ const showSidebar = () => {
   isSidebarOpen.value = true;
   // 隐藏导航栏
   uni.hideTabBar({
-    animation: true
+    animation: true,
   });
   sidebarPopup.value.open();
 };
@@ -742,7 +746,7 @@ const closeSidebar = () => {
     isSidebarOpen.value = false;
     // 显示导航栏
     uni.showTabBar({
-      animation: true
+      animation: true,
     });
   }, 300);
 };
@@ -752,7 +756,7 @@ const showAddFriendDialog = () => {
   closeSidebar();
   // 隐藏导航栏
   uni.hideTabBar({
-    animation: true
+    animation: true,
   });
   setTimeout(() => {
     addFriendPopup.value.open();
@@ -764,7 +768,7 @@ const showFriendsList = () => {
   closeSidebar();
   // 隐藏导航栏
   uni.hideTabBar({
-    animation: true
+    animation: true,
   });
   setTimeout(() => {
     friendsListPopup.value.open();
@@ -778,7 +782,7 @@ const closeFriendsList = () => {
   setTimeout(() => {
     isSidebarOpen.value = false;
     uni.showTabBar({
-      animation: true
+      animation: true,
     });
   }, 300);
 };
@@ -786,6 +790,22 @@ const closeFriendsList = () => {
 // 添加遮罩点击处理
 const handleMaskClick = () => {
   closeSidebar();
+};
+
+// 添加一个统一的关闭函数
+const closeAllMenus = () => {
+  // 关闭所有弹窗
+  sidebarPopup.value.close();
+  addFriendPopup.value.close();
+  friendsListPopup.value.close();
+  
+  // 延时恢复侧边栏按钮和导航栏
+  setTimeout(() => {
+    isSidebarOpen.value = false;
+    uni.showTabBar({
+      animation: true
+    });
+  }, 300);
 };
 </script>
 
@@ -1457,17 +1477,17 @@ const handleMaskClick = () => {
   padding: 10rpx;
   z-index: 100;
   transition: all 0.3s;
-  
+
   &.hidden {
     opacity: 0;
     transform: translateY(-50%) translateX(-100%);
     pointer-events: none;
   }
-  
+
   &:active {
     background: rgba(0, 0, 0, 0.8);
   }
-  
+
   .trigger-line {
     width: 20rpx;
     height: 2rpx;
