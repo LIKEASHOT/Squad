@@ -154,10 +154,7 @@
         </view>
 
         <!-- 修改 AI 计划显示部分 -->
-        <view
-          
-          class="custom-plan"
-        >
+        <view class="custom-plan">
           <view class="plan-header">
             <uni-icons type="flag-filled" size="24" color="#4cd964" />
             <text class="plan-title">你的专属计划来啦！</text>
@@ -834,7 +831,7 @@ const popup = ref(null);
 const dialogTitle = ref("添加计划");
 const completeText = ref("");
 const aiInput = ref(""); // AI 输入内容
-const customPlan = ref(''); // 使用 ref 而不是普通变量
+const customPlan = ref(""); // 使用 ref 而不是普通变量
 // 添加新的响应式变量
 const isGenerating = ref(false);
 const streamingContent = ref("");
@@ -886,7 +883,7 @@ onMounted(() => {
     store.initWebSocket();
     console.log("连接初始化...");
   }
-  
+
   // 读取缓存的计划
   const cachedPlan = getCachedPlan();
   if (cachedPlan) {
@@ -917,11 +914,11 @@ onMounted(() => {
       if (data.content.includes("[DONE]")) {
         // 保存最终的 markdown 渲染结果
         customPlan.value = md.render(completeText.value);
-        
+
         // 保存到缓存
         const username = uni.getStorageSync("username");
         uni.setStorageSync(`AiPlan_${username}_cache`, customPlan.value);
-        
+
         // 清空流式内容，但保持最终结果显示
         streamingContent.value = "";
         isGenerating.value = false;
@@ -929,27 +926,29 @@ onMounted(() => {
       }
 
       // 解析 SSE 格式的数据
-      const lines = data.content.split('\n');
+      const lines = data.content.split("\n");
       for (const line of lines) {
-        if (line.trim() && line.startsWith('data: ')) {
+        if (line.trim() && line.startsWith("data: ")) {
           try {
             const jsonStr = line.slice(6);
             const messageData = JSON.parse(jsonStr);
-            if (messageData.choices && 
-                messageData.choices[0].delta && 
-                messageData.choices[0].delta.content) {
+            if (
+              messageData.choices &&
+              messageData.choices[0].delta &&
+              messageData.choices[0].delta.content
+            ) {
               // 累积完整文本
               completeText.value += messageData.choices[0].delta.content;
               // 实时渲染 markdown
               streamingContent.value = md.render(completeText.value);
             }
           } catch (e) {
-            console.warn('解析数据块失败:', e);
+            console.warn("解析数据块失败:", e);
           }
         }
       }
     } catch (error) {
-      console.error('处理 AI 消息失败:', error);
+      console.error("处理 AI 消息失败:", error);
     }
   });
 });
@@ -1586,25 +1585,25 @@ const getCustomPlan = async () => {
 // 修改清空计划方法
 const clearPlan_AI = () => {
   uni.showModal({
-    title: '提示',
-    content: '确定要清空当前计划吗？',
+    title: "提示",
+    content: "确定要清空当前计划吗？",
     success: (res) => {
       if (res.confirm) {
         // 清空所有相关变量
-        customPlan.value = '';
-        streamingContent.value = '';
-        completeText.value = '';
-        
+        customPlan.value = "";
+        streamingContent.value = "";
+        completeText.value = "";
+
         // 清除缓存
         const username = uni.getStorageSync("username");
         uni.removeStorageSync(`AiPlan_${username}_cache`);
-        
+
         uni.showToast({
-          title: '计划已清空',
-          icon: 'success'
+          title: "计划已清空",
+          icon: "success",
         });
       }
-    }
+    },
   });
 };
 
@@ -1634,8 +1633,6 @@ const savePlan_AI = () => {
     },
   });
 };
-
-
 
 // 存储我的计划
 const myPlans = ref([]);
@@ -2351,97 +2348,97 @@ uni-button {
       }
     }
   }
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-plan {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+
+  .plan-header {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 20rpx;
+    padding-bottom: 20rpx;
+    border-bottom: 2rpx solid #eee;
+
+    .plan-title {
+      font-size: 36rpx;
+      font-weight: 600;
+      color: #333;
+    }
   }
 
-  @keyframes rotating {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  .plan-content {
+    .motivation-banner {
+      background: linear-gradient(135deg, #4b7bf9, #2c5ef6);
+      padding: 30rpx;
+      border-radius: 16rpx;
+      margin-bottom: 30rpx;
 
-  .custom-plan {
-    background: #fff;
-    border-radius: 20rpx;
-    padding: 30rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
-
-    .plan-header {
-      display: flex;
-      align-items: center;
-      gap: 12rpx;
-      margin-bottom: 20rpx;
-      padding-bottom: 20rpx;
-      border-bottom: 2rpx solid #eee;
-
-      .plan-title {
-        font-size: 36rpx;
-        font-weight: 600;
-        color: #333;
-      }
-    }
-
-    .plan-content {
-      .motivation-banner {
-        background: linear-gradient(135deg, #4b7bf9, #2c5ef6);
-        padding: 30rpx;
-        border-radius: 16rpx;
-        margin-bottom: 30rpx;
-
-        .motivation-text {
-          color: #fff;
-          font-size: 32rpx;
-          font-weight: 500;
-          text-align: center;
-          display: block;
-        }
-      }
-
-      .plan-text {
-        font-size: 30rpx;
-        line-height: 1.8;
-        color: #333;
-        padding: 20rpx;
-        background: #f8f9fa;
-        border-radius: 12rpx;
-        margin-bottom: 30rpx;
-        min-height: 100rpx;
-
-        // 添加打字机效果
-        &.streaming {
-          white-space: pre-wrap;
-          border-right: 2px solid #4cd964;
-          animation: blink 0.7s infinite;
-        }
-      }
-
-      @keyframes blink {
-        0%,
-        100% {
-          border-color: transparent;
-        }
-        50% {
-          border-color: #4cd964;
-        }
-      }
-
-      .motivation-footer {
+      .motivation-text {
+        color: #fff;
+        font-size: 32rpx;
+        font-weight: 500;
         text-align: center;
-        padding: 20rpx;
-        background: #e8f5e9;
-        border-radius: 12rpx;
+        display: block;
+      }
+    }
 
-        .footer-text {
-          color: #4cd964;
-          font-size: 28rpx;
-          font-weight: 500;
-        }
+    .plan-text {
+      font-size: 30rpx;
+      line-height: 1.8;
+      color: #333;
+      padding: 20rpx;
+      background: #f8f9fa;
+      border-radius: 12rpx;
+      margin-bottom: 30rpx;
+      min-height: 100rpx;
+
+      // 添加打字机效果
+      &.streaming {
+        white-space: pre-wrap;
+        border-right: 2px solid #4cd964;
+        animation: blink 0.7s infinite;
+      }
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        border-color: transparent;
+      }
+      50% {
+        border-color: #4cd964;
+      }
+    }
+
+    .motivation-footer {
+      text-align: center;
+      padding: 20rpx;
+      background: #e8f5e9;
+      border-radius: 12rpx;
+
+      .footer-text {
+        color: #4cd964;
+        font-size: 28rpx;
+        font-weight: 500;
       }
     }
   }
 }
+
 .schedule-section {
   margin-top: 10px;
 }
