@@ -16,10 +16,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.11.4",
     "ws": "^8.2.3",
-<<<<<<< HEAD
     "zhipuai": "^2.0.0",
-=======
->>>>>>> b4ae51c3e797941a19a7b4d68bba24574f3dba83
     "zhipuai-sdk-nodejs-v4": "^0.1.12"
   },
   "scripts": {
