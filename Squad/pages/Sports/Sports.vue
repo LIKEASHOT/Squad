@@ -72,6 +72,10 @@
     <!-- 我的课程展示 -->
     <view v-if="tab === 'myExercise'" class = "plan-section">
       <div class="plan-list">
+		  <!-- 判断是否有训练计划 -->
+		     <view v-if="myPlans.length === 0" class="no-exercise">
+		       <text>暂无我的课程计划，快去添加吧！</text>
+			   </view>
         <div
           v-for="(item, index) in myPlans"
           :key="index"
@@ -113,10 +117,36 @@
         </view>
       </view>
   </div> 
+  <view v-if="tab === 'freeExercise'" class = "plan-section">
     <!-- 自由训练展示 -->
-    <view v-if="tab === 'freeExercise'" class = "plan-section">
-      
-    </view>
+     <view class="exercise-list">
+		  <!-- 顶部计时器 -->
+		     <view class="timer-container">
+		       <text class="timer-label">运动时长:</text>
+		       <text class="timer-time">{{ formatTime(timer) }}</text>
+		       <button @click="toggleTimer" class="timer-btn">
+		         {{ isTimerRunning ? '停止计时' : '开始计时' }}
+		       </button>
+		     </view>
+         <!-- 判断是否有训练计划 --> 
+            <view v-if="exercisePlans.length === 0" class="no-exercise">
+              <text>暂无自由训练计划，快去添加吧！</text>
+            </view>
+            <!-- 循环渲染训练计划 -->
+            <view v-else>
+              <view
+                v-for="(plan, index) in exercisePlans"
+                :key="index"
+                class="exercise-item"
+              >
+                <text class="exercise-title">{{ plan.title }}</text>
+                <!-- 通过v-html渲染HTML内容 -->
+                <view class="exercise-content" v-html="plan.content"></view>
+                <text class="exercise-date">创建时间：{{ plan.createdAt }}</text>
+              </view>
+            </view>
+          </view>
+	</view>
   </div>
 </template>	 
 
@@ -124,6 +154,7 @@
 import {ref,onMounted} from "vue";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import uniPopup from "@/uni_modules/uni-popup/components/uni-popup/uni-popup.vue";
+import axios from 'axios';
 import dayjs from "dayjs"; // 引入 dayjs 日期库
 // 当前日期
 const today = dayjs().format("YYYY-MM-DD");
@@ -139,23 +170,140 @@ const isModalVisible = ref(false); // 控制弹窗显示
 const username = uni.getStorageSync("username"); // 获取已登录用户
 const startTime = ref(0); // 视频播放开始的时间戳
 const elapsedTime = ref(0); // 当前累计的运动时间
-const timerInterval = ref(null); // 定时器的引用
+let timerInterval = ref(null); // 定时器的引用
 const serverUrl =uni.getStorageSync("serverUrl");
 const isEditing = ref(false); // 控制弹窗显示
 const editDuration = ref(0); // 编辑中的目标时长
 const editCalories = ref(0); // 编辑中的目标热量
 const targetDuration = ref(20); // 目标运动时间，初始值为 20min
 const targetCalories = ref(100); // 目标热量，初始值为 100
+// 定义存储训练计划的变量
+const exercisePlans = ref([]);
+// 控制计时器的状态
+const timer = ref(0);  // 计时器的秒数
+let isTimerRunning = ref(false); // 计时器是否正在运行
+// 格式化时间：将秒数转换为 "分钟:秒" 格式
+const formatTime = (time) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+};
+
+// 开始或停止计时器
+const toggleTimer = () => {
+  if (isTimerRunning) {
+    // 停止计时
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+
+    // 保存计时器的时长并清零计时器
+    saveTimerExerciseDuration();
+  } else {
+    // 开始计时
+    isTimerRunning = true;
+    timerInterval = setInterval(() => {
+      timer.value++;
+    }, 1000);
+  }
+};
+
+//计时器保存
+const saveTimerExerciseDuration = () => {
+  const username = uni.getStorageSync("username"); // 获取已登录用户
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+
+  const today = dayjs().format("YYYY-MM-DD"); // 获取今天的日期
+  const timerDurationInMinutes = Math.floor(timer.value / 60); // 使用计时器的时长，转换为分钟
+
+  // 1. 先查询当前数据库中的运动时长
+  uni.request({
+    url: `${serverUrl}/exercise-duration`, // 获取当前日期的运动时长
+    method: "GET",
+    data: {
+      username: username,
+    },
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        // 2. 获取已有的运动时长
+        const existingDuration = res.data.data.exercise_duration || 0; // 如果没有记录，默认为 0
+
+        // 3. 累加计时器的时长
+        const totalDuration = existingDuration + timerDurationInMinutes;
+
+        // 4. 发送更新请求
+        uni.request({
+          url: `${serverUrl}/save-exercise-duration`,
+          method: "POST",
+          data: {
+            username: username,
+            date: today,
+            exercise_duration: totalDuration, // 保存累加后的时长
+          },
+          header: {
+            "Content-Type": "application/json",
+          },
+          success: (updateRes) => {
+            if (updateRes.statusCode === 200 && updateRes.data.success) {
+              console.log("今日运动时长已保存/更新");
+              
+              // 通知保存运动时长
+              uni.$emit("saveExerciseDuration");
+              // 计算当前显示运动时长占计划运动时长的百分比
+              target.value = Math.round((currentExercise.value / planExercise.value) * 100);
+
+              // 清零计时器
+              timer.value = 0;
+              console.log("计时器已清零");
+            } else {
+              console.error("保存今日运动时长失败：", updateRes.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            console.error("请求失败：", err);
+          },
+        });
+      } else {
+        console.error("获取当前运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+};
+
+
+// 加载自由训练计划
+const loadExercisePlans = () => {
+  const username = uni.getStorageSync("username");
+  const storedPlans = uni.getStorageSync(`freeExercisePlans_${username}`) || "[]";
+  exercisePlans.value = JSON.parse(storedPlans);
+};
+
+// 监听更新事件
+uni.$on("refreshExercisePlans", (updatedPlans) => {
+  exercisePlans.value = updatedPlans;
+});
+
 import{onPullDownRefresh} from '@dcloudio/uni-app';
 onPullDownRefresh(async () => {
   console.log("refresh"); 
   await loadMyPlans();
+  loadExerciseDurations(); // 加载每日运动时长
+  loadExercisePlans();
   uni.stopPullDownRefresh();
 });
 // 页面加载时调用
 onMounted(() => { 
   loadMyPlans();
   loadExerciseDurations(); // 加载每日运动时长
+  loadExercisePlans();// 页面加载时读取计划
   fetchPlanExercise(); // 获取计划运动时长
   fetchUserTargets();
   // 计算当前显示运动时长占计划运动时长的百分比
@@ -821,4 +969,64 @@ const goToSearchPage = () => {
 .video-close-btn:hover {
   background-color: #c82333;
 }
+.exercise-list {
+  padding: 16px;
+}
+.timer-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.timer-label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.timer-time {
+  font-size: 24px;
+  margin-left: 10px;
+}
+
+.timer-btn {
+  padding: 8px 16px;
+  background-color: #4cd964;
+  color: #fff;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.no-exercise {
+  text-align: center;
+  color: #888;
+}
+
+.exercise-item {
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.exercise-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.exercise-content {
+  font-size: 14px;
+  color: #323232;
+}
+
+.exercise-date {
+  font-size: 12px;
+  color: #999;
+  margin-top: 8px;
+}
 </style>
+
+

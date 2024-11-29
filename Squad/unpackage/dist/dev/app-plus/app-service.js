@@ -571,7 +571,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-a23503dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-a23503dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
   const icons = {
     "addressbook": "",
     "addfriends-fill": "",
@@ -829,7 +829,7 @@ if (uni.restoreGlobal) {
       /* TEXT, CLASS, STYLE */
     );
   }
-  const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-0d5d8e40"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
+  const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
   const logo$2 = "/static/Squad1.png";
   const _sfc_main$y = {
     __name: "Login",
@@ -1024,7 +1024,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-461d1d79"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Login/Login.vue"]]);
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-461d1d79"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Login/Login.vue"]]);
   const _sfc_main$x = {
     name: "fui-checkbox",
     emits: ["change"],
@@ -1199,7 +1199,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-bc643473"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-bc643473"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
   const _sfc_main$w = {
     name: "fui-list-cell",
     emits: ["click"],
@@ -1371,7 +1371,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-c16a41c6"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
+  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-c16a41c6"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
   const _sfc_main$v = {
     name: "fui-label",
     props: {
@@ -1426,7 +1426,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-186dfc0c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-186dfc0c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
   const _sfc_main$u = {
     name: "fui-checkbox-group",
     emits: ["change", "input", "update:modelValue"],
@@ -1492,7 +1492,7 @@ if (uni.restoreGlobal) {
       vue.renderSlot(_ctx.$slots, "default")
     ], 8, ["name"]);
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
   const _sfc_main$t = {
     data() {
       return {
@@ -1564,7 +1564,7 @@ if (uni.restoreGlobal) {
   function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
     const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$2);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
     const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
     return vue.openBlock(), vue.createElementBlock("view", null, [
       vue.createElementVNode("view", { class: "fui-section__title" }, "修改圆角值"),
@@ -1708,7 +1708,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
   const logo$1 = "/static/Squad1.png";
   const _sfc_main$s = {
     __name: "Register",
@@ -1891,7 +1891,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-6b0433d4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Register/Register.vue"]]);
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-6b0433d4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Register/Register.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -2611,7 +2611,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-d31e1c47"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -3104,7 +3104,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-09fd5285"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   const _imports_0$1 = "/static/back/back2.png";
   const logo = "/static/Squad1.png";
   const _sfc_main$p = {
@@ -3348,10 +3348,10 @@ if (uni.restoreGlobal) {
     }
   };
   function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_3);
+    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_4);
     const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
     const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$2);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
     const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 返回按钮 "),
@@ -3623,7 +3623,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-e8fa868b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/FirstLogin/FirstLogin.vue"]]);
+  const PagesFirstLoginFirstLogin = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__scopeId", "data-v-e8fa868b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/FirstLogin/FirstLogin.vue"]]);
   const pages = [
     {
       path: "pages/Login/Login",
@@ -3691,7 +3691,8 @@ if (uni.restoreGlobal) {
       path: "pages/InviteFriends/InviteFriends",
       style: {
         navigationStyle: "custom",
-        navigationBarTitleText: ""
+        navigationBarTitleText: "",
+        enablePullDownRefresh: true
       }
     },
     {
@@ -6940,7 +6941,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   const _sfc_main$n = {
     name: "UniSection",
     emits: ["click"],
@@ -7057,7 +7058,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-637fd36b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-637fd36b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-section/components/uni-section/uni-section.vue"]]);
   var calendar = {
     /**
         * 农历1900-2100的润大小信息表
@@ -8674,7 +8675,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-65626c58"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
+  const CalendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-65626c58"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar-item.vue"]]);
   const { t: t$2 } = initVueI18n(i18nMessages);
   const _sfc_main$l = {
     components: {
@@ -9152,7 +9153,7 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-b6ab2cfb"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-calendar/components/uni-calendar/uni-calendar.vue"]]);
   const _sfc_main$k = {
     name: "uniFormsItem",
     options: {
@@ -9541,7 +9542,7 @@ ${i3}
       /* CLASS */
     );
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-462874dd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__scopeId", "data-v-462874dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-forms/components/uni-forms-item/uni-forms-item.vue"]]);
   const en = {
     "uni-load-more.contentdown": "Pull up to show more",
     "uni-load-more.contentrefresh": "loading...",
@@ -9726,7 +9727,7 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-9245e42c"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-9245e42c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const _sfc_main$i = {
     name: "uniDataChecklist",
     mixins: [Ys.mixinDatacom || {}],
@@ -10283,7 +10284,7 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-2f788efd"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-2f788efd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-data-checkbox/components/uni-data-checkbox/uni-data-checkbox.vue"]]);
   var pattern = {
     email: /^\S+?@\S+?\.\S+?$/,
     idcard: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
@@ -11161,7 +11162,7 @@ ${i3}
       ])
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-9a1e3c32"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
+  const __easycom_7 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-9a1e3c32"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-forms/components/uni-forms/uni-forms.vue"]]);
   const decodeCache = {};
   function getDecodeCache(exclude) {
     let cache = decodeCache[exclude];
@@ -17163,7 +17164,7 @@ ${i3}
       /* CLASS, STYLE */
     );
   }
-  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-a96e7be9"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
+  const LCircle = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-a96e7be9"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/lime-circle/components/l-circle/l-circle.vue"]]);
   function bind(fn, thisArg) {
     return function wrap() {
       return fn.apply(thisArg, arguments);
@@ -21060,7 +21061,9 @@ This will fail in production.`);
           this.websocket.onMessage((res) => {
             try {
               const data = JSON.parse(res.data);
-              formatAppLog("log", "at store/websocket.js:65", "收到WebSocket消息:", data);
+              if (data.type !== "ai_plan") {
+                formatAppLog("log", "at store/websocket.js:66", "收到WebSocket消息:", data);
+              }
               switch (data.type) {
                 case "text":
                   this.saveMessageToLocal({
@@ -21096,13 +21099,22 @@ This will fail in production.`);
                     this.updateUnreadCounts();
                   }
                   break;
+                case "ai_plan":
+                  uni.$emit("aiPlanMessage", data);
+                  break;
+                case "invitation":
+                  this.handleInvitation(data);
+                  break;
+                case "invitation_response":
+                  this.handleInvitationResponse(data);
+                  break;
               }
             } catch (error2) {
-              formatAppLog("error", "at store/websocket.js:114", "处理WebSocket消息失败:", error2);
+              formatAppLog("error", "at store/websocket.js:129", "处理WebSocket消息失败:", error2);
             }
           });
         } catch (error2) {
-          formatAppLog("error", "at store/websocket.js:118", "初始化WebSocket失败:", error2);
+          formatAppLog("error", "at store/websocket.js:133", "初始化WebSocket失败:", error2);
         }
       },
       closeWebSocket() {
@@ -21115,7 +21127,7 @@ This will fail in production.`);
       },
       // 添加处理状态消息的方法
       handleStatusMessage(data) {
-        formatAppLog("log", "at store/websocket.js:133", "处理状态消息:", data);
+        formatAppLog("log", "at store/websocket.js:148", "处理状态消息:", data);
         this.friendsStatus.set(data.username, {
           isOnline: data.status === "online",
           lastActive: data.timestamp
@@ -21133,13 +21145,14 @@ This will fail in production.`);
       saveMessageToLocal(message) {
         if (!message)
           return;
+        formatAppLog("log", "at store/websocket.js:170", "保存消息:", message);
         const currentUser = uni.getStorageSync("username");
         if (message.receiver !== currentUser && message.sender !== currentUser) {
           return;
         }
         try {
           const key = `chat_history_${message.receiver}_${message.sender}`;
-          formatAppLog("log", "at store/websocket.js:166", "保存消息使用的key:", key);
+          formatAppLog("log", "at store/websocket.js:180", "保存消息使用的key:", key);
           let history = uni.getStorageSync(key) || [];
           if (!history.some((msg) => msg.id === message.id)) {
             const newMessage = {
@@ -21150,25 +21163,25 @@ This will fail in production.`);
               time: message.time || message.timestamp || Date.now()
             };
             history.push(newMessage);
-            formatAppLog("log", "at store/websocket.js:182", "添加新消息:", newMessage);
+            formatAppLog("log", "at store/websocket.js:196", "添加新消息:", newMessage);
             history.sort((a2, b2) => (a2.time || 0) - (b2.time || 0));
             uni.setStorageSync(key, history);
             if (message.receiver === currentUser) {
-              formatAppLog("log", "at store/websocket.js:192", "触发未读消息计数更新");
+              formatAppLog("log", "at store/websocket.js:206", "触发未读消息计数更新");
               this.updateUnreadCounts();
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at store/websocket.js:197", "保存消息到本地失败:", error2, message);
+          formatAppLog("error", "at store/websocket.js:211", "保存消息到本地失败:", error2, message);
         }
       },
       // 修改更新未读消息计数的函数
       updateUnreadCounts() {
         try {
           const username = uni.getStorageSync("username");
-          const friends = uni.getStorageSync("friendsList") || [];
+          const friends = uni.getStorageSync("friendsList_" + username) || [];
           let updated = false;
-          formatAppLog("log", "at store/websocket.js:207", "当前好友列表:", friends);
+          formatAppLog("log", "at store/websocket.js:221", "当前好友列表:", friends);
           friends.forEach((friend) => {
             const key = `chat_history_${username}_${friend.username}`;
             const history = uni.getStorageSync(key) || [];
@@ -21178,15 +21191,125 @@ This will fail in production.`);
             if (friend.unreadCount !== unreadCount) {
               friend.unreadCount = unreadCount;
               updated = true;
-              formatAppLog("log", "at store/websocket.js:221", "更新未读消息计数:", friend.username, unreadCount);
+              formatAppLog("log", "at store/websocket.js:235", "更新未读消息计数:", friend.username, unreadCount);
             }
           });
           if (updated) {
-            uni.setStorageSync("friendsList", friends);
+            uni.setStorageSync("friendsList_" + username, friends);
             uni.$emit("updateUnreadCounts");
           }
         } catch (error2) {
-          formatAppLog("error", "at store/websocket.js:231", "更新未读消息计数失败:", error2);
+          formatAppLog("error", "at store/websocket.js:245", "更新未读消息计数失败:", error2);
+        }
+      },
+      // 添加处理 AI 计划消息的方法
+      handleAiPlanMessage(data) {
+        if (data.type === "ai_plan") {
+          uni.$emit("aiPlanMessage", data);
+        }
+      },
+      // 发送 AI 计划请求
+      sendAiPlanRequest(prompt) {
+        if (this.isConnected && this.websocket) {
+          this.websocket.send({
+            data: JSON.stringify({
+              type: "ai_plan_request",
+              prompt,
+              username: uni.getStorageSync("username")
+            })
+          });
+        } else {
+          formatAppLog("error", "at store/websocket.js:268", "WebSocket未连接");
+          this.initWebSocket();
+        }
+      },
+      // 发送打卡邀请
+      sendInvitation(data) {
+        if (this.isConnected && this.websocket) {
+          this.websocket.send({
+            data: JSON.stringify(data)
+          });
+          const invitation = {
+            type: data.type,
+            id: data.id,
+            sender: data.sender,
+            receiver: data.receiver,
+            content: data.content,
+            time: data.time,
+            handled: false,
+            accepted: null,
+            duration: data.challengeData.duration,
+            calories: data.challengeData.goal.calories,
+            minutes: data.challengeData.goal.minutes,
+            startTime: data.challengeData.startTime,
+            isRead: false,
+            sendFailed: false
+          };
+          formatAppLog("log", "at store/websocket.js:316", "invitation: " + JSON.stringify(invitation));
+          const key = `chat_history_${data.sender}_${data.receiver}`;
+          let history = uni.getStorageSync(key) || [];
+          if (!history.some((msg) => msg.id === invitation.id)) {
+            history.push(invitation);
+            uni.setStorageSync(key, history);
+          }
+          uni.$emit("showMyInvitation", invitation);
+        } else {
+          formatAppLog("error", "at store/websocket.js:329", "WebSocket未连接");
+          this.initWebSocket();
+        }
+      },
+      // 处理收到的打卡邀请
+      handleInvitation(data) {
+        try {
+          const messageData = data.message_data ? JSON.parse(data.message_data) : {
+            duration: 7,
+            goal: {
+              minutes: 10,
+              calories: 80
+            },
+            startTime: Date.now()
+          };
+          const invitation = {
+            type: data.type,
+            id: data.id,
+            sender: data.sender,
+            receiver: data.receiver,
+            content: data.content,
+            time: data.time,
+            handled: false,
+            accepted: null,
+            duration: messageData.duration,
+            calories: messageData.goal.calories,
+            minutes: messageData.goal.minutes,
+            startTime: messageData.startTime,
+            isRead: false,
+            sendFailed: false
+          };
+          this.saveMessageToLocal(invitation);
+          this.updateUnreadCounts();
+          uni.$emit("websocketMessage", invitation);
+        } catch (error2) {
+          formatAppLog("error", "at store/websocket.js:372", "处理打卡邀请失败:", error2);
+        }
+      },
+      // 修改消息处理函数
+      handleInvitationResponse(data) {
+        try {
+          const currentUser = uni.getStorageSync("username");
+          const key = `chat_history_${currentUser}_${data.sender}`;
+          let history = uni.getStorageSync(key) || [];
+          const invitationIndex = history.findIndex(
+            (msg) => msg.type === "invitation" && msg.id === data.invitationId
+          );
+          if (invitationIndex !== -1) {
+            history[invitationIndex].handled = true;
+            history[invitationIndex].accepted = data.accepted;
+            uni.setStorageSync(key, history);
+          }
+          this.updateUnreadCounts();
+          uni.$emit("websocketMessage", data);
+        } catch (error2) {
+          formatAppLog("error", "at store/websocket.js:398", "处理WebSocket消息失败:", error2);
         }
       }
     }
@@ -21202,25 +21325,17 @@ This will fail in production.`);
       __expose();
       const store = useWebSocketStore$1();
       vue.onMounted(() => {
-        formatAppLog("log", "at pages/Home/Home.vue:797", store.isConnected);
+        formatAppLog("log", "at pages/Home/Home.vue:858", store.isConnected);
         if (!store.isConnected) {
           store.initWebSocket();
-          formatAppLog("log", "at pages/Home/Home.vue:800", "连接初始化...");
+          formatAppLog("log", "at pages/Home/Home.vue:861", "连接初始化...");
         }
         setInterval(() => {
           if (!store.isConnected) {
             store.initWebSocket();
-            formatAppLog("log", "at pages/Home/Home.vue:806", "连接初始化...");
+            formatAppLog("log", "at pages/Home/Home.vue:867", "连接初始化...");
           }
         }, 5e3);
-      });
-      onPullDownRefresh(async () => {
-        formatAppLog("log", "at pages/Home/Home.vue:811", "refresh");
-        await fetchPlansFromBackend();
-        loadExerciseDurations();
-        setTimeout(() => {
-          uni.stopPullDownRefresh();
-        }, 1e3);
       });
       const serverUrl = uni.getStorageSync("serverUrl");
       const target = vue.ref(0);
@@ -21241,6 +21356,12 @@ This will fail in production.`);
       const calories = vue.ref("");
       const popup = vue.ref(null);
       const dialogTitle = vue.ref("添加计划");
+      const completeText = vue.ref("");
+      const aiInput = vue.ref("");
+      const customPlan = vue.ref("");
+      const isGenerating = vue.ref(false);
+      const streamingContent = vue.ref("");
+      const md = new MarkdownIt();
       const targetDuration = vue.ref(20);
       const targetCalories = vue.ref(100);
       const isEditing = vue.ref(false);
@@ -21284,6 +21405,69 @@ This will fail in production.`);
       const manualFoodList = vue.ref([]);
       const errorMessage = vue.ref("");
       vue.onMounted(() => {
+        formatAppLog("log", "at pages/Home/Home.vue:955", store.isConnected);
+        if (!store.isConnected) {
+          store.initWebSocket();
+          formatAppLog("log", "at pages/Home/Home.vue:958", "连接初始化...");
+        }
+        const cachedPlan = getCachedPlan();
+        if (cachedPlan) {
+          customPlan.value = cachedPlan;
+        }
+        setInterval(() => {
+          if (!store.isConnected) {
+            store.initWebSocket();
+            formatAppLog("log", "at pages/Home/Home.vue:971", "连接初始化...");
+          }
+        }, 5e3);
+        uni.$on("aiPlanMessage", (data) => {
+          if (data.error) {
+            uni.showToast({
+              title: data.error,
+              icon: "none"
+            });
+            isGenerating.value = false;
+            return;
+          }
+          try {
+            if (data.content.includes("[DONE]")) {
+              customPlan.value = md.render(completeText.value);
+              const username2 = uni.getStorageSync("username");
+              uni.setStorageSync(`AiPlan_${username2}_cache`, customPlan.value);
+              streamingContent.value = "";
+              isGenerating.value = false;
+              return;
+            }
+            const lines = data.content.split("\n");
+            for (const line of lines) {
+              if (line.trim() && line.startsWith("data: ")) {
+                try {
+                  const jsonStr = line.slice(6);
+                  const messageData = JSON.parse(jsonStr);
+                  if (messageData.choices && messageData.choices[0].delta && messageData.choices[0].delta.content) {
+                    completeText.value += messageData.choices[0].delta.content;
+                    streamingContent.value = md.render(completeText.value);
+                  }
+                } catch (e2) {
+                  formatAppLog("warn", "at pages/Home/Home.vue:1020", "解析数据块失败:", e2);
+                }
+              }
+            }
+          } catch (error2) {
+            formatAppLog("error", "at pages/Home/Home.vue:1025", "处理 AI 消息失败:", error2);
+          }
+        });
+      });
+      onPullDownRefresh(async () => {
+        formatAppLog("log", "at pages/Home/Home.vue:1031", "refresh");
+        await fetchPlansFromBackend();
+        loadExerciseDurations();
+        fetchPlanExercise();
+        setTimeout(() => {
+          uni.stopPullDownRefresh();
+        }, 1e3);
+      });
+      vue.onMounted(() => {
         fetchPlansFromBackend();
         judgeManager();
         loadMyPlans();
@@ -21294,6 +21478,7 @@ This will fail in production.`);
         uni.$on("handleAdd", loadMyPlans);
         uni.$on("handleRemove", loadMyPlans);
         uni.$on("updateUserTargets", fetchPlanExercise);
+        uni.$on("updateUserTargets", loadExerciseDurations);
         uni.$on("plansUpdated", loadMyPlans);
         uni.$on("foodDeleted", initializeRemainingCalories);
         uni.$on("foodEdit", initializeRemainingCalories);
@@ -21301,24 +21486,23 @@ This will fail in production.`);
         setInterval(() => {
           const now2 = /* @__PURE__ */ new Date();
           if (now2.getHours() === 0 && now2.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:915", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1070", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
         }, 6e4);
-        username = uni.getStorageSync("username");
         initializeRemainingCalories();
       });
       const fetchUserTargets = async () => {
         try {
           const username2 = uni.getStorageSync("username");
           uni.setStorageSync(`username`, username2);
-          formatAppLog("log", "at pages/Home/Home.vue:929", `username: ${username2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1086", `username: ${username2}`);
           const res = await uni.request({
             url: `${serverUrl}/getTargets`,
             method: "POST",
             data: { username: username2 }
-            // 向后端发送用户名 
+            // 向后端发送用户名
           });
           if (res.data.success) {
             targetDuration.value = res.data.data.sport_time_goal;
@@ -21328,7 +21512,7 @@ This will fail in production.`);
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:946", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1103", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -21362,7 +21546,7 @@ This will fail in production.`);
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:987", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1144", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
         isEditing.value = false;
@@ -21370,11 +21554,13 @@ This will fail in production.`);
       const fetchPlanExercise = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Home/Home.vue:996", "用户未登录");
+          formatAppLog("error", "at pages/Home/Home.vue:1153", "用户未登录");
           return;
         }
         uni.request({
-          url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(username2)}`,
+          url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(
+            username2
+          )}`,
           // 拼接 username 参数
           method: "GET",
           header: {
@@ -21384,22 +21570,24 @@ This will fail in production.`);
             if (res.statusCode === 200 && res.data.success) {
               planExercise.value = res.data.data.sport_time_goal || 60;
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1010", "获取计划运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Home/Home.vue:1169", "获取计划运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1014", "请求失败：", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1173", "请求失败：", err);
           }
         });
       };
       const loadExerciseDurations = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1023", "用户未登录");
+          formatAppLog("error", "at pages/Home/Home.vue:1182", "用户未登录");
           return;
         }
         uni.request({
-          url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(username2)}`,
+          url: `${serverUrl}/exercise-duration?username=${encodeURIComponent(
+            username2
+          )}`,
           // 传递 username
           method: "GET",
           header: {
@@ -21408,29 +21596,31 @@ This will fail in production.`);
           success: (res) => {
             if (res.statusCode === 200 && res.data.success) {
               currentExercise.value = res.data.data.exercise_duration || 0;
-              target.value = Math.round(currentExercise.value / planExercise.value * 100);
+              target.value = Math.round(
+                currentExercise.value / planExercise.value * 100
+              );
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1039", "获取今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Home/Home.vue:1204", "获取今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1043", "请求失败：", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1208", "请求失败：", err);
           }
         });
       };
       const totalCalories = vue.computed(() => {
         const autoCalories = foodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:1051", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1216", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const manualCalories = manualFoodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:1058", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1223", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const total = Math.round(autoCalories + manualCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:1064", `总热量 (自动 + 手动): ${total} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1229", `总热量 (自动 + 手动): ${total} 千卡`);
         return total;
       });
       const calculateFoodCalories = (food) => {
@@ -21484,14 +21674,14 @@ This will fail in production.`);
         dailyFoods = [...dailyFoods, ...newFoods];
         uni.setStorageSync(storageKey, dailyFoods);
         const totalConsumedCalories2 = totalCalories.value;
-        formatAppLog("log", "at pages/Home/Home.vue:1138", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1303", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
         const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username2}`)) || 2e3;
         let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-        formatAppLog("log", "at pages/Home/Home.vue:1145", `1: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1310", `1: ${remainingCalories} 千卡`);
         remainingCalories = parseFloat(remainingCalories) || dailyCalories;
-        formatAppLog("log", "at pages/Home/Home.vue:1149", `3: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1314", `3: ${remainingCalories} 千卡`);
         remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories2);
-        formatAppLog("log", "at pages/Home/Home.vue:1153", `4: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1318", `4: ${remainingCalories} 千卡`);
         today_left_eat.value = remainingCalories;
         target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
         uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
@@ -21501,8 +21691,8 @@ This will fail in production.`);
           title: "已更新每日摄入",
           icon: "success"
         });
-        formatAppLog("log", "at pages/Home/Home.vue:1173", `总消耗: ${totalConsumedCalories2} 千卡`);
-        formatAppLog("log", "at pages/Home/Home.vue:1174", `剩余可摄入热量: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1337", `总消耗: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1338", `剩余可摄入热量: ${remainingCalories} 千卡`);
         try {
           const res = await uni.request({
             url: serverUrl + "/submitDailyFoods",
@@ -21524,7 +21714,7 @@ This will fail in production.`);
             throw new Error(res.data.message || "上传失败，请稍后重试");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1205", "上传失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1369", "上传失败:", error2);
           uni.showToast({
             title: "上传失败，请稍后重试",
             icon: "none"
@@ -21603,7 +21793,7 @@ This will fail in production.`);
           });
           errorMessage.value = "";
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1301", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1465", error2);
           errorMessage.value = error2;
         } finally {
           isRecognizing.value = false;
@@ -21637,7 +21827,7 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (err) {
-          formatAppLog("error", "at pages/Home/Home.vue:1346", "处理识别结果错误:", err);
+          formatAppLog("error", "at pages/Home/Home.vue:1510", "处理识别结果错误:", err);
           uni.showToast({
             title: "数据格式错误",
             icon: "none"
@@ -21650,7 +21840,7 @@ This will fail in production.`);
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1360", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:1524", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -21667,11 +21857,11 @@ This will fail in production.`);
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1377", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1541", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1381", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1545", "请求失败:", err);
           }
         });
       };
@@ -21681,11 +21871,11 @@ This will fail in production.`);
           const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username2}`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
-            formatAppLog("log", "at pages/Home/Home.vue:1394", "今日已获取过热量数据");
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1403", `剩余热量: ${today_left_eat.value} 千卡`);
-            const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
+            formatAppLog("log", "at pages/Home/Home.vue:1560", `剩余热量: ${today_left_eat.value} 千卡`);
+            const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username2}`)) || 2e3;
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
+            remainingCalories = parseFloat(remainingCalories) || dailyCalories;
             target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
             return;
           }
@@ -21700,7 +21890,7 @@ This will fail in production.`);
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1425", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1586", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -21712,7 +21902,7 @@ This will fail in production.`);
               let remainingCalories = uni.getStorageSync(
                 `today_left_eat_${username2}`
               );
-              formatAppLog("log", "at pages/Home/Home.vue:1441", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1602", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -21730,11 +21920,9 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1459", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1620", "请求失败:", error2);
         }
       }
-      const aiInput = vue.ref("");
-      const customPlan = vue.ref("");
       const exerciseProgress = vue.ref(50);
       const currentExercise = vue.ref(0);
       const planExercise = vue.ref(20);
@@ -21771,7 +21959,7 @@ This will fail in production.`);
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1521", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1680", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -21784,50 +21972,92 @@ This will fail in production.`);
           url: "/pages/Search/Search"
         });
       };
-      const getCustomPlan = () => {
-        if (!aiInput.value.trim()) {
+      const getCachedPlan = () => {
+        const username2 = uni.getStorageSync("username");
+        return uni.getStorageSync(`AiPlan_${username2}_cache`);
+      };
+      const getCustomPlan = async () => {
+        if (!aiInput.value.trim() || isGenerating.value)
+          return;
+        isGenerating.value = true;
+        streamingContent.value = "";
+        completeText.value = "";
+        try {
+          const cachedPlan = getCachedPlan();
+          if (cachedPlan) {
+            customPlan.value = cachedPlan;
+            uni.showToast({
+              title: "未处理的计划",
+              icon: "loading"
+            });
+            isGenerating.value = false;
+            return;
+          }
+          store.sendAiPlanRequest(aiInput.value);
+        } catch (error2) {
+          formatAppLog("error", "at pages/Home/Home.vue:1727", "获取AI计划失败:", error2);
           uni.showToast({
-            title: "请输入您的需求",
+            title: "获取计划失败，请重试",
+            icon: "none"
+          });
+          isGenerating.value = false;
+        }
+      };
+      const clearPlan_AI = () => {
+        uni.showModal({
+          title: "提示",
+          content: "确定要清空当前计划吗？",
+          success: (res) => {
+            if (res.confirm) {
+              customPlan.value = "";
+              streamingContent.value = "";
+              completeText.value = "";
+              const username2 = uni.getStorageSync("username");
+              uni.removeStorageSync(`AiPlan_${username2}_cache`);
+              uni.showToast({
+                title: "计划已清空",
+                icon: "success"
+              });
+            }
+          }
+        });
+      };
+      const savePlan_AI = () => {
+        const planContent = customPlan.value || streamingContent.value;
+        if (!planContent.trim()) {
+          uni.showToast({
+            title: "没有可保存的计划",
             icon: "none"
           });
           return;
         }
-        const username2 = uni.getStorageSync("username");
-        uni.request({
-          url: serverUrl + "/generateFitnessPlan",
-          // 请根据实际情况调整 IP 地址和端口
-          method: "POST",
-          data: {
-            aiInput: aiInput.value.trim(),
-            // 将用户输入的数据发送到后端
-            username: username2
-            // 传递用户名
-          },
-          header: {
-            "Content-Type": "application/json"
-          },
+        uni.showModal({
+          title: "保存计划",
+          content: "是否将此计划添加到自由训练模块？",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1564", "服务器响应:", res);
-            if (res.statusCode === 200 && res.data.fitnessPlan) {
-              const md = new MarkdownIt();
-              customPlan.value = md.render(res.data.fitnessPlan);
+            if (res.confirm) {
+              const username2 = uni.getStorageSync("username");
+              const storedPlans = uni.getStorageSync(`freeExercisePlans_${username2}`) || "[]";
+              const freeExercisePlans = JSON.parse(storedPlans);
+              const newPlan = {
+                title: "AI 定制计划",
+                // 默认标题
+                content: planContent,
+                // 计划内容
+                createdAt: (/* @__PURE__ */ new Date()).toLocaleString()
+                // 创建时间
+              };
+              freeExercisePlans.push(newPlan);
+              uni.setStorageSync(
+                `freeExercisePlans_${username2}`,
+                JSON.stringify(freeExercisePlans)
+              );
+              uni.$emit("updateFreeExercisePlans", freeExercisePlans);
               uni.showToast({
-                title: "计划生成成功",
+                title: "计划已添加到自由训练",
                 icon: "success"
               });
-            } else {
-              uni.showToast({
-                title: res.data.error || "生成计划失败",
-                icon: "none"
-              });
             }
-          },
-          fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1581", "请求失败:", err);
-            uni.showToast({
-              title: "网络请求失败，请稍后重试",
-              icon: "none"
-            });
           }
         });
       };
@@ -21849,8 +22079,9 @@ This will fail in production.`);
       const initializeRemainingCalories = () => {
         const username2 = uni.getStorageSync("username");
         today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-        const dailyCalories = uni.getStorageSync(`dailyCalories_${username2}`);
-        let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`) || 0;
+        const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username2}`)) || 2e3;
+        let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
+        remainingCalories = parseFloat(remainingCalories) || dailyCalories;
         if (remainingCalories > dailyCalories) {
           remainingCalories = dailyCalories;
         }
@@ -21864,14 +22095,14 @@ This will fail in production.`);
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1636", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1856", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1648", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1868", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -21880,7 +22111,7 @@ This will fail in production.`);
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1661", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1881", "计划已添加:", plan.title);
         uni.$emit("handleAdd");
         loadMyPlans();
       };
@@ -21889,7 +22120,7 @@ This will fail in production.`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1679", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1899", "计划已删除:", plan.title);
         uni.$emit("handleRemove");
         loadMyPlans();
       };
@@ -21932,7 +22163,7 @@ This will fail in production.`);
           image_url: planForm.value.imageUrl || "",
           B站连接: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1737", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:1957", "前端提交的计划数据:", planData);
         if (isEditing2) {
           uni.request({
             url: `${serverUrl}/goals`,
@@ -21951,7 +22182,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1758", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:1978", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -21973,7 +22204,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1781", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:2001", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -21981,7 +22212,7 @@ This will fail in production.`);
       };
       const chooseCoverImage = async () => {
         try {
-          formatAppLog("log", "at pages/Home/Home.vue:1791", "选择图片按钮被点击");
+          formatAppLog("log", "at pages/Home/Home.vue:2011", "选择图片按钮被点击");
           const res = await uni.chooseImage({
             count: 1,
             // 选择一张图片
@@ -21990,22 +22221,22 @@ This will fail in production.`);
           });
           if (res.errMsg === "chooseImage:ok") {
             const filePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/Home/Home.vue:1799", "选择的图片路径：", filePath);
+            formatAppLog("log", "at pages/Home/Home.vue:2019", "选择的图片路径：", filePath);
             const uploadRes = await uploadImage(filePath);
             if (uploadRes && uploadRes.imageUrl) {
               planForm.value.imageUrl = uploadRes.imageUrl;
-              formatAppLog("log", "at pages/Home/Home.vue:1805", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+              formatAppLog("log", "at pages/Home/Home.vue:2025", "图片上传成功，图片 URL:", uploadRes.imageUrl);
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1807", "图片上传失败");
+              formatAppLog("error", "at pages/Home/Home.vue:2027", "图片上传失败");
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1811", "选择图片失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:2031", "选择图片失败:", error2);
         }
       };
       const uploadImage = (filePath) => {
         return new Promise((resolve, reject) => {
-          formatAppLog("log", "at pages/Home/Home.vue:1818", "开始上传图片，路径:", filePath);
+          formatAppLog("log", "at pages/Home/Home.vue:2038", "开始上传图片，路径:", filePath);
           uni.uploadFile({
             url: serverUrl + "/upload",
             // 假设上传接口的URL
@@ -22016,7 +22247,7 @@ This will fail in production.`);
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200 && response.success) {
                   const imageUrl = response.imageUrl;
-                  formatAppLog("log", "at pages/Home/Home.vue:1830", "上传成功，返回的图片URL:", imageUrl);
+                  formatAppLog("log", "at pages/Home/Home.vue:2050", "上传成功，返回的图片URL:", imageUrl);
                   planForm.value.imageUrl = "http://121.37.195.13:3000/" + imageUrl;
                   uni.showToast({
                     title: "上传成功",
@@ -22024,14 +22255,14 @@ This will fail in production.`);
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:1840", "上传失败，返回错误:", response);
+                  formatAppLog("error", "at pages/Home/Home.vue:2060", "上传失败，返回错误:", response);
                   uni.showToast({
                     title: "上传失败，请重试",
                     icon: "none"
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:1847", "解析响应数据失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:2067", "解析响应数据失败:", err);
                 uni.showToast({
                   title: "响应数据解析失败",
                   icon: "none"
@@ -22039,7 +22270,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1855", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:2075", "上传失败", err);
               uni.showToast({
                 title: "上传失败，请检查网络连接",
                 icon: "none"
@@ -22072,7 +22303,7 @@ This will fail in production.`);
                   }
                 },
                 fail: (error2) => {
-                  formatAppLog("error", "at pages/Home/Home.vue:1889", "删除失败：", error2);
+                  formatAppLog("error", "at pages/Home/Home.vue:2109", "删除失败：", error2);
                   uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
                 }
               });
@@ -22082,8 +22313,8 @@ This will fail in production.`);
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:1901", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:1902", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:2121", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:2122", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -22104,7 +22335,7 @@ This will fail in production.`);
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1926", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:2146", `打开${day.date}的日程`);
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
@@ -22151,9 +22382,9 @@ This will fail in production.`);
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:1983", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:2203", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:1986", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:2206", currentday.value);
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
@@ -22248,7 +22479,10 @@ This will fail in production.`);
       const isRecognizing = vue.ref(false);
       vue.onUnmounted(() => {
       });
-      const __returned__ = { store, serverUrl, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, targetDuration, targetCalories, isEditing, editDuration, editCalories, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, fetchUserTargets, openEditModal, cancelEdit, saveEdit, fetchPlanExercise, loadExerciseDurations, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, aiInput, customPlan, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCustomPlan, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleDelete, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, onUnmounted: vue.onUnmounted, get MarkdownIt() {
+      vue.onUnmounted(() => {
+        uni.$off("aiPlanMessage");
+      });
+      const __returned__ = { store, serverUrl, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, completeText, aiInput, customPlan, isGenerating, streamingContent, md, targetDuration, targetCalories, isEditing, editDuration, editCalories, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, fetchUserTargets, openEditModal, cancelEdit, saveEdit, fetchPlanExercise, loadExerciseDurations, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCachedPlan, getCustomPlan, clearPlan_AI, savePlan_AI, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleDelete, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, onUnmounted: vue.onUnmounted, get MarkdownIt() {
         return MarkdownIt;
       }, LCircle, get type() {
         return type;
@@ -22266,11 +22500,12 @@ This will fail in production.`);
   function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$2);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_1$1);
-    const _component_uni_calendar = resolveEasycom(vue.resolveDynamicComponent("uni-calendar"), __easycom_2);
-    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_3);
-    const _component_uni_forms_item = resolveEasycom(vue.resolveDynamicComponent("uni-forms-item"), __easycom_4);
-    const _component_uni_data_checkbox = resolveEasycom(vue.resolveDynamicComponent("uni-data-checkbox"), __easycom_5);
-    const _component_uni_forms = resolveEasycom(vue.resolveDynamicComponent("uni-forms"), __easycom_6);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$3);
+    const _component_uni_calendar = resolveEasycom(vue.resolveDynamicComponent("uni-calendar"), __easycom_3);
+    const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_4);
+    const _component_uni_forms_item = resolveEasycom(vue.resolveDynamicComponent("uni-forms-item"), __easycom_5);
+    const _component_uni_data_checkbox = resolveEasycom(vue.resolveDynamicComponent("uni-data-checkbox"), __easycom_6);
+    const _component_uni_forms = resolveEasycom(vue.resolveDynamicComponent("uni-forms"), __easycom_7);
     return vue.openBlock(), vue.createElementBlock("div", { class: "container" }, [
       vue.createCommentVNode(" 搜索栏 "),
       vue.createElementVNode("div", {
@@ -22477,34 +22712,113 @@ This will fail in production.`);
             ))
           ])
         ])) : vue.createCommentVNode("v-if", true),
-        $setup.activeButton === "custom" ? (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
-          vue.createCommentVNode(" 智能定制内容 "),
-          vue.createElementVNode("div", { class: "ai-customization" }, [
-            vue.withDirectives(vue.createElementVNode(
-              "textarea",
-              {
-                "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.aiInput = $event),
-                placeholder: "请输入您的需求...",
-                class: "ai-input"
-              },
-              null,
-              512
-              /* NEED_PATCH */
-            ), [
+        $setup.activeButton === "custom" ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
+          class: "ai-customization"
+        }, [
+          vue.createElementVNode("view", { class: "ai-input-container" }, [
+            vue.createElementVNode("view", { class: "input-header" }, [
+              vue.createVNode(_component_uni_icons, {
+                type: "lightbulb-filled",
+                size: "24",
+                color: "#FFD700"
+              }),
+              vue.createElementVNode("text", { class: "input-title" }, "告诉AI你的运动需求")
+            ]),
+            vue.withDirectives(vue.createElementVNode("textarea", {
+              "onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => $setup.aiInput = $event),
+              placeholder: "例如：我想要一个每周三次的增肌计划，每次训练30分钟...\r\n或者：帮我制定一个适合初学者的减脂计划...",
+              class: "ai-input",
+              disabled: $setup.isGenerating
+            }, null, 8, ["disabled"]), [
               [vue.vModelText, $setup.aiInput]
             ]),
             vue.createElementVNode("button", {
               onClick: $setup.getCustomPlan,
-              class: "ai-button"
-            }, "获取定制计划"),
-            $setup.customPlan ? (vue.openBlock(), vue.createElementBlock("div", {
-              key: 0,
-              class: "custom-plan"
+              class: "ai-button",
+              disabled: !$setup.aiInput.trim() || $setup.isGenerating
             }, [
-              vue.createElementVNode("h3", null, "定制计划"),
-              vue.createElementVNode("div", { innerHTML: $setup.customPlan }, null, 8, ["innerHTML"]),
-              vue.createCommentVNode(" 渲染 HTML 内容 ")
-            ])) : vue.createCommentVNode("v-if", true)
+              $setup.isGenerating ? (vue.openBlock(), vue.createElementBlock(
+                vue.Fragment,
+                { key: 0 },
+                [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "refresh",
+                    size: "20",
+                    color: "#fff"
+                  }),
+                  vue.createElementVNode("text", null, "生成中...")
+                ],
+                64
+                /* STABLE_FRAGMENT */
+              )) : (vue.openBlock(), vue.createElementBlock(
+                vue.Fragment,
+                { key: 1 },
+                [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "paperplane-filled",
+                    size: "20",
+                    color: "#fff"
+                  }),
+                  vue.createElementVNode("text", null, "获取专属计划")
+                ],
+                64
+                /* STABLE_FRAGMENT */
+              ))
+            ], 8, ["disabled"])
+          ]),
+          vue.createCommentVNode(" 修改 AI 计划显示部分 "),
+          vue.createElementVNode("view", { class: "custom-plan" }, [
+            vue.createElementVNode("view", { class: "plan-header" }, [
+              vue.createVNode(_component_uni_icons, {
+                type: "flag-filled",
+                size: "24",
+                color: "#4cd964"
+              }),
+              vue.createElementVNode("text", { class: "plan-title" }, "你的专属计划来啦！")
+            ]),
+            vue.createElementVNode("view", { class: "plan-content" }, [
+              vue.createElementVNode("view", { class: "motivation-banner" }, [
+                vue.createElementVNode("text", { class: "motivation-text" }, "💪 准备好开始你的健身之旅了吗？")
+              ]),
+              vue.createElementVNode("view", { class: "plan-text" }, [
+                vue.createCommentVNode(" 修改这里的条件渲染逻辑 "),
+                $setup.isGenerating ? (vue.openBlock(), vue.createElementBlock("div", {
+                  key: 0,
+                  innerHTML: $setup.streamingContent
+                }, null, 8, ["innerHTML"])) : (vue.openBlock(), vue.createElementBlock("div", {
+                  key: 1,
+                  innerHTML: $setup.customPlan
+                }, null, 8, ["innerHTML"]))
+              ]),
+              vue.createElementVNode("view", { class: "plan-actions" }, [
+                vue.createElementVNode("button", {
+                  class: "action-btn clear",
+                  onClick: $setup.clearPlan_AI
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "trash",
+                    size: "16",
+                    color: "#fff"
+                  }),
+                  vue.createElementVNode("text", null, "清空计划")
+                ]),
+                vue.createElementVNode("button", {
+                  class: "action-btn save",
+                  onClick: $setup.savePlan_AI
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "plusempty",
+                    size: "16",
+                    color: "#fff"
+                  }),
+                  vue.createElementVNode("text", null, "添加计划")
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "motivation-footer" }, [
+                vue.createElementVNode("text", { class: "footer-text" }, "🎯 目标已定，开始行动吧！")
+              ])
+            ])
           ])
         ])) : vue.createCommentVNode("v-if", true)
       ])) : vue.createCommentVNode("v-if", true),
@@ -22808,19 +23122,27 @@ This will fail in production.`);
                         /* TEXT */
                       ),
                       vue.createElementVNode("text", { class: "gray_color" }, "千卡")
-                    ]),
-                    vue.createCommentVNode(" <text>{{ modelVale }}%</text> ")
+                    ])
                   ]),
                   _: 1
                   /* STABLE */
                 }, 8, ["modelValue", "percent"]),
-                vue.createElementVNode("button", {
-                  class: "take_picture",
-                  onClick: $setup.takePicture,
-                  disabled: $setup.isRecognizing
-                }, [
-                  !$setup.isRecognizing ? (vue.openBlock(), vue.createElementBlock("text", { key: 0 }, "拍照识别")) : (vue.openBlock(), vue.createElementBlock("text", { key: 1 }, "识别中..."))
-                ], 8, ["disabled"]),
+                vue.createCommentVNode(" 添加按钮容器 "),
+                vue.createElementVNode("view", { class: "button-group" }, [
+                  vue.createElementVNode("button", {
+                    class: "take_picture",
+                    onClick: $setup.takePicture,
+                    disabled: $setup.isRecognizing
+                  }, [
+                    !$setup.isRecognizing ? (vue.openBlock(), vue.createElementBlock("text", { key: 0 }, "拍照识别")) : (vue.openBlock(), vue.createElementBlock("text", { key: 1 }, "识别中..."))
+                  ], 8, ["disabled"]),
+                  vue.createElementVNode("button", {
+                    class: "take_picture",
+                    onClick: $setup.fetchDailyCalories
+                  }, [
+                    vue.createElementVNode("text", null, "手动获取")
+                  ])
+                ]),
                 vue.createCommentVNode(" 修改识别结果表格部分 "),
                 $setup.foodList.length > 0 || $setup.manualFoodList.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
                   key: 0,
@@ -23530,7 +23852,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-7ffebbf4"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Home/Home.vue"]]);
+  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-7ffebbf4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Home/Home.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -23907,7 +24229,7 @@ This will fail in production.`);
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
   const _sfc_main$d = {
     name: "uniPopup",
     components: {},
@@ -24318,7 +24640,7 @@ This will fail in production.`);
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-4dd3c44b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const defaultAvatar$2 = "/static/default-avatar.png";
   const _sfc_main$c = {
     __name: "Friends",
@@ -24395,16 +24717,19 @@ This will fail in production.`);
         currentTab.value = tab;
       };
       const enterChat = (friend) => {
-        uni.setStorageSync("friendInfo_" + userInfo2.value.username + "_" + friend.username, friend);
-        formatAppLog("log", "at pages/Friends/Friends.vue:300", "friendInfo_" + userInfo2.value.username + "_" + friend.username);
-        formatAppLog("log", "at pages/Friends/Friends.vue:301", "friend: ", friend);
+        uni.setStorageSync(
+          "friendInfo_" + userInfo2.value.username + "_" + friend.username,
+          friend
+        );
+        formatAppLog("log", "at pages/Friends/Friends.vue:331", "friendInfo_" + userInfo2.value.username + "_" + friend.username);
+        formatAppLog("log", "at pages/Friends/Friends.vue:332", "friend: ", friend);
         uni.navigateTo({
           url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
           success: () => {
-            formatAppLog("log", "at pages/Friends/Friends.vue:305", "进入聊天页面");
+            formatAppLog("log", "at pages/Friends/Friends.vue:336", "进入聊天页面");
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Friends/Friends.vue:308", "打开聊天页面失败:", err);
+            formatAppLog("error", "at pages/Friends/Friends.vue:339", "打开聊天页面失败:", err);
             uni.showToast({
               title: "打开聊天失败",
               icon: "none"
@@ -24463,7 +24788,7 @@ This will fail in production.`);
             }
           });
           if (res.statusCode === 200) {
-            uni.removeStorageSync("friendsList");
+            uni.removeStorageSync("friendsList_" + uni.getStorageSync("username"));
             await loadFriendsList();
             uni.showToast({
               title: "删除成功",
@@ -24471,7 +24796,7 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:398", "删除好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:427", "删除好友失败:", error2);
           uni.showToast({
             title: "删除失败",
             icon: "none"
@@ -24536,7 +24861,7 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:475", "添加好友失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:504", "添加好友失败:", error2);
           uni.showToast({
             title: "网络请求失败",
             icon: "none"
@@ -24563,15 +24888,15 @@ This will fail in production.`);
               unreadCount: 0
               // 初始化未读消息数
             }));
-            uni.setStorageSync("friendsList", formattedFriends);
+            uni.setStorageSync("friendsList_" + username, formattedFriends);
             friendsList.value = formattedFriends;
             loadUnreadCounts();
-            formatAppLog("log", "at pages/Friends/Friends.vue:533", "从服务器更新的好友列表:", friendsList.value);
+            formatAppLog("log", "at pages/Friends/Friends.vue:562", "从服务器更新的好友列表:", friendsList.value);
           } else {
             throw new Error(res.data.message || "获取好友列表失败");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Friends/Friends.vue:538", "获取好友列表失败:", error2);
+          formatAppLog("error", "at pages/Friends/Friends.vue:567", "获取好友列表失败:", error2);
           uni.showToast({
             title: "获取好友列表失败",
             icon: "none"
@@ -24586,8 +24911,8 @@ This will fail in production.`);
           const unreadCount = history.filter(
             (msg) => msg.sender === friend.username && !msg.isRead
           ).length;
-          formatAppLog("log", "at pages/Friends/Friends.vue:559", `好友 ${friend.username} 的未读消息数:`, unreadCount);
-          formatAppLog("log", "at pages/Friends/Friends.vue:560", `聊天历史:`, history);
+          formatAppLog("log", "at pages/Friends/Friends.vue:588", `好友 ${friend.username} 的未读消息数:`, unreadCount);
+          formatAppLog("log", "at pages/Friends/Friends.vue:589", `聊天历史:`, history);
           return {
             ...friend,
             unreadCount
@@ -24597,16 +24922,16 @@ This will fail in production.`);
       vue.onMounted(async () => {
         await loadFriendsList();
         if (!store.isConnected) {
-          formatAppLog("log", "at pages/Friends/Friends.vue:573", "websocket未连接，尝试新连接");
+          formatAppLog("log", "at pages/Friends/Friends.vue:602", "websocket未连接，尝试新连接");
           store.initWebSocket();
         }
         uni.$on("updateUnreadCounts", () => {
-          formatAppLog("log", "at pages/Friends/Friends.vue:579", "收到未读消息更新事件");
+          formatAppLog("log", "at pages/Friends/Friends.vue:608", "收到未读消息更新事件");
           loadUnreadCounts();
         });
       });
       onPullDownRefresh(async () => {
-        formatAppLog("log", "at pages/Friends/Friends.vue:584", "refresh");
+        formatAppLog("log", "at pages/Friends/Friends.vue:613", "refresh");
         await loadFriendsList();
         await loadUnreadCounts();
         setTimeout(() => {
@@ -24704,7 +25029,12 @@ This will fail in production.`);
                   }
                 });
                 if (result.statusCode === 200) {
-                  uni.removeStorageSync("friendsList");
+                  uni.removeStorageSync(
+                    "friendsList_" + uni.getStorageSync("username")
+                  );
+                  uni.removeStorageSync(
+                    `chat_history_${uni.getStorageSync("username")}_${friend.username}`
+                  );
                   await loadFriendsList();
                   uni.showToast({
                     title: "删除成功",
@@ -24714,7 +25044,7 @@ This will fail in production.`);
                   throw new Error("删除失败");
                 }
               } catch (error2) {
-                formatAppLog("error", "at pages/Friends/Friends.vue:719", "删除好友失败:", error2);
+                formatAppLog("error", "at pages/Friends/Friends.vue:756", "删除好友失败:", error2);
                 uni.showToast({
                   title: "删除失败",
                   icon: "none"
@@ -24773,7 +25103,17 @@ This will fail in production.`);
       const handleMaskClick = () => {
         closeSidebar();
       };
-      const __returned__ = { websocketUrl, store, tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, loadUnreadCounts, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, handleDelete, sidebarPopup, friendsListPopup, isSidebarOpen, showSidebar, closeSidebar, showAddFriendDialog, showFriendsList, closeFriendsList, handleMaskClick, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, get useWebSocketStore() {
+      const hasUnreadInvitation = (friend) => {
+        const currentUser = uni.getStorageSync("username");
+        const key = `chat_history_${currentUser}_${friend.username}`;
+        const history = uni.getStorageSync(key);
+        if (!Array.isArray(history))
+          return false;
+        return history.some(
+          (msg) => msg.type === "invitation" && msg.sender === friend.username && !msg.isRead
+        );
+      };
+      const __returned__ = { websocketUrl, store, tabs, currentTab, searchQuery, currentLetter, showLetterTip, defaultAvatar: defaultAvatar$2, serverUrl, letters, friendsList, touchLetter, endTouchLetter, switchTab, enterChat, groupedFriends, scrollToLetter, deleteFriend, addFriendPopup, newFriendUsername, showAddFriend, closeAddFriend, confirmAddFriend, loadFriendsList, loadUnreadCounts, teamList, createTeam, joinTeam, userInfo: userInfo2, checkInStatuses, navigateToInvite, handleDelete, sidebarPopup, friendsListPopup, isSidebarOpen, showSidebar, closeSidebar, showAddFriendDialog, showFriendsList, closeFriendsList, handleMaskClick, hasUnreadInvitation, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, get useWebSocketStore() {
         return useWebSocketStore$1;
       }, get onPullDownRefresh() {
         return onPullDownRefresh;
@@ -24922,10 +25262,20 @@ This will fail in production.`);
                             /* TEXT */
                           )
                         ]),
+                        $setup.hasUnreadInvitation(friend) ? (vue.openBlock(), vue.createElementBlock("view", {
+                          key: 0,
+                          class: "invitation-badge"
+                        }, [
+                          vue.createVNode(_component_uni_icons, {
+                            type: "calendar",
+                            size: "14",
+                            color: "#fff"
+                          })
+                        ])) : vue.createCommentVNode("v-if", true),
                         friend.unreadCount > 0 ? (vue.openBlock(), vue.createElementBlock(
                           "view",
                           {
-                            key: 0,
+                            key: 1,
                             class: "unread-badge"
                           },
                           vue.toDisplayString(friend.unreadCount > 99 ? "99+" : friend.unreadCount),
@@ -25220,7 +25570,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
+  const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Friends/Friends.vue"]]);
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -25534,21 +25884,110 @@ This will fail in production.`);
       const username = uni.getStorageSync("username");
       const startTime = vue.ref(0);
       const elapsedTime = vue.ref(0);
-      const timerInterval = vue.ref(null);
+      let timerInterval = vue.ref(null);
       const serverUrl = uni.getStorageSync("serverUrl");
       const isEditing = vue.ref(false);
       const editDuration = vue.ref(0);
       const editCalories = vue.ref(0);
       const targetDuration = vue.ref(20);
       const targetCalories = vue.ref(100);
+      const exercisePlans = vue.ref([]);
+      const timer = vue.ref(0);
+      let isTimerRunning = vue.ref(false);
+      const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+      };
+      const toggleTimer = () => {
+        if (isTimerRunning) {
+          clearInterval(timerInterval);
+          isTimerRunning = false;
+          saveTimerExerciseDuration();
+        } else {
+          isTimerRunning = true;
+          timerInterval = setInterval(() => {
+            timer.value++;
+          }, 1e3);
+        }
+      };
+      const saveTimerExerciseDuration = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Sports/Sports.vue:214", "用户未登录");
+          return;
+        }
+        const today2 = dayjs().format("YYYY-MM-DD");
+        const timerDurationInMinutes = Math.floor(timer.value / 60);
+        uni.request({
+          url: `${serverUrl}/exercise-duration`,
+          // 获取当前日期的运动时长
+          method: "GET",
+          data: {
+            username: username2
+          },
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              const existingDuration = res.data.data.exercise_duration || 0;
+              const totalDuration = existingDuration + timerDurationInMinutes;
+              uni.request({
+                url: `${serverUrl}/save-exercise-duration`,
+                method: "POST",
+                data: {
+                  username: username2,
+                  date: today2,
+                  exercise_duration: totalDuration
+                  // 保存累加后的时长
+                },
+                header: {
+                  "Content-Type": "application/json"
+                },
+                success: (updateRes) => {
+                  if (updateRes.statusCode === 200 && updateRes.data.success) {
+                    formatAppLog("log", "at pages/Sports/Sports.vue:253", "今日运动时长已保存/更新");
+                    uni.$emit("saveExerciseDuration");
+                    target.value = Math.round(currentExercise.value / planExercise.value * 100);
+                    timer.value = 0;
+                    formatAppLog("log", "at pages/Sports/Sports.vue:262", "计时器已清零");
+                  } else {
+                    formatAppLog("error", "at pages/Sports/Sports.vue:264", "保存今日运动时长失败：", updateRes.data.message || "未知错误");
+                  }
+                },
+                fail: (err) => {
+                  formatAppLog("error", "at pages/Sports/Sports.vue:268", "请求失败：", err);
+                }
+              });
+            } else {
+              formatAppLog("error", "at pages/Sports/Sports.vue:272", "获取当前运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Sports/Sports.vue:276", "请求失败：", err);
+          }
+        });
+      };
+      const loadExercisePlans = () => {
+        const username2 = uni.getStorageSync("username");
+        const storedPlans = uni.getStorageSync(`freeExercisePlans_${username2}`) || "[]";
+        exercisePlans.value = JSON.parse(storedPlans);
+      };
+      uni.$on("refreshExercisePlans", (updatedPlans) => {
+        exercisePlans.value = updatedPlans;
+      });
       onPullDownRefresh(async () => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:151", "refresh");
+        formatAppLog("log", "at pages/Sports/Sports.vue:296", "refresh");
         await loadMyPlans();
+        loadExerciseDurations();
+        loadExercisePlans();
         uni.stopPullDownRefresh();
       });
       vue.onMounted(() => {
         loadMyPlans();
         loadExerciseDurations();
+        loadExercisePlans();
         fetchPlanExercise();
         fetchUserTargets();
         target.value = Math.round(currentExercise.value / planExercise.value * 100);
@@ -25566,7 +26005,7 @@ This will fail in production.`);
         try {
           const username2 = uni.getStorageSync("username");
           uni.setStorageSync(`username`, username2);
-          formatAppLog("log", "at pages/Sports/Sports.vue:183", `username: ${username2}`);
+          formatAppLog("log", "at pages/Sports/Sports.vue:331", `username: ${username2}`);
           const res = await uni.request({
             url: `${serverUrl}/getTargets`,
             method: "POST",
@@ -25581,7 +26020,7 @@ This will fail in production.`);
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:200", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/Sports/Sports.vue:348", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -25607,7 +26046,7 @@ This will fail in production.`);
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:231", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/Sports/Sports.vue:379", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
         isEditing.value = false;
@@ -25618,7 +26057,7 @@ This will fail in production.`);
       const fetchPlanExercise = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:245", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:393", "用户未登录");
           return;
         }
         uni.request({
@@ -25633,18 +26072,18 @@ This will fail in production.`);
               planExercise.value = res.data.data.sport_time_goal || 60;
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:261", "获取计划运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:409", "获取计划运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:265", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:413", "请求失败：", err);
           }
         });
       };
       const loadExerciseDurations = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:274", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:422", "用户未登录");
           return;
         }
         uni.request({
@@ -25659,18 +26098,18 @@ This will fail in production.`);
               currentExercise.value = res.data.data.exercise_duration || 0;
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:290", "获取今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:438", "获取今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:294", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:442", "请求失败：", err);
           }
         });
       };
       const saveExerciseDuration = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:302", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:450", "用户未登录");
           return;
         }
         const today2 = dayjs().format("YYYY-MM-DD");
@@ -25688,15 +26127,15 @@ This will fail in production.`);
           },
           success: (res) => {
             if (res.statusCode === 200 && res.data.success) {
-              formatAppLog("log", "at pages/Sports/Sports.vue:322", "今日运动时长已保存");
+              formatAppLog("log", "at pages/Sports/Sports.vue:470", "今日运动时长已保存");
               uni.$emit("saveExerciseDuration");
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:328", "保存今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:476", "保存今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:332", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:480", "请求失败：", err);
           }
         });
       };
@@ -25725,7 +26164,7 @@ This will fail in production.`);
       };
       let videoStartTime = null;
       const playPlan = (plan) => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:367", "BV数据:", plan.videoUrl);
+        formatAppLog("log", "at pages/Sports/Sports.vue:515", "BV数据:", plan.videoUrl);
         if (plan.videoUrl) {
           currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}&quality=120`;
           isModalVisible.value = true;
@@ -25754,16 +26193,26 @@ This will fail in production.`);
         elapsedTime.value = 0;
       };
       const goToMy_Info = () => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:410", "跳转到我的信息页面");
+        formatAppLog("log", "at pages/Sports/Sports.vue:558", "跳转到我的信息页面");
         uni.navigateTo({
           url: "/pages/My_Info/My_Info"
         });
       };
-      const __returned__ = { today, exerciseDurations, currentExercise, planExercise, modelVale, target, tab, myPlans, currentVideoUrl, isModalVisible, username, startTime, elapsedTime, timerInterval, serverUrl, isEditing, editDuration, editCalories, targetDuration, targetCalories, openEditModal, fetchUserTargets, saveEdit, cancelEdit, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
+      const __returned__ = { today, exerciseDurations, currentExercise, planExercise, modelVale, target, tab, myPlans, currentVideoUrl, isModalVisible, username, startTime, elapsedTime, get timerInterval() {
+        return timerInterval;
+      }, set timerInterval(v2) {
+        timerInterval = v2;
+      }, serverUrl, isEditing, editDuration, editCalories, targetDuration, targetCalories, exercisePlans, timer, get isTimerRunning() {
+        return isTimerRunning;
+      }, set isTimerRunning(v2) {
+        isTimerRunning = v2;
+      }, formatTime, toggleTimer, saveTimerExerciseDuration, loadExercisePlans, openEditModal, fetchUserTargets, saveEdit, cancelEdit, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
         return videoStartTime;
       }, set videoStartTime(v2) {
         videoStartTime = v2;
-      }, playPlan, closeVideo, goToMy_Info, ref: vue.ref, onMounted: vue.onMounted, LCircle, uniPopup: __easycom_1, get dayjs() {
+      }, playPlan, closeVideo, goToMy_Info, ref: vue.ref, onMounted: vue.onMounted, LCircle, uniPopup: __easycom_1, get axios() {
+        return axios$1;
+      }, get dayjs() {
         return dayjs;
       }, get onPullDownRefresh() {
         return onPullDownRefresh;
@@ -25898,6 +26347,13 @@ This will fail in production.`);
           class: "plan-section"
         }, [
           vue.createElementVNode("div", { class: "plan-list" }, [
+            vue.createCommentVNode(" 判断是否有训练计划 "),
+            $setup.myPlans.length === 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+              key: 0,
+              class: "no-exercise"
+            }, [
+              vue.createElementVNode("text", null, "暂无我的课程计划，快去添加吧！")
+            ])) : vue.createCommentVNode("v-if", true),
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
               null,
@@ -25997,14 +26453,87 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true)
       ]),
-      vue.createCommentVNode(" 自由训练展示 "),
       $setup.tab === "freeExercise" ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
         class: "plan-section"
-      })) : vue.createCommentVNode("v-if", true)
+      }, [
+        vue.createCommentVNode(" 自由训练展示 "),
+        vue.createElementVNode("view", { class: "exercise-list" }, [
+          vue.createCommentVNode(" 顶部计时器 "),
+          vue.createElementVNode("view", { class: "timer-container" }, [
+            vue.createElementVNode("text", { class: "timer-label" }, "运动时长:"),
+            vue.createElementVNode(
+              "text",
+              { class: "timer-time" },
+              vue.toDisplayString($setup.formatTime($setup.timer)),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode(
+              "button",
+              {
+                onClick: $setup.toggleTimer,
+                class: "timer-btn"
+              },
+              vue.toDisplayString($setup.isTimerRunning ? "停止计时" : "开始计时"),
+              1
+              /* TEXT */
+            )
+          ]),
+          vue.createCommentVNode(" 判断是否有训练计划 "),
+          $setup.exercisePlans.length === 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "no-exercise"
+          }, [
+            vue.createElementVNode("text", null, "暂无自由训练计划，快去添加吧！")
+          ])) : (vue.openBlock(), vue.createElementBlock(
+            vue.Fragment,
+            { key: 1 },
+            [
+              vue.createCommentVNode(" 循环渲染训练计划 "),
+              vue.createElementVNode("view", null, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList($setup.exercisePlans, (plan, index) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: index,
+                      class: "exercise-item"
+                    }, [
+                      vue.createElementVNode(
+                        "text",
+                        { class: "exercise-title" },
+                        vue.toDisplayString(plan.title),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createCommentVNode(" 通过v-html渲染HTML内容 "),
+                      vue.createElementVNode("view", {
+                        class: "exercise-content",
+                        innerHTML: plan.content
+                      }, null, 8, ["innerHTML"]),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "exercise-date" },
+                        "创建时间：" + vue.toDisplayString(plan.createdAt),
+                        1
+                        /* TEXT */
+                      )
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ],
+            2112
+            /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+          ))
+        ])
+      ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-ec372f74"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Sports/Sports.vue"]]);
+  const PagesSportsSports = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-ec372f74"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Sports/Sports.vue"]]);
   const defaultAvatar$1 = "/static/default-avatar.jpg";
   const _sfc_main$a = {
     __name: "My_Info",
@@ -26276,7 +26805,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-4788b7bf"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/My_Info/My_Info.vue"]]);
+  const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-4788b7bf"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/My_Info/My_Info.vue"]]);
   const add_icon = "/static/icon/add.png";
   const delete_icon = "/static/icon/delete.png";
   const _sfc_main$9 = {
@@ -26514,25 +27043,36 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-a9e5e983"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Search/Search.vue"]]);
+  const PagesSearchSearch = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-a9e5e983"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Search/Search.vue"]]);
   const defaultAvatar = "/static/default-avatar.png";
   const _sfc_main$8 = {
     __name: "InviteFriends",
     setup(__props, { expose: __expose }) {
       __expose();
+      const username = uni.getStorageSync("username");
       const searchQuery = vue.ref("");
       const serverUrl = uni.getStorageSync("serverUrl");
-      formatAppLog("log", "at pages/InviteFriends/InviteFriends.vue:52", serverUrl);
+      formatAppLog("log", "at pages/InviteFriends/InviteFriends.vue:54", serverUrl);
       const friendsList = vue.ref([
         { id: 1, username: "Alice", avatar: "", invited: false },
         { id: 2, username: "Bob", avatar: "", invited: false }
         // ... 更多好友数据
       ]);
+      vue.onMounted(() => {
+        friendsList.value = uni.getStorageSync("friendsList_" + username);
+      });
+      onPullDownRefresh(() => {
+        friendsList.value = uni.getStorageSync("friendsList_" + username);
+        setTimeout(() => {
+          uni.stopPullDownRefresh();
+        }, 1e3);
+      });
       const filteredFriends = vue.computed(() => {
         return friendsList.value.filter(
           (friend) => friend.username.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       });
+      const store = useWebSocketStore$1();
       const inviteFriend = (friend) => {
         if (friend.invited)
           return;
@@ -26545,6 +27085,8 @@ This will fail in production.`);
           time: (/* @__PURE__ */ new Date()).getTime(),
           handled: false,
           accepted: null,
+          isRead: false,
+          sendFailed: false,
           challengeData: {
             duration: 7,
             goal: {
@@ -26554,47 +27096,30 @@ This will fail in production.`);
             startTime: (/* @__PURE__ */ new Date()).getTime()
           }
         };
-        uni.navigateTo({
-          url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
-          success: () => {
-            uni.$emit("new-invitation", invitation);
-            uni.request({
-              url: `${serverUrl}/chat/send`,
-              method: "POST",
-              data: {
-                senderId: invitation.sender,
-                receiverId: invitation.receiver,
-                content: JSON.stringify(invitation)
-              },
-              success: (res) => {
-                if (res.statusCode === 200) {
-                  friend.invited = true;
-                  uni.showToast({
-                    title: "邀请已发送",
-                    icon: "success"
-                  });
-                } else {
-                  uni.showToast({
-                    title: "发送失败",
-                    icon: "none"
-                  });
-                }
-              },
-              fail: (err) => {
-                formatAppLog("error", "at pages/InviteFriends/InviteFriends.vue:122", "发送邀请失败:", err);
-                uni.showToast({
-                  title: "发送失败",
-                  icon: "none"
-                });
-              }
-            });
-          }
-        });
+        if (store.isConnected) {
+          formatAppLog("log", "at pages/InviteFriends/InviteFriends.vue:107", "发送邀请");
+          store.sendInvitation(invitation);
+          friend.invited = true;
+          uni.showToast({
+            title: "邀请已发送",
+            icon: "success"
+          });
+        } else {
+          uni.showToast({
+            title: "发送失败",
+            icon: "none"
+          });
+          store.initWebSocket();
+        }
       };
       const goBack = () => {
         uni.navigateBack();
       };
-      const __returned__ = { searchQuery, defaultAvatar, serverUrl, friendsList, filteredFriends, inviteFriend, goBack, ref: vue.ref, computed: vue.computed };
+      const __returned__ = { username, searchQuery, defaultAvatar, serverUrl, friendsList, filteredFriends, store, inviteFriend, goBack, onMounted: vue.onMounted, ref: vue.ref, computed: vue.computed, onUnmounted: vue.onUnmounted, get useWebSocketStore() {
+        return useWebSocketStore$1;
+      }, get onPullDownRefresh() {
+        return onPullDownRefresh;
+      } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -26677,7 +27202,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-446afbc7"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/InviteFriends/InviteFriends.vue"]]);
+  const PagesInviteFriendsInviteFriends = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-446afbc7"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/InviteFriends/InviteFriends.vue"]]);
   const _sfc_main$7 = {
     __name: "Chat",
     setup(__props, { expose: __expose }) {
@@ -26722,11 +27247,11 @@ This will fail in production.`);
         return groups;
       });
       const store = useWebSocketStore$1();
-      uni.$on("friendStatusChanged", ({ username, status }) => {
-        if (username === friendInfo.value.username) {
-          friendInfo.value.online = status === "online";
-        }
-      });
+      const deal_with_invitation = (data) => {
+        formatAppLog("log", "at pages/Chat/Chat.vue:308", "发送了打卡邀请:", data);
+        const localMessages = getLocalMessages(friendInfo.value.username);
+        messages2.value = localMessages;
+      };
       const sendMessage = async () => {
         if (!messageText.value.trim())
           return;
@@ -26747,19 +27272,19 @@ This will fail in production.`);
           if (store.isConnected) {
             store.websocket.send({
               data: JSON.stringify(newMessage),
-              success: () => formatAppLog("log", "at pages/Chat/Chat.vue:322", "消息发送成功:", newMessage),
+              success: () => formatAppLog("log", "at pages/Chat/Chat.vue:335", "消息发送成功:", newMessage),
               fail: (error2) => {
-                formatAppLog("error", "at pages/Chat/Chat.vue:324", "发送消息失败:", error2);
+                formatAppLog("error", "at pages/Chat/Chat.vue:337", "发送消息失败:", error2);
                 markMessageAsFailed(newMessage.id);
               }
             });
           } else {
-            formatAppLog("warn", "at pages/Chat/Chat.vue:329", "WebSocket未连接");
+            formatAppLog("warn", "at pages/Chat/Chat.vue:342", "WebSocket未连接");
             store.initWebSocket();
             markMessageAsFailed(newMessage.id);
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:334", "发送消息失败:", error2);
+          formatAppLog("error", "at pages/Chat/Chat.vue:347", "发送消息失败:", error2);
           markMessageAsFailed(newMessage.id);
         }
         vue.nextTick(() => {
@@ -26791,7 +27316,7 @@ This will fail in production.`);
         invitationContent.value = "";
         input_status.value = true;
       };
-      const sendInvitation = async () => {
+      const sendInvitation = () => {
         if (!invitationContent.value.trim()) {
           uni.showToast({
             title: "请输入邀请内容",
@@ -26804,10 +27329,12 @@ This will fail in production.`);
           id: Date.now().toString(),
           sender: userInfo2.value.username,
           receiver: friendInfo.value.username,
-          content: invitationContent.value,
+          content: invitationContent.value.trim(),
           time: (/* @__PURE__ */ new Date()).getTime(),
           handled: false,
           accepted: null,
+          isRead: false,
+          sendFailed: false,
           challengeData: {
             duration: challengeDuration.value,
             goal: {
@@ -26817,77 +27344,33 @@ This will fail in production.`);
             startTime: (/* @__PURE__ */ new Date()).getTime()
           }
         };
-        messages2.value.push(invitation);
-        saveMessageToLocal(invitation);
-        closeInvitationDialog();
-        scrollToBottom();
-        try {
-          const [err, res] = await uni.request({
-            url: `${serverUrl}/chat/send`,
-            method: "POST",
-            data: {
-              senderId: invitation.sender,
-              receiverId: invitation.receiver,
-              content: JSON.stringify(invitation)
-            }
-          });
-          if (err) {
-            throw err;
-          }
-          if (res.statusCode !== 200) {
-            throw new Error(res.data.message || "发送失败");
-          }
+        if (store.isConnected) {
+          store.sendInvitation(invitation);
+          closeInvitationDialog();
           uni.showToast({
             title: "邀请已发送",
             icon: "success"
           });
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:435", "发送邀请失败:", error2);
-          const msgIndex = messages2.value.findIndex((m2) => m2.id === invitation.id);
-          if (msgIndex !== -1) {
-            messages2.value[msgIndex].sendFailed = true;
-            const key = getLocalStorageKey(friendInfo.value.username);
-            let history = uni.getStorageSync(key) || [];
-            const historyIndex = history.findIndex((m2) => m2.id === invitation.id);
-            if (historyIndex !== -1) {
-              history[historyIndex].sendFailed = true;
-              uni.setStorageSync(key, history);
-            }
-          }
+        } else {
           uni.showToast({
             title: "发送失败",
             icon: "none"
           });
+          store.initWebSocket();
         }
       };
-      const handleInvitation = (msg, accepted) => {
-        const response = {
-          type: "invitation_response",
-          sender: userInfo2.value.username,
-          receiver: msg.sender,
-          invitationId: msg.id,
-          accepted,
-          time: (/* @__PURE__ */ new Date()).getTime()
-        };
-        websocket.value.send({
-          data: JSON.stringify(response),
-          success: () => {
-            const msgIndex = messages2.value.findIndex((m2) => m2.id === msg.id);
-            if (msgIndex !== -1) {
-              messages2.value[msgIndex].handled = true;
-              messages2.value[msgIndex].accepted = accepted;
-              if (accepted) {
-                enterChallenge(messages2.value[msgIndex]);
-              }
-            }
+      const handleInvitation = (data) => {
+        try {
+          const invitation = data;
+          formatAppLog("log", "at pages/Chat/Chat.vue:441", "处理打卡邀请:", invitation);
+          if (data.sender === friendInfo.value.username && data.receiver === userInfo2.value.username || data.sender === userInfo2.value.username && data.receiver === friendInfo.value.username) {
+            const isUnread = data.sender === friendInfo.value.username && data.time > lastReadTimestamp.value;
+            invitation.isRead = !isUnread;
+            messages2.value.push(invitation);
+            scrollToBottom();
           }
-        });
-      };
-      const handleInvitationResponse = (data) => {
-        const msgIndex = messages2.value.findIndex((m2) => m2.id === data.invitationId);
-        if (msgIndex !== -1) {
-          messages2.value[msgIndex].handled = true;
-          messages2.value[msgIndex].accepted = data.accepted;
+        } catch (error2) {
+          formatAppLog("error", "at pages/Chat/Chat.vue:464", "处理打卡邀请失败:", error2, data);
         }
       };
       const initPage = async () => {
@@ -26896,6 +27379,9 @@ This will fail in production.`);
         const { id, name } = currentPage2.$page.options;
         friendInfo.value.username = name;
         const localMessages = getLocalMessages(name);
+        for (const msg of localMessages) {
+          formatAppLog("log", "at pages/Chat/Chat.vue:480", "msg: " + msg);
+        }
         if (localMessages.length > 0) {
           messages2.value = localMessages;
           scrollToBottom();
@@ -26944,10 +27430,53 @@ This will fail in production.`);
           scrollToBottom(false);
           markAllMessagesAsRead();
         });
+        uni.$on("friendStatusChanged", ({ username, status: status2 }) => {
+          if (username === friendInfo.value.username) {
+            friendInfo.value.online = status2 === "online";
+          }
+        });
+        uni.$on("showMyInvitation", (data) => {
+          deal_with_invitation(data);
+        });
+        uni.$on("websocketMessage", (data) => {
+          try {
+            formatAppLog("log", "at pages/Chat/Chat.vue:573", "收到WebSocket消息:", data);
+            switch (data.type) {
+              case "text":
+                if (data.sender === friendInfo.value.username && data.receiver === userInfo2.value.username || data.sender === userInfo2.value.username && data.receiver === friendInfo.value.username) {
+                  const isUnread = data.sender === friendInfo.value.username && data.time > lastReadTimestamp.value;
+                  messages2.value.push({
+                    ...data,
+                    isRead: !isUnread
+                  });
+                  vue.nextTick(() => {
+                    scrollTop.value = 99999;
+                  });
+                }
+                break;
+              case "read_ack":
+                if (data.sender === friendInfo.value.username) {
+                  handleReadAck(data);
+                }
+                break;
+              case "invitation":
+                if (data.sender === friendInfo.value.username) {
+                  handleInvitation(data);
+                }
+                break;
+            }
+          } catch (error2) {
+            formatAppLog("error", "at pages/Chat/Chat.vue:622", "处理WebSocket消息失败:", error2);
+          }
+        });
         userInfo2.value.username = uni.getStorageSync("username");
-        userInfo2.value.avatar = uni.getStorageSync("userInfo_" + userInfo2.value.username).avatar;
-        friendInfo.value.avatar = uni.getStorageSync("friendInfo_" + userInfo2.value.username + "_" + friendInfo.value.username).avatar;
-        formatAppLog("log", "at pages/Chat/Chat.vue:586", "friendInfo.value.avatar: " + friendInfo.value.avatar);
+        userInfo2.value.avatar = uni.getStorageSync(
+          "userInfo_" + userInfo2.value.username
+        ).avatar;
+        friendInfo.value.avatar = uni.getStorageSync(
+          "friendInfo_" + userInfo2.value.username + "_" + friendInfo.value.username
+        ).avatar;
+        formatAppLog("log", "at pages/Chat/Chat.vue:632", "friendInfo.value.avatar: " + friendInfo.value.avatar);
         const status = store.getFriendStatus(friendInfo.value.username);
         friendInfo.value.online = status.isOnline;
       });
@@ -27027,10 +27556,10 @@ This will fail in production.`);
                   messages2.value[msgIndex].sendFailed = false;
                   messages2.value[msgIndex].time = message.time;
                 }
-                formatAppLog("log", "at pages/Chat/Chat.vue:692", "消息重发成功:", message);
+                formatAppLog("log", "at pages/Chat/Chat.vue:738", "消息重发成功:", message);
               },
               fail: (error2) => {
-                formatAppLog("error", "at pages/Chat/Chat.vue:695", "重发消息失败:", error2);
+                formatAppLog("error", "at pages/Chat/Chat.vue:741", "重发消息失败:", error2);
                 markMessageAsFailed(message.id);
                 uni.showToast({
                   title: "重发失败",
@@ -27039,7 +27568,7 @@ This will fail in production.`);
               }
             });
           } else {
-            formatAppLog("warn", "at pages/Chat/Chat.vue:704", "WebSocket未连接");
+            formatAppLog("warn", "at pages/Chat/Chat.vue:750", "WebSocket未连接");
             store.initWebSocket();
             markMessageAsFailed(message.id);
             uni.showToast({
@@ -27048,7 +27577,7 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:713", "重发消息失败:", error2);
+          formatAppLog("error", "at pages/Chat/Chat.vue:759", "重发消息失败:", error2);
           markMessageAsFailed(message.id);
           uni.showToast({
             title: "重发失败",
@@ -27070,7 +27599,7 @@ This will fail in production.`);
         }
       };
       const handleReadAck = (data) => {
-        formatAppLog("log", "at pages/Chat/Chat.vue:739", "处理已读回执:", data);
+        formatAppLog("log", "at pages/Chat/Chat.vue:785", "处理已读回执:", data);
         messages2.value = messages2.value.map((msg) => {
           if (msg.sender === userInfo2.value.username && msg.receiver === data.sender && !msg.isRead && msg.time <= data.time) {
             return { ...msg, isRead: true };
@@ -27124,7 +27653,7 @@ This will fail in production.`);
               input_status.value = true;
               break;
             default:
-              formatAppLog("warn", "at pages/Chat/Chat.vue:818", `未知的操作: ${action}`);
+              formatAppLog("warn", "at pages/Chat/Chat.vue:864", `未知的操作: ${action}`);
           }
         }, 100);
       };
@@ -27152,38 +27681,10 @@ This will fail in production.`);
         const key = getLocalStorageKey(friendUsername);
         return uni.getStorageSync(key) || [];
       };
-      uni.$on("websocketMessage", (data) => {
-        try {
-          formatAppLog("log", "at pages/Chat/Chat.vue:860", "收到WebSocket消息:", data);
-          switch (data.type) {
-            case "text":
-              if (data.sender === friendInfo.value.username && data.receiver === userInfo2.value.username || data.sender === userInfo2.value.username && data.receiver === friendInfo.value.username) {
-                const isUnread = data.sender === friendInfo.value.username && data.time > lastReadTimestamp.value;
-                messages2.value.push({
-                  ...data,
-                  isRead: !isUnread
-                });
-                saveMessageToLocal({
-                  ...data,
-                  isRead: !isUnread
-                });
-                vue.nextTick(() => {
-                  scrollTop.value = 99999;
-                });
-              }
-              break;
-            case "read_ack":
-              if (data.sender === friendInfo.value.username) {
-                handleReadAck(data);
-              }
-              break;
-          }
-        } catch (error2) {
-          formatAppLog("error", "at pages/Chat/Chat.vue:903", "处理WebSocket消息失败:", error2);
-        }
-      });
       vue.onUnmounted(() => {
         uni.$off("websocketMessage");
+        uni.$off("showMyInvitation");
+        uni.$off("friendStatusChanged");
       });
       const observeMessageVisibility = () => {
         const observer = uni.createIntersectionObserver();
@@ -27223,7 +27724,70 @@ This will fail in production.`);
           uni.$emit("updateUnreadCounts");
         }
       };
-      const __returned__ = { input_status, serverUrl, websocketUrl, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, old_scrollTop, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, groupedMessages, store, sendMessage, markMessageAsFailed, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, handleInvitationResponse, initPage, handleScroll, lastReadTimestamp, markAllMessagesAsRead, scrollToBottom, formatTime, goBack, enterChallenge, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, handleMessageClick, handleReadAck, clearHistory, moreMenuPopup, showMoreMenu, handleMenuClick, getLocalStorageKey, saveMessageToLocal, getLocalMessages, observeMessageVisibility, markMessageAsRead, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get useWebSocketStore() {
+      const handleAcceptInvitation = async (msg) => {
+        const response = {
+          type: "invitation_response",
+          id: Date.now().toString(),
+          invitationId: msg.id,
+          sender: userInfo2.value.username,
+          receiver: msg.sender,
+          content: "已接受运动挑战邀请",
+          time: (/* @__PURE__ */ new Date()).getTime(),
+          accepted: true
+        };
+        try {
+          store.websocket.send({
+            data: JSON.stringify(response)
+          });
+          msg.handled = true;
+          msg.accepted = true;
+          store.saveMessageToLocal(msg);
+          uni.showToast({
+            title: "已接受邀请",
+            icon: "success"
+          });
+          setTimeout(() => {
+            uni.navigateTo({
+              url: `/pages/Home/Home?challenge=${encodeURIComponent(JSON.stringify({
+                duration: msg.duration,
+                minutes: msg.minutes,
+                calories: msg.calories,
+                startTime: msg.startTime,
+                partner: msg.sender
+              }))}`
+            });
+          }, 1500);
+        } catch (error2) {
+          formatAppLog("error", "at pages/Chat/Chat.vue:1014", "处理打卡邀请失败:", error2);
+          uni.showToast({
+            title: "操作失败",
+            icon: "none"
+          });
+        }
+      };
+      const handleRejectInvitation = (msg) => {
+        const response = {
+          type: "invitation_response",
+          id: Date.now().toString(),
+          invitationId: msg.id,
+          sender: userInfo2.username,
+          receiver: msg.sender,
+          content: "已拒绝运动挑战邀请",
+          time: (/* @__PURE__ */ new Date()).getTime(),
+          accepted: false
+        };
+        store.websocket.send({
+          data: JSON.stringify(response)
+        });
+        msg.handled = true;
+        msg.accepted = false;
+        store.saveMessageToLocal(msg);
+        uni.showToast({
+          title: "已拒绝邀请",
+          icon: "none"
+        });
+      };
+      const __returned__ = { input_status, serverUrl, websocketUrl, messageText, messages: messages2, scrollTop, websocket, lastMessageId, invitationContent, invitationPopup, userInfo: userInfo2, friendInfo, old_scrollTop, unreadCount, showNewMessageTip, isLoading, isAtBottom, currentPage, groupedMessages, store, deal_with_invitation, sendMessage, markMessageAsFailed, showInvitationDialog, closeInvitationDialog, sendInvitation, handleInvitation, initPage, handleScroll, lastReadTimestamp, markAllMessagesAsRead, scrollToBottom, formatTime, goBack, enterChallenge, goalMinutes, goalCalories, challengeDuration, onDurationChange, formatDate, resendMessage, handleMessageClick, handleReadAck, clearHistory, moreMenuPopup, showMoreMenu, handleMenuClick, getLocalStorageKey, saveMessageToLocal, getLocalMessages, observeMessageVisibility, markMessageAsRead, handleAcceptInvitation, handleRejectInvitation, ref: vue.ref, onMounted: vue.onMounted, onUnmounted: vue.onUnmounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get useWebSocketStore() {
         return useWebSocketStore$1;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -27331,81 +27895,139 @@ This will fail in production.`);
                           vue.Fragment,
                           { key: 1 },
                           [
-                            vue.createCommentVNode(" 打卡邀请卡片 "),
-                            vue.createElementVNode("view", { class: "invitation-card" }, [
-                              vue.createElementVNode("view", { class: "card-header" }, [
-                                vue.createVNode(_component_uni_icons, {
-                                  type: "calendar",
-                                  size: "16",
-                                  color: "#4CD964"
-                                }),
-                                vue.createElementVNode("text", { class: "card-title" }, "打卡邀请")
-                              ]),
-                              vue.createElementVNode("view", { class: "card-content" }, [
-                                vue.createElementVNode(
-                                  "text",
-                                  { class: "invitation-text" },
-                                  vue.toDisplayString(msg.content),
-                                  1
-                                  /* TEXT */
-                                ),
-                                vue.createElementVNode("view", { class: "challenge-details" }, [
-                                  vue.createElementVNode(
-                                    "text",
-                                    null,
-                                    "🎯 " + vue.toDisplayString(msg.challengeData.duration) + "天挑战",
-                                    1
-                                    /* TEXT */
-                                  ),
-                                  vue.createElementVNode(
-                                    "text",
-                                    null,
-                                    "⏱️ " + vue.toDisplayString(msg.challengeData.goal.minutes) + "分钟/天",
-                                    1
-                                    /* TEXT */
-                                  ),
-                                  vue.createElementVNode(
-                                    "text",
-                                    null,
-                                    "🔥 " + vue.toDisplayString(msg.challengeData.goal.calories) + "千卡/天",
-                                    1
-                                    /* TEXT */
-                                  )
+                            vue.createCommentVNode(" 打卡邀请消息 "),
+                            vue.createElementVNode("view", { class: "invitation-bubble" }, [
+                              vue.createElementVNode("view", { class: "invitation-card" }, [
+                                vue.createElementVNode("view", { class: "invitation-header" }, [
+                                  vue.createVNode(_component_uni_icons, {
+                                    type: "calendar-filled",
+                                    size: "20",
+                                    color: "#4CD964"
+                                  }),
+                                  vue.createElementVNode("text", { class: "invitation-title" }, "运动打卡挑战")
                                 ]),
-                                msg.sender !== $setup.userInfo.username && !msg.handled ? (vue.openBlock(), vue.createElementBlock("view", {
+                                vue.createElementVNode("view", { class: "card-content" }, [
+                                  vue.createElementVNode(
+                                    "text",
+                                    { class: "invitation-text" },
+                                    vue.toDisplayString(msg.content),
+                                    1
+                                    /* TEXT */
+                                  ),
+                                  vue.createElementVNode("view", { class: "challenge-details" }, [
+                                    vue.createElementVNode("view", { class: "detail-item" }, [
+                                      vue.createElementVNode("text", { class: "icon" }, "🎯"),
+                                      vue.createElementVNode("text", { class: "label" }, "挑战天数"),
+                                      vue.createElementVNode(
+                                        "text",
+                                        { class: "value" },
+                                        vue.toDisplayString(msg.duration) + "天",
+                                        1
+                                        /* TEXT */
+                                      )
+                                    ]),
+                                    vue.createElementVNode("view", { class: "detail-item" }, [
+                                      vue.createElementVNode("text", { class: "icon" }, "⏱️"),
+                                      vue.createElementVNode("text", { class: "label" }, "每日目标"),
+                                      vue.createElementVNode(
+                                        "text",
+                                        { class: "value" },
+                                        vue.toDisplayString(msg.minutes) + "分钟",
+                                        1
+                                        /* TEXT */
+                                      )
+                                    ]),
+                                    vue.createElementVNode("view", { class: "detail-item" }, [
+                                      vue.createElementVNode("text", { class: "icon" }, "🔥"),
+                                      vue.createElementVNode("text", { class: "label" }, "消耗目标"),
+                                      vue.createElementVNode(
+                                        "text",
+                                        { class: "value" },
+                                        vue.toDisplayString(msg.calories) + "千卡",
+                                        1
+                                        /* TEXT */
+                                      )
+                                    ])
+                                  ])
+                                ]),
+                                msg.sender === $setup.userInfo.username ? (vue.openBlock(), vue.createElementBlock("view", {
                                   key: 0,
-                                  class: "card-actions"
-                                }, [
-                                  vue.createElementVNode("button", {
-                                    class: "action-btn accept",
-                                    onClick: ($event) => $setup.handleInvitation(msg, true)
-                                  }, " 接受 ", 8, ["onClick"]),
-                                  vue.createElementVNode("button", {
-                                    class: "action-btn reject",
-                                    onClick: ($event) => $setup.handleInvitation(msg, false)
-                                  }, " 拒绝 ", 8, ["onClick"])
-                                ])) : msg.handled ? (vue.openBlock(), vue.createElementBlock("view", {
-                                  key: 1,
                                   class: "invitation-status"
                                 }, [
-                                  vue.createElementVNode(
-                                    "text",
-                                    {
-                                      class: vue.normalizeClass([
-                                        "status-text",
-                                        msg.accepted ? "accepted" : "rejected"
-                                      ])
-                                    },
-                                    vue.toDisplayString(msg.accepted ? "已接受" : "已拒绝"),
-                                    3
-                                    /* TEXT, CLASS */
-                                  ),
-                                  msg.accepted ? (vue.openBlock(), vue.createElementBlock("button", {
-                                    key: 0,
-                                    class: "enter-btn",
-                                    onClick: ($event) => $setup.enterChallenge(msg)
-                                  }, " 进入打卡 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
-                                ])) : vue.createCommentVNode("v-if", true)
+                                  !msg.handled ? (vue.openBlock(), vue.createElementBlock(
+                                    vue.Fragment,
+                                    { key: 0 },
+                                    [
+                                      vue.createVNode(_component_uni_icons, {
+                                        type: "waiting",
+                                        size: "16",
+                                        color: "#999"
+                                      }),
+                                      vue.createElementVNode("text", { class: "waiting" }, "等待对方接受")
+                                    ],
+                                    64
+                                    /* STABLE_FRAGMENT */
+                                  )) : (vue.openBlock(), vue.createElementBlock(
+                                    vue.Fragment,
+                                    { key: 1 },
+                                    [
+                                      vue.createVNode(_component_uni_icons, {
+                                        type: msg.accepted ? "checkmarkempty" : "closeempty",
+                                        size: "16",
+                                        color: msg.accepted ? "#4CD964" : "#999"
+                                      }, null, 8, ["type", "color"]),
+                                      vue.createElementVNode(
+                                        "text",
+                                        {
+                                          class: vue.normalizeClass({ accepted: msg.accepted })
+                                        },
+                                        vue.toDisplayString(msg.accepted ? "对方已接受挑战" : "对方已拒绝"),
+                                        3
+                                        /* TEXT, CLASS */
+                                      )
+                                    ],
+                                    64
+                                    /* STABLE_FRAGMENT */
+                                  ))
+                                ])) : !msg.handled ? (vue.openBlock(), vue.createElementBlock("view", {
+                                  key: 1,
+                                  class: "invitation-actions"
+                                }, [
+                                  vue.createElementVNode("button", {
+                                    class: "accept-btn",
+                                    onClick: ($event) => $setup.handleAcceptInvitation(msg)
+                                  }, [
+                                    vue.createElementVNode("text", { class: "btn-text" }, "接受")
+                                  ], 8, ["onClick"]),
+                                  vue.createElementVNode("button", {
+                                    class: "reject-btn",
+                                    onClick: ($event) => $setup.handleRejectInvitation(msg)
+                                  }, [
+                                    vue.createElementVNode("text", { class: "btn-text" }, "婉拒")
+                                  ], 8, ["onClick"])
+                                ])) : (vue.openBlock(), vue.createElementBlock(
+                                  "view",
+                                  {
+                                    key: 2,
+                                    class: vue.normalizeClass(["invitation-status", { accepted: msg.accepted }])
+                                  },
+                                  [
+                                    vue.createVNode(_component_uni_icons, {
+                                      type: msg.accepted ? "checkmarkempty" : "closeempty",
+                                      size: "16",
+                                      color: msg.accepted ? "#4CD964" : "#999"
+                                    }, null, 8, ["type", "color"]),
+                                    vue.createElementVNode(
+                                      "text",
+                                      null,
+                                      vue.toDisplayString(msg.accepted ? "已接受挑战" : "已婉拒"),
+                                      1
+                                      /* TEXT */
+                                    )
+                                  ],
+                                  2
+                                  /* CLASS */
+                                ))
                               ])
                             ])
                           ],
@@ -27629,7 +28251,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-5eb7b895"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Chat/Chat.vue"]]);
+  const PagesChatChat = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-5eb7b895"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Chat/Chat.vue"]]);
   const defaultFoodImage = "/static/default-food.png";
   const _sfc_main$6 = {
     __name: "DietRecord",
@@ -27950,7 +28572,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesDietRecordDietRecord = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-f6f5839d"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/DietRecord/DietRecord.vue"]]);
+  const PagesDietRecordDietRecord = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-f6f5839d"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/DietRecord/DietRecord.vue"]]);
   const _sfc_main$5 = {
     __name: "Challenge",
     setup(__props, { expose: __expose }) {
@@ -28287,7 +28909,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesChallengeChallenge = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-15272dee"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Challenge/Challenge.vue"]]);
+  const PagesChallengeChallenge = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-15272dee"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Challenge/Challenge.vue"]]);
   /*!
     * vue-router v4.3.0
     * (c) 2024 Eduardo San Martin Morote
@@ -28367,7 +28989,9 @@ This will fail in production.`);
           this.websocket.onMessage((res) => {
             try {
               const data = JSON.parse(res.data);
-              formatAppLog("log", "at store/webSocket.js:65", "收到WebSocket消息:", data);
+              if (data.type !== "ai_plan") {
+                formatAppLog("log", "at store/webSocket.js:66", "收到WebSocket消息:", data);
+              }
               switch (data.type) {
                 case "text":
                   this.saveMessageToLocal({
@@ -28403,13 +29027,22 @@ This will fail in production.`);
                     this.updateUnreadCounts();
                   }
                   break;
+                case "ai_plan":
+                  uni.$emit("aiPlanMessage", data);
+                  break;
+                case "invitation":
+                  this.handleInvitation(data);
+                  break;
+                case "invitation_response":
+                  this.handleInvitationResponse(data);
+                  break;
               }
             } catch (error2) {
-              formatAppLog("error", "at store/webSocket.js:114", "处理WebSocket消息失败:", error2);
+              formatAppLog("error", "at store/webSocket.js:129", "处理WebSocket消息失败:", error2);
             }
           });
         } catch (error2) {
-          formatAppLog("error", "at store/webSocket.js:118", "初始化WebSocket失败:", error2);
+          formatAppLog("error", "at store/webSocket.js:133", "初始化WebSocket失败:", error2);
         }
       },
       closeWebSocket() {
@@ -28422,7 +29055,7 @@ This will fail in production.`);
       },
       // 添加处理状态消息的方法
       handleStatusMessage(data) {
-        formatAppLog("log", "at store/webSocket.js:133", "处理状态消息:", data);
+        formatAppLog("log", "at store/webSocket.js:148", "处理状态消息:", data);
         this.friendsStatus.set(data.username, {
           isOnline: data.status === "online",
           lastActive: data.timestamp
@@ -28440,13 +29073,14 @@ This will fail in production.`);
       saveMessageToLocal(message) {
         if (!message)
           return;
+        formatAppLog("log", "at store/webSocket.js:170", "保存消息:", message);
         const currentUser = uni.getStorageSync("username");
         if (message.receiver !== currentUser && message.sender !== currentUser) {
           return;
         }
         try {
           const key = `chat_history_${message.receiver}_${message.sender}`;
-          formatAppLog("log", "at store/webSocket.js:166", "保存消息使用的key:", key);
+          formatAppLog("log", "at store/webSocket.js:180", "保存消息使用的key:", key);
           let history = uni.getStorageSync(key) || [];
           if (!history.some((msg) => msg.id === message.id)) {
             const newMessage = {
@@ -28457,25 +29091,25 @@ This will fail in production.`);
               time: message.time || message.timestamp || Date.now()
             };
             history.push(newMessage);
-            formatAppLog("log", "at store/webSocket.js:182", "添加新消息:", newMessage);
+            formatAppLog("log", "at store/webSocket.js:196", "添加新消息:", newMessage);
             history.sort((a2, b2) => (a2.time || 0) - (b2.time || 0));
             uni.setStorageSync(key, history);
             if (message.receiver === currentUser) {
-              formatAppLog("log", "at store/webSocket.js:192", "触发未读消息计数更新");
+              formatAppLog("log", "at store/webSocket.js:206", "触发未读消息计数更新");
               this.updateUnreadCounts();
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at store/webSocket.js:197", "保存消息到本地失败:", error2, message);
+          formatAppLog("error", "at store/webSocket.js:211", "保存消息到本地失败:", error2, message);
         }
       },
       // 修改更新未读消息计数的函数
       updateUnreadCounts() {
         try {
           const username = uni.getStorageSync("username");
-          const friends = uni.getStorageSync("friendsList") || [];
+          const friends = uni.getStorageSync("friendsList_" + username) || [];
           let updated = false;
-          formatAppLog("log", "at store/webSocket.js:207", "当前好友列表:", friends);
+          formatAppLog("log", "at store/webSocket.js:221", "当前好友列表:", friends);
           friends.forEach((friend) => {
             const key = `chat_history_${username}_${friend.username}`;
             const history = uni.getStorageSync(key) || [];
@@ -28485,15 +29119,125 @@ This will fail in production.`);
             if (friend.unreadCount !== unreadCount) {
               friend.unreadCount = unreadCount;
               updated = true;
-              formatAppLog("log", "at store/webSocket.js:221", "更新未读消息计数:", friend.username, unreadCount);
+              formatAppLog("log", "at store/webSocket.js:235", "更新未读消息计数:", friend.username, unreadCount);
             }
           });
           if (updated) {
-            uni.setStorageSync("friendsList", friends);
+            uni.setStorageSync("friendsList_" + username, friends);
             uni.$emit("updateUnreadCounts");
           }
         } catch (error2) {
-          formatAppLog("error", "at store/webSocket.js:231", "更新未读消息计数失败:", error2);
+          formatAppLog("error", "at store/webSocket.js:245", "更新未读消息计数失败:", error2);
+        }
+      },
+      // 添加处理 AI 计划消息的方法
+      handleAiPlanMessage(data) {
+        if (data.type === "ai_plan") {
+          uni.$emit("aiPlanMessage", data);
+        }
+      },
+      // 发送 AI 计划请求
+      sendAiPlanRequest(prompt) {
+        if (this.isConnected && this.websocket) {
+          this.websocket.send({
+            data: JSON.stringify({
+              type: "ai_plan_request",
+              prompt,
+              username: uni.getStorageSync("username")
+            })
+          });
+        } else {
+          formatAppLog("error", "at store/webSocket.js:268", "WebSocket未连接");
+          this.initWebSocket();
+        }
+      },
+      // 发送打卡邀请
+      sendInvitation(data) {
+        if (this.isConnected && this.websocket) {
+          this.websocket.send({
+            data: JSON.stringify(data)
+          });
+          const invitation = {
+            type: data.type,
+            id: data.id,
+            sender: data.sender,
+            receiver: data.receiver,
+            content: data.content,
+            time: data.time,
+            handled: false,
+            accepted: null,
+            duration: data.challengeData.duration,
+            calories: data.challengeData.goal.calories,
+            minutes: data.challengeData.goal.minutes,
+            startTime: data.challengeData.startTime,
+            isRead: false,
+            sendFailed: false
+          };
+          formatAppLog("log", "at store/webSocket.js:316", "invitation: " + JSON.stringify(invitation));
+          const key = `chat_history_${data.sender}_${data.receiver}`;
+          let history = uni.getStorageSync(key) || [];
+          if (!history.some((msg) => msg.id === invitation.id)) {
+            history.push(invitation);
+            uni.setStorageSync(key, history);
+          }
+          uni.$emit("showMyInvitation", invitation);
+        } else {
+          formatAppLog("error", "at store/webSocket.js:329", "WebSocket未连接");
+          this.initWebSocket();
+        }
+      },
+      // 处理收到的打卡邀请
+      handleInvitation(data) {
+        try {
+          const messageData = data.message_data ? JSON.parse(data.message_data) : {
+            duration: 7,
+            goal: {
+              minutes: 10,
+              calories: 80
+            },
+            startTime: Date.now()
+          };
+          const invitation = {
+            type: data.type,
+            id: data.id,
+            sender: data.sender,
+            receiver: data.receiver,
+            content: data.content,
+            time: data.time,
+            handled: false,
+            accepted: null,
+            duration: messageData.duration,
+            calories: messageData.goal.calories,
+            minutes: messageData.goal.minutes,
+            startTime: messageData.startTime,
+            isRead: false,
+            sendFailed: false
+          };
+          this.saveMessageToLocal(invitation);
+          this.updateUnreadCounts();
+          uni.$emit("websocketMessage", invitation);
+        } catch (error2) {
+          formatAppLog("error", "at store/webSocket.js:372", "处理打卡邀请失败:", error2);
+        }
+      },
+      // 修改消息处理函数
+      handleInvitationResponse(data) {
+        try {
+          const currentUser = uni.getStorageSync("username");
+          const key = `chat_history_${currentUser}_${data.sender}`;
+          let history = uni.getStorageSync(key) || [];
+          const invitationIndex = history.findIndex(
+            (msg) => msg.type === "invitation" && msg.id === data.invitationId
+          );
+          if (invitationIndex !== -1) {
+            history[invitationIndex].handled = true;
+            history[invitationIndex].accepted = data.accepted;
+            uni.setStorageSync(key, history);
+          }
+          this.updateUnreadCounts();
+          uni.$emit("websocketMessage", data);
+        } catch (error2) {
+          formatAppLog("error", "at store/webSocket.js:398", "处理WebSocket消息失败:", error2);
         }
       }
     }
@@ -28531,10 +29275,10 @@ This will fail in production.`);
               uni.reLaunch({
                 url: "/pages/Login/Login",
                 success: () => {
-                  formatAppLog("log", "at pages/Setting/Setting.vue:71", "已退出登录并重置页面栈");
+                  formatAppLog("log", "at pages/Setting/Setting.vue:70", "已退出登录并重置页面栈");
                 },
                 fail: (error2) => {
-                  formatAppLog("error", "at pages/Setting/Setting.vue:74", "退出登录失败:", error2);
+                  formatAppLog("error", "at pages/Setting/Setting.vue:73", "退出登录失败:", error2);
                 }
               });
             }
@@ -28581,7 +29325,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesSettingSetting = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-3c55a289"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Setting.vue"]]);
+  const PagesSettingSetting = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-3c55a289"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/Setting.vue"]]);
   const _sfc_main$3 = {
     __name: "Info",
     setup(__props, { expose: __expose }) {
@@ -28829,7 +29573,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesSettingInfoInfo = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-1140c1f2"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/Info/Info.vue"]]);
+  const PagesSettingInfoInfo = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-1140c1f2"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/Info/Info.vue"]]);
   const _sfc_main$2 = {
     __name: "changePassword",
     setup(__props, { expose: __expose }) {
@@ -28940,7 +29684,7 @@ This will fail in production.`);
       }, " 提交 ", 10, ["disabled"])
     ]);
   }
-  const PagesSettingChangePasswordChangePassword = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-ad9c736f"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/changePassword/changePassword.vue"]]);
+  const PagesSettingChangePasswordChangePassword = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-ad9c736f"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/changePassword/changePassword.vue"]]);
   const _sfc_main$1 = {
     __name: "sportSetting",
     setup(__props, { expose: __expose }) {
@@ -29032,7 +29776,7 @@ This will fail in production.`);
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
     const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$2);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2$1);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
     const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "sport-container" }, [
       vue.createCommentVNode(" 运动目标多选框 "),
@@ -29165,7 +29909,7 @@ This will fail in production.`);
       }, "提交", 8, ["disabled"])
     ]);
   }
-  const PagesSettingSportSettingSportSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-ff4fc63b"], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Setting/sportSetting/sportSetting.vue"]]);
+  const PagesSettingSportSettingSportSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-ff4fc63b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/sportSetting/sportSetting.vue"]]);
   __definePage("pages/Login/Login", PagesLoginLogin);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("pages/Register/Register", PagesRegisterRegister);
@@ -29207,7 +29951,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/coding/sf_enginering/Squad/Squad/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     const pinia = createPinia();

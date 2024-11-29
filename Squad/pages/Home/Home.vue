@@ -868,14 +868,6 @@ onMounted(() => {
     }
   }, 5000);
 });
-onPullDownRefresh(async () => {
-  console.log("refresh");
-  await fetchPlansFromBackend();
-  loadExerciseDurations();
-  setTimeout(() => {
-    uni.stopPullDownRefresh();
-  }, 1000);
-
 
 // 初始化WebSocket连接
 // store.initWebSocket();
@@ -1038,10 +1030,13 @@ onMounted(() => {
 onPullDownRefresh(async () => {
   console.log("refresh");
   await fetchPlansFromBackend();
+  loadExerciseDurations(); // 加载每日运动时长
+  fetchPlanExercise(); // 获取计划运动时长
   setTimeout(() => {
     uni.stopPullDownRefresh();
   }, 1000);
 });
+
 // 页面加载时调用
 onMounted(() => {
   fetchPlansFromBackend();
@@ -1059,6 +1054,7 @@ onMounted(() => {
   uni.$on("handleRemove", loadMyPlans);
   //监听更新目标的通知
   uni.$on("updateUserTargets", fetchPlanExercise);
+  uni.$on("updateUserTargets", loadExerciseDurations);
   // 监听来自 Search 页面更新计划的通知
   uni.$on("plansUpdated", loadMyPlans);
   // 监听删除食物的通知
@@ -1078,7 +1074,7 @@ onMounted(() => {
     }
 
   }, 60000); // 每分钟检查一次
-  username = uni.getStorageSync("username");
+  // username = uni.getStorageSync("username");
   // 页面加载时初始化数据
   initializeRemainingCalories();
 });
@@ -1325,7 +1321,6 @@ const submitFoodList = async () => {
   target_eat_percent.value = dailyCalories
     ? Math.round((remainingCalories / dailyCalories) * 100)
     : 0;
-
   // 保存更新后的剩余热量到本地
   uni.setStorageSync(`today_left_eat_${username}`, remainingCalories);
 
@@ -1560,18 +1555,15 @@ async function fetchDailyCalories(username) {
     const lastFetchDate = uni.getStorageSync(`lastFetchDate_${username}`);
     const today = new Date().toLocaleDateString();
     if (lastFetchDate === today) {
-      console.log("今日已获取过热量数据");
-      // 如果当天已经获取过数据，则直接从本地获取并显示
-      // const cachedCalories = uni.getStorageSync(`dailyCalories_${username}`);
-      // if (cachedCalories) {
-      //   today_left_eat.value = cachedCalories;
-      //   target_eat_percent.value = 100; // 假设每日目标2000千卡
-      // }
 
       today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
       console.log(`剩余热量: ${today_left_eat.value} 千卡`);
-      const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`);
-      let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+	  // 获取每日热量和剩余热量
+	  const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username}`)) || 2000;
+	  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+	  // 确保 `remainingCalories` 是有效数字
+	  remainingCalories = parseFloat(remainingCalories) || dailyCalories; 
+
       target_eat_percent.value = dailyCalories
         ? Math.round((remainingCalories / dailyCalories) * 100)
         : 0;
@@ -1768,8 +1760,8 @@ const clearPlan_AI = () => {
 
 // 添加保存计划方法
 const savePlan_AI = () => {
-  const planContent = customPlan || streamingContent.value;
-  if (!planContent) {
+  const planContent = customPlan.value || streamingContent.value; // 计划内容
+  if (!planContent.trim()) {
     uni.showToast({
       title: "没有可保存的计划",
       icon: "none",
@@ -1777,15 +1769,35 @@ const savePlan_AI = () => {
     return;
   }
 
-  // 这里可以添加保存到我的计划列表的逻辑
   uni.showModal({
     title: "保存计划",
-    content: "是否将此计划添加到我的计划列表？",
+    content: "是否将此计划添加到自由训练模块？",
     success: (res) => {
       if (res.confirm) {
-        // TODO: 添加到计划列表的逻辑
+        const username = uni.getStorageSync("username"); // 获取当前用户名
+        const storedPlans =
+          uni.getStorageSync(`freeExercisePlans_${username}`) || "[]";
+        const freeExercisePlans = JSON.parse(storedPlans);
+
+        // 创建新的自由训练计划
+        const newPlan = {
+          title: "AI 定制计划", // 默认标题
+          content: planContent, // 计划内容
+          createdAt: new Date().toLocaleString(), // 创建时间
+        };
+
+        // 添加计划到本地存储
+        freeExercisePlans.push(newPlan);
+        uni.setStorageSync(
+          `freeExercisePlans_${username}`,
+          JSON.stringify(freeExercisePlans)
+        );
+
+        // 通知 Sports 界面更新
+        uni.$emit("updateFreeExercisePlans", freeExercisePlans);
+
         uni.showToast({
-          title: "计划已添加",
+          title: "计划已添加到自由训练",
           icon: "success",
         });
       }
@@ -1818,8 +1830,11 @@ const judgeManager = () => {
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
   today_left_eat.value = uni.getStorageSync(`today_left_eat_${username}`);
-  const dailyCalories = uni.getStorageSync(`dailyCalories_${username}`); //获取每日热量
-  let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`) || 0; //获取剩余热量
+ // 获取每日热量和剩余热量
+ const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username}`)) || 2000;
+ let remainingCalories = uni.getStorageSync(`today_left_eat_${username}`);
+ // 确保 `remainingCalories` 是有效数字
+ remainingCalories = parseFloat(remainingCalories) || dailyCalories; 
   if (remainingCalories > dailyCalories) {
     remainingCalories = dailyCalories;
   }
@@ -2319,6 +2334,7 @@ onUnmounted(() => {
 onUnmounted(() => {
   uni.$off("aiPlanMessage");
 });
+
 </script>
 
 <style scoped lang="scss">
@@ -2548,7 +2564,6 @@ uni-button {
       }
     }
   }
-}
 
 @keyframes rotating {
   from {
@@ -2606,13 +2621,12 @@ uni-button {
       margin-bottom: 30rpx;
       min-height: 100rpx;
 
-      // 添加打字机效果
-      &.streaming {
-        white-space: pre-wrap;
-        border-right: 2px solid #4cd964;
-        animation: blink 0.7s infinite;
+        &.streaming {
+          white-space: pre-wrap;
+          border-right: 2px solid #4cd964;
+          animation: blink 0.7s infinite;
+        }
       }
-    }
 
     @keyframes blink {
       0%,
@@ -2630,10 +2644,11 @@ uni-button {
       background: #e8f5e9;
       border-radius: 12rpx;
 
-      .footer-text {
-        color: #4cd964;
-        font-size: 28rpx;
-        font-weight: 500;
+        .footer-text {
+          color: #4cd964;
+          font-size: 28rpx;
+          font-weight: 500;
+        }
       }
     }
   }
@@ -2886,27 +2901,7 @@ uni-button {
   width: 2px;
   background-color: #ccc;
 }
-// .modify-button {
-//   /* 保持原有属性 */
-//   border: none;
-//   border-radius: 5px;
-//   background-color: #641013;
-//   color: white;
-//   cursor: pointer;
-//   transition: background-color 0.3s;
-//   margin-left: 5px;
-//   margin-right: 5px;
-//   /* 新增垂直排列相关样式 */
-//   writing-mode: vertical-lr; /* 使文字垂直排列，从左到右 */
-//   text-orientation: upright; /* 保持文字正向 */
-//   padding: 15px 8px; /* 调整内边距：上下15px，左右8px */
-//   height: 80px; /* 设置按钮高度 */
-//   width: 30px; /* 设置按钮宽度 */
-//   display: flex; /* 使用flex布 */
-//   align-items: center; /* 水平居中 */
-//   justify-content: center; /* 垂直居中 */
-//   letter-spacing: 2px; /* 文字间距 */
-// }
+
 .popup-content {
   background-color: #fff;
   padding: 20px;
@@ -3278,7 +3273,7 @@ button {
         opacity: 0.9;
       }
     }
-
+}} 
 .modal {
   position: fixed;
   top: 0;
