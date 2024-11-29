@@ -52,10 +52,10 @@ const logout = () => {
     success: (res) => {
       if (res.confirm) {
         // 清除用户相关的本地存储
-        // uni.clearStorageSync(); // 清除所有存储
+        uni.clearStorageSync(); // 清除所有存储
         // 或者选择性清除：
-        uni.removeStorageSync("username");
-        uni.removeStorageSync("friendsList");
+        // uni.removeStorageSync("username");
+        // uni.removeStorageSync("friendsList");
         // ... 清除其他相关存储
 
         // 关闭WebSocket连接
@@ -64,14 +64,14 @@ const logout = () => {
 
         // 重置页面栈并跳转到登录页
         uni.reLaunch({
-          url: "/pages/Login/Login",
+          url: '/pages/Login/Login',
           success: () => {
             // 确保页面栈被清空
-            console.log("已退出登录并重置页面栈");
+            console.log('已退出登录并重置页面栈');
           },
           fail: (error) => {
-            console.error("退出登录失败:", error);
-          },
+            console.error('退出登录失败:', error);
+          }
         });
       }
     },

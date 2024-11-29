@@ -878,7 +878,7 @@ const modelVale = ref(0);
 const target_eat_percent = ref(100);
 const tab = ref("plan"); // 当前选中的标签
 const activeButton = ref("all"); // 当前选中的按钮
-const selectedGoal = ref("全部"); // 选中的目标筛选项
+const selectedGoal = ref("全部"); // 选��的目标筛选项
 const selectedType = ref("全部"); // 选中的类型筛选项
 const selectedDifficulty = ref("全部"); // 选中的难度筛选项
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
@@ -988,11 +988,11 @@ onMounted(() => {
       if (data.content.includes("[DONE]")) {
         // 保存最终的 markdown 渲染结果
         customPlan.value = md.render(completeText.value);
-
+        
         // 保存到缓存
         const username = uni.getStorageSync("username");
         uni.setStorageSync(`AiPlan_${username}_cache`, customPlan.value);
-
+        
         // 清空流式内容，但保持最终结果显示
         streamingContent.value = "";
         isGenerating.value = false;
@@ -1000,29 +1000,27 @@ onMounted(() => {
       }
 
       // 解析 SSE 格式的数据
-      const lines = data.content.split("\n");
+      const lines = data.content.split('\n');
       for (const line of lines) {
-        if (line.trim() && line.startsWith("data: ")) {
+        if (line.trim() && line.startsWith('data: ')) {
           try {
             const jsonStr = line.slice(6);
             const messageData = JSON.parse(jsonStr);
-            if (
-              messageData.choices &&
-              messageData.choices[0].delta &&
-              messageData.choices[0].delta.content
-            ) {
+            if (messageData.choices && 
+                messageData.choices[0].delta && 
+                messageData.choices[0].delta.content) {
               // 累积完整文本
               completeText.value += messageData.choices[0].delta.content;
               // 实时渲染 markdown
               streamingContent.value = md.render(completeText.value);
             }
           } catch (e) {
-            console.warn("解析数据块失败:", e);
+            console.warn('解析数据块失败:', e);
           }
         }
       }
     } catch (error) {
-      console.error("处理 AI 消息失败:", error);
+      console.error('处理 AI 消息失败:', error);
     }
   });
 });
@@ -2684,6 +2682,7 @@ uni-button {
       }
     }
   }
+}
 
 @keyframes rotating {
   from {
@@ -2772,7 +2771,7 @@ uni-button {
       }
     }
   }
-}
+
 
 .schedule-section {
   margin-top: 10px;

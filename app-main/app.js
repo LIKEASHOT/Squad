@@ -203,6 +203,10 @@ wss.on("connection", (ws) => {
         case "invitation":
           await handleInvitation(ws, data);
           break;
+
+        case "invitation_response":
+          await handleInvitationResponse(ws, data);
+          break;
       }
     } catch (error) {
       console.error("处理WebSocket消息失败:", error);
@@ -235,7 +239,7 @@ const updateUserStatus = async (userId, username, isOnline) => {
 };
 
 const saveMessage = async (message) => {
-  // 首先查询发送者和接收者的用户ID
+  // 首先��询发送者和接收者的用户ID
   const getUsersQuery = `
     SELECT id, name FROM users 
     WHERE name IN (?, ?)
@@ -2683,6 +2687,82 @@ const handleInvitation = async (ws, data) => {
     ws.send(JSON.stringify({
       type: 'invitation_error',
       error: "发送邀请失败"
+    }));
+  }
+};
+
+// 处理打卡邀请响应
+const handleInvitationResponse = async (ws, data) => {
+  try {
+    // 获取原始邀请者的ID
+    const [senderResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [data.receiver] // receiver 是原始邀请者
+    );
+
+    if (senderResults.length === 0) {
+      throw new Error("发送者不存在");
+    }
+
+    const senderId = senderResults[0].id;
+    const senderWs = clients.get(senderId);
+
+    // 构建响应消息
+    const response = {
+      type: 'invitation_response',
+      id: data.id,
+      invitationId: data.invitationId,
+      sender: data.sender,
+      receiver: data.receiver,
+      content: data.content,
+      time: data.time,
+      accepted: data.accepted
+    };
+
+    // 如果接受了邀请，创建挑战记录
+    if (data.accepted) {
+      const challengeQuery = `
+        INSERT INTO challenges 
+        (invitation_id, challenger_id, challenged_id, start_time, duration, goal_minutes, goal_calories, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'active')
+      `;
+      
+      await pool.query(challengeQuery, [
+        data.invitationId,
+        senderId, // 邀请者ID
+        ws.userId, // 接受者ID
+        new Date().getTime(),
+        data.challengeData.duration,
+        data.challengeData.goal.minutes,
+        data.challengeData.goal.calories
+      ]);
+    }
+
+    // 发送响应给原始邀请者
+    if (senderWs && senderWs.readyState === WebSocket.OPEN) {
+      senderWs.send(JSON.stringify(response));
+    } else {
+      // 如果邀请者离线，存储到离线消息
+      const query = `
+        INSERT INTO offline_messages 
+        (sender_id, user_id, sender, receiver, type, content, message_data) 
+        VALUES (?, ?, ?, ?, 'invitation_response', ?, ?)
+      `;
+      await pool.query(query, [
+        ws.userId,
+        senderId,
+        data.sender,
+        data.receiver,
+        data.content,
+        JSON.stringify({ accepted: data.accepted })
+      ]);
+    }
+
+  } catch (error) {
+    console.error("处理打卡邀请响应失败:", error);
+    ws.send(JSON.stringify({
+      type: 'invitation_error',
+      error: "处理邀请响应失败"
     }));
   }
 };

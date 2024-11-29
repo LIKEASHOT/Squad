@@ -73,9 +73,14 @@
     {
       "path": "pages/Chat/Chat",
       "style": {
-        "navigationStyle": "custom",
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
+        "navigationStyle": "custom",
+        "app-plus": {
+          "titleNView": false
+        },
+        "tabBar": {
+          "visible": false
+        }
       }
     },
     {

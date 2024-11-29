@@ -61,10 +61,16 @@
               <view
                 v-else-if="msg.type === 'invitation'"
                 class="invitation-bubble"
+                @click="handleInvitationClick(msg)"
+                :class="{ clickable: msg.handled && msg.accepted }"
               >
                 <view class="invitation-card">
                   <view class="invitation-header">
-                    <uni-icons type="calendar-filled" size="20" color="#4CD964" />
+                    <uni-icons
+                      type="calendar-filled"
+                      size="20"
+                      color="#4CD964"
+                    />
                     <text class="invitation-title">运动打卡挑战</text>
                   </view>
                   <view class="card-content">
@@ -87,40 +93,50 @@
                       </view>
                     </view>
                   </view>
-                  <view v-if="msg.sender === userInfo.username" class="invitation-status">
+                  <view
+                    v-if="msg.sender === userInfo.username"
+                    class="invitation-status"
+                  >
                     <template v-if="!msg.handled">
                       <uni-icons type="waiting" size="16" color="#999" />
                       <text class="waiting">等待对方接受</text>
                     </template>
                     <template v-else>
-                      <uni-icons 
-                        :type="msg.accepted ? 'checkmarkempty' : 'closeempty'" 
-                        size="16" 
-                        :color="msg.accepted ? '#4CD964' : '#999'" 
+                      <uni-icons
+                        :type="msg.accepted ? 'checkmarkempty' : 'closeempty'"
+                        size="16"
+                        :color="msg.accepted ? '#4CD964' : '#999'"
                       />
                       <text :class="{ accepted: msg.accepted }">
-                        {{ msg.accepted ? '对方已接受挑战' : '对方已拒绝' }}
+                        {{ msg.accepted ? "对方已接受挑战" : "对方已拒绝" }}
                       </text>
                     </template>
                   </view>
-                  <view 
-                    v-else-if="!msg.handled" 
-                    class="invitation-actions"
-                  >
-                    <button class="accept-btn" @click="handleAcceptInvitation(msg)">
+                  <view v-else-if="!msg.handled" class="invitation-actions">
+                    <button
+                      class="accept-btn"
+                      @click="handleAcceptInvitation(msg)"
+                    >
                       <text class="btn-text">接受</text>
                     </button>
-                    <button class="reject-btn" @click="handleRejectInvitation(msg)">
+                    <button
+                      class="reject-btn"
+                      @click="handleRejectInvitation(msg)"
+                    >
                       <text class="btn-text">婉拒</text>
                     </button>
                   </view>
-                  <view v-else class="invitation-status" :class="{ accepted: msg.accepted }">
-                    <uni-icons 
-                      :type="msg.accepted ? 'checkmarkempty' : 'closeempty'" 
-                      size="16" 
-                      :color="msg.accepted ? '#4CD964' : '#999'" 
+                  <view
+                    v-else
+                    class="invitation-status"
+                    :class="{ accepted: msg.accepted }"
+                  >
+                    <uni-icons
+                      :type="msg.accepted ? 'checkmarkempty' : 'closeempty'"
+                      size="16"
+                      :color="msg.accepted ? '#4CD964' : '#999'"
                     />
-                    <text>{{ msg.accepted ? '已接受挑战' : '已婉拒' }}</text>
+                    <text>{{ msg.accepted ? "已接受挑战" : "已婉拒" }}</text>
                   </view>
                 </view>
               </view>
@@ -302,13 +318,16 @@ const groupedMessages = computed(() => {
 
 // 初始化WebSocket连接
 const store = useWebSocketStore();
-
-
+const deal_with_invitation_response = (data) => {
+  const localMessages = getLocalMessages(friendInfo.value.username);
+  messages.value = localMessages;
+  console.log("对方接受了打卡邀请:", data);
+};
 const deal_with_invitation = (data) => {
-    console.log("发送了打卡邀请:", data);
-    // 先加载本地消息
-    const localMessages = getLocalMessages(friendInfo.value.username);
-    messages.value = localMessages;
+  console.log("发送了打卡邀请:", data);
+  // 先加载本地消息
+  const localMessages = getLocalMessages(friendInfo.value.username);
+  messages.value = localMessages;
 };
 // 发送消息
 const sendMessage = async () => {
@@ -395,9 +414,28 @@ const sendInvitation = () => {
     return;
   }
 
+  // 检查是否已存在未处理的打卡邀请
+  const key = getLocalStorageKey(friendInfo.value.username);
+  const history = uni.getStorageSync(key) || [];
+  const hasUnhandledInvitation = history.some(
+    (msg) =>
+      msg.type === "invitation" &&
+      !msg.handled &&
+      msg.sender === userInfo.value.username
+  );
+
+  if (hasUnhandledInvitation) {
+    uni.showToast({
+      title: "已有未处理的打卡邀请",
+      icon: "none",
+    });
+    closeInvitationDialog();
+    return;
+  }
+
   // 构建打卡邀请消息
   const invitation = {
-    type: 'invitation',
+    type: "invitation",
     id: Date.now().toString(),
     sender: userInfo.value.username,
     receiver: friendInfo.value.username,
@@ -411,10 +449,10 @@ const sendInvitation = () => {
       duration: challengeDuration.value,
       goal: {
         minutes: goalMinutes.value,
-        calories: goalCalories.value
+        calories: goalCalories.value,
       },
-      startTime: new Date().getTime()
-    }
+      startTime: new Date().getTime(),
+    },
   };
 
   // 通过 WebSocket 发送邀请
@@ -422,13 +460,13 @@ const sendInvitation = () => {
     store.sendInvitation(invitation);
     closeInvitationDialog();
     uni.showToast({
-      title: '邀请已发送',
-      icon: 'success'
+      title: "邀请已发送",
+      icon: "success",
     });
   } else {
     uni.showToast({
-      title: '发送失败',
-      icon: 'none'
+      title: "发送失败",
+      icon: "none",
     });
     store.initWebSocket();
   }
@@ -450,7 +488,7 @@ const handleInvitation = (data) => {
         data.sender === friendInfo.value.username &&
         data.time > lastReadTimestamp.value;
       invitation.isRead = !isUnread;
-      
+
       // 添加到消息列表
       messages.value.push(invitation);
 
@@ -461,7 +499,7 @@ const handleInvitation = (data) => {
       scrollToBottom();
     }
   } catch (error) {
-    console.error('处理打卡邀请失败:', error, data);
+    console.error("处理打卡邀请失败:", error, data);
   }
 };
 
@@ -567,61 +605,131 @@ onMounted(() => {
   uni.$on("showMyInvitation", (data) => {
     deal_with_invitation(data);
   });
+  uni.$on("showInvitationResponse", (data) => {
+    deal_with_invitation_response(data);
+  });
   // 修改接收新消息的处理
-uni.$on("websocketMessage", (data) => {
-  try {
-    console.log("收到WebSocket消息:", data);
+  uni.$on("websocketMessage", (data) => {
+    try {
+      console.log("收到WebSocket消息:", data);
 
-    switch (data.type) {
-      case "text":
-        // 检查消息是否属于当前聊天
-        if (
-          (data.sender === friendInfo.value.username &&
-            data.receiver === userInfo.value.username) ||
-          (data.sender === userInfo.value.username &&
-            data.receiver === friendInfo.value.username)
-        ) {
-          // 如果是接收到的新消息，且时间戳大于最后已读时间戳，则标记为未读
-          const isUnread =
-            data.sender === friendInfo.value.username &&
-            data.time > lastReadTimestamp.value;
+      switch (data.type) {
+        case "text":
+          // 检查消息是否属于当前聊天
+          if (
+            (data.sender === friendInfo.value.username &&
+              data.receiver === userInfo.value.username) ||
+            (data.sender === userInfo.value.username &&
+              data.receiver === friendInfo.value.username)
+          ) {
+            // 如果是接收到的新消息，且时间戳大于最后已读时间戳，则标记为未读
+            const isUnread =
+              data.sender === friendInfo.value.username &&
+              data.time > lastReadTimestamp.value;
 
-          // 添加到消息列表
-          messages.value.push({
-            ...data,
-            isRead: !isUnread,
-          });
+            // 添加到消息列表
+            messages.value.push({
+              ...data,
+              isRead: !isUnread,
+            });
 
-          // 保存到本地
-          // saveMessageToLocal({
-          //   ...data,
-          //   isRead: !isUnread,
-          // });
+            // 保存到本地
+            // saveMessageToLocal({
+            //   ...data,
+            //   isRead: !isUnread,
+            // });
 
-          // 滚动到底部
-          nextTick(() => {
-            scrollTop.value = 99999;
-          });
-        }
-        break;
+            // 滚动到底部
+            nextTick(() => {
+              scrollTop.value = 99999;
+            });
+          }
+          break;
 
-      case "read_ack":
-        // 处理已读回执
-        if (data.sender === friendInfo.value.username) {
-          handleReadAck(data);
-        }
-        break;
-      case "invitation":
-        // 处理打卡邀请
-        if (data.sender === friendInfo.value.username) {
-          handleInvitation(data);
-        }
-        break;
+        case "read_ack":
+          // 处理已读回执
+          if (data.sender === friendInfo.value.username) {
+            handleReadAck(data);
+          }
+          break;
+        case "invitation":
+          // 处理打卡邀请
+          if (
+            (data.sender === friendInfo.value.username &&
+              data.receiver === userInfo.value.username) ||
+            (data.sender === userInfo.value.username &&
+              data.receiver === friendInfo.value.username)
+          ) {
+            handleInvitation(data);
+          }
+          break;
+
+        case "invitation_response":
+          // 处理打卡邀请响应
+          if (
+            (data.sender === friendInfo.value.username &&
+              data.receiver === userInfo.value.username) ||
+            (data.sender === userInfo.value.username &&
+              data.receiver === friendInfo.value.username)
+          ) {
+            // 更新本地消息状态
+            const messageIndex = messages.value.findIndex(
+              (msg) => msg.id === data.invitationId
+            );
+
+            if (messageIndex !== -1) {
+              // 更新消息状态
+              messages.value[messageIndex].handled = true;
+              messages.value[messageIndex].accepted = data.accepted;
+
+              // 保存到本地存储
+              const key = getLocalStorageKey(friendInfo.value.username);
+              let history = uni.getStorageSync(key) || [];
+              const historyIndex = history.findIndex(
+                (msg) => msg.id === data.invitationId
+              );
+
+              if (historyIndex !== -1) {
+                history[historyIndex].handled = true;
+                history[historyIndex].accepted = data.accepted;
+                uni.setStorageSync(key, history);
+              }
+
+              // 如果是接受邀请，显示提示并准备跳转
+              if (data.accepted && data.sender === friendInfo.value.username) {
+                uni.showToast({
+                  title: "对方已接受挑战",
+                  icon: "success",
+                });
+
+                // 延迟跳转到打卡页面
+                // setTimeout(() => {
+                //   uni.navigateTo({
+                //     url: `/pages/Challenge/Challenge?challenge=${encodeURIComponent(
+                //       JSON.stringify({
+                //         challenger: data.sender,
+                //         challengeData: {
+                //           duration: messages.value[messageIndex].duration,
+                //           goal: {
+                //             minutes: messages.value[messageIndex].minutes,
+                //             calories: messages.value[messageIndex].calories,
+                //           },
+                //           startTime: data.time,
+                //         },
+                //         invitationId: data.invitationId,
+                //       })
+                //     )}`,
+                //   });
+                // }, 1500);
+              }
+            }
+          }
+          break;
+      }
+    } catch (error) {
+      console.error("处理WebSocket消息失败:", error);
     }
-  } catch (error) {
-    console.error("处理WebSocket消息失败:", error);
-  }
-});
+  });
   userInfo.value.username = uni.getStorageSync("username");
   userInfo.value.avatar = uni.getStorageSync(
     "userInfo_" + userInfo.value.username
@@ -900,8 +1008,6 @@ const getLocalMessages = (friendUsername) => {
   return uni.getStorageSync(key) || [];
 };
 
-
-
 // 在组件卸载时移除事件监听
 onUnmounted(() => {
   uni.$off("websocketMessage");
@@ -977,76 +1083,138 @@ const handleAcceptInvitation = async (msg) => {
     receiver: msg.sender,
     content: "已接受运动挑战邀请",
     time: new Date().getTime(),
-    accepted: true
+    accepted: true,
+    challengeData: {
+      duration: msg.duration,
+      goal: {
+        minutes: msg.minutes,
+        calories: msg.calories,
+      },
+    },
   };
 
   try {
     // 发送回执
     store.websocket.send({
-      data: JSON.stringify(response)
+      data: JSON.stringify(response),
     });
 
     // 更新本地消息状态
     msg.handled = true;
     msg.accepted = true;
-    store.saveMessageToLocal(msg);
+
+    // 更新本地存储中的消息状态
+    const key = getLocalStorageKey(friendInfo.value.username);
+    let history = uni.getStorageSync(key) || [];
+    const msgIndex = history.findIndex((m) => m.id === msg.id);
+    if (msgIndex !== -1) {
+      history[msgIndex].handled = true;
+      history[msgIndex].accepted = true;
+      uni.setStorageSync(key, history);
+    }
 
     // 显示接受提示
     uni.showToast({
       title: "已接受邀请",
-      icon: "success"
+      icon: "success",
     });
 
     // 跳转到打卡页面
-    setTimeout(() => {
-      uni.navigateTo({
-        url: `/pages/Home/Home?challenge=${encodeURIComponent(JSON.stringify({
-          duration: msg.duration,
-          minutes: msg.minutes,
-          calories: msg.calories,
-          startTime: msg.startTime,
-          partner: msg.sender
-        }))}`
-      });
-    }, 1500);
-
+    // setTimeout(() => {
+    //   uni.navigateTo({
+    //     url: `/pages/Challenge/Challenge?challenge=${encodeURIComponent(
+    //       JSON.stringify({
+    //         challenger: msg.sender,
+    //         challengeData: {
+    //           duration: msg.duration,
+    //           goal: {
+    //             minutes: msg.minutes,
+    //             calories: msg.calories,
+    //           },
+    //           startTime: msg.time,
+    //         },
+    //         invitationId: msg.id,
+    //       })
+    //     )}`,
+    //   });
+    // }, 1500);
   } catch (error) {
-    console.error('处理打卡邀请失败:', error);
+    console.error("处理打卡邀请失败:", error);
     uni.showToast({
-      title: '操作失败',
-      icon: 'none'
+      title: "操作失败",
+      icon: "none",
     });
   }
 };
 
-// 处理拒绝邀请
+// 修改处理拒绝邀请的函数
 const handleRejectInvitation = (msg) => {
   // 构建拒绝回执消息
   const response = {
     type: "invitation_response",
     id: Date.now().toString(),
     invitationId: msg.id,
-    sender: userInfo.username,
+    sender: userInfo.value.username,
     receiver: msg.sender,
     content: "已拒绝运动挑战邀请",
     time: new Date().getTime(),
     accepted: false,
   };
 
-  // 发送回执
-  store.websocket.send({
-    data: JSON.stringify(response),
-  });
+  try {
+    // 发送回执
+    store.websocket.send({
+      data: JSON.stringify(response),
+    });
 
-  // 更新本地消息状态
-  msg.handled = true;
-  msg.accepted = false;
-  store.saveMessageToLocal(msg);
+    // 更新本地消息状态
+    msg.handled = true;
+    msg.accepted = false;
+    // 更新本地存储中的消息状态
+    const key = getLocalStorageKey(friendInfo.value.username);
+    let history = uni.getStorageSync(key) || [];
+    const msgIndex = history.findIndex((m) => m.id === msg.id);
+    if (msgIndex !== -1) {
+      history[msgIndex].handled = true;
+      history[msgIndex].accepted = true;
+      uni.setStorageSync(key, history);
+    }
 
-  uni.showToast({
-    title: "已拒绝邀请",
-    icon: "none",
-  });
+    uni.showToast({
+      title: "已拒绝邀请",
+      icon: "none",
+    });
+  } catch (error) {
+    console.error("处理打卡邀请失败:", error);
+    uni.showToast({
+      title: "操作失败",
+      icon: "none",
+    });
+  }
+};
+
+// 添加点击卡片进入打卡页面的处理函数
+const handleInvitationClick = (msg) => {
+  // 如果邀请已经被处理且被接受，才允许点击进入
+  if (msg.handled && msg.accepted) {
+    uni.navigateTo({
+      url: `/pages/Challenge/Challenge?challenge=${encodeURIComponent(
+        JSON.stringify({
+          challenger:
+            msg.sender === userInfo.value.username ? msg.receiver : msg.sender,
+          challengeData: {
+            duration: msg.duration,
+            goal: {
+              minutes: msg.minutes,
+              calories: msg.calories,
+            },
+            startTime: msg.time,
+          },
+          invitationId: msg.id,
+        })
+      )}`,
+    });
+  }
 };
 </script>
 
@@ -1430,62 +1598,62 @@ const handleRejectInvitation = (msg) => {
 
 .invitation-bubble {
   max-width: 500rpx;
-  
+
   .invitation-card {
     background: #fff;
     border-radius: 16rpx;
     overflow: hidden;
     box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-    
+
     .invitation-header {
-      background: linear-gradient(135deg, #4CD964, #3CB371);
+      background: linear-gradient(135deg, #4cd964, #3cb371);
       padding: 20rpx;
       display: flex;
       align-items: center;
       gap: 12rpx;
-      
+
       .invitation-title {
         color: #fff;
         font-size: 32rpx;
         font-weight: 600;
       }
     }
-    
+
     .card-content {
       padding: 24rpx;
-      
+
       .invitation-text {
         font-size: 28rpx;
         color: #333;
         margin-bottom: 20rpx;
         display: block;
       }
-      
+
       .challenge-details {
         background: #f8f8f8;
         border-radius: 12rpx;
         padding: 16rpx;
-        
+
         .detail-item {
           display: flex;
           align-items: center;
           margin-bottom: 12rpx;
-          
+
           &:last-child {
             margin-bottom: 0;
           }
-          
+
           .icon {
             font-size: 32rpx;
             margin-right: 12rpx;
           }
-          
+
           .label {
             color: #666;
             font-size: 26rpx;
             flex: 1;
           }
-          
+
           .value {
             color: #333;
             font-size: 28rpx;
@@ -1494,13 +1662,13 @@ const handleRejectInvitation = (msg) => {
         }
       }
     }
-    
+
     .invitation-actions {
       display: flex;
       padding: 20rpx;
       gap: 16rpx;
       border-top: 1rpx solid #eee;
-      
+
       button {
         flex: 1;
         height: 72rpx;
@@ -1509,31 +1677,31 @@ const handleRejectInvitation = (msg) => {
         justify-content: center;
         border-radius: 36rpx;
         border: none;
-        
+
         .btn-text {
           font-size: 28rpx;
         }
-        
+
         &.accept-btn {
-          background: linear-gradient(135deg, #4CD964, #3CB371);
+          background: linear-gradient(135deg, #4cd964, #3cb371);
           color: #fff;
-          
+
           &:active {
             opacity: 0.9;
           }
         }
-        
+
         &.reject-btn {
           background: #f5f5f5;
           color: #666;
-          
+
           &:active {
             background: #eee;
           }
         }
       }
     }
-    
+
     .invitation-status {
       padding: 16rpx;
       display: flex;
@@ -1543,15 +1711,15 @@ const handleRejectInvitation = (msg) => {
       color: #999;
       font-size: 26rpx;
       border-top: 1rpx solid #eee;
-      
+
       &.accepted {
-        color: #4CD964;
+        color: #4cd964;
       }
-      
+
       .waiting {
         color: #999;
       }
-      
+
       .uni-icons {
         &.waiting {
           animation: rotating 2s linear infinite;
@@ -1567,6 +1735,17 @@ const handleRejectInvitation = (msg) => {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.invitation-bubble {
+  &.clickable {
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 }
 </style>
