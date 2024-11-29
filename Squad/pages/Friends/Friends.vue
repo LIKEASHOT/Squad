@@ -64,6 +64,9 @@
                   friend.signature || "这个人很懒，什么都没写~"
                 }}</text>
               </view>
+              <view v-if="hasUnreadInvitation(friend)" class="invitation-badge">
+                <uni-icons type="calendar" size="18" color="#fff" />
+              </view>
               <view v-if="friend.unreadCount > 0" class="unread-badge">
                 {{ friend.unreadCount > 99 ? "99+" : friend.unreadCount }}
               </view>
@@ -175,12 +178,12 @@
       <view class="sidebar">
         <view class="sidebar-header">
           <text class="sidebar-title">好友管理</text>
-          <uni-icons
+          <!-- <uni-icons
             type="close"
             size="24"
             color="#333"
             @click="closeSidebar"
-          />
+          /> -->
         </view>
 
         <view class="sidebar-content">
@@ -252,7 +255,7 @@ const currentTab = ref("friends");
 const searchQuery = ref("");
 const currentLetter = ref("");
 const showLetterTip = ref(false);
-const defaultAvatar = "/static/avatar/default.png";
+const defaultAvatar = "/static/default-avatar.png";
 const serverUrl = uni.getStorageSync("serverUrl");
 
 const letters = [
@@ -282,6 +285,7 @@ const letters = [
   "X",
   "Y",
   "Z",
+  "#",
 ];
 
 const friendsList = ref([
@@ -320,6 +324,12 @@ const switchTab = (tab) => {
 
 // 进入聊天
 const enterChat = (friend) => {
+  uni.setStorageSync(
+    "friendInfo_" + userInfo.value.username + "_" + friend.username,
+    friend
+  );
+  console.log("friendInfo_" + userInfo.value.username + "_" + friend.username);
+  console.log("friend: ", friend);
   uni.navigateTo({
     url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
     success: () => {
@@ -342,12 +352,34 @@ const groupedFriends = computed(() => {
   );
 
   const grouped = {};
+
+  // 初始化字母分组
   letters.forEach((letter) => {
-    const friends = filtered.filter((friend) =>
-      friend.username.toUpperCase().startsWith(letter)
-    );
-    if (friends.length > 0) {
-      grouped[letter] = friends;
+    grouped[letter] = [];
+  });
+  // 初始化 # 分组
+  grouped["#"] = [];
+  filtered.forEach((friend) => {
+    // 获取好友名称的首字符
+    const firstChar = friend.username.charAt(0).toUpperCase();
+
+    // 判断首字符是否是字母
+    if (/[A-Z]/.test(firstChar)) {
+      // 如果是字母，添加到对应字母分组
+      if (!grouped[firstChar]) {
+        grouped[firstChar] = [];
+      }
+      grouped[firstChar].push(friend);
+    } else {
+      // 如果不是字母，添加到 # 分组
+      grouped["#"].push(friend);
+    }
+  });
+
+  // 删除空分组
+  Object.keys(grouped).forEach((key) => {
+    if (grouped[key].length === 0) {
+      delete grouped[key];
     }
   });
 
@@ -383,7 +415,7 @@ const deleteFriend = async (friendUsername) => {
 
     if (res.statusCode === 200) {
       // 清除本地好友列表缓存，强制从服务器重新获取
-      uni.removeStorageSync("friendsList");
+      uni.removeStorageSync("friendsList_" + uni.getStorageSync("username"));
       await loadFriendsList();
 
       uni.showToast({
@@ -519,9 +551,9 @@ const loadFriendsList = async () => {
       }));
 
       // 保存到本地存储
-      uni.setStorageSync("friendsList", formattedFriends);
+      uni.setStorageSync("friendsList_" + username, formattedFriends);
 
-      // 更新响应式数据
+      // 更新响���式数据
       friendsList.value = formattedFriends;
 
       // 立即加载未读消息数
@@ -541,7 +573,7 @@ const loadFriendsList = async () => {
 };
 
 // 修改加载未读消息数的函数
-const loadUnreadCounts = () => {
+const loadUnreadCounts = async () => {
   const currentUser = uni.getStorageSync("username");
 
   friendsList.value = friendsList.value.map((friend) => {
@@ -580,7 +612,10 @@ onMounted(async () => {
 onPullDownRefresh(async () => {
   console.log("refresh");
   await loadFriendsList();
-  uni.stopPullDownRefresh();
+  await loadUnreadCounts();
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  }, 1000);
 });
 onUnmounted(() => {
   // 清除定时器
@@ -646,9 +681,9 @@ const joinTeam = (team) => {
 
 // 用户信息
 const userInfo = ref({
-  avatar: "",
-  level: 1,
-  exp: 45, // 当前等级进度
+  username: uni.getStorageSync("username"),
+  avatar:
+    uni.getStorageSync("userInfo")?.avatar || "/static/default-avatar.jpg",
 });
 
 // 更新打卡状态数据
@@ -698,7 +733,15 @@ const handleDelete = (friend) => {
 
           if (result.statusCode === 200) {
             // 清除本地好友列表缓存
-            uni.removeStorageSync("friendsList");
+            uni.removeStorageSync(
+              "friendsList_" + uni.getStorageSync("username")
+            );
+            // 清空与好友的聊天记录
+            uni.removeStorageSync(
+              `chat_history_${uni.getStorageSync("username")}_${
+                friend.username
+              }`
+            );
             // 重新加载好友列表
             await loadFriendsList();
 
@@ -792,7 +835,21 @@ const handleMaskClick = () => {
   closeSidebar();
 };
 
-
+// 修改检查未读打卡邀请的方法
+const hasUnreadInvitation = (friend) => {
+  const currentUser = uni.getStorageSync("username");
+  const key = `chat_history_${currentUser}_${friend.username}`;
+  const history = uni.getStorageSync(key);
+  
+  // 确保 history 是数组
+  if (!Array.isArray(history)) return false;
+  
+  return history.some(msg => 
+    msg.type === 'invitation' && 
+    msg.sender === friend.username && 
+    !msg.isRead
+  );
+};
 </script>
 
 <style lang="scss">
@@ -871,13 +928,13 @@ const handleMaskClick = () => {
 
 .friend-item {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #fff;
   padding: 20rpx 30rpx;
   border-radius: 20rpx;
   margin-bottom: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 
   .friend-content {
@@ -885,6 +942,7 @@ const handleMaskClick = () => {
     display: flex;
     align-items: center;
     padding-right: 20rpx;
+    position: relative;
   }
 
   .action-buttons {
@@ -979,7 +1037,7 @@ const handleMaskClick = () => {
     transform: translateY(-50%);
     min-width: 40rpx;
     height: 40rpx;
-    padding: 0 12rpx;
+    padding: 0 10rpx;
     background: #ff4d4f;
     border-radius: 20rpx;
     color: #fff;
@@ -1486,5 +1544,19 @@ const handleMaskClick = () => {
     background: #fff;
     border-radius: 2rpx;
   }
+}
+
+.invitation-badge {
+  position: absolute;
+  top: 50%;
+  right: 95rpx;
+  transform: translateY(-50%);
+  width: 48rpx;
+  height: 48rpx;
+  background: #ff4d4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

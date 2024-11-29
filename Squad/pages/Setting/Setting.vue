@@ -20,28 +20,28 @@
   </view>
 </template>
 
-
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
+import { useWebSocketStore } from "@/store/webSocket";
 
 // 路由导航
 const router = useRouter();
 
 const goToPersonalInfo = () => {
   uni.navigateTo({
-    url: '/pages/Setting/Info/Info'
+    url: "/pages/Setting/Info/Info",
   });
 };
 
 const goToPasswordSetting = () => {
   uni.navigateTo({
-    url: '/pages/Setting/changePassword/changePassword'
+    url: "/pages/Setting/changePassword/changePassword",
   });
 };
 
 const goToSportSetting = () => {
   uni.navigateTo({
-    url: '/pages/Setting/sportSetting/sportSetting'
+    url: "/pages/Setting/sportSetting/sportSetting",
   });
 };
 
@@ -51,9 +51,27 @@ const logout = () => {
     content: "确认退出登录吗？",
     success: (res) => {
       if (res.confirm) {
-        // uni.removeStorageSync("username"); // 清除用户信息
-        uni.navigateTo({
-          url: '/pages/Login/Login'
+        // 清除用户相关的本地存储
+        uni.clearStorageSync(); // 清除所有存储
+        // 或者选择性清除：
+        // uni.removeStorageSync("username");
+        // uni.removeStorageSync("friendsList");
+        // ... 清除其他相关存储
+
+        // 关闭WebSocket连接
+        const store = useWebSocketStore();
+        store.closeWebSocket();
+
+        // 重置页面栈并跳转到登录页
+        uni.reLaunch({
+          url: '/pages/Login/Login',
+          success: () => {
+            // 确保页面栈被清空
+            console.log('已退出登录并重置页面栈');
+          },
+          fail: (error) => {
+            console.error('退出登录失败:', error);
+          }
         });
       }
     },

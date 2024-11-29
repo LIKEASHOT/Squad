@@ -1,0 +1,67 @@
+export default {
+  methods: {
+    async fetchStream(newValue, oldValue, ownerInstance) {
+      if (!newValue || !newValue.url) return;
+      
+      try {
+        const response = await fetch(newValue.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newValue.data)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        const processStream = async (result) => {
+          if (result.done) {
+            ownerInstance.callMethod('onStreamComplete');
+            return;
+          }
+
+          const text = decoder.decode(result.value, { stream: true });
+          const lines = text.split('\n');
+
+          for (const line of lines) {
+            if (line.trim() === '[DONE]') {
+              ownerInstance.callMethod('onStreamComplete');
+              return;
+            }
+
+            if (line.trim()) {
+              try {
+                if (line.startsWith('data: ')) {
+                  const jsonStr = line.slice(6);
+                  const data = JSON.parse(jsonStr);
+                  if (data.choices && 
+                      data.choices[0].delta && 
+                      data.choices[0].delta.content) {
+                    ownerInstance.callMethod('onStreamData', {
+                      content: data.choices[0].delta.content
+                    });
+                  }
+                }
+              } catch (e) {
+                console.warn('解析数据块失败:', e);
+              }
+            }
+          }
+
+          return reader.read().then(processStream);
+        };
+
+        reader.read().then(processStream);
+
+      } catch (error) {
+        console.error('Fetch error:', error);
+        ownerInstance.callMethod('onStreamError', { error: error.message });
+      }
+    }
+  }
+} 

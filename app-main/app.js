@@ -255,7 +255,7 @@ const updateUserStatus = async (userId, username, isOnline) => {
 };
 
 const saveMessage = async (message) => {
-  // 首先查询发送者和接收者的用户ID
+  // 首先��询发送者和接收者的用户ID
   const getUsersQuery = `
     SELECT id, name FROM users 
     WHERE name IN (?, ?)
@@ -1143,7 +1143,6 @@ app.post("/add-user-goals", (req, res) => {
   });
 });
 
-
 // 返回所有计划信息（SELECT 名称, 时间, 运动次数, 难度, 卡路里, video_url, image_url, 目标, 运动类型）
 app.get("/goals", (req, res) => {
   console.log("请求所有计划信息");
@@ -1172,7 +1171,6 @@ app.get("/goals", (req, res) => {
     return res.json(results.length > 0 ? results : []);
   });
 });
-
 
 const ZHIPU_API_URL =
   "https://open.bigmodel.cn/api/paas/v4/async/chat/completions";
@@ -1957,7 +1955,6 @@ app.post("/friends/add", (req, res) => {
   });
 });
 
-
 // 添加标记消息已读的函数
 const notifyMessageRead = async (userId, friendId, message) => {
   try {
@@ -2046,7 +2043,7 @@ app.post("/friends/delete", async (req, res) => {
   if (!userId || !friendUsername) {
     return res.status(400).json({
       status: "error",
-      message: "Missing required parameters"
+      message: "Missing required parameters",
     });
   }
 
@@ -2060,7 +2057,7 @@ app.post("/friends/delete", async (req, res) => {
     if (friendResults.length === 0) {
       return res.status(404).json({
         status: "error",
-        message: "Friend not found"
+        message: "Friend not found",
       });
     }
 
@@ -2073,7 +2070,7 @@ app.post("/friends/delete", async (req, res) => {
     if (userResults.length === 0) {
       return res.status(404).json({
         status: "error",
-        message: "User not found"
+        message: "User not found",
       });
     }
 
@@ -2081,7 +2078,7 @@ app.post("/friends/delete", async (req, res) => {
     const friendId = friendResults[0].id;
 
     // 开始事务
-    await pool.query('START TRANSACTION');
+    await pool.query("START TRANSACTION");
 
     try {
       // 删除好友关系（双向删除）
@@ -2090,7 +2087,12 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (user_id = ? AND friend_id = ?) 
         OR (user_id = ? AND friend_id = ?)
       `;
-      await pool.query(deleteQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 删除相关的聊天记录
       const deleteMessagesQuery = `
@@ -2098,7 +2100,12 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (sender_id = ? AND receiver_id = ?) 
         OR (sender_id = ? AND receiver_id = ?)
       `;
-      await pool.query(deleteMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteMessagesQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 删除离线消息
       const deleteOfflineMessagesQuery = `
@@ -2106,34 +2113,41 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (sender_id = ? AND receiver_id = ?) 
         OR (sender_id = ? AND receiver_id = ?)
       `;
-      await pool.query(deleteOfflineMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteOfflineMessagesQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 提交事务
-      await pool.query('COMMIT');
+      await pool.query("COMMIT");
 
       // 如果好友在线，发送通知
       const friendSocket = clients.get(friendId);
       if (friendSocket) {
-        friendSocket.send(JSON.stringify({
-          type: 'friend_deleted',
-          username: userId
-        }));
+        friendSocket.send(
+          JSON.stringify({
+            type: "friend_deleted",
+            username: userId,
+          })
+        );
       }
 
       res.json({
         status: "success",
-        message: "Friend deleted successfully"
+        message: "Friend deleted successfully",
       });
     } catch (error) {
       // 如果出错，回滚事务
-      await pool.query('ROLLBACK');
+      await pool.query("ROLLBACK");
       throw error;
     }
   } catch (error) {
     console.error("删除好友失败:", error);
     res.status(500).json({
       status: "error",
-      message: "Failed to delete friend"
+      message: "Failed to delete friend",
     });
   }
 });
@@ -2232,7 +2246,8 @@ app.post("/getUserInfo", (req, res) => {
     return res.status(400).json({ success: false, message: "用户名不能为空" });
   }
 
-  const query = "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
+  const query =
+    "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
   connection.query(query, [username], (error, results) => {
     if (error) {
       console.error("获取用户信息失败:", error);
@@ -2308,18 +2323,24 @@ app.post("/changePassword", (req, res) => {
     }
 
     // 更新密码
-    connection.query(queryUpdate, [newPassword, username], (err, updateResults) => {
-      if (err) {
-        console.error("更新密码失败:", err);
-        return res.status(500).json({ success: false, message: "服务器错误" });
-      }
+    connection.query(
+      queryUpdate,
+      [newPassword, username],
+      (err, updateResults) => {
+        if (err) {
+          console.error("更新密码失败:", err);
+          return res
+            .status(500)
+            .json({ success: false, message: "服务器错误" });
+        }
 
-      if (updateResults.affectedRows > 0) {
-        res.json({ success: true, message: "密码修改成功" });
-      } else {
-        res.status(500).json({ success: false, message: "密码修改失败" });
+        if (updateResults.affectedRows > 0) {
+          res.json({ success: true, message: "密码修改成功" });
+        } else {
+          res.status(500).json({ success: false, message: "密码修改失败" });
+        }
       }
-    });
+    );
   });
 });
 // 获取用户运动数据
@@ -2353,18 +2374,22 @@ app.post("/updateSportData", (req, res) => {
     WHERE name = ?
   `;
 
-  connection.query(query, [fitnessGoal, exerciseType, username], (error, results) => {
-    if (error) {
-      console.error("更新运动数据失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
+  connection.query(
+    query,
+    [fitnessGoal, exerciseType, username],
+    (error, results) => {
+      if (error) {
+        console.error("更新运动数据失败:", error);
+        return res.status(500).json({ success: false, message: "服务器错误" });
+      }
 
-    if (results.affectedRows > 0) {
-      res.json({ success: true, message: "数据更新成功" });
-    } else {
-      res.status(404).json({ success: false, message: "用户不存在" });
+      if (results.affectedRows > 0) {
+        res.json({ success: true, message: "数据更新成功" });
+      } else {
+        res.status(404).json({ success: false, message: "用户不存在" });
+      }
     }
-  });
+  );
 });
 //获取目标运动时长
 app.get("/sport-time-goal", (req, res) => {
@@ -2378,7 +2403,9 @@ app.get("/sport-time-goal", (req, res) => {
   connection.query(query, [username], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
@@ -2406,7 +2433,9 @@ app.get("/exercise-duration", (req, res) => {
   connection.query(query, [username, today], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
@@ -2434,34 +2463,48 @@ app.post("/save-exercise-duration", (req, res) => {
   connection.query(checkQuery, [username, date], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
       // 如果当天已有记录，执行更新操作
       const updateQuery = `UPDATE exercise_logs SET exercise_duration = ? WHERE username = ? AND date = ?`;
-      connection.query(updateQuery, [exercise_duration, username, date], (err, updateResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "更新数据失败" });
-        }
+      connection.query(
+        updateQuery,
+        [exercise_duration, username, date],
+        (err, updateResults) => {
+          if (err) {
+            console.error(err);
+            return res
+              .status(500)
+              .json({ success: false, message: "更新数据失败" });
+          }
 
-        res.json({ success: true, message: "运动时长更新成功" });
-      });
+          res.json({ success: true, message: "运动时长更新成功" });
+        }
+      );
     } else {
       // 如果当天没有记录，执行插入操作
       const insertQuery = `
         INSERT INTO exercise_logs (username, date, exercise_duration)
         VALUES (?, ?, ?)
       `;
-      connection.query(insertQuery, [username, date, exercise_duration], (err, insertResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "插入数据失败" });
-        }
+      connection.query(
+        insertQuery,
+        [username, date, exercise_duration],
+        (err, insertResults) => {
+          if (err) {
+            console.error(err);
+            return res
+              .status(500)
+              .json({ success: false, message: "插入数据失败" });
+          }
 
-        res.json({ success: true, message: "运动时长保存成功" });
-      });
+          res.json({ success: true, message: "运动时长保存成功" });
+        }
+      );
     }
   });
 });
@@ -2844,4 +2887,3 @@ const handleInvitationResponse = async (ws, data) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-

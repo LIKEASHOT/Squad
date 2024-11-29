@@ -62,56 +62,74 @@ export const useWebSocketStore = defineStore("websocket", {
         this.websocket.onMessage((res) => {
           try {
             const data = JSON.parse(res.data);
-            console.log("收到WebSocket消息:", data);
+            if (data.type !== "ai_plan") {
+              console.log("收到WebSocket消息:", data);
+            }
 
-            switch(data.type) {
-              case 'text':
+            switch (data.type) {
+              case "text":
                 // 保存消息到本地
                 this.saveMessageToLocal({
                   ...data,
                   isRead: false,
-                  sendFailed: false
+                  sendFailed: false,
                 });
                 // 更新未读消息计数
                 this.updateUnreadCounts();
                 // 广播消息给所有组件
-                uni.$emit('websocketMessage', data);
+                uni.$emit("websocketMessage", data);
                 break;
-                
-              case 'read_ack':
+
+              case "read_ack":
                 // 广播已读回执给所有组件
-                uni.$emit('websocketMessage', data);
+                uni.$emit("websocketMessage", data);
                 break;
-                
-              case 'status':
+
+              case "status":
                 this.handleStatusMessage(data);
                 break;
-                
-              case 'friends_status':
+
+              case "friends_status":
                 if (Array.isArray(data.statuses)) {
-                  data.statuses.forEach(status => {
+                  data.statuses.forEach((status) => {
                     this.handleStatusMessage(status);
                   });
                 }
                 break;
 
-              case 'offline_messages':
+              case "offline_messages":
                 // 处理离线消息
                 if (Array.isArray(data.messages)) {
-                  data.messages.forEach(msg => {
+                  data.messages.forEach((msg) => {
                     this.saveMessageToLocal({
                       ...msg,
                       isRead: false,
-                      sendFailed: false
+                      sendFailed: false,
                     });
                   });
                   // 更新未读消息计数
                   this.updateUnreadCounts();
                 }
                 break;
+
+              case "ai_plan":
+                // 广播 AI 计划消息给组件
+                uni.$emit("aiPlanMessage", data);
+                break;
+
+              case "invitation":
+                this.handleInvitation(data);
+                break;
+
+              case "invitation_response":
+                this.handleInvitationResponse(data);
+                break;
+              case "invitation_error":
+                console.error("处理邀请响应失败:", data);
+                break;
             }
           } catch (error) {
-            console.error('处理WebSocket消息失败:', error);
+            console.error("处理WebSocket消息失败:", error);
           }
         });
       } catch (error) {
@@ -149,52 +167,51 @@ export const useWebSocketStore = defineStore("websocket", {
       return this.friendsStatus.get(username) || { isOnline: false };
     },
 
-
     // 修改保存消息到本地的函数
     saveMessageToLocal(message) {
       if (!message) return;
-      
+      console.log("保存消息:", message);
       const currentUser = uni.getStorageSync("username");
       // 确保消息属于当前用户
       if (message.receiver !== currentUser && message.sender !== currentUser) {
         return;
       }
-      
+
       try {
         // 构建正确的存储key
         const key = `chat_history_${message.receiver}_${message.sender}`;
-        console.log('保存消息使用的key:', key);
-        
+        console.log("保存消息使用的key:", key);
+
         let history = uni.getStorageSync(key) || [];
         // console.log('当前历史记录:', history);
-        
+
         // 避免重复消息
-        if (!history.some(msg => msg.id === message.id)) {
+        if (!history.some((msg) => msg.id === message.id)) {
           // 保存完整的消息对象
           const newMessage = {
             ...message,
             isRead: message.receiver !== currentUser, // 如果是发送的消息，标记为已读
             sendFailed: false,
-            time: message.time || message.timestamp || Date.now()
+            time: message.time || message.timestamp || Date.now(),
           };
-          
+
           history.push(newMessage);
-          console.log('添加新消息:', newMessage);
-          
+          console.log("添加新消息:", newMessage);
+
           // 按时间排序
           history.sort((a, b) => (a.time || 0) - (b.time || 0));
-          
+
           // 保存到本地存储
           uni.setStorageSync(key, history);
-          
+
           // 如果是接收到的新消息，更新未读计数
           if (message.receiver === currentUser) {
-            console.log('触发未读消息计数更新');
+            console.log("触发未读消息计数更新");
             this.updateUnreadCounts();
           }
         }
       } catch (error) {
-        console.error('保存消息到本地失败:', error, message);
+        console.error("保存消息到本地失败:", error, message);
       }
     },
 
@@ -202,33 +219,207 @@ export const useWebSocketStore = defineStore("websocket", {
     updateUnreadCounts() {
       try {
         const username = uni.getStorageSync("username");
-        const friends = uni.getStorageSync("friendsList") || [];
+        const friends = uni.getStorageSync("friendsList_" + username) || [];
         let updated = false;
-        console.log('当前好友列表:', friends);
-        friends.forEach(friend => {
+        console.log("当前好友列表:", friends);
+        friends.forEach((friend) => {
           const key = `chat_history_${username}_${friend.username}`;
           const history = uni.getStorageSync(key) || [];
-          
+
           // 计算未读消息数
-          const unreadCount = history.filter(msg => 
-            msg && msg.sender === friend.username && !msg.isRead
+          const unreadCount = history.filter(
+            (msg) => msg && msg.sender === friend.username && !msg.isRead
           ).length;
-          
+
           // 只有当未读数发生变化时才更新
           if (friend.unreadCount !== unreadCount) {
             friend.unreadCount = unreadCount;
             updated = true;
-            console.log('更新未读消息计数:', friend.username, unreadCount);
+            console.log("更新未读消息计数:", friend.username, unreadCount);
           }
         });
-        
-        // 只有当有变化时才保存和触发更新
+
+        // 只有当有变化时��保存和触发更新
         if (updated) {
-          uni.setStorageSync("friendsList", friends);
-          uni.$emit('updateUnreadCounts');
+          uni.setStorageSync("friendsList_" + username, friends);
+          uni.$emit("updateUnreadCounts");
         }
       } catch (error) {
-        console.error('更新未读消息计数失败:', error);
+        console.error("更新未读消息计数���败:", error);
+      }
+    },
+
+    // 添加处理 AI 计划消息的方法
+    handleAiPlanMessage(data) {
+      if (data.type === "ai_plan") {
+        // 广播 AI 计划消息
+        uni.$emit("aiPlanMessage", data);
+      }
+    },
+
+    // 发送 AI 计划请求
+    sendAiPlanRequest(prompt) {
+      if (this.isConnected && this.websocket) {
+        this.websocket.send({
+          data: JSON.stringify({
+            type: "ai_plan_request",
+            prompt,
+            username: uni.getStorageSync("username"),
+          }),
+        });
+      } else {
+        console.error("WebSocket未连接");
+        this.initWebSocket();
+      }
+    },
+
+    // 发送打卡邀请
+    sendInvitation(data) {
+      if (this.isConnected && this.websocket) {
+        // 发送消息
+        this.websocket.send({
+          data: JSON.stringify(data),
+        });
+
+        // 构建本地存储的消息对象
+        const invitation = {
+          type: data.type,
+          id: data.id,
+          sender: data.sender,
+          receiver: data.receiver,
+          content: data.content,
+          time: data.time,
+          handled: false,
+          accepted: null,
+          duration: data.challengeData.duration,
+          calories: data.challengeData.goal.calories,
+          minutes: data.challengeData.goal.minutes,
+          startTime: data.challengeData.startTime,
+          isRead: false,
+          sendFailed: false,
+        };
+        console.log("invitation: " + JSON.stringify(invitation));
+        // 保存到本地聊天记录
+        const key = `chat_history_${data.sender}_${data.receiver}`;
+        let history = uni.getStorageSync(key) || [];
+        // 避免重复消息
+        if (!history.some((msg) => msg.id === invitation.id)) {
+          history.push(invitation);
+          uni.setStorageSync(key, history);
+        }
+
+        // 广播给自己的聊天界面
+        uni.$emit("showMyInvitation", invitation);
+      } else {
+        console.error("WebSocket未连接");
+        this.initWebSocket();
+      }
+    },
+
+    // 处理收到的打卡邀请
+    handleInvitation(data) {
+      try {
+        // 解析 message_data 字符串为对象
+        const messageData = data.message_data
+          ? JSON.parse(data.message_data)
+          : {
+              duration: 7,
+              goal: {
+                minutes: 10,
+                calories: 80,
+              },
+              startTime: Date.now(),
+            };
+
+        // 构建邀请消息对象
+        const invitation = {
+          type: data.type,
+          id: data.id,
+          sender: data.sender,
+          receiver: data.receiver,
+          content: data.content,
+          time: data.time,
+          handled: false,
+          accepted: null,
+          duration: messageData.duration,
+          calories: messageData.goal.calories,
+          minutes: messageData.goal.minutes,
+          startTime: messageData.startTime,
+          isRead: false,
+          sendFailed: false,
+        };
+        this.saveMessageToLocal(invitation);
+        this.updateUnreadCounts();
+        // uni.$emit("receivedInvitation", data);
+        // 广播邀请消息给组件
+        uni.$emit("websocketMessage", invitation);
+      } catch (error) {
+        console.error("处理打卡邀请失败:", error);
+      }
+    },
+
+    // 修改消息处理函数
+    handleInvitationResponse(data) {
+      try {
+        // 找到原始邀请消息并更新状态
+        const currentUser = uni.getStorageSync("username");
+        
+        // 构建聊天记录的key
+        const key = data.sender === currentUser 
+          ? `chat_history_${currentUser}_${data.receiver}`
+          : `chat_history_${currentUser}_${data.sender}`;
+        
+        let history = uni.getStorageSync(key) || [];
+
+        // 找到对应的邀请消息
+        const invitationIndex = history.findIndex(
+          msg => msg.type === 'invitation' && msg.id === data.invitationId
+        );
+
+        if (invitationIndex !== -1) {
+          // 更新邀请消息的状态
+          history[invitationIndex].handled = true;
+          history[invitationIndex].accepted = data.accepted;
+          
+          // 保存更新后的历史记录
+          uni.setStorageSync(key, history);
+
+          // 如果是接受邀请，并且当前用户是邀请发送者
+          if (data.accepted && data.receiver === currentUser) {
+            // 准备跳转到打卡页面的数据
+            const challengeData = {
+              challenger: data.sender,
+              challengeData: {
+                duration: history[invitationIndex].duration,
+                goal: {
+                  minutes: history[invitationIndex].minutes,
+                  calories: history[invitationIndex].calories
+                },
+                startTime: data.time
+              },
+              invitationId: data.invitationId
+            };
+
+            // 广播消息给所有组件
+            uni.$emit('websocketMessage', {
+              type: 'invitation_response',
+              ...data,
+              challengeData
+            });
+
+            // 显示提示
+            uni.showToast({
+              title: '对方已接受挑战',
+              icon: 'success'
+            });
+          }
+        }
+
+        // 更新未读消息计数
+        this.updateUnreadCounts();
+
+      } catch (error) {
+        console.error("处理打卡邀请响应失败:", error);
       }
     },
   },
@@ -238,8 +429,8 @@ export const useWebSocketStore = defineStore("websocket", {
 const checkLocalStorage = () => {
   const currentUser = uni.getStorageSync("username");
   const friends = uni.getStorageSync("friendsList") || [];
-  
-  friends.forEach(friend => {
+
+  friends.forEach((friend) => {
     const key = `chat_history_${currentUser}_${friend.username}`;
     const history = uni.getStorageSync(key) || [];
     console.log(`${friend.username} 的聊天记录:`, history);

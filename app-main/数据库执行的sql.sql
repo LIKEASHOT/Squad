@@ -19,12 +19,19 @@ CREATE TABLE users (
     -- 健身相关信息
     fitnessGoal VARCHAR(255),
     exerciseType VARCHAR(255),
-    goalid VARCHAR(255),
-    calories_goal int DEFAULT 100,                    
-    sport_time_goal int DEFAULT 20,                      
-    -- 其他信息
-    avatar VARCHAR(255),                 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+    goalid VARCHAR(255), 
+    calories_goal int DEFAULT 100,                        --目标热量,默认100卡
+    sport_time_goal int DEFAULT 20,                 BIGINT      --目标运动时间,默认20min
+    avatar VARCHAR(255),                 -- 头像 URL，最大长度 255
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 注册时间，默认当前时间
+);
+--记录运动时长
+CREATE TABLE exercise_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  exercise_duration INT DEFAULT 0,
+  daily_calories INT DEFAULT 0
 );
 
 -- 2.2 用户在线状态表
@@ -55,11 +62,11 @@ CREATE TABLE messages (
 );
 
 -- 3.2 离线消息表
+DROP TABLE IF EXISTS offline_messages;
 CREATE TABLE offline_messages (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
     sender VARCHAR(50) NOT NULL,
     receiver VARCHAR(50) NOT NULL,
     type VARCHAR(20) DEFAULT 'text',
@@ -67,8 +74,7 @@ CREATE TABLE offline_messages (
     message_data json,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- 3.3 好友关系表

@@ -31,7 +31,7 @@
       "path": "pages/Home/Home",
       "style": {
         "navigationBarTitleText": "主页",
-        "enablePullDownRefresh":true
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -45,14 +45,14 @@
       "path": "pages/Sports/Sports",
       "style": {
         "navigationBarTitleText": "运动",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/My_Info/My_Info",
       "style": {
         "navigationBarTitleText": "我的",
-        "enablePullDownRefresh": false
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -66,15 +66,21 @@
       "path": "pages/InviteFriends/InviteFriends",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": ""
+        "navigationBarTitleText": "",
+		"enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/Chat/Chat",
       "style": {
-        "navigationStyle": "custom",
         "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
+        "navigationStyle": "custom",
+        "app-plus": {
+          "titleNView": false
+        },
+        "tabBar": {
+          "visible": false
+        }
       }
     },
     {
@@ -91,34 +97,30 @@
         "enablePullDownRefresh": false
       }
     },
-	{
-		"path" : "pages/Setting/Setting",
-		"style" : 
-		{
-			"navigationBarTitleText" : "设置"
-		}
-	},
-	{
-		"path" : "pages/Setting/Info/Info",
-		"style" : 
-		{
-			"navigationBarTitleText" : "个人信息"
-		}
-	},
-	{
-		"path" : "pages/Setting/changePassword/changePassword",
-		"style" : 
-		{
-			"navigationBarTitleText" : "密码设置"
-		}
-	},
-	{
-		"path" : "pages/Setting/sportSetting/sportSetting",
-		"style" : 
-		{
-			"navigationBarTitleText" : "运动设置"
-		}
-	}
+    {
+      "path": "pages/Setting/Setting",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    },
+    {
+      "path": "pages/Setting/Info/Info",
+      "style": {
+        "navigationBarTitleText": "个人信息"
+      }
+    },
+    {
+      "path": "pages/Setting/changePassword/changePassword",
+      "style": {
+        "navigationBarTitleText": "密码设置"
+      }
+    },
+    {
+      "path": "pages/Setting/sportSetting/sportSetting",
+      "style": {
+        "navigationBarTitleText": "运动设置"
+      }
+    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

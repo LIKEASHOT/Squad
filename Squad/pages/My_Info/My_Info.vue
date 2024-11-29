@@ -11,7 +11,7 @@
 		</view>
       <view class="avatar-section">
         <image :src="userInfo.avatar || defaultAvatar" class="avatar" @click="changeAvatar"></image>
-        <text class="username">{{ userInfo.username || '未登录' }}</text>
+        <text class="username">{{ username || '未登录' }}</text>
       </view>
     </view>
 	
@@ -75,6 +75,12 @@ const editCalories = ref(null);
 const targetDuration = ref(20); // 目标运动时间，初始值为 20min
 const targetCalories = ref(100); // 目标热量，初始值为 100卡
 const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
+import{onPullDownRefresh} from '@dcloudio/uni-app';
+onPullDownRefresh(async () => {
+  console.log("refresh");
+  await fetchUserTargets();
+  uni.stopPullDownRefresh();
+});
 onMounted(() => {
 	const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
     fetchUserTargets();
@@ -99,7 +105,8 @@ const fetchUserTargets = async () => {
       targetDuration.value = res.data.data.sport_time_goal;
       targetCalories.value = res.data.data.calories_goal; 
      if(res.data.data.avatar!=null){
-		   userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}` ;// 拼接完整 URL 
+       userInfo.value.avatar = `${serverUrl}/${res.data.data.avatar}`;// 拼接完整 URL 
+       uni.setStorageSync("userInfo_" + username, userInfo.value);
 	 }
 	else{
 		userInfo.value.avatar = defaultAvatar;

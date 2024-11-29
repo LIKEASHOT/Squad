@@ -78,13 +78,13 @@
         </view>
       </view>
     </view>
- 
+
     <!-- 底部协议 -->
     <view class="agreement">
       登录/注册表示您已同意
       <text class="link">《用户协议》</text> 和
       <text class="link">《隐私政策》</text>
-    </view> 
+    </view>
   </view>
 </template>
 
@@ -161,7 +161,7 @@ const submitLogin = () => {
       username: form.value.username,
       password: form.value.password,
     },
-    success: (res) => { 
+    success: (res) => {
       if (res.statusCode === 200) {
         // 保存登录信息
         uni.setStorageSync("token", res.data.token);
@@ -311,6 +311,5 @@ const goRegister = () => {
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
-
 }
 </style>
