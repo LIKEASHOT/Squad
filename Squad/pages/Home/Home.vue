@@ -14,7 +14,7 @@
         @click="switchTab('schedule')"
         >日程</span
       >
-      <span
+     <span
         :class="{ active: tab === 'plan-board' }"
         @click="switchTab('plan-board')"
         v-if="IsManager === true"
@@ -479,7 +479,6 @@
           <!-- 打卡和签到按钮 -->
           <div class="action-buttons">
             <button @click="addCheckIn">打卡</button>
-            <button @click="addSignIn">签到</button>
           </div>
           <!-- 显示 selected 的内容 -->
           <div class="selected-list">
@@ -838,13 +837,14 @@ import {
   onUnmounted,
 } from "vue";
 import MarkdownIt from "markdown-it";
+import dayjs from "dayjs";
 import LCircle from "@/uni_modules/lime-circle/components/l-circle/l-circle.vue"; // 引入组件
 import { type } from "../../uni_modules/uni-forms/components/uni-forms/utils";
 import axios from "axios";
 import { useWebSocketStore } from "@/store/websocket";
 import { onPullDownRefresh } from "@dcloudio/uni-app";
 // 使用 store
-const store = useWebSocketStore();
+const store = useWebSocketStore(); 
 
 onMounted(() => {
   // 初始化WebSocket连接
@@ -858,8 +858,8 @@ onMounted(() => {
     if (!store.isConnected) {
       store.initWebSocket();
       console.log("连接初始化...");
-    }
-  }, 5000);
+    } 
+  }, 5000); 
 });
 
 // 初始化WebSocket连接
@@ -1030,12 +1030,13 @@ onPullDownRefresh(async () => {
 
 // 页面加载时调用
 onMounted(() => {
-  fetchPlansFromBackend();
-  judgeManager();
-  loadMyPlans();
-  fetchDailyCalories(username.value);
+  fetchPlansFromBackend();//加载运动数据
+  judgeManager();//判断管理员
+  loadMyPlans();//加载我的计划
+  fetchDailyCalories(username.value);//加载每日热量
   loadExerciseDurations(); // 加载每日运动时长
   fetchPlanExercise(); // 获取计划运动时长
+  loadWeeklyProgress();//加载一周运动数据
   // 监听添加计划的通知
 
   fetchUserTargets();
@@ -1167,7 +1168,7 @@ const fetchPlanExercise = () => {
 };
 // 加载运动时长
 const loadExerciseDurations = () => {
-
+  fetchPlanExercise();
   const username = uni.getStorageSync("username"); // 获取已登录用户
   if (!username) {
     console.error("用户未登录");
@@ -1190,7 +1191,10 @@ const loadExerciseDurations = () => {
         target.value = Math.round(
           (currentExercise.value / planExercise.value) * 100
         );
-
+		 // 如果运动完成，则自动打卡
+		        if (target.value >= 100) {
+		          autoCheckIn();
+		        }
       } else {
         console.error("获取今日运动时长失败：", res.data.message || "未知错误");
       }
@@ -1620,15 +1624,77 @@ const exerciseProgress = ref(50); // 运动进度百分比
 const currentExercise = ref(0); // 当前运动时长
 const planExercise = ref(20); // 计划运动时长
 
+// 模拟一周的数据
 const weekDays = ref([
-  { date: "周一", progress: 70 },
-  { date: "周二", progress: 50 },
-  { date: "周三", progress: 80 },
-  { date: "周四", progress: 60 },
-  { date: "周五", progress: 90 },
-  { date: "周六", progress: 40 },
-  { date: "周日", progress: 100 },
+  { date: "周一", progress: 0 },
+  { date: "周二", progress: 0 },
+  { date: "周三", progress: 0 },
+  { date: "周四", progress: 0 },
+  { date: "周五", progress: 0 },
+  { date: "周六", progress: 0 },
+  { date: "周日", progress: 0 },
 ]);
+
+// 加载一周的运动进度
+const loadWeeklyProgress = () => {
+  const username = uni.getStorageSync("username");
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+  let planDuration  = ref();
+  const today = new Date();
+  const startDate = dayjs(today).startOf("week").add(1, "day").format("YYYY-MM-DD"); // 获取本周周一的日期
+  const endDate = dayjs(today).endOf("week").add(1, "day").format("YYYY-MM-DD"); // 获取本周周日的日期
+  uni.request({
+    url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(
+      username
+    )}`, // 拼接 username 参数
+    method: "GET",
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        planExercise.value = res.data.data.sport_time_goal || 60; // 更新计划运动时长
+		planDuration.value = planExercise.value; // 每天计划运动时长，单位分钟（示例值）
+		uni.request({
+		  url: `${serverUrl}/weekly-exercise-progress`,
+		  method: "GET",
+		  data: {
+		    username,
+		    startDate,
+		    endDate,
+		    planDuration: planDuration.value, // 传递实际值 
+		  },
+		  success: (res) => {
+		    if (res.statusCode === 200 && res.data.success) {
+		      const weeklyProgress = res.data.data;
+		      weeklyProgress.forEach((item, index) => {
+		        weekDays.value[index].progress = item.progress;
+		      });
+		      console.log("周运动进度已加载:", weekDays.value);
+		    } else {
+		      console.error("加载周运动进度失败：", res.data.message || "未知错误");
+		    }
+		  },
+		  fail: (err) => {
+		    console.error("请求失败：", err);
+		  },
+		});
+      } else {
+        console.error("获取计划运动时长失败：", res.data.message || "未知错误");
+      }
+    },
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+   
+  
+console.log("用户名:", username, "查询范围:", startDate, "-", endDate, "计划时长:", planDuration);
+  
+};
 const showCalendar_bar = ref(false); // 是否显示月历
 
 const switchTab = (selectedTab) => {
@@ -1812,13 +1878,35 @@ const loadMyPlans = () => {
   }
 };
 const judgeManager = () => {
-  // 判断是否为管理员
-  // const Level = uni.getStorageSync("Level");
-  const Level = "1";
-  if (Level === "1") {
-    IsManager.value = true;
+  const username = uni.getStorageSync("username"); // 获取已登录用户名
+  if (!username) {
+    console.error("用户未登录");
+    return;
   }
-};
+
+  // 请求后端获取用户权限
+  uni.request({
+    url: `${serverUrl}/get-user-permission`, // 后端接口地址
+    method: "GET",
+    data: {
+      username: username,
+    },
+    header: {
+      "Content-Type": "application/json",
+    },
+    success: (res) => {
+      if (res.statusCode === 200 && res.data.success) {
+        const permission = res.data.data.permission; // 从响应中获取权限
+        IsManager.value = permission === 0; // 如果权限为 0，则是管理员
+      } else {
+        console.error("获取用户权限失败：", res.data.message || "未知错误");
+      }
+    }, 
+    fail: (err) => {
+      console.error("请求失败：", err);
+    },
+  });
+}; 
 // 初始化剩余热量
 const initializeRemainingCalories = () => {
   const username = uni.getStorageSync("username");
@@ -2138,9 +2226,33 @@ const openDaySchedule = (day) => {
   // 例如，设置为当前选中的日期并显示相关内容
   console.log(`打开${day.date}的日程`);
 };
+// 自动打卡今日
+const autoCheckIn = () => {
+  const today = getDate(new Date()).fullDate; // 获取今天日期
 
+  // 检查是否已打卡
+  const isAlreadyCheckedIn = info.value.selected.some(
+    (record) => record.date === today
+  );
+
+  if (!isAlreadyCheckedIn) {
+    info.value.selected.push({
+      date: today,
+      info: "自动打卡",
+    });
+    saveCheckInToStorage(); // 保存到本地存储
+    console.log("今日已自动打卡");
+  } else {
+    console.log("今日已打卡，无需重复打卡");
+  }
+};
 const toggleCalendar = () => {
   showCalendar_bar.value = !showCalendar_bar.value;
+
+  // 加载运动时长并判断是否需要自动打卡
+  if (showCalendar_bar.value) {
+    loadExerciseDurations();
+  }
 };
 const To_myplan = () => {
   showMyplan.value = true;
@@ -2198,30 +2310,55 @@ const change = (info) => {
   currentday.value = info.fulldate;
   console.log(currentday.value);
 };
+/**
+ * 保存打卡记录到本地存储
+ */
+const saveCheckInToStorage = () => {
+  const username = uni.getStorageSync("username"); // 获取当前用户名
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+  const allRecords = uni.getStorageSync("checkInRecords") || {}; // 获取所有记录
+  allRecords[username] = info.value.selected; // 更新当前用户的记录
+  uni.setStorageSync("checkInRecords", allRecords); // 保存回本地存储
+};
+
+/**
+ * 从本地加载打卡记录
+ */
+const loadCheckInFromStorage = () => {
+  const username = uni.getStorageSync("username"); // 获取当前用户名
+  if (!username) {
+    console.error("用户未登录");
+    return;
+  }
+  const allRecords = uni.getStorageSync("checkInRecords") || {}; // 获取所有记录
+  info.value.selected = allRecords[username] || []; // 加载当前用户的记录
+};
 // 添加打卡记录
 const addCheckIn = () => {
   const newDate = currentday.value;
-  info.value.selected.push({
-    date: newDate,
-    info: "打卡",
-  });
-  refreshCalendar();
+  if (
+    !info.value.selected.some((record) => record.date === newDate) // 防止重复打卡
+  ) {
+    info.value.selected.push({
+      date: newDate,
+      info: "打卡",
+    });
+    saveCheckInToStorage(); // 保存到本地存储
+    refreshCalendar(); // 刷新日历
+  } else {
+    console.warn("当天已打卡，不能重复添加");
+  }
 };
 
-// 添加签到记录
-const addSignIn = () => {
-  const newDate = currentday.value;
-  info.value.selected.push({
-    date: newDate,
-    info: "签到",
-  });
-  refreshCalendar();
-};
 
 // 删除选中的记录
 const removeSelected = (index) => {
-  info.value.selected.splice(index, 1);
-  refreshCalendar();
+  info.value.selected.splice(index, 1); // 删除记录
+  saveCheckInToStorage(); // 保存到本地存储
+  refreshCalendar(); // 刷新日历
 };
 // 刷新日历
 const refreshCalendar = () => {
@@ -2234,28 +2371,11 @@ const refreshCalendar = () => {
 onMounted(() => {
   filterPlans();
   showCalendar.value = true;
+  loadCheckInFromStorage(); // 加载当前用户的打卡记录
   setTimeout(() => {
     info.value.date = getDate(new Date(), -30).fullDate;
     info.value.startDate = getDate(new Date(), -60).fullDate;
     info.value.endDate = getDate(new Date(), 30).fullDate;
-    info.value.selected = [
-      {
-        date: getDate(new Date(), -3).fullDate,
-        info: "打卡",
-      },
-      {
-        date: getDate(new Date(), -2).fullDate,
-        info: "签到",
-        data: {
-          custom: "自定义信息",
-          name: "自定义消息头",
-        },
-      },
-      {
-        date: getDate(new Date(), -1).fullDate,
-        info: "已打卡",
-      },
-    ];
   }, 2000);
 });
 

@@ -31,7 +31,7 @@ export const useWebSocketStore = defineStore("websocket", {
 
         this.websocket.onOpen(() => {
           console.log("WebSocket连接已打开");
-          this.isConnected = true;
+          this.isConnected = true; 
           // 发送认证消息
           this.websocket.send({
             data: JSON.stringify({

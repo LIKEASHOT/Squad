@@ -16375,6 +16375,302 @@ ${i3}
     env = env || {};
     return this.renderer.render(this.parseInline(src, env), this.options, env);
   };
+  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+  }
+  var dayjs_min = { exports: {} };
+  (function(module, exports) {
+    !function(t2, e2) {
+      module.exports = e2();
+    }(commonjsGlobal, function() {
+      var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i2 = "second", s2 = "minute", u2 = "hour", a2 = "day", o2 = "week", c2 = "month", f2 = "quarter", h2 = "year", d2 = "date", l2 = "Invalid Date", $2 = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y2 = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
+        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
+        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
+      } }, m2 = function(t3, e3, n3) {
+        var r3 = String(t3);
+        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
+      }, v2 = { s: m2, z: function(t3) {
+        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
+        return (e3 <= 0 ? "+" : "-") + m2(r3, 2, "0") + ":" + m2(i3, 2, "0");
+      }, m: function t3(e3, n3) {
+        if (e3.date() < n3.date())
+          return -t3(n3, e3);
+        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c2), s3 = n3 - i3 < 0, u3 = e3.clone().add(r3 + (s3 ? -1 : 1), c2);
+        return +(-(r3 + (n3 - i3) / (s3 ? i3 - u3 : u3 - i3)) || 0);
+      }, a: function(t3) {
+        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
+      }, p: function(t3) {
+        return { M: c2, y: h2, w: o2, d: a2, D: d2, h: u2, m: s2, s: i2, ms: r2, Q: f2 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
+      }, u: function(t3) {
+        return void 0 === t3;
+      } }, g2 = "en", D2 = {};
+      D2[g2] = M2;
+      var p2 = "$isDayjsObject", S2 = function(t3) {
+        return t3 instanceof _2 || !(!t3 || !t3[p2]);
+      }, w2 = function t3(e3, n3, r3) {
+        var i3;
+        if (!e3)
+          return g2;
+        if ("string" == typeof e3) {
+          var s3 = e3.toLowerCase();
+          D2[s3] && (i3 = s3), n3 && (D2[s3] = n3, i3 = s3);
+          var u3 = e3.split("-");
+          if (!i3 && u3.length > 1)
+            return t3(u3[0]);
+        } else {
+          var a3 = e3.name;
+          D2[a3] = e3, i3 = a3;
+        }
+        return !r3 && i3 && (g2 = i3), i3 || !r3 && g2;
+      }, O2 = function(t3, e3) {
+        if (S2(t3))
+          return t3.clone();
+        var n3 = "object" == typeof e3 ? e3 : {};
+        return n3.date = t3, n3.args = arguments, new _2(n3);
+      }, b2 = v2;
+      b2.l = w2, b2.i = S2, b2.w = function(t3, e3) {
+        return O2(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
+      };
+      var _2 = function() {
+        function M3(t3) {
+          this.$L = w2(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p2] = true;
+        }
+        var m3 = M3.prototype;
+        return m3.parse = function(t3) {
+          this.$d = function(t4) {
+            var e3 = t4.date, n3 = t4.utc;
+            if (null === e3)
+              return /* @__PURE__ */ new Date(NaN);
+            if (b2.u(e3))
+              return /* @__PURE__ */ new Date();
+            if (e3 instanceof Date)
+              return new Date(e3);
+            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
+              var r3 = e3.match($2);
+              if (r3) {
+                var i3 = r3[2] - 1 || 0, s3 = (r3[7] || "0").substring(0, 3);
+                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3);
+              }
+            }
+            return new Date(e3);
+          }(t3), this.init();
+        }, m3.init = function() {
+          var t3 = this.$d;
+          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
+        }, m3.$utils = function() {
+          return b2;
+        }, m3.isValid = function() {
+          return !(this.$d.toString() === l2);
+        }, m3.isSame = function(t3, e3) {
+          var n3 = O2(t3);
+          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
+        }, m3.isAfter = function(t3, e3) {
+          return O2(t3) < this.startOf(e3);
+        }, m3.isBefore = function(t3, e3) {
+          return this.endOf(e3) < O2(t3);
+        }, m3.$g = function(t3, e3, n3) {
+          return b2.u(t3) ? this[e3] : this.set(n3, t3);
+        }, m3.unix = function() {
+          return Math.floor(this.valueOf() / 1e3);
+        }, m3.valueOf = function() {
+          return this.$d.getTime();
+        }, m3.startOf = function(t3, e3) {
+          var n3 = this, r3 = !!b2.u(e3) || e3, f3 = b2.p(t3), l3 = function(t4, e4) {
+            var i3 = b2.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
+            return r3 ? i3 : i3.endOf(a2);
+          }, $3 = function(t4, e4) {
+            return b2.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
+          }, y3 = this.$W, M4 = this.$M, m4 = this.$D, v3 = "set" + (this.$u ? "UTC" : "");
+          switch (f3) {
+            case h2:
+              return r3 ? l3(1, 0) : l3(31, 11);
+            case c2:
+              return r3 ? l3(1, M4) : l3(0, M4 + 1);
+            case o2:
+              var g3 = this.$locale().weekStart || 0, D3 = (y3 < g3 ? y3 + 7 : y3) - g3;
+              return l3(r3 ? m4 - D3 : m4 + (6 - D3), M4);
+            case a2:
+            case d2:
+              return $3(v3 + "Hours", 0);
+            case u2:
+              return $3(v3 + "Minutes", 1);
+            case s2:
+              return $3(v3 + "Seconds", 2);
+            case i2:
+              return $3(v3 + "Milliseconds", 3);
+            default:
+              return this.clone();
+          }
+        }, m3.endOf = function(t3) {
+          return this.startOf(t3, false);
+        }, m3.$set = function(t3, e3) {
+          var n3, o3 = b2.p(t3), f3 = "set" + (this.$u ? "UTC" : ""), l3 = (n3 = {}, n3[a2] = f3 + "Date", n3[d2] = f3 + "Date", n3[c2] = f3 + "Month", n3[h2] = f3 + "FullYear", n3[u2] = f3 + "Hours", n3[s2] = f3 + "Minutes", n3[i2] = f3 + "Seconds", n3[r2] = f3 + "Milliseconds", n3)[o3], $3 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
+          if (o3 === c2 || o3 === h2) {
+            var y3 = this.clone().set(d2, 1);
+            y3.$d[l3]($3), y3.init(), this.$d = y3.set(d2, Math.min(this.$D, y3.daysInMonth())).$d;
+          } else
+            l3 && this.$d[l3]($3);
+          return this.init(), this;
+        }, m3.set = function(t3, e3) {
+          return this.clone().$set(t3, e3);
+        }, m3.get = function(t3) {
+          return this[b2.p(t3)]();
+        }, m3.add = function(r3, f3) {
+          var d3, l3 = this;
+          r3 = Number(r3);
+          var $3 = b2.p(f3), y3 = function(t3) {
+            var e3 = O2(l3);
+            return b2.w(e3.date(e3.date() + Math.round(t3 * r3)), l3);
+          };
+          if ($3 === c2)
+            return this.set(c2, this.$M + r3);
+          if ($3 === h2)
+            return this.set(h2, this.$y + r3);
+          if ($3 === a2)
+            return y3(1);
+          if ($3 === o2)
+            return y3(7);
+          var M4 = (d3 = {}, d3[s2] = e2, d3[u2] = n2, d3[i2] = t2, d3)[$3] || 1, m4 = this.$d.getTime() + r3 * M4;
+          return b2.w(m4, this);
+        }, m3.subtract = function(t3, e3) {
+          return this.add(-1 * t3, e3);
+        }, m3.format = function(t3) {
+          var e3 = this, n3 = this.$locale();
+          if (!this.isValid())
+            return n3.invalidDate || l2;
+          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b2.z(this), s3 = this.$H, u3 = this.$m, a3 = this.$M, o3 = n3.weekdays, c3 = n3.months, f3 = n3.meridiem, h3 = function(t4, n4, i4, s4) {
+            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s4);
+          }, d3 = function(t4) {
+            return b2.s(s3 % 12 || 12, t4, "0");
+          }, $3 = f3 || function(t4, e4, n4) {
+            var r4 = t4 < 12 ? "AM" : "PM";
+            return n4 ? r4.toLowerCase() : r4;
+          };
+          return r3.replace(y2, function(t4, r4) {
+            return r4 || function(t5) {
+              switch (t5) {
+                case "YY":
+                  return String(e3.$y).slice(-2);
+                case "YYYY":
+                  return b2.s(e3.$y, 4, "0");
+                case "M":
+                  return a3 + 1;
+                case "MM":
+                  return b2.s(a3 + 1, 2, "0");
+                case "MMM":
+                  return h3(n3.monthsShort, a3, c3, 3);
+                case "MMMM":
+                  return h3(c3, a3);
+                case "D":
+                  return e3.$D;
+                case "DD":
+                  return b2.s(e3.$D, 2, "0");
+                case "d":
+                  return String(e3.$W);
+                case "dd":
+                  return h3(n3.weekdaysMin, e3.$W, o3, 2);
+                case "ddd":
+                  return h3(n3.weekdaysShort, e3.$W, o3, 3);
+                case "dddd":
+                  return o3[e3.$W];
+                case "H":
+                  return String(s3);
+                case "HH":
+                  return b2.s(s3, 2, "0");
+                case "h":
+                  return d3(1);
+                case "hh":
+                  return d3(2);
+                case "a":
+                  return $3(s3, u3, true);
+                case "A":
+                  return $3(s3, u3, false);
+                case "m":
+                  return String(u3);
+                case "mm":
+                  return b2.s(u3, 2, "0");
+                case "s":
+                  return String(e3.$s);
+                case "ss":
+                  return b2.s(e3.$s, 2, "0");
+                case "SSS":
+                  return b2.s(e3.$ms, 3, "0");
+                case "Z":
+                  return i3;
+              }
+              return null;
+            }(t4) || i3.replace(":", "");
+          });
+        }, m3.utcOffset = function() {
+          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
+        }, m3.diff = function(r3, d3, l3) {
+          var $3, y3 = this, M4 = b2.p(d3), m4 = O2(r3), v3 = (m4.utcOffset() - this.utcOffset()) * e2, g3 = this - m4, D3 = function() {
+            return b2.m(y3, m4);
+          };
+          switch (M4) {
+            case h2:
+              $3 = D3() / 12;
+              break;
+            case c2:
+              $3 = D3();
+              break;
+            case f2:
+              $3 = D3() / 3;
+              break;
+            case o2:
+              $3 = (g3 - v3) / 6048e5;
+              break;
+            case a2:
+              $3 = (g3 - v3) / 864e5;
+              break;
+            case u2:
+              $3 = g3 / n2;
+              break;
+            case s2:
+              $3 = g3 / e2;
+              break;
+            case i2:
+              $3 = g3 / t2;
+              break;
+            default:
+              $3 = g3;
+          }
+          return l3 ? $3 : b2.a($3);
+        }, m3.daysInMonth = function() {
+          return this.endOf(c2).$D;
+        }, m3.$locale = function() {
+          return D2[this.$L];
+        }, m3.locale = function(t3, e3) {
+          if (!t3)
+            return this.$L;
+          var n3 = this.clone(), r3 = w2(t3, e3, true);
+          return r3 && (n3.$L = r3), n3;
+        }, m3.clone = function() {
+          return b2.w(this.$d, this);
+        }, m3.toDate = function() {
+          return new Date(this.valueOf());
+        }, m3.toJSON = function() {
+          return this.isValid() ? this.toISOString() : null;
+        }, m3.toISOString = function() {
+          return this.$d.toISOString();
+        }, m3.toString = function() {
+          return this.$d.toUTCString();
+        }, M3;
+      }(), k = _2.prototype;
+      return O2.prototype = k, [["$ms", r2], ["$s", i2], ["$m", s2], ["$H", u2], ["$W", a2], ["$M", c2], ["$y", h2], ["$D", d2]].forEach(function(t3) {
+        k[t3[1]] = function(e3) {
+          return this.$g(e3, t3[0], t3[1]);
+        };
+      }), O2.extend = function(t3, e3) {
+        return t3.$i || (t3(e3, _2, O2), t3.$i = true), O2;
+      }, O2.locale = w2, O2.isDayjs = S2, O2.unix = function(t3) {
+        return O2(1e3 * t3);
+      }, O2.en = D2[g2], O2.Ls = D2, O2.p = {}, O2;
+    });
+  })(dayjs_min);
+  var dayjs_minExports = dayjs_min.exports;
+  const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
   const CircleProps = {
     percent: {
       type: Number,
@@ -21377,6 +21673,7 @@ This will fail in production.`);
         fetchDailyCalories(username.value);
         loadExerciseDurations();
         fetchPlanExercise();
+        loadWeeklyProgress();
         fetchUserTargets();
         uni.$on("handleAdd", loadMyPlans);
         uni.$on("handleRemove", loadMyPlans);
@@ -21389,7 +21686,7 @@ This will fail in production.`);
         setInterval(() => {
           const now2 = /* @__PURE__ */ new Date();
           if (now2.getHours() === 0 && now2.getMinutes() === 0) {
-            formatAppLog("log", "at pages/Home/Home.vue:1061", "已到0点，重新获取每日热量");
+            formatAppLog("log", "at pages/Home/Home.vue:1062", "已到0点，重新获取每日热量");
             fetchDailyCalories(username.value);
             resetRemainingCalories();
           }
@@ -21401,7 +21698,7 @@ This will fail in production.`);
         try {
           const username2 = uni.getStorageSync("username");
           uni.setStorageSync(`username`, username2);
-          formatAppLog("log", "at pages/Home/Home.vue:1077", `username: ${username2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1078", `username: ${username2}`);
           const res = await uni.request({
             url: `${serverUrl}/getTargets`,
             method: "POST",
@@ -21416,7 +21713,7 @@ This will fail in production.`);
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1094", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1095", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -21450,7 +21747,7 @@ This will fail in production.`);
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1135", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1136", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
         isEditing.value = false;
@@ -21458,7 +21755,7 @@ This will fail in production.`);
       const fetchPlanExercise = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1144", "用户未登录");
+          formatAppLog("error", "at pages/Home/Home.vue:1145", "用户未登录");
           return;
         }
         uni.request({
@@ -21474,18 +21771,19 @@ This will fail in production.`);
             if (res.statusCode === 200 && res.data.success) {
               planExercise.value = res.data.data.sport_time_goal || 60;
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1160", "获取计划运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Home/Home.vue:1161", "获取计划运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1164", "请求失败：", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1165", "请求失败：", err);
           }
         });
       };
       const loadExerciseDurations = () => {
+        fetchPlanExercise();
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1173", "用户未登录");
+          formatAppLog("error", "at pages/Home/Home.vue:1174", "用户未登录");
           return;
         }
         uni.request({
@@ -21503,28 +21801,31 @@ This will fail in production.`);
               target.value = Math.round(
                 currentExercise.value / planExercise.value * 100
               );
+              if (target.value >= 100) {
+                autoCheckIn();
+              }
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:1195", "获取今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Home/Home.vue:1199", "获取今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1199", "请求失败：", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1203", "请求失败：", err);
           }
         });
       };
       const totalCalories = vue.computed(() => {
         const autoCalories = foodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:1207", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1211", `自动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const manualCalories = manualFoodList.value.reduce((sum, food) => {
           const calories2 = Number(food.currentCalories);
-          formatAppLog("log", "at pages/Home/Home.vue:1214", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
+          formatAppLog("log", "at pages/Home/Home.vue:1218", `手动食物 ${food.食物名称} 的热量: ${calories2}`);
           return sum + (isNaN(calories2) ? 0 : calories2);
         }, 0);
         const total = Math.round(autoCalories + manualCalories);
-        formatAppLog("log", "at pages/Home/Home.vue:1220", `总热量 (自动 + 手动): ${total} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1224", `总热量 (自动 + 手动): ${total} 千卡`);
         return total;
       });
       const calculateFoodCalories = (food) => {
@@ -21578,14 +21879,14 @@ This will fail in production.`);
         dailyFoods = [...dailyFoods, ...newFoods];
         uni.setStorageSync(storageKey, dailyFoods);
         const totalConsumedCalories2 = totalCalories.value;
-        formatAppLog("log", "at pages/Home/Home.vue:1294", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1298", `提交时总消耗的热量: ${totalConsumedCalories2} 千卡`);
         const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username2}`)) || 2e3;
         let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
-        formatAppLog("log", "at pages/Home/Home.vue:1301", `1: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1305", `1: ${remainingCalories} 千卡`);
         remainingCalories = parseFloat(remainingCalories) || dailyCalories;
-        formatAppLog("log", "at pages/Home/Home.vue:1305", `3: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1309", `3: ${remainingCalories} 千卡`);
         remainingCalories = Math.max(0, remainingCalories - totalConsumedCalories2);
-        formatAppLog("log", "at pages/Home/Home.vue:1309", `4: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1313", `4: ${remainingCalories} 千卡`);
         today_left_eat.value = remainingCalories;
         target_eat_percent.value = dailyCalories ? Math.round(remainingCalories / dailyCalories * 100) : 0;
         uni.setStorageSync(`today_left_eat_${username2}`, remainingCalories);
@@ -21595,8 +21896,8 @@ This will fail in production.`);
           title: "已更新每日摄入",
           icon: "success"
         });
-        formatAppLog("log", "at pages/Home/Home.vue:1328", `总消耗: ${totalConsumedCalories2} 千卡`);
-        formatAppLog("log", "at pages/Home/Home.vue:1329", `剩余可摄入热量: ${remainingCalories} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1332", `总消耗: ${totalConsumedCalories2} 千卡`);
+        formatAppLog("log", "at pages/Home/Home.vue:1333", `剩余可摄入热量: ${remainingCalories} 千卡`);
         try {
           const res = await uni.request({
             url: serverUrl + "/submitDailyFoods",
@@ -21618,7 +21919,7 @@ This will fail in production.`);
             throw new Error(res.data.message || "上传失败，请稍后重试");
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1360", "上传失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1364", "上传失败:", error2);
           uni.showToast({
             title: "上传失败，请稍后重试",
             icon: "none"
@@ -21697,7 +21998,7 @@ This will fail in production.`);
           });
           errorMessage.value = "";
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1456", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1460", error2);
           errorMessage.value = error2;
         } finally {
           isRecognizing.value = false;
@@ -21731,7 +22032,7 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (err) {
-          formatAppLog("error", "at pages/Home/Home.vue:1501", "处理识别结果错误:", err);
+          formatAppLog("error", "at pages/Home/Home.vue:1505", "处理识别结果错误:", err);
           uni.showToast({
             title: "数据格式错误",
             icon: "none"
@@ -21744,7 +22045,7 @@ This will fail in production.`);
           // 替换为你的实际后端地址
           method: "GET",
           success: (res) => {
-            formatAppLog("log", "at pages/Home/Home.vue:1515", "返回的所有计划数据:", res.data);
+            formatAppLog("log", "at pages/Home/Home.vue:1519", "返回的所有计划数据:", res.data);
             if (Array.isArray(res.data) && res.data.length > 0) {
               plans.value = res.data.map((item) => ({
                 title: item.title,
@@ -21761,11 +22062,11 @@ This will fail in production.`);
               }));
               filterPlans();
             } else {
-              formatAppLog("log", "at pages/Home/Home.vue:1532", "未找到相关计划数据");
+              formatAppLog("log", "at pages/Home/Home.vue:1536", "未找到相关计划数据");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Home/Home.vue:1536", "请求失败:", err);
+            formatAppLog("error", "at pages/Home/Home.vue:1540", "请求失败:", err);
           }
         });
       };
@@ -21776,7 +22077,7 @@ This will fail in production.`);
           const today = (/* @__PURE__ */ new Date()).toLocaleDateString();
           if (lastFetchDate === today) {
             today_left_eat.value = uni.getStorageSync(`today_left_eat_${username2}`);
-            formatAppLog("log", "at pages/Home/Home.vue:1551", `剩余热量: ${today_left_eat.value} 千卡`);
+            formatAppLog("log", "at pages/Home/Home.vue:1555", `剩余热量: ${today_left_eat.value} 千卡`);
             const dailyCalories = parseFloat(uni.getStorageSync(`dailyCalories_${username2}`)) || 2e3;
             let remainingCalories = uni.getStorageSync(`today_left_eat_${username2}`);
             remainingCalories = parseFloat(remainingCalories) || dailyCalories;
@@ -21794,7 +22095,7 @@ This will fail in production.`);
               // 传递用户名到后端
             }
           });
-          formatAppLog("log", "at pages/Home/Home.vue:1577", "服务器响应:", response);
+          formatAppLog("log", "at pages/Home/Home.vue:1581", "服务器响应:", response);
           if (response.statusCode === 200) {
             const { dailyCalories, error: error2 } = response.data;
             if (dailyCalories) {
@@ -21806,7 +22107,7 @@ This will fail in production.`);
               let remainingCalories = uni.getStorageSync(
                 `today_left_eat_${username2}`
               );
-              formatAppLog("log", "at pages/Home/Home.vue:1593", `更新剩余热量: ${remainingCalories} 千卡`);
+              formatAppLog("log", "at pages/Home/Home.vue:1597", `更新剩余热量: ${remainingCalories} 千卡`);
               uni.showToast({
                 title: "获取热量成功",
                 icon: "success"
@@ -21824,21 +22125,79 @@ This will fail in production.`);
             });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1611", "请求失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1615", "请求失败:", error2);
         }
       }
       const exerciseProgress = vue.ref(50);
       const currentExercise = vue.ref(0);
       const planExercise = vue.ref(20);
       const weekDays = vue.ref([
-        { date: "周一", progress: 70 },
-        { date: "周二", progress: 50 },
-        { date: "周三", progress: 80 },
-        { date: "周四", progress: 60 },
-        { date: "周五", progress: 90 },
-        { date: "周六", progress: 40 },
-        { date: "周日", progress: 100 }
+        { date: "周一", progress: 0 },
+        { date: "周二", progress: 0 },
+        { date: "周三", progress: 0 },
+        { date: "周四", progress: 0 },
+        { date: "周五", progress: 0 },
+        { date: "周六", progress: 0 },
+        { date: "周日", progress: 0 }
       ]);
+      const loadWeeklyProgress = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Home/Home.vue:1642", "用户未登录");
+          return;
+        }
+        let planDuration = vue.ref();
+        const today = /* @__PURE__ */ new Date();
+        const startDate = dayjs(today).startOf("week").add(1, "day").format("YYYY-MM-DD");
+        const endDate = dayjs(today).endOf("week").add(1, "day").format("YYYY-MM-DD");
+        uni.request({
+          url: `${serverUrl}/sport-time-goal?username=${encodeURIComponent(
+            username2
+          )}`,
+          // 拼接 username 参数
+          method: "GET",
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              planExercise.value = res.data.data.sport_time_goal || 60;
+              planDuration.value = planExercise.value;
+              uni.request({
+                url: `${serverUrl}/weekly-exercise-progress`,
+                method: "GET",
+                data: {
+                  username: username2,
+                  startDate,
+                  endDate,
+                  planDuration: planDuration.value
+                  // 传递实际值 
+                },
+                success: (res2) => {
+                  if (res2.statusCode === 200 && res2.data.success) {
+                    const weeklyProgress = res2.data.data;
+                    weeklyProgress.forEach((item, index) => {
+                      weekDays.value[index].progress = item.progress;
+                    });
+                    formatAppLog("log", "at pages/Home/Home.vue:1676", "周运动进度已加载:", weekDays.value);
+                  } else {
+                    formatAppLog("error", "at pages/Home/Home.vue:1678", "加载周运动进度失败：", res2.data.message || "未知错误");
+                  }
+                },
+                fail: (err) => {
+                  formatAppLog("error", "at pages/Home/Home.vue:1682", "请求失败：", err);
+                }
+              });
+            } else {
+              formatAppLog("error", "at pages/Home/Home.vue:1686", "获取计划运动时长失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Home/Home.vue:1690", "请求失败：", err);
+          }
+        });
+        formatAppLog("log", "at pages/Home/Home.vue:1695", "用户名:", username2, "查询范围:", startDate, "-", endDate, "计划时长:", planDuration);
+      };
       const showCalendar_bar = vue.ref(false);
       const switchTab = (selectedTab) => {
         tab.value = selectedTab;
@@ -21863,7 +22222,7 @@ This will fail in production.`);
         });
       };
       const logSelectedFilters = () => {
-        formatAppLog("log", "at pages/Home/Home.vue:1671", "当前选中的筛选条件:", {
+        formatAppLog("log", "at pages/Home/Home.vue:1737", "当前选中的筛选条件:", {
           goal: selectedGoal.value,
           type: selectedType.value,
           difficulty: selectedDifficulty.value
@@ -21899,7 +22258,7 @@ This will fail in production.`);
           }
           store.sendAiPlanRequest(aiInput.value);
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:1718", "获取AI计划失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:1784", "获取AI计划失败:", error2);
           uni.showToast({
             title: "获取计划失败，请重试",
             icon: "none"
@@ -21976,9 +22335,33 @@ This will fail in production.`);
         }
       };
       const judgeManager = () => {
-        {
-          IsManager.value = true;
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Home/Home.vue:1883", "用户未登录");
+          return;
         }
+        uni.request({
+          url: `${serverUrl}/get-user-permission`,
+          // 后端接口地址
+          method: "GET",
+          data: {
+            username: username2
+          },
+          header: {
+            "Content-Type": "application/json"
+          },
+          success: (res) => {
+            if (res.statusCode === 200 && res.data.success) {
+              const permission = res.data.data.permission;
+              IsManager.value = permission === 0;
+            } else {
+              formatAppLog("error", "at pages/Home/Home.vue:1902", "获取用户权限失败：", res.data.message || "未知错误");
+            }
+          },
+          fail: (err) => {
+            formatAppLog("error", "at pages/Home/Home.vue:1906", "请求失败：", err);
+          }
+        });
       };
       const initializeRemainingCalories = () => {
         const username2 = uni.getStorageSync("username");
@@ -21999,14 +22382,14 @@ This will fail in production.`);
         today_left_eat.value = dailyCalories || 2e3;
         uni.setStorageSync(`today_left_eat_${username2}`, today_left_eat.value);
         target_eat_percent.value = 100;
-        formatAppLog("log", "at pages/Home/Home.vue:1849", "已重置剩余热量为每日热量");
+        formatAppLog("log", "at pages/Home/Home.vue:1937", "已重置剩余热量为每日热量");
       };
       const handleAdd = (plan) => {
         let currentPlans = uni.getStorageSync(`myPlans_${username}`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const isPlanExists = currentPlans.some((item) => item.title === plan.title);
         if (isPlanExists) {
-          formatAppLog("log", "at pages/Home/Home.vue:1861", "该计划已经添加过:", plan.title);
+          formatAppLog("log", "at pages/Home/Home.vue:1949", "该计划已经添加过:", plan.title);
           uni.showToast({
             title: "计划已存在",
             icon: "none"
@@ -22015,7 +22398,7 @@ This will fail in production.`);
         }
         currentPlans.push(plan);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(currentPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1874", "计划已添加:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1962", "计划已添加:", plan.title);
         uni.$emit("handleAdd");
         loadMyPlans();
       };
@@ -22024,7 +22407,7 @@ This will fail in production.`);
         currentPlans = currentPlans ? JSON.parse(currentPlans) : [];
         const updatedPlans = currentPlans.filter((item) => item.title !== plan.title);
         uni.setStorageSync(`myPlans_${username}`, JSON.stringify(updatedPlans));
-        formatAppLog("log", "at pages/Home/Home.vue:1892", "计划已删除:", plan.title);
+        formatAppLog("log", "at pages/Home/Home.vue:1980", "计划已删除:", plan.title);
         uni.$emit("handleRemove");
         loadMyPlans();
       };
@@ -22067,7 +22450,7 @@ This will fail in production.`);
           image_url: planForm.value.imageUrl || "",
           B站连接: planForm.value.videoUrl || ""
         };
-        formatAppLog("log", "at pages/Home/Home.vue:1950", "前端提交的计划数据:", planData);
+        formatAppLog("log", "at pages/Home/Home.vue:2038", "前端提交的计划数据:", planData);
         if (isEditing2) {
           uni.request({
             url: `${serverUrl}/goals`,
@@ -22086,7 +22469,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1971", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:2059", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -22108,7 +22491,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:1994", "请求失败:", err);
+              formatAppLog("error", "at pages/Home/Home.vue:2082", "请求失败:", err);
               uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
             }
           });
@@ -22116,7 +22499,7 @@ This will fail in production.`);
       };
       const chooseCoverImage = async () => {
         try {
-          formatAppLog("log", "at pages/Home/Home.vue:2004", "选择图片按钮被点击");
+          formatAppLog("log", "at pages/Home/Home.vue:2092", "选择图片按钮被点击");
           const res = await uni.chooseImage({
             count: 1,
             // 选择一张图片
@@ -22125,22 +22508,22 @@ This will fail in production.`);
           });
           if (res.errMsg === "chooseImage:ok") {
             const filePath = res.tempFilePaths[0];
-            formatAppLog("log", "at pages/Home/Home.vue:2012", "选择的图片路径：", filePath);
+            formatAppLog("log", "at pages/Home/Home.vue:2100", "选择的图片路径：", filePath);
             const uploadRes = await uploadImage(filePath);
             if (uploadRes && uploadRes.imageUrl) {
               planForm.value.imageUrl = uploadRes.imageUrl;
-              formatAppLog("log", "at pages/Home/Home.vue:2018", "图片上传成功，图片 URL:", uploadRes.imageUrl);
+              formatAppLog("log", "at pages/Home/Home.vue:2106", "图片上传成功，图片 URL:", uploadRes.imageUrl);
             } else {
-              formatAppLog("error", "at pages/Home/Home.vue:2020", "图片上传失败");
+              formatAppLog("error", "at pages/Home/Home.vue:2108", "图片上传失败");
             }
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Home/Home.vue:2024", "选择图片失败:", error2);
+          formatAppLog("error", "at pages/Home/Home.vue:2112", "选择图片失败:", error2);
         }
       };
       const uploadImage = (filePath) => {
         return new Promise((resolve, reject) => {
-          formatAppLog("log", "at pages/Home/Home.vue:2031", "开始上传图片，路径:", filePath);
+          formatAppLog("log", "at pages/Home/Home.vue:2119", "开始上传图片，路径:", filePath);
           uni.uploadFile({
             url: serverUrl + "/upload",
             // 假设上传接口的URL
@@ -22151,7 +22534,7 @@ This will fail in production.`);
                 const response = JSON.parse(uploadRes.data);
                 if (uploadRes.statusCode === 200 && response.success) {
                   const imageUrl = response.imageUrl;
-                  formatAppLog("log", "at pages/Home/Home.vue:2043", "上传成功，返回的图片URL:", imageUrl);
+                  formatAppLog("log", "at pages/Home/Home.vue:2131", "上传成功，返回的图片URL:", imageUrl);
                   planForm.value.imageUrl = "http://121.37.195.13:3000/" + imageUrl;
                   uni.showToast({
                     title: "上传成功",
@@ -22159,14 +22542,14 @@ This will fail in production.`);
                     duration: 2e3
                   });
                 } else {
-                  formatAppLog("error", "at pages/Home/Home.vue:2053", "上传失败，返回错误:", response);
+                  formatAppLog("error", "at pages/Home/Home.vue:2141", "上传失败，返回错误:", response);
                   uni.showToast({
                     title: "上传失败，请重试",
                     icon: "none"
                   });
                 }
               } catch (err) {
-                formatAppLog("error", "at pages/Home/Home.vue:2060", "解析响应数据失败:", err);
+                formatAppLog("error", "at pages/Home/Home.vue:2148", "解析响应数据失败:", err);
                 uni.showToast({
                   title: "响应数据解析失败",
                   icon: "none"
@@ -22174,7 +22557,7 @@ This will fail in production.`);
               }
             },
             fail: (err) => {
-              formatAppLog("error", "at pages/Home/Home.vue:2068", "上传失败", err);
+              formatAppLog("error", "at pages/Home/Home.vue:2156", "上传失败", err);
               uni.showToast({
                 title: "上传失败，请检查网络连接",
                 icon: "none"
@@ -22207,7 +22590,7 @@ This will fail in production.`);
                   }
                 },
                 fail: (error2) => {
-                  formatAppLog("error", "at pages/Home/Home.vue:2102", "删除失败：", error2);
+                  formatAppLog("error", "at pages/Home/Home.vue:2190", "删除失败：", error2);
                   uni.showToast({ title: "网络错误，请稍后重试", icon: "none" });
                 }
               });
@@ -22217,8 +22600,8 @@ This will fail in production.`);
       };
       const handleEdit = (item, index) => {
         currentEditIndex.value = index;
-        formatAppLog("log", "at pages/Home/Home.vue:2114", "编辑计划:", item.title);
-        formatAppLog("log", "at pages/Home/Home.vue:2115", "编辑索引:", index);
+        formatAppLog("log", "at pages/Home/Home.vue:2202", "编辑计划:", item.title);
+        formatAppLog("log", "at pages/Home/Home.vue:2203", "编辑索引:", index);
         dialogTitle.value = "编辑计划";
         const selectedGoals = item.goal.map((goalText) => {
           const goalItem = goals.value.find((g2) => g2.text === goalText);
@@ -22239,10 +22622,29 @@ This will fail in production.`);
         openPopup();
       };
       const openDaySchedule = (day) => {
-        formatAppLog("log", "at pages/Home/Home.vue:2139", `打开${day.date}的日程`);
+        formatAppLog("log", "at pages/Home/Home.vue:2227", `打开${day.date}的日程`);
+      };
+      const autoCheckIn = () => {
+        const today = getDate(/* @__PURE__ */ new Date()).fullDate;
+        const isAlreadyCheckedIn = info.value.selected.some(
+          (record) => record.date === today
+        );
+        if (!isAlreadyCheckedIn) {
+          info.value.selected.push({
+            date: today,
+            info: "自动打卡"
+          });
+          saveCheckInToStorage();
+          formatAppLog("log", "at pages/Home/Home.vue:2244", "今日已自动打卡");
+        } else {
+          formatAppLog("log", "at pages/Home/Home.vue:2246", "今日已打卡，无需重复打卡");
+        }
       };
       const toggleCalendar = () => {
         showCalendar_bar.value = !showCalendar_bar.value;
+        if (showCalendar_bar.value) {
+          loadExerciseDurations();
+        }
       };
       const To_myplan = () => {
         showMyplan.value = true;
@@ -22286,28 +22688,45 @@ This will fail in production.`);
         selected: []
       });
       const change = (info2) => {
-        formatAppLog("log", "at pages/Home/Home.vue:2196", "change 返回:", info2);
+        formatAppLog("log", "at pages/Home/Home.vue:2308", "change 返回:", info2);
         currentday.value = info2.fulldate;
-        formatAppLog("log", "at pages/Home/Home.vue:2199", currentday.value);
+        formatAppLog("log", "at pages/Home/Home.vue:2311", currentday.value);
+      };
+      const saveCheckInToStorage = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Home/Home.vue:2319", "用户未登录");
+          return;
+        }
+        const allRecords = uni.getStorageSync("checkInRecords") || {};
+        allRecords[username2] = info.value.selected;
+        uni.setStorageSync("checkInRecords", allRecords);
+      };
+      const loadCheckInFromStorage = () => {
+        const username2 = uni.getStorageSync("username");
+        if (!username2) {
+          formatAppLog("error", "at pages/Home/Home.vue:2333", "用户未登录");
+          return;
+        }
+        const allRecords = uni.getStorageSync("checkInRecords") || {};
+        info.value.selected = allRecords[username2] || [];
       };
       const addCheckIn = () => {
         const newDate = currentday.value;
-        info.value.selected.push({
-          date: newDate,
-          info: "打卡"
-        });
-        refreshCalendar();
-      };
-      const addSignIn = () => {
-        const newDate = currentday.value;
-        info.value.selected.push({
-          date: newDate,
-          info: "签到"
-        });
-        refreshCalendar();
+        if (!info.value.selected.some((record) => record.date === newDate)) {
+          info.value.selected.push({
+            date: newDate,
+            info: "打卡"
+          });
+          saveCheckInToStorage();
+          refreshCalendar();
+        } else {
+          formatAppLog("warn", "at pages/Home/Home.vue:2352", "当天已打卡，不能重复添加");
+        }
       };
       const removeSelected = (index) => {
         info.value.selected.splice(index, 1);
+        saveCheckInToStorage();
         refreshCalendar();
       };
       const refreshCalendar = () => {
@@ -22319,28 +22738,11 @@ This will fail in production.`);
       vue.onMounted(() => {
         filterPlans();
         showCalendar.value = true;
+        loadCheckInFromStorage();
         setTimeout(() => {
           info.value.date = getDate(/* @__PURE__ */ new Date(), -30).fullDate;
           info.value.startDate = getDate(/* @__PURE__ */ new Date(), -60).fullDate;
           info.value.endDate = getDate(/* @__PURE__ */ new Date(), 30).fullDate;
-          info.value.selected = [
-            {
-              date: getDate(/* @__PURE__ */ new Date(), -3).fullDate,
-              info: "打卡"
-            },
-            {
-              date: getDate(/* @__PURE__ */ new Date(), -2).fullDate,
-              info: "签到",
-              data: {
-                custom: "自定义信息",
-                name: "自定义消息头"
-              }
-            },
-            {
-              date: getDate(/* @__PURE__ */ new Date(), -1).fullDate,
-              info: "已打卡"
-            }
-          ];
         }, 2e3);
       });
       const showAddFood = vue.ref(false);
@@ -22386,8 +22788,10 @@ This will fail in production.`);
       vue.onUnmounted(() => {
         uni.$off("aiPlanMessage");
       });
-      const __returned__ = { store, serverUrl, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, completeText, aiInput, customPlan, isGenerating, streamingContent, md, targetDuration, targetCalories, isEditing, editDuration, editCalories, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, fetchUserTargets, openEditModal, cancelEdit, saveEdit, fetchPlanExercise, loadExerciseDurations, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, exerciseProgress, currentExercise, planExercise, weekDays, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCachedPlan, getCustomPlan, clearPlan_AI, savePlan_AI, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleDelete, handleEdit, openDaySchedule, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, addCheckIn, addSignIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, onUnmounted: vue.onUnmounted, get MarkdownIt() {
+      const __returned__ = { store, serverUrl, target, modelVale, target_eat_percent, tab, activeButton, selectedGoal, selectedType, selectedDifficulty, username, showMyplan, showMyeat, today_left_eat, totalConsumedCalories, IsManager, add_icon: add_icon$1, delete_icon: delete_icon$1, column_bar, foodName, calories, popup, dialogTitle, completeText, aiInput, customPlan, isGenerating, streamingContent, md, targetDuration, targetCalories, isEditing, editDuration, editCalories, goals, types: types2, difficulties, planForm, plans, foodList, manualFoodList, errorMessage, fetchUserTargets, openEditModal, cancelEdit, saveEdit, fetchPlanExercise, loadExerciseDurations, totalCalories, calculateFoodCalories, calculateManualFoodCalories, addManualFood, removeFood, submitFoodList, takePicture, processRecognitionResult, fetchPlansFromBackend, fetchDailyCalories, exerciseProgress, currentExercise, planExercise, weekDays, loadWeeklyProgress, showCalendar_bar, switchTab, selectButton, selectGoal, selectType, filteredPlans, filterPlans, logSelectedFilters, openPlanDetail, goToSearchPage, getCachedPlan, getCustomPlan, clearPlan_AI, savePlan_AI, myPlans, currentEditIndex, loadMyPlans, judgeManager, initializeRemainingCalories, resetRemainingCalories, handleAdd, handleRemove, openPopup, closePopup, handleAddPlan_board, savePlan, chooseCoverImage, uploadImage, handleDelete, handleEdit, openDaySchedule, autoCheckIn, toggleCalendar, To_myplan, To_myeat, toDietRecord, getDate, showCalendar, currentday, info, change, saveCheckInToStorage, loadCheckInFromStorage, addCheckIn, removeSelected, refreshCalendar, showAddFood, newFood, showAddFoodPopup, closeAddFoodPopup, confirmAddFood, isRecognizing, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, nextTick: vue.nextTick, watch: vue.watch, provide: vue.provide, reactive: vue.reactive, onUnmounted: vue.onUnmounted, get MarkdownIt() {
         return MarkdownIt;
+      }, get dayjs() {
+        return dayjs;
       }, LCircle, get type() {
         return type;
       }, get axios() {
@@ -23199,8 +23603,7 @@ This will fail in production.`);
             ])) : vue.createCommentVNode("v-if", true),
             vue.createCommentVNode(" 打卡和签到按钮 "),
             vue.createElementVNode("div", { class: "action-buttons" }, [
-              vue.createElementVNode("button", { onClick: $setup.addCheckIn }, "打卡"),
-              vue.createElementVNode("button", { onClick: $setup.addSignIn }, "签到")
+              vue.createElementVNode("button", { onClick: $setup.addCheckIn }, "打卡")
             ]),
             vue.createCommentVNode(" 显示 selected 的内容 "),
             vue.createElementVNode("div", { class: "selected-list" }, [
@@ -25450,302 +25853,6 @@ This will fail in production.`);
     ]);
   }
   const PagesFriendsFriends = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__file", "C:/Users/LIKEASHOT/Documents/HBuilderProjects/Squad/pages/Friends/Friends.vue"]]);
-  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-  function getDefaultExportFromCjs(x) {
-    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
-  }
-  var dayjs_min = { exports: {} };
-  (function(module, exports) {
-    !function(t2, e2) {
-      module.exports = e2();
-    }(commonjsGlobal, function() {
-      var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i2 = "second", s2 = "minute", u2 = "hour", a2 = "day", o2 = "week", c2 = "month", f2 = "quarter", h2 = "year", d2 = "date", l2 = "Invalid Date", $2 = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y2 = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
-        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
-        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
-      } }, m2 = function(t3, e3, n3) {
-        var r3 = String(t3);
-        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
-      }, v2 = { s: m2, z: function(t3) {
-        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
-        return (e3 <= 0 ? "+" : "-") + m2(r3, 2, "0") + ":" + m2(i3, 2, "0");
-      }, m: function t3(e3, n3) {
-        if (e3.date() < n3.date())
-          return -t3(n3, e3);
-        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c2), s3 = n3 - i3 < 0, u3 = e3.clone().add(r3 + (s3 ? -1 : 1), c2);
-        return +(-(r3 + (n3 - i3) / (s3 ? i3 - u3 : u3 - i3)) || 0);
-      }, a: function(t3) {
-        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
-      }, p: function(t3) {
-        return { M: c2, y: h2, w: o2, d: a2, D: d2, h: u2, m: s2, s: i2, ms: r2, Q: f2 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
-      }, u: function(t3) {
-        return void 0 === t3;
-      } }, g2 = "en", D2 = {};
-      D2[g2] = M2;
-      var p2 = "$isDayjsObject", S2 = function(t3) {
-        return t3 instanceof _2 || !(!t3 || !t3[p2]);
-      }, w2 = function t3(e3, n3, r3) {
-        var i3;
-        if (!e3)
-          return g2;
-        if ("string" == typeof e3) {
-          var s3 = e3.toLowerCase();
-          D2[s3] && (i3 = s3), n3 && (D2[s3] = n3, i3 = s3);
-          var u3 = e3.split("-");
-          if (!i3 && u3.length > 1)
-            return t3(u3[0]);
-        } else {
-          var a3 = e3.name;
-          D2[a3] = e3, i3 = a3;
-        }
-        return !r3 && i3 && (g2 = i3), i3 || !r3 && g2;
-      }, O2 = function(t3, e3) {
-        if (S2(t3))
-          return t3.clone();
-        var n3 = "object" == typeof e3 ? e3 : {};
-        return n3.date = t3, n3.args = arguments, new _2(n3);
-      }, b2 = v2;
-      b2.l = w2, b2.i = S2, b2.w = function(t3, e3) {
-        return O2(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
-      };
-      var _2 = function() {
-        function M3(t3) {
-          this.$L = w2(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p2] = true;
-        }
-        var m3 = M3.prototype;
-        return m3.parse = function(t3) {
-          this.$d = function(t4) {
-            var e3 = t4.date, n3 = t4.utc;
-            if (null === e3)
-              return /* @__PURE__ */ new Date(NaN);
-            if (b2.u(e3))
-              return /* @__PURE__ */ new Date();
-            if (e3 instanceof Date)
-              return new Date(e3);
-            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
-              var r3 = e3.match($2);
-              if (r3) {
-                var i3 = r3[2] - 1 || 0, s3 = (r3[7] || "0").substring(0, 3);
-                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3);
-              }
-            }
-            return new Date(e3);
-          }(t3), this.init();
-        }, m3.init = function() {
-          var t3 = this.$d;
-          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
-        }, m3.$utils = function() {
-          return b2;
-        }, m3.isValid = function() {
-          return !(this.$d.toString() === l2);
-        }, m3.isSame = function(t3, e3) {
-          var n3 = O2(t3);
-          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
-        }, m3.isAfter = function(t3, e3) {
-          return O2(t3) < this.startOf(e3);
-        }, m3.isBefore = function(t3, e3) {
-          return this.endOf(e3) < O2(t3);
-        }, m3.$g = function(t3, e3, n3) {
-          return b2.u(t3) ? this[e3] : this.set(n3, t3);
-        }, m3.unix = function() {
-          return Math.floor(this.valueOf() / 1e3);
-        }, m3.valueOf = function() {
-          return this.$d.getTime();
-        }, m3.startOf = function(t3, e3) {
-          var n3 = this, r3 = !!b2.u(e3) || e3, f3 = b2.p(t3), l3 = function(t4, e4) {
-            var i3 = b2.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
-            return r3 ? i3 : i3.endOf(a2);
-          }, $3 = function(t4, e4) {
-            return b2.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
-          }, y3 = this.$W, M4 = this.$M, m4 = this.$D, v3 = "set" + (this.$u ? "UTC" : "");
-          switch (f3) {
-            case h2:
-              return r3 ? l3(1, 0) : l3(31, 11);
-            case c2:
-              return r3 ? l3(1, M4) : l3(0, M4 + 1);
-            case o2:
-              var g3 = this.$locale().weekStart || 0, D3 = (y3 < g3 ? y3 + 7 : y3) - g3;
-              return l3(r3 ? m4 - D3 : m4 + (6 - D3), M4);
-            case a2:
-            case d2:
-              return $3(v3 + "Hours", 0);
-            case u2:
-              return $3(v3 + "Minutes", 1);
-            case s2:
-              return $3(v3 + "Seconds", 2);
-            case i2:
-              return $3(v3 + "Milliseconds", 3);
-            default:
-              return this.clone();
-          }
-        }, m3.endOf = function(t3) {
-          return this.startOf(t3, false);
-        }, m3.$set = function(t3, e3) {
-          var n3, o3 = b2.p(t3), f3 = "set" + (this.$u ? "UTC" : ""), l3 = (n3 = {}, n3[a2] = f3 + "Date", n3[d2] = f3 + "Date", n3[c2] = f3 + "Month", n3[h2] = f3 + "FullYear", n3[u2] = f3 + "Hours", n3[s2] = f3 + "Minutes", n3[i2] = f3 + "Seconds", n3[r2] = f3 + "Milliseconds", n3)[o3], $3 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
-          if (o3 === c2 || o3 === h2) {
-            var y3 = this.clone().set(d2, 1);
-            y3.$d[l3]($3), y3.init(), this.$d = y3.set(d2, Math.min(this.$D, y3.daysInMonth())).$d;
-          } else
-            l3 && this.$d[l3]($3);
-          return this.init(), this;
-        }, m3.set = function(t3, e3) {
-          return this.clone().$set(t3, e3);
-        }, m3.get = function(t3) {
-          return this[b2.p(t3)]();
-        }, m3.add = function(r3, f3) {
-          var d3, l3 = this;
-          r3 = Number(r3);
-          var $3 = b2.p(f3), y3 = function(t3) {
-            var e3 = O2(l3);
-            return b2.w(e3.date(e3.date() + Math.round(t3 * r3)), l3);
-          };
-          if ($3 === c2)
-            return this.set(c2, this.$M + r3);
-          if ($3 === h2)
-            return this.set(h2, this.$y + r3);
-          if ($3 === a2)
-            return y3(1);
-          if ($3 === o2)
-            return y3(7);
-          var M4 = (d3 = {}, d3[s2] = e2, d3[u2] = n2, d3[i2] = t2, d3)[$3] || 1, m4 = this.$d.getTime() + r3 * M4;
-          return b2.w(m4, this);
-        }, m3.subtract = function(t3, e3) {
-          return this.add(-1 * t3, e3);
-        }, m3.format = function(t3) {
-          var e3 = this, n3 = this.$locale();
-          if (!this.isValid())
-            return n3.invalidDate || l2;
-          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b2.z(this), s3 = this.$H, u3 = this.$m, a3 = this.$M, o3 = n3.weekdays, c3 = n3.months, f3 = n3.meridiem, h3 = function(t4, n4, i4, s4) {
-            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s4);
-          }, d3 = function(t4) {
-            return b2.s(s3 % 12 || 12, t4, "0");
-          }, $3 = f3 || function(t4, e4, n4) {
-            var r4 = t4 < 12 ? "AM" : "PM";
-            return n4 ? r4.toLowerCase() : r4;
-          };
-          return r3.replace(y2, function(t4, r4) {
-            return r4 || function(t5) {
-              switch (t5) {
-                case "YY":
-                  return String(e3.$y).slice(-2);
-                case "YYYY":
-                  return b2.s(e3.$y, 4, "0");
-                case "M":
-                  return a3 + 1;
-                case "MM":
-                  return b2.s(a3 + 1, 2, "0");
-                case "MMM":
-                  return h3(n3.monthsShort, a3, c3, 3);
-                case "MMMM":
-                  return h3(c3, a3);
-                case "D":
-                  return e3.$D;
-                case "DD":
-                  return b2.s(e3.$D, 2, "0");
-                case "d":
-                  return String(e3.$W);
-                case "dd":
-                  return h3(n3.weekdaysMin, e3.$W, o3, 2);
-                case "ddd":
-                  return h3(n3.weekdaysShort, e3.$W, o3, 3);
-                case "dddd":
-                  return o3[e3.$W];
-                case "H":
-                  return String(s3);
-                case "HH":
-                  return b2.s(s3, 2, "0");
-                case "h":
-                  return d3(1);
-                case "hh":
-                  return d3(2);
-                case "a":
-                  return $3(s3, u3, true);
-                case "A":
-                  return $3(s3, u3, false);
-                case "m":
-                  return String(u3);
-                case "mm":
-                  return b2.s(u3, 2, "0");
-                case "s":
-                  return String(e3.$s);
-                case "ss":
-                  return b2.s(e3.$s, 2, "0");
-                case "SSS":
-                  return b2.s(e3.$ms, 3, "0");
-                case "Z":
-                  return i3;
-              }
-              return null;
-            }(t4) || i3.replace(":", "");
-          });
-        }, m3.utcOffset = function() {
-          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
-        }, m3.diff = function(r3, d3, l3) {
-          var $3, y3 = this, M4 = b2.p(d3), m4 = O2(r3), v3 = (m4.utcOffset() - this.utcOffset()) * e2, g3 = this - m4, D3 = function() {
-            return b2.m(y3, m4);
-          };
-          switch (M4) {
-            case h2:
-              $3 = D3() / 12;
-              break;
-            case c2:
-              $3 = D3();
-              break;
-            case f2:
-              $3 = D3() / 3;
-              break;
-            case o2:
-              $3 = (g3 - v3) / 6048e5;
-              break;
-            case a2:
-              $3 = (g3 - v3) / 864e5;
-              break;
-            case u2:
-              $3 = g3 / n2;
-              break;
-            case s2:
-              $3 = g3 / e2;
-              break;
-            case i2:
-              $3 = g3 / t2;
-              break;
-            default:
-              $3 = g3;
-          }
-          return l3 ? $3 : b2.a($3);
-        }, m3.daysInMonth = function() {
-          return this.endOf(c2).$D;
-        }, m3.$locale = function() {
-          return D2[this.$L];
-        }, m3.locale = function(t3, e3) {
-          if (!t3)
-            return this.$L;
-          var n3 = this.clone(), r3 = w2(t3, e3, true);
-          return r3 && (n3.$L = r3), n3;
-        }, m3.clone = function() {
-          return b2.w(this.$d, this);
-        }, m3.toDate = function() {
-          return new Date(this.valueOf());
-        }, m3.toJSON = function() {
-          return this.isValid() ? this.toISOString() : null;
-        }, m3.toISOString = function() {
-          return this.$d.toISOString();
-        }, m3.toString = function() {
-          return this.$d.toUTCString();
-        }, M3;
-      }(), k = _2.prototype;
-      return O2.prototype = k, [["$ms", r2], ["$s", i2], ["$m", s2], ["$H", u2], ["$W", a2], ["$M", c2], ["$y", h2], ["$D", d2]].forEach(function(t3) {
-        k[t3[1]] = function(e3) {
-          return this.$g(e3, t3[0], t3[1]);
-        };
-      }), O2.extend = function(t3, e3) {
-        return t3.$i || (t3(e3, _2, O2), t3.$i = true), O2;
-      }, O2.locale = w2, O2.isDayjs = S2, O2.unix = function(t3) {
-        return O2(1e3 * t3);
-      }, O2.en = D2[g2], O2.Ls = D2, O2.p = {}, O2;
-    });
-  })(dayjs_min);
-  var dayjs_minExports = dayjs_min.exports;
-  const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
   const _sfc_main$b = {
     __name: "Sports",
     setup(__props, { expose: __expose }) {
