@@ -64,6 +64,9 @@
                   friend.signature || "这个人很懒，什么都没写~"
                 }}</text>
               </view>
+              <view v-if="hasUnreadInvitation(friend)" class="invitation-badge">
+                <uni-icons type="calendar" size="14" color="#fff" />
+              </view>
               <view v-if="friend.unreadCount > 0" class="unread-badge">
                 {{ friend.unreadCount > 99 ? "99+" : friend.unreadCount }}
               </view>
@@ -412,7 +415,7 @@ const deleteFriend = async (friendUsername) => {
 
     if (res.statusCode === 200) {
       // 清除本地好友列表缓存，强制从服务器重新获取
-      uni.removeStorageSync("friendsList");
+      uni.removeStorageSync("friendsList_" + uni.getStorageSync("username"));
       await loadFriendsList();
 
       uni.showToast({
@@ -548,7 +551,7 @@ const loadFriendsList = async () => {
       }));
 
       // 保存到本地存储
-      uni.setStorageSync("friendsList", formattedFriends);
+      uni.setStorageSync("friendsList_" + username, formattedFriends);
 
       // 更新响应式数据
       friendsList.value = formattedFriends;
@@ -730,7 +733,15 @@ const handleDelete = (friend) => {
 
           if (result.statusCode === 200) {
             // 清除本地好友列表缓存
-            uni.removeStorageSync("friendsList");
+            uni.removeStorageSync(
+              "friendsList_" + uni.getStorageSync("username")
+            );
+            // 清空与好友的聊天记录
+            uni.removeStorageSync(
+              `chat_history_${uni.getStorageSync("username")}_${
+                friend.username
+              }`
+            );
             // 重新加载好友列表
             await loadFriendsList();
 
@@ -822,6 +833,21 @@ const closeFriendsList = () => {
 // 添加遮罩点击处理
 const handleMaskClick = () => {
   closeSidebar();
+};
+
+// 添加检查未读打卡邀请的方法
+const hasUnreadInvitation = (friend) => {
+  const currentUser = uni.getStorageSync("username");
+  const key = `chat_history_${currentUser}_${friend.username}`;
+  const history = uni.getStorageSync(key);
+
+  // 确保 history 是数组
+  if (!Array.isArray(history)) return false;
+
+  return history.some(
+    (msg) =>
+      msg.type === "invitation" && msg.sender === friend.username && !msg.isRead
+  );
 };
 </script>
 
@@ -1516,5 +1542,19 @@ const handleMaskClick = () => {
     background: #fff;
     border-radius: 2rpx;
   }
+}
+
+.invitation-badge {
+  position: absolute;
+  left: -6rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32rpx;
+  height: 32rpx;
+  background: #ff4d4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

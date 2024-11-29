@@ -44,8 +44,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-
+import { onMounted, ref, computed, onUnmounted} from "vue";
+import { useWebSocketStore } from '@/store/websocket';
+import { onPullDownRefresh } from "@dcloudio/uni-app";
+const username = uni.getStorageSync("username");
 const searchQuery = ref("");
 const defaultAvatar = "/static/default-avatar.png";
 const serverUrl = uni.getStorageSync("serverUrl");
@@ -56,13 +58,23 @@ const friendsList = ref([
   { id: 2, username: "Bob", avatar: "", invited: false },
   // ... 更多好友数据
 ]);
-
+onMounted(() => {
+  friendsList.value = uni.getStorageSync("friendsList_" + username);
+});
+onPullDownRefresh(() => {
+  friendsList.value = uni.getStorageSync("friendsList_" + username);
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  }, 1000);
+});
 // 搜索过滤
 const filteredFriends = computed(() => {
   return friendsList.value.filter((friend) =>
     friend.username.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
+
+const store = useWebSocketStore();
 
 // 修改邀请好友函数
 const inviteFriend = (friend) => {
@@ -78,6 +90,8 @@ const inviteFriend = (friend) => {
     time: new Date().getTime(),
     handled: false,
     accepted: null,
+    isRead: false,
+    sendFailed: false,
     challengeData: {
       duration: 7,
       goal: {
@@ -88,46 +102,24 @@ const inviteFriend = (friend) => {
     }
   };
 
-  // 先跳转到聊天页面
-  uni.navigateTo({
-    url: `/pages/Chat/Chat?id=${friend.id}&name=${friend.username}`,
-    success: () => {
-      // 通过事件总线发送消息到聊天页面
-      uni.$emit('new-invitation', invitation);
-      
-      // 然后发送到服务器
-      uni.request({
-        url: `${serverUrl}/chat/send`,
-        method: 'POST',
-        data: {
-          senderId: invitation.sender,
-          receiverId: invitation.receiver,
-          content: JSON.stringify(invitation)
-        },
-        success: (res) => {
-          if (res.statusCode === 200) {
-            friend.invited = true;
-            uni.showToast({
-              title: '邀请已发送',
-              icon: 'success'
-            });
-          } else {
-            uni.showToast({
-              title: '发送失败',
-              icon: 'none'
-            });
-          }
-        },
-        fail: (err) => {
-          console.error('发送邀请失败:', err);
-          uni.showToast({
-            title: '发送失败',
-            icon: 'none'
-          });
-        }
-      });
-    }
-  });
+  // 通过 WebSocket 发送邀请
+  if (store.isConnected) {
+    console.log("发送邀请");
+    store.sendInvitation(invitation);
+    // 保存到本地聊天记录
+    // store.saveMessageToLocal(invitation);
+    friend.invited = true;
+    uni.showToast({
+      title: '邀请已发送',
+      icon: 'success'
+    });
+  } else {
+    uni.showToast({
+      title: '发送失败',
+      icon: 'none'
+    });
+    store.initWebSocket();
+  }
 };
 
 // 返回上一页

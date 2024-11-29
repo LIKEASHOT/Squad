@@ -10,12 +10,17 @@
     "express-session": "^1.18.1",
     "ip": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
+    "markdown-it": "^14.1.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.11.4",
-    "ws": "^8.2.3"
+    "ws": "^8.2.3",
+    "zhipuai-sdk-nodejs-v4": "^0.1.12"
   },
   "scripts": {
     "start": "cross-env API_KEY=70e21317d91374161ec57346a5b44b39.nDWuV1ntp8Fm3ETA node app.js"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2"
   }
 }
