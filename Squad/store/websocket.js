@@ -124,6 +124,9 @@ export const useWebSocketStore = defineStore("websocket", {
               case "invitation_response":
                 this.handleInvitationResponse(data);
                 break;
+              case "invitation_error":
+                console.error("处理邀请响应失败:", data);
+                break;
             }
           } catch (error) {
             console.error("处理WebSocket消息失败:", error);
@@ -236,13 +239,13 @@ export const useWebSocketStore = defineStore("websocket", {
           }
         });
 
-        // 只有当有变化时才保存和触发更新
+        // 只有当有变化时��保存和触发更新
         if (updated) {
           uni.setStorageSync("friendsList_" + username, friends);
           uni.$emit("updateUnreadCounts");
         }
       } catch (error) {
-        console.error("更新未读消息计数失败:", error);
+        console.error("更新未读消息计数���败:", error);
       }
     },
 
@@ -273,27 +276,9 @@ export const useWebSocketStore = defineStore("websocket", {
     // 发送打卡邀请
     sendInvitation(data) {
       if (this.isConnected && this.websocket) {
-        // 构建要发送的消息对象
-        // const messageToSend = {
-        //   type: data.type,
-        //   id: data.id,
-        //   sender: data.sender,
-        //   receiver: data.receiver,
-        //   content: data.content,
-        //   time: data.time,
-        //   message_data: JSON.stringify({
-        //     duration: data.challengeData.duration,
-        //     goal: {
-        //       minutes: data.challengeData.goal.minutes,
-        //       calories: data.challengeData.goal.calories
-        //     },
-        //     startTime: data.challengeData.startTime
-        //   })
-        // };
-
         // 发送消息
         this.websocket.send({
-          data: JSON.stringify(data)
+          data: JSON.stringify(data),
         });
 
         // 构建本地存储的消息对象
@@ -311,7 +296,7 @@ export const useWebSocketStore = defineStore("websocket", {
           minutes: data.challengeData.goal.minutes,
           startTime: data.challengeData.startTime,
           isRead: false,
-          sendFailed: false
+          sendFailed: false,
         };
         console.log("invitation: " + JSON.stringify(invitation));
         // 保存到本地聊天记录
@@ -324,9 +309,9 @@ export const useWebSocketStore = defineStore("websocket", {
         }
 
         // 广播给自己的聊天界面
-        uni.$emit('showMyInvitation', invitation);
+        uni.$emit("showMyInvitation", invitation);
       } else {
-        console.error('WebSocket未连接');
+        console.error("WebSocket未连接");
         this.initWebSocket();
       }
     },
@@ -378,24 +363,63 @@ export const useWebSocketStore = defineStore("websocket", {
       try {
         // 找到原始邀请消息并更新状态
         const currentUser = uni.getStorageSync("username");
-        const key = `chat_history_${currentUser}_${data.sender}`;
+        
+        // 构建聊天记录的key
+        const key = data.sender === currentUser 
+          ? `chat_history_${currentUser}_${data.receiver}`
+          : `chat_history_${currentUser}_${data.sender}`;
+        
         let history = uni.getStorageSync(key) || [];
 
+        // 找到对应的邀请消息
         const invitationIndex = history.findIndex(
-          (msg) => msg.type === "invitation" && msg.id === data.invitationId
+          msg => msg.type === 'invitation' && msg.id === data.invitationId
         );
+
         if (invitationIndex !== -1) {
+          // 更新邀请消息的状态
           history[invitationIndex].handled = true;
           history[invitationIndex].accepted = data.accepted;
+          
+          // 保存更新后的历史记录
           uni.setStorageSync(key, history);
+
+          // 如果是接受邀请，并且当前用户是邀请发送者
+          if (data.accepted && data.receiver === currentUser) {
+            // 准备跳转到打卡页面的数据
+            const challengeData = {
+              challenger: data.sender,
+              challengeData: {
+                duration: history[invitationIndex].duration,
+                goal: {
+                  minutes: history[invitationIndex].minutes,
+                  calories: history[invitationIndex].calories
+                },
+                startTime: data.time
+              },
+              invitationId: data.invitationId
+            };
+
+            // 广播消息给所有组件
+            uni.$emit('websocketMessage', {
+              type: 'invitation_response',
+              ...data,
+              challengeData
+            });
+
+            // 显示提示
+            uni.showToast({
+              title: '对方已接受挑战',
+              icon: 'success'
+            });
+          }
         }
 
         // 更新未读消息计数
         this.updateUnreadCounts();
-        // 广播消息给所有组件
-        uni.$emit("websocketMessage", data);
+
       } catch (error) {
-        console.error("处理WebSocket消息失败:", error);
+        console.error("处理打卡邀请响应失败:", error);
       }
     },
   },

@@ -1,59 +1,107 @@
 <template>
   <view class="challenge-container">
-    <view class="challenge-header">
-      <text class="title">打卡挑战</text>
-      <text class="sub-title">与 {{ challenger }} 的7天运动挑战</text>
-    </view>
-    
-    <view class="progress-section">
-      <view class="progress-card">
-        <text class="day-count">Day {{ currentDay }}/{{ totalDays }}</text>
-        <progress :percent="progressPercent" stroke-width="4" color="#4cd964"/>
+    <!-- 顶部卡片 -->
+    <view class="challenge-card">
+      <view class="card-header">
+        <view class="title-section">
+          <text class="title">运动挑战</text>
+          <text class="sub-title">与 {{ challenger }} 的{{ totalDays }}天运动计划</text>
+        </view>
+        <view class="day-badge">
+          Day {{ currentDay }}/{{ totalDays }}
+        </view>
+      </view>
+      
+      <view class="progress-ring">
+        <l-circle
+          v-model="progressPercent"
+          :percent="progressPercent"
+          size="100"
+          strokeWidth="16"
+          trailWidth="16"
+          lineCap="butt"
+          strokeColor="#fff"
+          trailColor="rgba(255, 255, 255, 0.3)"
+        >
+          <view class="ring-content">
+            <text class="progress-text">{{ progressPercent }}%</text>
+            <text class="progress-label">已完成</text>
+          </view>
+        </l-circle>
       </view>
     </view>
-    
-    <view class="daily-goals">
-      <view class="goal-item">
-        <text class="goal-title">今日目标</text>
-        <text class="goal-value">{{ challengeData.goal.minutes }}分钟</text>
-        <text class="goal-desc">或消耗{{ challengeData.goal.calories }}千卡</text>
+
+    <!-- 今日目标卡片 -->
+    <view class="goal-card">
+      <view class="card-title">
+        <uni-icons type="flag-filled" size="20" color="#4CD964" />
+        <text>今日目标</text>
+      </view>
+      <view class="goal-metrics">
+        <view class="metric-item">
+          <view class="metric-value">{{ challengeData.goal.minutes }}</view>
+          <view class="metric-label">运动时长(分钟)</view>
+        </view>
+        <view class="metric-divider"></view>
+        <view class="metric-item">
+          <view class="metric-value">{{ challengeData.goal.calories }}</view>
+          <view class="metric-label">消耗热量(千卡)</view>
+        </view>
       </view>
     </view>
-    
-    <view class="check-in-btn" @click="handleCheckIn">
-      <text>打卡</text>
+
+    <!-- 打卡按钮 -->
+    <view class="action-section">
+      <button class="check-in-btn" @click="handleCheckIn">
+        <uni-icons type="checkbox-filled" size="24" color="#fff" />
+        <text>打卡</text>
+      </button>
     </view>
-    
-    <view class="progress-comparison">
-      <view class="progress-item">
-        <text class="player-name">我的进度</text>
-        <text class="progress-value">{{ selfProgress }}%</text>
-        <progress :percent="selfProgress" stroke-width="4" color="#4cd964"/>
+
+    <!-- 进度对比 -->
+    <view class="comparison-card">
+      <view class="card-title">
+        <uni-icons type="medal-filled" size="20" color="#4CD964" />
+        <text>挑战进度</text>
       </view>
-      <view class="progress-item">
-        <text class="player-name">{{ challenger }}的进度</text>
-        <text class="progress-value">{{ friendProgress }}%</text>
-        <progress :percent="friendProgress" stroke-width="4" color="#12b7f5"/>
+      <view class="progress-comparison">
+        <view class="player-progress">
+          <view class="player-info">
+            <image class="player-avatar" :src="userAvatar" mode="aspectFill" />
+            <text class="player-name">我的进度</text>
+            <text class="progress-value">{{ selfProgress }}%</text>
+          </view>
+          <progress 
+            :percent="selfProgress" 
+            stroke-width="6" 
+            activeColor="#4CD964"
+            backgroundColor="#E8F5E9"
+          />
+        </view>
+        <view class="player-progress">
+          <view class="player-info">
+            <image class="player-avatar" :src="challengerAvatar" mode="aspectFill" />
+            <text class="player-name">{{ challenger }}的进度</text>
+            <text class="progress-value">{{ friendProgress }}%</text>
+          </view>
+          <progress 
+            :percent="friendProgress" 
+            stroke-width="6" 
+            activeColor="#12B7F5"
+            backgroundColor="#E1F5FE"
+          />
+        </view>
       </view>
     </view>
-    
-    <view class="checkin-history">
-      <view 
-        v-for="(record, index) in checkinRecords" 
-        :key="index"
-        class="record-item"
-      >
-        <text class="day-label">Day {{ record.day }}</text>
-        <text class="status" :class="record.status">
-          {{ record.status === 'completed' ? '已完成' : '未完成' }}
-        </text>
-      </view>
-    </view>
-    
-    <view class="checkin-details">
-      <view class="details-header">
-        <text class="header-title">打卡记录</text>
-        <text class="completion-rate">完成率: {{ completionRate }}%</text>
+
+    <!-- 打卡记录 -->
+    <view class="records-card">
+      <view class="card-header">
+        <view class="card-title">
+          <uni-icons type="calendar-filled" size="20" color="#4CD964" />
+          <text>打卡记录</text>
+        </view>
+        <text class="completion-rate">完成率 {{ completionRate }}%</text>
       </view>
       
       <scroll-view scroll-y class="records-list">
@@ -61,32 +109,28 @@
           v-for="(record, index) in checkinRecords" 
           :key="index"
           class="record-item"
+          :class="{ completed: record.status === 'completed' }"
         >
-          <view class="record-date">
+          <view class="record-left">
             <text class="day">Day {{ record.day }}</text>
             <text class="date">{{ formatDate(record.date) }}</text>
           </view>
           
-          <view class="record-content">
-            <view class="record-data">
-              <view class="data-item">
-                <text class="label">运动时长</text>
-                <text class="value">{{ record.minutes }}分钟</text>
-              </view>
-              <view class="data-item">
-                <text class="label">消耗热量</text>
-                <text class="value">{{ record.calories }}千卡</text>
-              </view>
+          <view class="record-center">
+            <view class="record-metrics">
+              <text class="metric">{{ record.minutes }}分钟</text>
+              <text class="metric">{{ record.calories }}千卡</text>
             </view>
-            
-            <view class="record-note" v-if="record.note">
-              <text class="note-text">{{ record.note }}</text>
-            </view>
+            <text v-if="record.note" class="record-note">{{ record.note }}</text>
           </view>
           
-          <text class="status-tag" :class="record.status">
-            {{ record.status === 'completed' ? '已完成' : '未完成' }}
-          </text> 
+          <view class="record-status">
+            <uni-icons 
+              :type="record.status === 'completed' ? 'checkbox-filled' : 'circle'"
+              :color="record.status === 'completed' ? '#4CD964' : '#999'"
+              size="20"
+            />
+          </view>
         </view>
       </scroll-view>
     </view>
@@ -95,75 +139,80 @@
 
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from 'vue';
+import { useWebSocketStore } from '@/store/websocket';
+
+const store = useWebSocketStore();
+const userInfo = ref({
+  username: uni.getStorageSync("username")
+});
 
 const challenger = ref('');
-const challengeData = ref(null);
+const challengeData = ref({
+  duration: 7,
+  goal: {
+    minutes: 10,
+    calories: 80
+  },
+  startTime: Date.now()
+});
 const invitationId = ref('');
 const currentDay = ref(1);
 const totalDays = ref(7);
 const selfProgress = ref(0);
 const friendProgress = ref(0);
 const checkinRecords = ref([]);
-const websocket = ref(null);
 const goalMinutes = ref(10);
 const goalCalories = ref(80);
-const challengeDuration = ref(7);
-
-// 计算进度百分比
-const progressPercent = computed(() => {
-  return (currentDay.value / totalDays.value) * 100;
-});
-
-// 初始化WebSocket连接
-const initWebSocket = () => {
-  websocket.value = uni.connectSocket({
-    url: `ws://your-server-url:3000/challenge`,
-    success: () => {
-      console.log('Challenge WebSocket连接成功');
-    }
-  });
-
-  websocket.value.onMessage((res) => {
-    const data = JSON.parse(res.data);
-    if (data.type === 'progress_update') {
-      updateProgress(data);
-    }
-  });
-};
-
-// 更新进度
-const updateProgress = (data) => {
-  if (data.userId === userInfo.value.username) {
-    selfProgress.value = data.progress;
-  } else {
-    friendProgress.value = data.progress;
-  }
-};
 
 onMounted(() => {
-  // 监听从聊天页面传递的数据
-  uni.$on('challenge-data', (data) => {
-    challenger.value = data.challenger;
-    challengeData.value = data.challengeData;
-    invitationId.value = data.invitationId;
-  });
-  initWebSocket();
-  // 初始化打卡记录
-  for (let i = 1; i <= totalDays.value; i++) {
-    checkinRecords.value.push({
-      day: i,
-      status: 'pending'
-    });
+  // 获取页面参数
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  const options = currentPage.$page?.options;
+  
+  if (options && options.challenge) {
+    try {
+      const challengeInfo = JSON.parse(decodeURIComponent(options.challenge));
+      challenger.value = challengeInfo.challenger;
+      challengeData.value = challengeInfo.challengeData;
+      invitationId.value = challengeInfo.invitationId;
+      
+      // 更新其他相关值
+      totalDays.value = challengeData.value.duration;
+      goalMinutes.value = challengeData.value.goal.minutes;
+      goalCalories.value = challengeData.value.goal.calories;
+      
+      // 初始化打卡记录
+      for (let i = 1; i <= totalDays.value; i++) {
+        checkinRecords.value.push({
+          day: i,
+          status: 'pending',
+          date: new Date(challengeData.value.startTime + (i-1) * 24 * 60 * 60 * 1000),
+          minutes: 0,
+          calories: 0,
+          note: ''
+        });
+      }
+      
+      // 初始化WebSocket连接
+      initWebSocket();
+      
+    } catch (error) {
+      console.error('解析挑战数据失败:', error);
+      uni.showToast({
+        title: '加载挑战数据失败',
+        icon: 'none'
+      });
+    }
   }
 });
 
-onUnmounted(() => {
-  if (websocket.value) {
-    websocket.value.close();
-  }
+// 修改进度百分比计算
+const progressPercent = computed(() => {
+  return Math.floor((currentDay.value / totalDays.value) * 100);
 });
 
-// 处理打卡
+// 修改处理打卡函数
 const handleCheckIn = () => {
   uni.showModal({
     title: '打卡确认',
@@ -176,6 +225,7 @@ const handleCheckIn = () => {
           type: 'checkin',
           userId: userInfo.value.username,
           challengeId: invitationId.value,
+          challenger: challenger.value,
           day: currentDay.value,
           time: new Date().getTime(),
           minutes: goalMinutes.value,
@@ -183,26 +233,35 @@ const handleCheckIn = () => {
           note: res.content
         };
         
-        websocket.value.send({
-          data: JSON.stringify(checkInData),
-          success: () => {
-            currentDay.value++;
-            selfProgress.value = (currentDay.value / totalDays.value) * 100;
-            updateCheckinRecord({
-              day: currentDay.value,
-              status: 'completed',
-              date: new Date().getTime(),
-              minutes: goalMinutes.value,
-              calories: goalCalories.value,
-              note: res.content
-            });
-            
-            uni.showToast({
-              title: '打卡成功',
-              icon: 'success'
-            });
-          }
-        });
+        // 用 WebSocket store 发送打卡数据
+        if (store.isConnected) {
+          store.websocket.send({
+            data: JSON.stringify(checkInData)
+          });
+          
+          // 更新本地记录
+          currentDay.value++;
+          selfProgress.value = (currentDay.value / totalDays.value) * 100;
+          updateCheckinRecord({
+            day: currentDay.value - 1,
+            status: 'completed',
+            date: new Date().getTime(),
+            minutes: goalMinutes.value,
+            calories: goalCalories.value,
+            note: res.content
+          });
+          
+          uni.showToast({
+            title: '打卡成功',
+            icon: 'success'
+          });
+        } else {
+          uni.showToast({
+            title: '网络连接失败',
+            icon: 'none'
+          });
+          store.initWebSocket();
+        }
       }
     }
   });
@@ -218,10 +277,10 @@ const updateCheckinRecord = (day, status) => {
   }
 };
 
-// 添加完成率计算
+// 同样修改完成率计算
 const completionRate = computed(() => {
   const completed = checkinRecords.value.filter(r => r.status === 'completed').length;
-  return Math.round((completed / totalDays.value) * 100);
+  return Math.floor((completed / totalDays.value) * 100);
 });
 
 // 格式化日期
@@ -233,235 +292,248 @@ const formatDate = (timestamp) => {
 
 <style lang="scss" scoped>
 .challenge-container {
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding: 30rpx;
+}
+
+.challenge-card {
+  background: linear-gradient(135deg, #4CD964, #3CB371);
+  border-radius: 24rpx;
   padding: 40rpx;
-}
-
-.challenge-header {
-  text-align: center;
-  margin-bottom: 40rpx;
-  
-  .title {
-    font-size: 40rpx;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .sub-title {
-    font-size: 28rpx;
-    color: #666;
-    margin-top: 10rpx;
-  }
-}
-
-.progress-section {
-  margin-bottom: 40rpx;
-}
-
-.progress-card {
-  background: #fff;
-  padding: 30rpx;
-  border-radius: 20rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
-  
-  .day-count {
-    font-size: 32rpx;
-    color: #333;
-    margin-bottom: 20rpx;
-    display: block;
-  }
-}
-
-.daily-goals {
-  margin-bottom: 60rpx;
-}
-
-.goal-item {
-  background: #fff;
-  padding: 30rpx;
-  border-radius: 20rpx;
-  text-align: center;
-  
-  .goal-title {
-    font-size: 28rpx;
-    color: #666;
-  }
-  
-  .goal-value {
-    font-size: 48rpx;
-    color: #333;
-    font-weight: bold;
-    margin: 20rpx 0;
-    display: block;
-  }
-  
-  .goal-desc {
-    font-size: 24rpx;
-    color: #999;
-  }
-}
-
-.check-in-btn {
-  background: #4cd964;
-  padding: 30rpx;
-  border-radius: 100rpx;
-  text-align: center;
   color: #fff;
-  font-size: 32rpx;
-  font-weight: bold;
-  box-shadow: 0 4rpx 20rpx rgba(76,217,100,0.3);
-  
-  &:active {
-    transform: scale(0.98);
-  }
-}
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 20rpx rgba(76, 217, 100, 0.2);
 
-.progress-comparison {
-  margin: 30rpx 0;
-  
-  .progress-item {
-    background: #fff;
-    padding: 20rpx;
-    border-radius: 12rpx;
-    margin-bottom: 20rpx;
-    
-    .player-name {
-      font-size: 28rpx;
-      color: #666;
-      margin-bottom: 10rpx;
-      display: block;
-    }
-    
-    .progress-value {
-      font-size: 32rpx;
-      color: #333;
-      font-weight: bold;
-      margin-bottom: 10rpx;
-      display: block;
-    }
-  }
-}
-
-.checkin-history {
-  margin-top: 30rpx;
-  
-  .record-item {
+  .card-header {
     display: flex;
     justify-content: space-between;
-    padding: 20rpx;
-    background: #fff;
-    border-radius: 12rpx;
-    margin-bottom: 10rpx;
-    
-    .day-label {
-      font-size: 28rpx;
-      color: #333;
-    }
-    
-    .status {
-      font-size: 28rpx;
-      
-      &.completed {
-        color: #4cd964;
+    align-items: flex-start;
+    margin-bottom: 40rpx;
+
+    .title-section {
+      .title {
+        font-size: 44rpx;
+        font-weight: 600;
+        margin-bottom: 8rpx;
+        display: block;
       }
-      
-      &.pending {
-        color: #999;
+
+      .sub-title {
+        font-size: 28rpx;
+        opacity: 0.9;
+      }
+    }
+
+    .day-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8rpx 20rpx;
+      border-radius: 100rpx;
+      font-size: 26rpx;
+    }
+  }
+
+  .progress-ring {
+    width: 200rpx;
+    height: 200rpx;
+    margin: 40rpx auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ring-content {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 80%;
+      z-index: 2;
+
+      .progress-text {
+        font-size: 40rpx;
+        font-weight: 600;
+        color: #fff;
+        display: block;
+        white-space: nowrap;
+      }
+
+      .progress-label {
+        font-size: 24rpx;
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 8rpx;
+        display: block;
+        white-space: nowrap;
       }
     }
   }
 }
 
-.checkin-details {
-  margin-top: 40rpx;
+.goal-card, .comparison-card, .records-card {
   background: #fff;
   border-radius: 20rpx;
   padding: 30rpx;
-  
-  .details-header {
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.goal-metrics {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20rpx 0;
+
+  .metric-item {
+    text-align: center;
+
+    .metric-value {
+      font-size: 48rpx;
+      font-weight: 600;
+      color: #4CD964;
+      margin-bottom: 8rpx;
+    }
+
+    .metric-label {
+      font-size: 24rpx;
+      color: #666;
+    }
+  }
+
+  .metric-divider {
+    width: 2rpx;
+    height: 80rpx;
+    background: #eee;
+  }
+}
+
+.action-section {
+  margin: 40rpx 0;
+
+  .check-in-btn {
+    width: 100%;
+    height: 96rpx;
+    background: linear-gradient(135deg, #4CD964, #3CB371);
+    border-radius: 48rpx;
+    color: #fff;
+    font-size: 32rpx;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    border: none;
+    box-shadow: 0 8rpx 20rpx rgba(76, 217, 100, 0.2);
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+}
+
+.player-progress {
+  margin-bottom: 24rpx;
+
+  .player-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12rpx;
+
+    .player-avatar {
+      width: 48rpx;
+      height: 48rpx;
+      border-radius: 24rpx;
+      margin-right: 12rpx;
+    }
+
+    .player-name {
+      flex: 1;
+      font-size: 28rpx;
+      color: #333;
+    }
+
+    .progress-value {
+      font-size: 28rpx;
+      font-weight: 600;
+      color: #4CD964;
+    }
+  }
+}
+
+.records-card {
+  .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30rpx;
-    
-    .header-title {
-      font-size: 32rpx;
-      font-weight: bold;
-      color: #333;
-    }
-    
+    margin-bottom: 24rpx;
+
     .completion-rate {
       font-size: 28rpx;
-      color: #4cd964;
+      color: #4CD964;
+      font-weight: 500;
     }
   }
-  
+
   .records-list {
-    height: 600rpx;
+    max-height: 600rpx;
   }
-  
+
   .record-item {
-    padding: 20rpx;
-    border-bottom: 1rpx solid #eee;
-    
-    .record-date {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20rpx;
-      
+    display: flex;
+    align-items: center;
+    padding: 24rpx;
+    border-radius: 16rpx;
+    background: #F8F9FA;
+    margin-bottom: 16rpx;
+    transition: all 0.3s;
+
+    &.completed {
+      background: #E8F5E9;
+    }
+
+    .record-left {
       .day {
         font-size: 28rpx;
-        font-weight: bold;
+        font-weight: 600;
         color: #333;
+        display: block;
       }
-      
+
       .date {
         font-size: 24rpx;
         color: #999;
       }
     }
-    
-    .record-content {
-      margin-bottom: 20rpx;
-      
-      .record-data {
+
+    .record-center {
+      flex: 1;
+      margin: 0 24rpx;
+
+      .record-metrics {
         display: flex;
-        gap: 40rpx;
-        
-        .data-item {
-          .label {
-            font-size: 24rpx;
-            color: #666;
-          }
-          
-          .value {
-            font-size: 28rpx;
-            color: #333;
-            margin-left: 10rpx;
-          }
+        gap: 16rpx;
+
+        .metric {
+          font-size: 26rpx;
+          color: #666;
         }
       }
-      
+
       .record-note {
-        margin-top: 10rpx;
         font-size: 24rpx;
         color: #999;
-      }
-    }
-    
-    .status-tag {
-      display: inline-block;
-      padding: 4rpx 16rpx;
-      border-radius: 100rpx;
-      font-size: 24rpx;
-      
-      &.completed {
-        background: #e8f7eb;
-        color: #4cd964;
-      }
-      
-      &.pending {
-        background: #f5f5f5;
-        color: #999;
+        margin-top: 8rpx;
       }
     }
   }

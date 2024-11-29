@@ -61,19 +61,18 @@ CREATE TABLE messages (
 );
 
 -- 3.2 离线消息表
+DROP TABLE IF EXISTS offline_messages;
 CREATE TABLE offline_messages (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
     sender VARCHAR(50) NOT NULL,
     receiver VARCHAR(50) NOT NULL,
     type VARCHAR(20) DEFAULT 'text',
     content TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- 3.3 好友关系表

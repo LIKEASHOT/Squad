@@ -9,7 +9,7 @@
       <!-- 使用静态图片作为删除按钮 -->
       <img
         v-if="inputValue"
-        src="@/static/delete_icon/删除.png"
+        src="@/static/delete_icon/delete.png"
         alt="Clear"
         class="clear-icon"
         @click="clearInput"

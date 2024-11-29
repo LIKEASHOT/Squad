@@ -90,8 +90,6 @@ const inviteFriend = (friend) => {
     time: new Date().getTime(),
     handled: false,
     accepted: null,
-    isRead: false,
-    sendFailed: false,
     challengeData: {
       duration: 7,
       goal: {
@@ -104,10 +102,9 @@ const inviteFriend = (friend) => {
 
   // 通过 WebSocket 发送邀请
   if (store.isConnected) {
-    console.log("发送邀请");
     store.sendInvitation(invitation);
     // 保存到本地聊天记录
-    // store.saveMessageToLocal(invitation);
+    store.saveMessageToLocal(invitation);
     friend.invited = true;
     uni.showToast({
       title: '邀请已发送',
@@ -118,7 +115,6 @@ const inviteFriend = (friend) => {
       title: '发送失败',
       icon: 'none'
     });
-    store.initWebSocket();
   }
 };
 

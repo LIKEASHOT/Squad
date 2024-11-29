@@ -65,7 +65,7 @@
                 }}</text>
               </view>
               <view v-if="hasUnreadInvitation(friend)" class="invitation-badge">
-                <uni-icons type="calendar" size="14" color="#fff" />
+                <uni-icons type="calendar" size="18" color="#fff" />
               </view>
               <view v-if="friend.unreadCount > 0" class="unread-badge">
                 {{ friend.unreadCount > 99 ? "99+" : friend.unreadCount }}
@@ -553,7 +553,7 @@ const loadFriendsList = async () => {
       // 保存到本地存储
       uni.setStorageSync("friendsList_" + username, formattedFriends);
 
-      // 更新响应式数据
+      // 更新响���式数据
       friendsList.value = formattedFriends;
 
       // 立即加载未读消息数
@@ -835,18 +835,19 @@ const handleMaskClick = () => {
   closeSidebar();
 };
 
-// 添加检查未读打卡邀请的方法
+// 修改检查未读打卡邀请的方法
 const hasUnreadInvitation = (friend) => {
   const currentUser = uni.getStorageSync("username");
   const key = `chat_history_${currentUser}_${friend.username}`;
   const history = uni.getStorageSync(key);
-
+  
   // 确保 history 是数组
   if (!Array.isArray(history)) return false;
-
-  return history.some(
-    (msg) =>
-      msg.type === "invitation" && msg.sender === friend.username && !msg.isRead
+  
+  return history.some(msg => 
+    msg.type === 'invitation' && 
+    msg.sender === friend.username && 
+    !msg.isRead
   );
 };
 </script>
@@ -927,13 +928,13 @@ const hasUnreadInvitation = (friend) => {
 
 .friend-item {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #fff;
   padding: 20rpx 30rpx;
   border-radius: 20rpx;
   margin-bottom: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 
   .friend-content {
@@ -941,6 +942,7 @@ const hasUnreadInvitation = (friend) => {
     display: flex;
     align-items: center;
     padding-right: 20rpx;
+    position: relative;
   }
 
   .action-buttons {
@@ -1035,7 +1037,7 @@ const hasUnreadInvitation = (friend) => {
     transform: translateY(-50%);
     min-width: 40rpx;
     height: 40rpx;
-    padding: 0 12rpx;
+    padding: 0 10rpx;
     background: #ff4d4f;
     border-radius: 20rpx;
     color: #fff;
@@ -1546,11 +1548,11 @@ const hasUnreadInvitation = (friend) => {
 
 .invitation-badge {
   position: absolute;
-  left: -6rpx;
   top: 50%;
+  right: 95rpx;
   transform: translateY(-50%);
-  width: 32rpx;
-  height: 32rpx;
+  width: 48rpx;
+  height: 48rpx;
   background: #ff4d4f;
   border-radius: 50%;
   display: flex;
