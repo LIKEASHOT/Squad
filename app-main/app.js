@@ -3,7 +3,7 @@
 
 // nodemon --inspect app.js 用于调试
 const express = require("express");
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 const mysql = require("mysql");
 const mysql2 = require("mysql2/promise"); // 使用 mysql2/promise 以支持 async/await
 const bodyParser = require("body-parser");
@@ -194,6 +194,14 @@ wss.on("connection", (ws) => {
           if (!success) {
             console.error("处理已读回执失败");
           }
+          break;
+
+        case "ai_plan_request":
+          await handleAiPlanRequest(ws, data);
+          break;
+
+        case "invitation":
+          await handleInvitation(ws, data);
           break;
       }
     } catch (error) {
@@ -1115,7 +1123,6 @@ app.post("/add-user-goals", (req, res) => {
   });
 });
 
-
 // 返回所有计划信息（SELECT 名称, 时间, 运动次数, 难度, 卡路里, video_url, image_url, 目标, 运动类型）
 app.get("/goals", (req, res) => {
   console.log("请求所有计划信息");
@@ -1144,7 +1151,6 @@ app.get("/goals", (req, res) => {
     return res.json(results.length > 0 ? results : []);
   });
 });
-
 
 const ZHIPU_API_URL =
   "https://open.bigmodel.cn/api/paas/v4/async/chat/completions";
@@ -1896,7 +1902,6 @@ app.post("/friends/add", (req, res) => {
   });
 });
 
-
 // 添加标记消息已读的函数
 const notifyMessageRead = async (userId, friendId, message) => {
   try {
@@ -1985,7 +1990,7 @@ app.post("/friends/delete", async (req, res) => {
   if (!userId || !friendUsername) {
     return res.status(400).json({
       status: "error",
-      message: "Missing required parameters"
+      message: "Missing required parameters",
     });
   }
 
@@ -1999,7 +2004,7 @@ app.post("/friends/delete", async (req, res) => {
     if (friendResults.length === 0) {
       return res.status(404).json({
         status: "error",
-        message: "Friend not found"
+        message: "Friend not found",
       });
     }
 
@@ -2012,7 +2017,7 @@ app.post("/friends/delete", async (req, res) => {
     if (userResults.length === 0) {
       return res.status(404).json({
         status: "error",
-        message: "User not found"
+        message: "User not found",
       });
     }
 
@@ -2020,7 +2025,7 @@ app.post("/friends/delete", async (req, res) => {
     const friendId = friendResults[0].id;
 
     // 开始事务
-    await pool.query('START TRANSACTION');
+    await pool.query("START TRANSACTION");
 
     try {
       // 删除好友关系（双向删除）
@@ -2029,7 +2034,12 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (user_id = ? AND friend_id = ?) 
         OR (user_id = ? AND friend_id = ?)
       `;
-      await pool.query(deleteQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 删除相关的聊天记录
       const deleteMessagesQuery = `
@@ -2037,7 +2047,12 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (sender_id = ? AND receiver_id = ?) 
         OR (sender_id = ? AND receiver_id = ?)
       `;
-      await pool.query(deleteMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteMessagesQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 删除离线消息
       const deleteOfflineMessagesQuery = `
@@ -2045,34 +2060,41 @@ app.post("/friends/delete", async (req, res) => {
         WHERE (sender_id = ? AND receiver_id = ?) 
         OR (sender_id = ? AND receiver_id = ?)
       `;
-      await pool.query(deleteOfflineMessagesQuery, [requesterId, friendId, friendId, requesterId]);
+      await pool.query(deleteOfflineMessagesQuery, [
+        requesterId,
+        friendId,
+        friendId,
+        requesterId,
+      ]);
 
       // 提交事务
-      await pool.query('COMMIT');
+      await pool.query("COMMIT");
 
       // 如果好友在线，发送通知
       const friendSocket = clients.get(friendId);
       if (friendSocket) {
-        friendSocket.send(JSON.stringify({
-          type: 'friend_deleted',
-          username: userId
-        }));
+        friendSocket.send(
+          JSON.stringify({
+            type: "friend_deleted",
+            username: userId,
+          })
+        );
       }
 
       res.json({
         status: "success",
-        message: "Friend deleted successfully"
+        message: "Friend deleted successfully",
       });
     } catch (error) {
       // 如果出错，回滚事务
-      await pool.query('ROLLBACK');
+      await pool.query("ROLLBACK");
       throw error;
     }
   } catch (error) {
     console.error("删除好友失败:", error);
     res.status(500).json({
       status: "error",
-      message: "Failed to delete friend"
+      message: "Failed to delete friend",
     });
   }
 });
@@ -2171,7 +2193,8 @@ app.post("/getUserInfo", (req, res) => {
     return res.status(400).json({ success: false, message: "用户名不能为空" });
   }
 
-  const query = "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
+  const query =
+    "SELECT name, height, weight, age, gender FROM users WHERE name = ?";
   connection.query(query, [username], (error, results) => {
     if (error) {
       console.error("获取用户信息失败:", error);
@@ -2247,18 +2270,24 @@ app.post("/changePassword", (req, res) => {
     }
 
     // 更新密码
-    connection.query(queryUpdate, [newPassword, username], (err, updateResults) => {
-      if (err) {
-        console.error("更新密码失败:", err);
-        return res.status(500).json({ success: false, message: "服务器错误" });
-      }
+    connection.query(
+      queryUpdate,
+      [newPassword, username],
+      (err, updateResults) => {
+        if (err) {
+          console.error("更新密码失败:", err);
+          return res
+            .status(500)
+            .json({ success: false, message: "服务器错误" });
+        }
 
-      if (updateResults.affectedRows > 0) {
-        res.json({ success: true, message: "密码修改成功" });
-      } else {
-        res.status(500).json({ success: false, message: "密码修改失败" });
+        if (updateResults.affectedRows > 0) {
+          res.json({ success: true, message: "密码修改成功" });
+        } else {
+          res.status(500).json({ success: false, message: "密码修改失败" });
+        }
       }
-    });
+    );
   });
 });
 // 获取用户运动数据
@@ -2292,18 +2321,22 @@ app.post("/updateSportData", (req, res) => {
     WHERE name = ?
   `;
 
-  connection.query(query, [fitnessGoal, exerciseType, username], (error, results) => {
-    if (error) {
-      console.error("更新运动数据失败:", error);
-      return res.status(500).json({ success: false, message: "服务器错误" });
-    }
+  connection.query(
+    query,
+    [fitnessGoal, exerciseType, username],
+    (error, results) => {
+      if (error) {
+        console.error("更新运动数据失败:", error);
+        return res.status(500).json({ success: false, message: "服务器错误" });
+      }
 
-    if (results.affectedRows > 0) {
-      res.json({ success: true, message: "数据更新成功" });
-    } else {
-      res.status(404).json({ success: false, message: "用户不存在" });
+      if (results.affectedRows > 0) {
+        res.json({ success: true, message: "数据更新成功" });
+      } else {
+        res.status(404).json({ success: false, message: "用户不存在" });
+      }
     }
-  });
+  );
 });
 //获取目标运动时长
 app.get("/sport-time-goal", (req, res) => {
@@ -2317,7 +2350,9 @@ app.get("/sport-time-goal", (req, res) => {
   connection.query(query, [username], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
@@ -2345,7 +2380,9 @@ app.get("/exercise-duration", (req, res) => {
   connection.query(query, [username, today], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
@@ -2373,36 +2410,143 @@ app.post("/save-exercise-duration", (req, res) => {
   connection.query(checkQuery, [username, date], (err, results) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ success: false, message: "数据库查询失败" });
+      return res
+        .status(500)
+        .json({ success: false, message: "数据库查询失败" });
     }
 
     if (results.length > 0) {
       // 如果当天已有记录，执行更新操作
       const updateQuery = `UPDATE exercise_logs SET exercise_duration = ? WHERE username = ? AND date = ?`;
-      connection.query(updateQuery, [exercise_duration, username, date], (err, updateResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "更新数据失败" });
-        }
+      connection.query(
+        updateQuery,
+        [exercise_duration, username, date],
+        (err, updateResults) => {
+          if (err) {
+            console.error(err);
+            return res
+              .status(500)
+              .json({ success: false, message: "更新数据失败" });
+          }
 
-        res.json({ success: true, message: "运动时长更新成功" });
-      });
+          res.json({ success: true, message: "运动时长更新成功" });
+        }
+      );
     } else {
       // 如果当天没有记录，执行插入操作
       const insertQuery = `
         INSERT INTO exercise_logs (username, date, exercise_duration)
         VALUES (?, ?, ?)
       `;
-      connection.query(insertQuery, [username, date, exercise_duration], (err, insertResults) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: "插入数据失败" });
-        }
+      connection.query(
+        insertQuery,
+        [username, date, exercise_duration],
+        (err, insertResults) => {
+          if (err) {
+            console.error(err);
+            return res
+              .status(500)
+              .json({ success: false, message: "插入数据失败" });
+          }
 
-        res.json({ success: true, message: "运动时长保存成功" });
-      });
+          res.json({ success: true, message: "运动时长保存成功" });
+        }
+      );
     }
   });
+});
+// 添加流式生成健身计划接口
+app.post("/ai/generate-plan", async (req, res) => {
+  const { prompt, username } = req.body;
+
+  // 验证输入
+  if (typeof prompt !== "string" || prompt.trim() === "") {
+    return res.status(400).json({ error: "无效的输入" });
+  }
+
+  try {
+    // 从数据库获取用户信息
+    const [userResults] = await pool.query(
+      "SELECT * FROM users WHERE name = ?",
+      [username]
+    );
+
+    if (userResults.length === 0) {
+      return res.status(404).json({ error: "用户未找到" });
+    }
+
+    const user = userResults[0];
+    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } =
+      user;
+
+    // 设置响应头以支持流式传输
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    try {
+      // 创建智谱AI客户端
+      const ai = new ZhipuAI({
+        apiKey: process.env.ZHIPU_API_KEY,
+      });
+
+      // 创建流式对话
+      const result = await ai.createCompletions({
+        model: "glm-4",
+        messages: [
+          {
+            role: "system",
+            content:
+              "你是一个专业的健身教练，擅长根据用户的身体状况和目标制定个性化的运动计划。",
+          },
+          {
+            role: "user",
+            content: `用户需求：${prompt}。
+            根据以下信息生成一个详细的健身计划：
+            性别：${gender}
+            年龄：${age}岁
+            身高：${height}米
+            体重：${weight}公斤
+            BMI：${bmi}
+            健身目标：${fitnessGoal}
+            偏好的运动类型：${exerciseType}
+            
+            请按照以下格式输出计划：
+            1. 计划概述
+            2. 每周训练安排
+            3. 具体动作说明
+            4. 注意事项和建议`,
+          },
+        ],
+        stream: true,
+      });
+
+      // 处理流式响应
+      for await (const chunk of result) {
+        const content = chunk.toString();
+        if (content) {
+          res.write(content);
+        }
+      }
+
+      // 发送结束标记
+      res.write("\n[DONE]");
+      res.end();
+    } catch (error) {
+      console.error("智谱AI API调用失败:", error);
+      // 如果流还没有结束，发送错误消息
+      if (!res.writableEnded) {
+        res.write(JSON.stringify({ error: "生成计划失败" }));
+        res.end();
+      }
+    }
+  } catch (error) {
+    console.error("数据库查询失败:", error);
+    if (!res.writableEnded) {
+      res.write(JSON.stringify({ error: "服务器错误" }));
+      res.end();
+    }
+  }
 });
 
 // 启动服务器
@@ -2410,3 +2554,135 @@ app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
 
+// 添加处理 AI 计划的函数
+const handleAiPlanRequest = async (ws, data) => {
+  try {
+    // 从数据库获取用户信息
+    const [userResults] = await pool.query(
+      "SELECT * FROM users WHERE name = ?",
+      [data.username]
+    );
+
+    if (userResults.length === 0) {
+      throw new Error("用户未找到");
+    }
+
+    const user = userResults[0];
+    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } = user;
+
+    // 创建智谱AI客户端
+    const ai = new ZhipuAI({
+      apiKey: process.env.ZHIPU_API_KEY,
+    });
+
+    // 创建流式对话
+    const result = await ai.createCompletions({
+      model: "glm-4",
+      messages: [
+        {
+          role: "system",
+          content: "你是一个专业的健身教练，擅长根据用户的身体状况和目标制定个性化的运动计划。"
+        },
+        {
+          role: "user",
+          content: `用户需求：${data.prompt}。
+          根据以下信息生成一个详细的健身计划：
+          性别：${gender}
+          年龄：${age}岁
+          身高：${height}米
+          体重：${weight}公斤
+          BMI：${bmi}
+          健身目标：${fitnessGoal}
+          偏好的运动类型：${exerciseType}
+          
+          请按照以下格式输出计划：
+          1. 计划概述
+          2. 每周训练安排
+          3. 具体动作说明
+          4. 注意事项和建议`
+        }
+      ],
+      stream: true,
+    });
+
+    // 处理流式响应
+    for await (const chunk of result) {
+      const content = chunk.toString();
+      if (content) {
+        ws.send(JSON.stringify({
+          type: 'ai_plan',
+          content: content
+        }));
+      }
+    }
+
+    // 发送完成标记
+    ws.send(JSON.stringify({
+      type: 'ai_plan',
+      content: '[DONE]'
+    }));
+
+  } catch (error) {
+    console.error("AI计划生成失败:", error);
+    ws.send(JSON.stringify({
+      type: 'ai_plan',
+      error: "生成计划失败"
+    }));
+  }
+};
+
+// 添加处理打卡邀请的函数
+const handleInvitation = async (ws, data) => {
+  try {
+    // 获取接收者ID
+    const [receiverResults] = await pool.query(
+      "SELECT id FROM users WHERE name = ?",
+      [data.receiver]
+    );
+
+    if (receiverResults.length === 0) {
+      throw new Error("接收者不存在");
+    }
+
+    const receiverId = receiverResults[0].id;
+    const receiverWs = clients.get(receiverId);
+
+    // 构建邀请消息
+    const invitation = {
+      type: 'invitation',
+      id: data.id,
+      sender: data.sender,
+      receiver: data.receiver,
+      content: data.content,
+      time: data.time,
+      challengeData: data.challengeData
+    };
+
+    if (receiverWs && receiverWs.readyState === WebSocket.OPEN) {
+      // 接收者在线，直接发送
+      receiverWs.send(JSON.stringify(invitation));
+    } else {
+      // 接收者离线，存储到离线消息表
+      const query = `
+        INSERT INTO offline_messages 
+        (sender_id, user_id, sender, receiver, type, content, message_data) 
+        VALUES (?, ?, ?, ?, 'invitation', ?, ?)
+      `;
+      await pool.query(query, [
+        ws.userId,
+        receiverId,
+        data.sender,
+        data.receiver,
+        data.content,
+        JSON.stringify(data.challengeData)
+      ]);
+    }
+
+  } catch (error) {
+    console.error("处理打卡邀请失败:", error);
+    ws.send(JSON.stringify({
+      type: 'invitation_error',
+      error: "发送邀请失败"
+    }));
+  }
+};
