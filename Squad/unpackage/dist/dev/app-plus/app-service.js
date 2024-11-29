@@ -25772,27 +25772,28 @@ This will fail in production.`);
       const targetCalories = vue.ref(100);
       const exercisePlans = vue.ref([]);
       const timer = vue.ref(0);
-      const isTimerRunning = vue.ref(false);
+      let isTimerRunning = vue.ref(false);
       const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
         return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
       };
       const toggleTimer = () => {
-        if (isTimerRunning.value) {
+        if (isTimerRunning) {
           clearInterval(timerInterval);
+          isTimerRunning = false;
           saveTimerExerciseDuration();
         } else {
+          isTimerRunning = true;
           timerInterval = setInterval(() => {
             timer.value++;
           }, 1e3);
         }
-        isTimerRunning.value = !isTimerRunning.value;
       };
       const saveTimerExerciseDuration = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:209", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:214", "用户未登录");
           return;
         }
         const today2 = dayjs().format("YYYY-MM-DD");
@@ -25825,23 +25826,25 @@ This will fail in production.`);
                 },
                 success: (updateRes) => {
                   if (updateRes.statusCode === 200 && updateRes.data.success) {
-                    formatAppLog("log", "at pages/Sports/Sports.vue:248", "今日运动时长已保存/更新");
+                    formatAppLog("log", "at pages/Sports/Sports.vue:253", "今日运动时长已保存/更新");
                     uni.$emit("saveExerciseDuration");
                     target.value = Math.round(currentExercise.value / planExercise.value * 100);
+                    timer.value = 0;
+                    formatAppLog("log", "at pages/Sports/Sports.vue:262", "计时器已清零");
                   } else {
-                    formatAppLog("error", "at pages/Sports/Sports.vue:255", "保存今日运动时长失败：", updateRes.data.message || "未知错误");
+                    formatAppLog("error", "at pages/Sports/Sports.vue:264", "保存今日运动时长失败：", updateRes.data.message || "未知错误");
                   }
                 },
                 fail: (err) => {
-                  formatAppLog("error", "at pages/Sports/Sports.vue:259", "请求失败：", err);
+                  formatAppLog("error", "at pages/Sports/Sports.vue:268", "请求失败：", err);
                 }
               });
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:263", "获取当前运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:272", "获取当前运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:267", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:276", "请求失败：", err);
           }
         });
       };
@@ -25854,7 +25857,7 @@ This will fail in production.`);
         exercisePlans.value = updatedPlans;
       });
       onPullDownRefresh(async () => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:286", "refresh");
+        formatAppLog("log", "at pages/Sports/Sports.vue:296", "refresh");
         await loadMyPlans();
         loadExerciseDurations();
         loadExercisePlans();
@@ -25881,7 +25884,7 @@ This will fail in production.`);
         try {
           const username2 = uni.getStorageSync("username");
           uni.setStorageSync(`username`, username2);
-          formatAppLog("log", "at pages/Sports/Sports.vue:321", `username: ${username2}`);
+          formatAppLog("log", "at pages/Sports/Sports.vue:331", `username: ${username2}`);
           const res = await uni.request({
             url: `${serverUrl}/getTargets`,
             method: "POST",
@@ -25896,7 +25899,7 @@ This will fail in production.`);
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:338", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/Sports/Sports.vue:348", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -25922,7 +25925,7 @@ This will fail in production.`);
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:369", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/Sports/Sports.vue:379", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
         isEditing.value = false;
@@ -25933,7 +25936,7 @@ This will fail in production.`);
       const fetchPlanExercise = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:383", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:393", "用户未登录");
           return;
         }
         uni.request({
@@ -25948,18 +25951,18 @@ This will fail in production.`);
               planExercise.value = res.data.data.sport_time_goal || 60;
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:399", "获取计划运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:409", "获取计划运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:403", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:413", "请求失败：", err);
           }
         });
       };
       const loadExerciseDurations = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:412", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:422", "用户未登录");
           return;
         }
         uni.request({
@@ -25974,18 +25977,18 @@ This will fail in production.`);
               currentExercise.value = res.data.data.exercise_duration || 0;
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:428", "获取今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:438", "获取今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:432", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:442", "请求失败：", err);
           }
         });
       };
       const saveExerciseDuration = () => {
         const username2 = uni.getStorageSync("username");
         if (!username2) {
-          formatAppLog("error", "at pages/Sports/Sports.vue:440", "用户未登录");
+          formatAppLog("error", "at pages/Sports/Sports.vue:450", "用户未登录");
           return;
         }
         const today2 = dayjs().format("YYYY-MM-DD");
@@ -26003,15 +26006,15 @@ This will fail in production.`);
           },
           success: (res) => {
             if (res.statusCode === 200 && res.data.success) {
-              formatAppLog("log", "at pages/Sports/Sports.vue:460", "今日运动时长已保存");
+              formatAppLog("log", "at pages/Sports/Sports.vue:470", "今日运动时长已保存");
               uni.$emit("saveExerciseDuration");
               target.value = Math.round(currentExercise.value / planExercise.value * 100);
             } else {
-              formatAppLog("error", "at pages/Sports/Sports.vue:466", "保存今日运动时长失败：", res.data.message || "未知错误");
+              formatAppLog("error", "at pages/Sports/Sports.vue:476", "保存今日运动时长失败：", res.data.message || "未知错误");
             }
           },
           fail: (err) => {
-            formatAppLog("error", "at pages/Sports/Sports.vue:470", "请求失败：", err);
+            formatAppLog("error", "at pages/Sports/Sports.vue:480", "请求失败：", err);
           }
         });
       };
@@ -26040,7 +26043,7 @@ This will fail in production.`);
       };
       let videoStartTime = null;
       const playPlan = (plan) => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:505", "BV数据:", plan.videoUrl);
+        formatAppLog("log", "at pages/Sports/Sports.vue:515", "BV数据:", plan.videoUrl);
         if (plan.videoUrl) {
           currentVideoUrl.value = `https://player.bilibili.com/player.html?bvid=${plan.videoUrl}&quality=120`;
           isModalVisible.value = true;
@@ -26069,7 +26072,7 @@ This will fail in production.`);
         elapsedTime.value = 0;
       };
       const goToMy_Info = () => {
-        formatAppLog("log", "at pages/Sports/Sports.vue:548", "跳转到我的信息页面");
+        formatAppLog("log", "at pages/Sports/Sports.vue:558", "跳转到我的信息页面");
         uni.navigateTo({
           url: "/pages/My_Info/My_Info"
         });
@@ -26078,7 +26081,11 @@ This will fail in production.`);
         return timerInterval;
       }, set timerInterval(v2) {
         timerInterval = v2;
-      }, serverUrl, isEditing, editDuration, editCalories, targetDuration, targetCalories, exercisePlans, timer, isTimerRunning, formatTime, toggleTimer, saveTimerExerciseDuration, loadExercisePlans, openEditModal, fetchUserTargets, saveEdit, cancelEdit, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
+      }, serverUrl, isEditing, editDuration, editCalories, targetDuration, targetCalories, exercisePlans, timer, get isTimerRunning() {
+        return isTimerRunning;
+      }, set isTimerRunning(v2) {
+        isTimerRunning = v2;
+      }, formatTime, toggleTimer, saveTimerExerciseDuration, loadExercisePlans, openEditModal, fetchUserTargets, saveEdit, cancelEdit, fetchPlanExercise, loadExerciseDurations, saveExerciseDuration, switchTab, planForm, currentEditIndex, loadMyPlans, get videoStartTime() {
         return videoStartTime;
       }, set videoStartTime(v2) {
         videoStartTime = v2;

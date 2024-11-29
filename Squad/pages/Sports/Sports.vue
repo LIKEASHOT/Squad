@@ -181,7 +181,7 @@ const targetCalories = ref(100); // 目标热量，初始值为 100
 const exercisePlans = ref([]);
 // 控制计时器的状态
 const timer = ref(0);  // 计时器的秒数
-const isTimerRunning = ref(false); // 计时器是否正在运行
+let isTimerRunning = ref(false); // 计时器是否正在运行
 // 格式化时间：将秒数转换为 "分钟:秒" 格式
 const formatTime = (time) => {
   const minutes = Math.floor(time / 60);
@@ -191,17 +191,22 @@ const formatTime = (time) => {
 
 // 开始或停止计时器
 const toggleTimer = () => {
-  if (isTimerRunning.value) {
-    clearInterval(timerInterval);  // 停止计时
-    saveTimerExerciseDuration();  // 保存计时数据
+  if (isTimerRunning) {
+    // 停止计时
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+
+    // 保存计时器的时长并清零计时器
+    saveTimerExerciseDuration();
   } else {
+    // 开始计时
+    isTimerRunning = true;
     timerInterval = setInterval(() => {
-      timer.value++;  // 每秒钟增加1
+      timer.value++;
     }, 1000);
   }
-  // 切换计时器状态
-  isTimerRunning.value = !isTimerRunning.value;
 };
+
 //计时器保存
 const saveTimerExerciseDuration = () => {
   const username = uni.getStorageSync("username"); // 获取已登录用户
@@ -232,7 +237,7 @@ const saveTimerExerciseDuration = () => {
         const totalDuration = existingDuration + timerDurationInMinutes;
 
         // 4. 发送更新请求
-        uni.request({ 
+        uni.request({
           url: `${serverUrl}/save-exercise-duration`,
           method: "POST",
           data: {
@@ -246,11 +251,15 @@ const saveTimerExerciseDuration = () => {
           success: (updateRes) => {
             if (updateRes.statusCode === 200 && updateRes.data.success) {
               console.log("今日运动时长已保存/更新");
-			  
+              
               // 通知保存运动时长
               uni.$emit("saveExerciseDuration");
               // 计算当前显示运动时长占计划运动时长的百分比
               target.value = Math.round((currentExercise.value / planExercise.value) * 100);
+
+              // 清零计时器
+              timer.value = 0;
+              console.log("计时器已清零");
             } else {
               console.error("保存今日运动时长失败：", updateRes.data.message || "未知错误");
             }
@@ -268,6 +277,7 @@ const saveTimerExerciseDuration = () => {
     },
   });
 };
+
 
 // 加载自由训练计划
 const loadExercisePlans = () => {
