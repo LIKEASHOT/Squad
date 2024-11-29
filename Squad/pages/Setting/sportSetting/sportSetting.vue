@@ -1,49 +1,68 @@
 <template>
   <view class="sport-container">
-    <!-- 运动目标多选框 -->
-    <view class="checkbox-group">
-      <text class="label">运动目标：</text>
-      <fui-checkbox-group v-model="form.goals">
-        <fui-label v-for="(item, index) in goalOptions" :key="index">
-          <fui-list-cell>
-            <view class="fui-align__center">
-              <fui-checkbox
-                :checked="item.checked"
-                :value="item.value"
-                color="#777CFF"
-                borderColor="#B2B2B2"
-                borderRadius="8rpx"
-              />
-              <text class="fui-text">{{ item.name }}</text>
-            </view>
-          </fui-list-cell>
-        </fui-label>
-      </fui-checkbox-group>
+    <!-- 顶部标题区域 -->
+    <view class="header">
+      <text class="page-title">运动偏好设置</text>
+      <text class="sub-title">选择你感兴趣的运动目标和类型</text>
     </view>
 
-    <!-- 运动类型多选框 -->
-    <view class="checkbox-group">
-      <text class="label">运动类型：</text>
-      <fui-checkbox-group v-model="form.types">
-        <fui-label v-for="(item, index) in typeOptions" :key="index">
-          <fui-list-cell>
-            <view class="fui-align__center">
-              <fui-checkbox
-                :checked="item.checked"
-                :value="item.value"
-                color="#777CFF"
-                borderColor="#B2B2B2"
-                borderRadius="8rpx"
-              />
-              <text class="fui-text">{{ item.name }}</text>
-            </view>
-          </fui-list-cell>
-        </fui-label>
-      </fui-checkbox-group>
+    <!-- 运动目标选择区域 -->
+    <view class="section goals-section">
+      <view class="section-title">
+        <uni-icons type="star-filled" size="20" color="#5B8FF9"/>
+        <text>运动目标</text>
+      </view>
+      <view class="checkbox-grid">
+        <view 
+          v-for="(item, index) in goalOptions" 
+          :key="index"
+          class="checkbox-item"
+          :class="{ active: form.goals.includes(item.value) }"
+          @click="toggleGoal(item.value)"
+        >
+          <uni-icons 
+            :type="form.goals.includes(item.value) ? 'checkbox-filled' : 'circle'" 
+            size="18" 
+            :color="form.goals.includes(item.value) ? '#5B8FF9' : '#999'"
+          />
+          <text>{{ item.name }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 运动类型选择区域 -->
+    <view class="section types-section">
+      <view class="section-title">
+        <uni-icons type="flag-filled" size="20" color="#5B8FF9"/>
+        <text>运动类型</text>
+      </view>
+      <view class="checkbox-grid">
+        <view 
+          v-for="(item, index) in typeOptions" 
+          :key="index"
+          class="checkbox-item"
+          :class="{ active: form.types.includes(item.value) }"
+          @click="toggleType(item.value)"
+        >
+          <uni-icons 
+            :type="form.types.includes(item.value) ? 'checkbox-filled' : 'circle'" 
+            size="18" 
+            :color="form.types.includes(item.value) ? '#5B8FF9' : '#999'"
+          />
+          <text>{{ item.name }}</text>
+        </view>
+      </view>
     </view>
 
     <!-- 提交按钮 -->
-    <button class="submit-btn" :disabled="!isFormValid" @click="submitData">提交</button>
+    <button 
+      class="submit-btn" 
+      :disabled="!isFormValid" 
+      @click="submitData"
+    >
+      <text class="submit-text">保存设置</text>
+      <uni-icons type="checkmarkempty" size="20" color="#fff"/>
+    </button>
   </view>
 </template>
 
@@ -77,6 +96,26 @@ const form = ref({
 const isFormValid = computed(() => {
   return form.value.goals.length > 0 && form.value.types.length > 0;
 });
+
+// 切换目标选择
+const toggleGoal = (value) => {
+  const index = form.value.goals.indexOf(value);
+  if (index === -1) {
+    form.value.goals.push(value);
+  } else {
+    form.value.goals.splice(index, 1);
+  }
+};
+
+// 切换类型选择
+const toggleType = (value) => {
+  const index = form.value.types.indexOf(value);
+  if (index === -1) {
+    form.value.types.push(value);
+  } else {
+    form.value.types.splice(index, 1);
+  }
+};
 
 // 获取用户的运动数据
 onMounted(() => {
@@ -136,8 +175,8 @@ const submitData = async () => {
     });
 
     if (res.data.success) {
-		// 返回上一级页面
-	  uni.navigateBack();
+      // 返回上一级页面
+      uni.navigateBack();
       uni.showToast({ title: "数据提交成功", icon: "success" });
     } else {
       uni.showToast({ title: res.data.message || "提交失败", icon: "none" });
@@ -149,38 +188,120 @@ const submitData = async () => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .sport-container {
-  padding: 20rpx;
-  background-color: #f7f7f7;
   min-height: 100vh;
+  background: linear-gradient(135deg, #f6f7f9 0%, #ffffff 100%);
+  padding: 40rpx 30rpx;
 }
 
-.checkbox-group {
-  margin-bottom: 20rpx;
+.header {
+  text-align: center;
+  margin-bottom: 60rpx;
+  
+  .page-title {
+    font-size: 44rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16rpx;
+    display: block;
+  }
+  
+  .sub-title {
+    font-size: 28rpx;
+    color: #666;
+  }
 }
 
-.label {
-  font-size: 32rpx;
-  margin-bottom: 10rpx;
-  display: block;
-  color: #333;
+.section {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+  animation: slideUp 0.6s ease-out;
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 30rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 24rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: rgba(91, 143, 249, 0.1);
+    border: 2rpx solid #5B8FF9;
+  }
+  
+  text {
+    font-size: 28rpx;
+    color: #333;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .submit-btn {
-  width: 100%;
-  padding: 20rpx;
-  font-size: 34rpx;
-  background-color: #4caf50;
+  width: 90%;
+  height: 96rpx;
+  margin: 60rpx auto;
+  background: linear-gradient(135deg, #5B8FF9, #6094EA);
+  border-radius: 48rpx;
   color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
   border: none;
-  border-radius: 10rpx;
-  text-align: center;
+  box-shadow: 0 8rpx 20rpx rgba(91, 143, 249, 0.2);
   transition: all 0.3s ease;
+  &:disabled {
+    background: #ccc;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
 }
-
-.submit-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.submit-text{
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+} 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
