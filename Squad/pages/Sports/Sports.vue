@@ -146,6 +146,12 @@ const editDuration = ref(0); // 编辑中的目标时长
 const editCalories = ref(0); // 编辑中的目标热量
 const targetDuration = ref(20); // 目标运动时间，初始值为 20min
 const targetCalories = ref(100); // 目标热量，初始值为 100
+import{onPullDownRefresh} from '@dcloudio/uni-app';
+onPullDownRefresh(async () => {
+  console.log("refresh"); 
+  await loadMyPlans();
+  uni.stopPullDownRefresh();
+});
 // 页面加载时调用
 onMounted(() => { 
   loadMyPlans();
