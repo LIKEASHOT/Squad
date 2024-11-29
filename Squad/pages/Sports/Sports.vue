@@ -293,10 +293,12 @@ uni.$on("refreshExercisePlans", (updatedPlans) => {
 
 import{onPullDownRefresh} from '@dcloudio/uni-app';
 onPullDownRefresh(async () => {
-  console.log("refresh"); 
-  await loadMyPlans();
+  console.log("refresh");  
+  loadMyPlans();
   loadExerciseDurations(); // 加载每日运动时长
-  loadExercisePlans();
+  loadExercisePlans();// 页面加载时读取计划
+  fetchPlanExercise(); // 获取计划运动时长
+  fetchUserTargets();
   uni.stopPullDownRefresh();
 });
 // 页面加载时调用
@@ -315,7 +317,7 @@ onMounted(() => {
   //监听更新目标的通知
   uni.$on("updateUserTargets",fetchPlanExercise);
   uni.$on("updateUserTargets",fetchUserTargets);
-}); 
+});  
 
 // 打开编辑弹窗
 const openEditModal = () => {

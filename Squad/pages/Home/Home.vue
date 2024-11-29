@@ -1037,7 +1037,7 @@ onMounted(() => {
   loadExerciseDurations(); // 加载每日运动时长
   fetchPlanExercise(); // 获取计划运动时长
   loadWeeklyProgress();//加载一周运动数据
-  // 监听添加计划的通知
+  // 监听添加计划的通知 
 
   fetchUserTargets();
 
