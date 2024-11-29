@@ -75,8 +75,8 @@ def main():
     # 创建数据库执行器实例
     executor = DatabaseExecutor(
         host='localhost',
-        user='root',
-        password='123456'  # 替换为您的MySQL密码
+        user='sport_admin',
+        password='Aa@123456789'  # 替换为您的MySQL密码
     )
 
     # 连接到数据库

@@ -2,26 +2,47 @@
 // 加载环境变量
 
 // nodemon --inspect app.js 用于调试
-const express = require("express");
-const dayjs = require("dayjs");
-const mysql = require("mysql");
-const mysql2 = require("mysql2/promise"); // 使用 mysql2/promise 以支持 async/await
-const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken"); // 引入 JWT 库
-const session = require("express-session");
-const cors = require("cors");
-const axios = require("axios");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+
+// const express = require("express");
+// const dayjs = require('dayjs');
+// const mysql = require("mysql");
+// const mysql2 = require("mysql2/promise"); // 使用 mysql2/promise 以支持 async/await
+// const bodyParser = require("body-parser");
+// const jwt = require("jsonwebtoken"); // 引入 JWT 库
+// const session = require("express-session");
+// const cors = require("cors");
+// const axios = require("axios");
+// const multer = require("multer");
+// const path = require("path");
+// const fs = require("fs");
+//const WebSocket = require("ws");
+import { fileURLToPath } from 'url';
+import express from 'express';
+import dayjs from 'dayjs';
+import mysql from 'mysql';
+import mysql2 from 'mysql2/promise';
+import bodyParser from 'body-parser';
+import jwt from 'jsonwebtoken';
+import session from 'express-session';
+import cors from 'cors';
+import axios from 'axios';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { ZhipuAI } from 'zhipuai-sdk-nodejs-v4';
+import dotenv from 'dotenv';
+import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 //这里不知道为什么用 serverUrl不能替换，下面的返回所有计划信息api请手动替换自己的ip
-require("dotenv").config();
+// require("dotenv").config();
+dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const config = {
   // 获取本地IP地址
   localIP: process.env.SERVER_HOST,
   port: process.env.SERVER_PORT,
 };
-
 // 创建应用实例
 const app = express();
 const port = process.env.PORT || 3000;
@@ -67,11 +88,9 @@ app.use(
     cookie: { secure: false },
   })
 );
-require("dotenv").config();
-const WebSocket = require("ws");
 
 // 在 app 创建后添加 WebSocket 服务器
-const wss = new WebSocket.Server({ port: 3001 });
+const wss = new WebSocketServer({ port: 3001 });
 
 // 存储在线用户的 WebSocket 连接
 const clients = new Map();
@@ -115,7 +134,7 @@ wss.on("connection", (ws) => {
                   user_id: msg.sender_id,
                 };
 
-                // 如果消息包含额外数据，解析并添加
+                // 如果消息包含额外数据，解析并添加到消息中
                 if (msg.message_data) {
                   try {
                     const extraData = JSON.parse(msg.message_data);
@@ -195,15 +214,12 @@ wss.on("connection", (ws) => {
             console.error("处理已读回执失败");
           }
           break;
-
         case "ai_plan_request":
           await handleAiPlanRequest(ws, data);
           break;
-
         case "invitation":
           await handleInvitation(ws, data);
           break;
-
         case "invitation_response":
           await handleInvitationResponse(ws, data);
           break;
@@ -349,8 +365,8 @@ const updateofflineMessage = async (message) => {
   const userId = receiver.id;
   const senderId = sender.id;
   const query = `
-    INSERT INTO offline_messages (user_id, sender_id, receiver_id, sender, receiver, type, content, timestamp)
-    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+    INSERT INTO offline_messages (user_id, sender_id, receiver_id, sender, receiver, type, content, timestamp,message_data)
+    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(),?)
     ON DUPLICATE KEY UPDATE
     content = VALUES(content),
     timestamp = NOW()
@@ -364,6 +380,7 @@ const updateofflineMessage = async (message) => {
       receiver.name,
       message.type,
       message.content,
+      message.message_data,
     ]);
     console.log("离线消息已保存", message);
   } catch (error) {
@@ -386,7 +403,6 @@ const forwardMessage = async (message) => {
     receiverWs.send(
       JSON.stringify({
         ...message,
-        id: message.id,
       })
     );
     console.log(`消息已转发给 ${message.receiver}`);
@@ -1231,7 +1247,7 @@ async function getDailyCalories(height, weight, age, activityType, goal) {
 // API 路由，处理前端请求
 app.post("/api/calculateCalories", async (req, res) => {
   const { username } = req.body;
-
+  console.log("计算每日热量摄取量:", username);
   // 验证用户名是否提供
   if (!username) {
     return res.status(400).json({ error: "用户名未提供" });
@@ -1295,6 +1311,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
     res.status(400).json({ success: false, message: "上传失败" });
   }
 });
+
 
 // 提交每日饮食记录
 app.post("/submitDailyFoods", async (req, res) => {
@@ -1617,7 +1634,7 @@ app.put("/goals", (req, res) => {
     目标,
     难度,
     image_url,
-    video_url,
+    B站连接,
   } = req.body;
 
   console.log("接收到的更新数据:", req.body);
@@ -1642,7 +1659,7 @@ app.put("/goals", (req, res) => {
       目标 = ?, 
       难度 = ?, 
       image_url = ?, 
-      video_url = ? 
+      B站连接 = ? 
     WHERE 名称 = ?`;
 
   const params = [
@@ -1653,7 +1670,7 @@ app.put("/goals", (req, res) => {
     目标,
     难度,
     image_url,
-    video_url,
+    B站连接,
     名称,
   ];
 
@@ -1674,7 +1691,7 @@ app.put("/goals", (req, res) => {
 });
 
 app.post("/goals/add", (req, res) => {
-  const {
+  let {
     名称,
     运动次数,
     难度,
@@ -1683,16 +1700,25 @@ app.post("/goals/add", (req, res) => {
     运动类型,
     时间,
     image_url,
-    video_url,
     B站连接,
   } = req.body;
 
   if (!名称) return res.status(400).json({ message: "计划名称不能为空" });
-
+// 修改时间字段的提取逻辑
+if (typeof 时间 === "string") {
+  const timeMatch = 时间.match(/\d+/); // 提取字符串中的数字部分
+  时间 = timeMatch ? parseInt(timeMatch[0], 10) : 0; // 只保留数字部分，转换为整数
+} else {
+  时间 = parseInt(时间, 10) || 0; // 如果时间本身是数字，直接使用
+}
+// 只保留 `uploads` 之后的部分
+if (image_url && image_url.includes("uploads/")) {
+  image_url = image_url.substring(image_url.indexOf("uploads"));
+}
   const sql = `
     INSERT INTO goal 
-    (名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, video_url, B站连接) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    (名称, 运动次数, 难度, 卡路里, 目标, 运动类型, 时间, image_url, B站连接) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   connection.query(
     sql,
@@ -1705,7 +1731,6 @@ app.post("/goals/add", (req, res) => {
       运动类型,
       时间,
       image_url,
-      video_url,
       B站连接,
     ],
     (error, results) => {
@@ -1714,6 +1739,28 @@ app.post("/goals/add", (req, res) => {
     }
   );
 });
+// 删除计划
+app.post("/goals/delete", (req, res) => {
+  const { title } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ message: "计划标题不能为空" });
+  }
+
+  const sql = "DELETE FROM goal WHERE 名称 = ?"; // 使用名称字段来匹配
+  connection.query(sql, [title], (error, results) => {
+    if (error) {
+      console.error("删除计划失败：", error);
+      return res.status(500).json({ message: "删除失败", error });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "计划不存在" });
+    }
+    res.json({ message: "删除成功" });
+  });
+});
+
+
 // 获取好友列表接口
 app.get("/friends", (req, res) => {
   const { userId } = req.query;
@@ -1781,7 +1828,9 @@ app.get("/friends", (req, res) => {
         const formattedFriends = friends.map((friend) => ({
           id: friend.friendId,
           username: friend.friendName,
-          avatar: friend.friendAvatar || "/static/avatar/default.png",
+          avatar: friend.friendAvatar 
+            ? `http://${config.localIP}:${config.port}/${friend.friendAvatar}`
+            : "/static/default-avatar.jpg",
           status: "离线", // 默认离线状态
           friendshipSince: friend.friendshipSince,
         }));
@@ -2462,7 +2511,7 @@ app.post("/save-exercise-duration", (req, res) => {
 // 添加流式生成健身计划接口
 app.post("/ai/generate-plan", async (req, res) => {
   const { prompt, username } = req.body;
-
+  console.log("收到生成计划请求:", req.body);
   // 验证输入
   if (typeof prompt !== "string" || prompt.trim() === "") {
     return res.status(400).json({ error: "无效的输入" });
@@ -2480,18 +2529,17 @@ app.post("/ai/generate-plan", async (req, res) => {
     }
 
     const user = userResults[0];
-    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } =
-      user;
+    const { gender, age, height, weight, bmi, fitnessGoal, exerciseType } = user;
 
     // 设置响应头以支持流式传输
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
     try {
       // 创建智谱AI客户端
       const ai = new ZhipuAI({
-        apiKey: process.env.ZHIPU_API_KEY,
+        apiKey: process.env.ZHIPU_API_KEY
       });
 
       // 创建流式对话
@@ -2500,8 +2548,7 @@ app.post("/ai/generate-plan", async (req, res) => {
         messages: [
           {
             role: "system",
-            content:
-              "你是一个专业的健身教练，擅长根据用户的身体状况和目标制定个性化的运动计划。",
+            content: "你是一个专业的健身教练，擅长根据用户的身体状况和目标制定个性化的运动计划。"
           },
           {
             role: "user",
@@ -2519,10 +2566,10 @@ app.post("/ai/generate-plan", async (req, res) => {
             1. 计划概述
             2. 每周训练安排
             3. 具体动作说明
-            4. 注意事项和建议`,
-          },
+            4. 注意事项和建议`
+          }
         ],
-        stream: true,
+        stream: true
       });
 
       // 处理流式响应
@@ -2534,8 +2581,9 @@ app.post("/ai/generate-plan", async (req, res) => {
       }
 
       // 发送结束标记
-      res.write("\n[DONE]");
+      res.write('\n[DONE]');
       res.end();
+
     } catch (error) {
       console.error("智谱AI API调用失败:", error);
       // 如果流还没有结束，发送错误消息
@@ -2544,6 +2592,7 @@ app.post("/ai/generate-plan", async (req, res) => {
         res.end();
       }
     }
+
   } catch (error) {
     console.error("数据库查询失败:", error);
     if (!res.writableEnded) {
@@ -2552,12 +2601,6 @@ app.post("/ai/generate-plan", async (req, res) => {
     }
   }
 });
-
-// 启动服务器
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
-
 // 添加处理 AI 计划的函数
 const handleAiPlanRequest = async (ws, data) => {
   try {
@@ -2634,7 +2677,6 @@ const handleAiPlanRequest = async (ws, data) => {
     }));
   }
 };
-
 // 添加处理打卡邀请的函数
 const handleInvitation = async (ws, data) => {
   try {
@@ -2647,39 +2689,26 @@ const handleInvitation = async (ws, data) => {
     if (receiverResults.length === 0) {
       throw new Error("接收者不存在");
     }
-
+    console.log(data);
     const receiverId = receiverResults[0].id;
     const receiverWs = clients.get(receiverId);
-
     // 构建邀请消息
     const invitation = {
-      type: 'invitation',
+      type: data.type,
       id: data.id,
       sender: data.sender,
       receiver: data.receiver,
       content: data.content,
       time: data.time,
-      challengeData: data.challengeData
+      message_data: JSON.stringify(data.challengeData), // 转换为 JSON 字符串
     };
-
+    console.log("发送邀请:", invitation);
     if (receiverWs && receiverWs.readyState === WebSocket.OPEN) {
       // 接收者在线，直接发送
       receiverWs.send(JSON.stringify(invitation));
     } else {
       // 接收者离线，存储到离线消息表
-      const query = `
-        INSERT INTO offline_messages 
-        (sender_id, user_id, sender, receiver, type, content, message_data) 
-        VALUES (?, ?, ?, ?, 'invitation', ?, ?)
-      `;
-      await pool.query(query, [
-        ws.userId,
-        receiverId,
-        data.sender,
-        data.receiver,
-        data.content,
-        JSON.stringify(data.challengeData)
-      ]);
+      updateofflineMessage(invitation);
     }
 
   } catch (error) {
@@ -2690,6 +2719,93 @@ const handleInvitation = async (ws, data) => {
     }));
   }
 };
+// 获取用户权限接口
+app.get("/get-user-permission", (req, res) => {
+  const { username } = req.query;
+
+  // 检查必需参数
+  if (!username) {
+    return res.status(400).json({ success: false, message: "用户名缺失" });
+  }
+
+  const query = "SELECT permission FROM users WHERE name = ?";
+
+  connection.query(query, [username], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: "数据库查询失败" });
+    }
+
+    if (results.length > 0) {
+      res.json({
+        success: true,
+        data: { permission: results[0].permission },
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "用户不存在",
+      });
+    }
+  });
+});
+app.get("/weekly-exercise-progress", (req, res) => {
+  const username = req.query.username; // 获取用户名
+  const startDate = req.query.startDate; // 一周开始日期
+  const endDate = req.query.endDate; // 一周结束日期
+  const planDuration = parseInt(req.query.planDuration, 10); // 每天的计划运动时长
+  console.log("后端接收计划时长:", planDuration);
+
+  if (!username || !startDate || !endDate || isNaN(planDuration)) {
+    return res.status(400).json({ success: false, message: "参数不完整" });
+  }
+
+  const query = `
+    SELECT DATE(date) AS date, exercise_duration
+    FROM exercise_logs
+    WHERE username = ? AND DATE(date) BETWEEN ? AND ?
+  `;
+
+  connection.query(query, [username, startDate, endDate], (err, results) => {
+    if (err) {
+      console.error("数据库查询错误:", err);
+      return res.status(500).json({ success: false, message: "数据库查询失败" });
+    }
+
+    // 初始化一周数据
+    const weeklyData = {};
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + i);
+      const formattedDate = dayjs(currentDate).format("YYYY-MM-DD");
+      weeklyData[formattedDate] = 0; // 默认值为 0
+    }
+
+    console.log("查询范围:", startDate, "-", endDate);
+    console.log("weeklyData 初始化:", weeklyData);
+    console.log("数据库返回记录:", results);
+
+    // 将查询结果合并到初始数据
+    results.forEach((row) => {
+      const formattedDate = dayjs(row.date).format("YYYY-MM-DD"); // 格式化为 YYYY-MM-DD
+      if (weeklyData[formattedDate] !== undefined) {
+        weeklyData[formattedDate] = row.exercise_duration;
+      }
+    });
+
+    // 计算进度比例
+    const weeklyProgress = Object.keys(weeklyData).map((date) => ({
+      date,
+      progress: Math.min(
+        Math.round((weeklyData[date] / planDuration) * 100),
+        100
+      ),
+    }));
+
+    console.log("计算结果:", weeklyProgress);
+    res.json({ success: true, data: weeklyProgress });
+  });
+});
 
 // 处理打卡邀请响应
 const handleInvitationResponse = async (ws, data) => {
@@ -2720,7 +2836,7 @@ const handleInvitationResponse = async (ws, data) => {
     };
 
     // 如果接受了邀请，创建挑战记录
-    if (data.accepted) {
+    if (data.accepted===true) {
       const challengeQuery = `
         INSERT INTO challenges 
         (invitation_id, challenger_id, challenged_id, start_time, duration, goal_minutes, goal_calories, status) 
@@ -2745,8 +2861,8 @@ const handleInvitationResponse = async (ws, data) => {
       // 如果邀请者离线，存储到离线消息
       const query = `
         INSERT INTO offline_messages 
-        (sender_id, user_id, sender, receiver, type, content, message_data) 
-        VALUES (?, ?, ?, ?, 'invitation_response', ?, ?)
+        (sender_id, user_id, sender, receiver, type, content, message_data,receiver_id) 
+        VALUES (?, ?, ?, ?, 'invitation_response', ?, ?, ?)
       `;
       await pool.query(query, [
         ws.userId,
@@ -2754,7 +2870,8 @@ const handleInvitationResponse = async (ws, data) => {
         data.sender,
         data.receiver,
         data.content,
-        JSON.stringify({ accepted: data.accepted })
+        JSON.stringify({ accepted: data.accepted }),
+        senderId
       ]);
     }
 
@@ -2766,3 +2883,7 @@ const handleInvitationResponse = async (ws, data) => {
     }));
   }
 };
+// 启动服务器
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});

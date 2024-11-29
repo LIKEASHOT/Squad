@@ -264,9 +264,9 @@ def main():
     # 数据库连接配置
     config = {
         'host': 'localhost',     # 改为你的数据库主机地址
-        'user': 'root',          # 改为你的数据库用户名
-        'password': '123456',    # 改为你的数据库密码
-        'database': 'my_database' # 改为你的数据库名
+        'user': 'sport_admin',          # 改为你的数据库用户名
+        'password': 'Aa@123456789',    # 改为你的数据库密码
+        'database': 'Squad_db' # 改为你的数据库名
     }
     
     inspector = None
