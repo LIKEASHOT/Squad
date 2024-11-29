@@ -210,40 +210,50 @@
           </div>
         </view>
         <view>
-           <!-- 点击按钮打开弹窗 -->
-            <image 
-              src="../../static/icon/shot_sport.png"  
-              class="shot_icon" 
-              @tap="openEditModal" 
-            />
-          
-            <!-- 编辑弹窗 -->
-            <view v-if="isEditing" class="modal">
-              <view class="modal-content">
-                <!-- 弹窗头部 -->
-                <view class="modal-header">
-                  <text class="modal-title">编辑目标</text>
+          <!-- 点击按钮打开弹窗 -->
+          <image
+            src="../../static/icon/shot_sport.png"
+            class="shot_icon"
+            @tap="openEditModal"
+          />
+
+          <!-- 编辑弹窗 -->
+          <view v-if="isEditing" class="modal">
+            <view class="modal-content">
+              <!-- 弹窗头部 -->
+              <view class="modal-header">
+                <text class="modal-title">编辑目标</text>
+              </view>
+
+              <!-- 弹窗内容 -->
+              <view class="modal-body">
+                <view class="input-group">
+                  <text class="label">目标时长 (分钟)</text>
+                  <input
+                    v-model="editDuration"
+                    type="number"
+                    class="input"
+                    placeholder="请输入目标时长"
+                  />
                 </view>
-        
-                <!-- 弹窗内容 -->
-                <view class="modal-body">
-                  <view class="input-group">
-                    <text class="label">目标时长 (分钟)</text>
-                    <input v-model="editDuration" type="number" class="input" placeholder="请输入目标时长" />
-                  </view>
-                  <view class="input-group">
-                    <text class="label">目标热量 (kcal)</text>
-                    <input v-model="editCalories" type="number" class="input" placeholder="请输入目标热量" />
-                  </view>
-                </view>
-        
-                <!-- 弹窗底部 -->
-                <view class="modal-footer">
-                  <button class="cancel-btn1" @click="cancelEdit">取消</button>
-                  <button class="save-btn1" @click="saveEdit">保存</button>
+                <view class="input-group">
+                  <text class="label">目标热量 (kcal)</text>
+                  <input
+                    v-model="editCalories"
+                    type="number"
+                    class="input"
+                    placeholder="请输入目标热量"
+                  />
                 </view>
               </view>
+
+              <!-- 弹窗底部 -->
+              <view class="modal-footer">
+                <button class="cancel-btn1" @click="cancelEdit">取消</button>
+                <button class="save-btn1" @click="saveEdit">保存</button>
+              </view>
             </view>
+          </view>
         </view>
       </view>
       <view v-if="showCalendar_bar === false">
@@ -1074,28 +1084,28 @@ onMounted(() => {
 });
 // 获取用户目标数据和头像
 const fetchUserTargets = async () => {
-  try {  
+  try {
 	  const username = uni.getStorageSync("username"); // 获取已登录用户的用户名
 	  uni.setStorageSync(`username`, username);
 	  console.log(`username: ${username}`);
     const res = await uni.request({
-      url: `${serverUrl}/getTargets`,  
-      method: "POST", 
-      data: { username }, // 向后端发送用户名 
+      url: `${serverUrl}/getTargets`,
+      method: "POST",
+      data: { username }, // 向后端发送用户名
     });
 
     if (res.data.success) {
       // 更新目标数据
       targetDuration.value = res.data.data.sport_time_goal;
-      targetCalories.value = res.data.data.calories_goal; 
+      targetCalories.value = res.data.data.calories_goal;
 	  // 计算当前显示运动时长占计划运动时长的百分比
 	  target.value =  Math.round((currentExercise.value / planExercise.value) * 100);
     } else {
       uni.showToast({ title: "加载用户数据失败", icon: "none" });
     }
   } catch (error) {
-    console.error("获取用户目标失败:", error); 
-    uni.showToast({ title: "服务器错误", icon: "none" }); 
+    console.error("获取用户目标失败:", error);
+    uni.showToast({ title: "服务器错误", icon: "none" });
   }
 };
 // 打开编辑弹窗
@@ -1198,7 +1208,7 @@ const loadExerciseDurations = () => {
         console.error("获取今日运动时长失败：", res.data.message || "未知错误");
       }
     },
-    fail: (err) => { 
+    fail: (err) => {
       console.error("请求失败：", err);
     },
   });
@@ -1304,7 +1314,7 @@ const submitFoodList = async () => {
 	console.log(`1: ${remainingCalories} 千卡`);
 
 	// 确保 `remainingCalories` 是有效数字
-	remainingCalories = parseFloat(remainingCalories) || dailyCalories; 
+	remainingCalories = parseFloat(remainingCalories) || dailyCalories;
 	console.log(`3: ${remainingCalories} 千卡`);
 
 	// 计算并更新剩余热量
@@ -1327,7 +1337,7 @@ const submitFoodList = async () => {
     title: "已更新每日摄入",
     icon: "success",
   });
- 
+
   // 调试信息
   console.log(`总消耗: ${totalConsumedCalories} 千卡`);
   console.log(`剩余可摄入热量: ${remainingCalories} 千卡`);
@@ -2088,7 +2098,7 @@ const handleDelete = (item, index) => {
       }
     },
   });
-}; 
+};
 
 const handleEdit = (item, index) => {
   // 编辑计划逻辑
@@ -2844,7 +2854,7 @@ uni-button {
   font-size: 14px;
   margin-right: 11px;
   box-shadow: 0 4px 8px rgba(94, 87, 87, 0.4); /* 添加边界阴影 */
-  
+
   /* 使用flexbox让文字居中 */
   display: flex;
   align-items: center; /* 垂直居中 */
