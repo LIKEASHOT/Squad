@@ -45,6 +45,7 @@ CREATE TABLE messages (
     receiver VARCHAR(50) NOT NULL,
     content TEXT NOT NULL,
     type VARCHAR(20) DEFAULT 'text',
+    message_data json,
     is_read BOOLEAN DEFAULT FALSE,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -63,6 +64,7 @@ CREATE TABLE offline_messages (
     receiver VARCHAR(50) NOT NULL,
     type VARCHAR(20) DEFAULT 'text',
     content TEXT NOT NULL,
+    message_data json,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -127,6 +129,22 @@ CREATE TABLE exercise_logs (
   username VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
   exercise_duration INT DEFAULT 0
+);
+-- 挑战记录
+CREATE TABLE challenges (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  invitation_id BIGINT NOT NULL, -- 邀请信息ID
+  challenger_id INT NOT NULL, -- 邀请者ID
+  challenged_id INT NOT NULL, -- 接受者ID
+  start_time BIGINT NOT NULL, -- 挑战开始时间（使用时间戳）
+  duration INT NOT NULL, -- 挑战持续时间（天数）
+  goal_minutes INT NOT NULL, -- 每天目标分钟数
+  goal_calories INT NOT NULL, -- 每天目标卡路里数
+  status ENUM('active', 'completed', 'failed') NOT NULL, -- 挑战状态
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 记录创建时间
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 记录更新时间
+  FOREIGN KEY (challenger_id) REFERENCES users(id), -- 假设有一个 users 表
+  FOREIGN KEY (challenged_id) REFERENCES users(id) -- 假设有一个 users 表
 );
 -- 5. 创建索引
 CREATE INDEX idx_sender_receiver ON messages(sender_id, receiver_id);
