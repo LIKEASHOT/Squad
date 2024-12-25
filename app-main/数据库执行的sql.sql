@@ -68,6 +68,7 @@ CREATE TABLE offline_messages (
     user_id INT NOT NULL,
     sender_id INT NOT NULL,
     sender VARCHAR(50) NOT NULL,
+    receiver_id INT NOT NULL,
     receiver VARCHAR(50) NOT NULL,
     type VARCHAR(20) DEFAULT 'text',
     content TEXT NOT NULL,

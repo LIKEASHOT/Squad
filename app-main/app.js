@@ -61,13 +61,50 @@ app.use(bodyParser.urlencoded({ extended: true })); // 解析 URL 编码的请�
 // 提供静态文件访问
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // 创建数据库连接
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+// const connection = mysql.createConnection({
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+//   // 创建重新连接
+// });
+let connection;
 
+async function createConnection() {
+  connection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  });
+
+  // 添加重连逻辑
+  connection.on('error', async (err) => {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.error('数据库连接丢失，正在尝试重新连接...');
+      await handleDisconnect(); // 重新连接
+    } else {
+      throw err;
+    }
+  });
+
+  return connection;
+}
+
+async function handleDisconnect() {
+  try {
+    connection = await createConnection();
+    console.log('重新连接成功');
+  } catch (err) {
+    console.error('重新连接失败，5秒后重试...', err);
+    setTimeout(handleDisconnect, 5000); // 5秒后重试
+  }
+}
+
+// 初始化连接
+createConnection().catch(err => {
+  console.error('初始连接失败:', err);
+});
 // 创建数据库连接池
 const pool = mysql2.createPool({
   host: process.env.DB_HOST,
@@ -255,7 +292,7 @@ const updateUserStatus = async (userId, username, isOnline) => {
 };
 
 const saveMessage = async (message) => {
-  // 首先��询发送者和接收者的用户ID
+  // 首先查询发送者和接收者的用户ID
   const getUsersQuery = `
     SELECT id, name FROM users 
     WHERE name IN (?, ?)
