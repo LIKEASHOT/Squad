@@ -1,60 +1,103 @@
 <template>
   <view class="profile-container">
-    <!-- 信息展示部分 -->
-    <view class="info-display">
+    <!-- 顶部标题 -->
+    <view class="header">
+      <text class="page-title">个人资料</text>
+      <text class="sub-title">完善你的个人信息</text>
+    </view>
+
+    <!-- 信息展示卡片 -->
+    <view class="info-card">
       <view class="info-item">
-        <text class="label">用户名：</text>
+        <text class="label">用户名</text>
         <text class="value">{{ userInfo.username }}</text>
       </view>
       <view class="info-item">
-        <text class="label">身高：</text>
+        <text class="label">身高</text>
         <text class="value">{{ userInfo.height }} cm</text>
       </view>
       <view class="info-item">
-        <text class="label">体重：</text>
+        <text class="label">体重</text>
         <text class="value">{{ userInfo.weight }} kg</text>
       </view>
       <view class="info-item">
-        <text class="label">年龄：</text>
+        <text class="label">年龄</text>
         <text class="value">{{ userInfo.age }} 岁</text>
       </view>
       <view class="info-item">
-        <text class="label">性别：</text>
+        <text class="label">性别</text>
         <text class="value">{{ userInfo.gender }}</text>
       </view>
     </view>
 
     <!-- 编辑按钮 -->
-    <button class="edit-btn" @click="openEditModal">编辑</button>
+    <button class="edit-btn" @click="openEditModal">
+      <uni-icons type="compose" size="16" color="#fff"/>
+      <text>编辑资料</text>
+    </button>
 
     <!-- 编辑弹窗 -->
     <view v-if="isEditing" class="modal">
       <view class="modal-content">
         <view class="modal-header">
-          <text>编辑个人信息</text>
+          <text class="modal-title">编辑个人信息</text>
         </view>
-        <view class="modal-body">
+        
+        <scroll-view class="modal-body" scroll-y>
           <view class="input-group">
-            <text class="label">用户名：</text>
-            <input v-model="editData.username" placeholder="请输入用户名" />
+            <text class="label">用户名</text>
+            <input 
+              v-model="editData.username" 
+              placeholder="请输入用户名"
+              class="input"
+            />
           </view>
+          
           <view class="input-group">
-            <text class="label">身高：</text>
-            <input v-model="editData.height" type="number" placeholder="请输入身高(cm)" />
+            <text class="label">身高 (cm)</text>
+            <input 
+              v-model="editData.height" 
+              type="number" 
+              placeholder="请输入身高"
+              class="input"
+            />
           </view>
+          
           <view class="input-group">
-            <text class="label">体重：</text>
-            <input v-model="editData.weight" type="number" placeholder="请输入体重(kg)" />
+            <text class="label">体重 (kg)</text>
+            <input 
+              v-model="editData.weight" 
+              type="number" 
+              placeholder="请输入体重"
+              class="input"
+            />
           </view>
+          
           <view class="input-group">
-            <text class="label">年龄：</text>
-            <input v-model="editData.age" type="number" placeholder="请输入年龄" />
+            <text class="label">年龄</text>
+            <input 
+              v-model="editData.age" 
+              type="number" 
+              placeholder="请输入年龄"
+              class="input"
+            />
           </view>
+          
           <view class="input-group">
-            <text class="label">性别：</text>
-            <input v-model="editData.gender" placeholder="请输入性别" />
+            <text class="label">性别</text>
+            <picker 
+              mode="selector" 
+              :range="['男', '女']" 
+              @change="onGenderChange"
+              class="picker"
+            >
+              <view class="picker-value">
+                {{ editData.gender || '请选择性别' }}
+              </view>
+            </picker>
           </view>
-        </view>
+        </scroll-view>
+        
         <view class="modal-footer">
           <button class="cancel-btn" @click="closeEditModal">取消</button>
           <button class="save-btn" @click="saveEdit">保存</button>
@@ -129,9 +172,10 @@ const saveEdit = async () => {
 	  console.log(`1: ${username}`);
 	  // 通知 My_Info界面重新获取用户名
 	  uni.$emit("saveEdit");
-	   uni.navigateTo({
-	           url:"/pages/My_Info/My_Info"  // 替换为你想刷新的页面路径
-	         });
+	  //  uni.navigateTo({
+	  //          url:"/pages/My_Info/My_Info"  // 替换为你想刷新的页面路径
+      //        });
+    uni.navigateBack(); 
       uni.showToast({ title: "修改成功", icon: "success" });
     } else {
       uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
@@ -144,61 +188,91 @@ const saveEdit = async () => {
   } 
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .profile-container {
-  padding: 20rpx;
-  background: linear-gradient(120deg, #f6f9fc, #e9eef5);
   min-height: 100vh;
-}
-
-.info-display {
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #f6f7f9 0%, #ffffff 100%);
   padding: 30rpx;
-  border-radius: 20rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
   margin-bottom: 40rpx;
+  
+  .page-title {
+    font-size: 44rpx;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12rpx;
+    display: block;
+  }
+  
+  .sub-title {
+    font-size: 28rpx;
+    color: #666;
+  }
 }
 
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10rpx 0;
-  border-bottom: 1rpx solid #ffffff;
-}
+.info-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+  animation: slideIn 0.6s ease-out;
 
-.info-item:last-child {
-  border-bottom: none;
-}
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24rpx 0;
+    border-bottom: 2rpx solid #f0f2f5;
+    transition: all 0.3s ease;
 
-.label {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333333;
-}
+    &:last-child {
+      border-bottom: none;
+    }
 
-.value {
-  font-size: 30rpx;
-  color: #666666;
+    &:hover {
+      background: #f8f9fa;
+      border-radius: 12rpx;
+      padding: 24rpx 20rpx;
+    }
+
+    .label {
+      font-size: 28rpx;
+      color: #666;
+    }
+
+    .value {
+      font-size: 28rpx;
+      font-weight: 500;
+      color: #333;
+    }
+  }
 }
 
 .edit-btn {
-  width: 100%;
-  padding: 25rpx;
-  font-size: 34rpx;
-  background: linear-gradient(90deg, #4caf50, #66bb6a);
-  color: white;
+  width: 90%;
+  height: 96rpx;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #5B8FF9, #6094EA);
+  border-radius: 48rpx;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
   border: none;
-  border-radius: 15rpx;
-  text-align: center;
-  box-shadow: 0 4rpx 8rpx rgba(76, 175, 80, 0.3);
-  cursor: pointer;
+  box-shadow: 0 8rpx 20rpx rgba(91, 143, 249, 0.2);
   transition: all 0.3s ease;
-}
 
-.edit-btn:active {
-  box-shadow: 0 2rpx 6rpx rgba(76, 175, 80, 0.4);
-  transform: scale(0.98);
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
 }
 
 .modal {
@@ -207,103 +281,144 @@ const saveEdit = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 999;
 }
 
 .modal-content {
-  width: 90%;
-  max-width: 600rpx;
-  background: #ffffff;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 24rpx;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
-  font-size: 36rpx;
-  font-weight: bold;
+  padding: 30rpx;
   text-align: center;
-  color: #4caf50;
-  margin-bottom: 20rpx;
+  background: linear-gradient(135deg, #5B8FF9, #6094EA);
+  border-radius: 24rpx 24rpx 0 0;
+
+  .modal-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #fff;
+  }
 }
 
 .modal-body {
-  margin-bottom: 30rpx;
-}
+  flex: 1;
+  padding: 30rpx;
+  max-height: calc(80vh - 240rpx);
+  box-sizing: border-box;
 
-.input-group {
-  margin-bottom: 25rpx;
-}
+  .input-group {
+    margin-bottom: 30rpx;
+    width: 100%;
+    box-sizing: border-box;
 
-.input-group:last-child {
-  margin-bottom: 0;
-}
+    &:last-child {
+      margin-bottom: 0;
+    }
 
-.label {
-  font-size: 30rpx;
-  margin-bottom: 8rpx;
-  display: block;
-  color: #333333;
-}
+    .label {
+      font-size: 28rpx;
+      color: #333;
+      margin-bottom: 12rpx;
+      display: block;
+    }
 
-input {
-  width: 95%;
-  padding: 15rpx;
-  font-size: 30rpx;
-  border: 1rpx solid #ccc;
-  border-radius: 10rpx;
-  background: #f9f9f9;
-  transition: border 0.3s ease, background 0.3s ease;
-}
+    .input {
+      width: 100%;
+      height: 88rpx;
+      background: #f8f9fa;
+      border: 2rpx solid #e9ecef;
+      border-radius: 16rpx;
+      padding: 0 24rpx;
+      font-size: 28rpx;
+      box-sizing: border-box;
 
-input:focus {
-  border: 1rpx solid #4caf50;
-  background: #ffffff;
-  outline: none;
-  box-shadow: 0 2rpx 6rpx rgba(76, 175, 80, 0.2);
+      &:focus {
+        border-color: #5B8FF9;
+        background: #fff;
+        box-shadow: 0 0 0 2rpx rgba(91, 143, 249, 0.1);
+      }
+    }
+
+    .picker {
+      width: 100%;
+      height: 88rpx;
+      background: #f8f9fa;
+      border: 2rpx solid #e9ecef;
+      border-radius: 16rpx;
+      overflow: hidden;
+      box-sizing: border-box;
+
+      .picker-value {
+        height: 88rpx;
+        line-height: 88rpx;
+        padding: 0 24rpx;
+        font-size: 28rpx;
+        color: #333;
+      }
+    }
+  }
 }
 
 .modal-footer {
+  padding: 30rpx;
   display: flex;
-  justify-content: space-between;
   gap: 20rpx;
+  border-top: 2rpx solid #f0f2f5;
+  background: #fff;
+
+  button {
+    flex: 1;
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28rpx;
+    font-weight: 500;
+    border-radius: 16rpx;
+    border: none;
+    transition: all 0.3s ease;
+
+    &.cancel-btn {
+      background: #f8f9fa;
+      color: #666;
+    }
+
+    &.save-btn {
+      background: linear-gradient(135deg, #5B8FF9, #6094EA);
+      color: #fff;
+      box-shadow: 0 4rpx 12rpx rgba(91, 143, 249, 0.2);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
 }
 
-.cancel-btn,
-.save-btn {
-  flex: 1;
-  padding: 20rpx;
-  font-size: 28rpx;
-  border-radius: 12rpx;
-  text-align: center;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.cancel-btn {
-  background-color: #f5f5f5;
-  color: #666;
-  border: 1rpx solid #ccc;
-  transition: background 0.3s ease, color 0.3s ease;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-.cancel-btn:hover {
-  background-color: #eeeeee;
-  color: #333333;
-}
-
-.save-btn {
-  background: linear-gradient(90deg, #4caf50, #66bb6a);
-  color: white;
-  border: none;
-  box-shadow: 0 4rpx 8rpx rgba(76, 175, 80, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.save-btn:active {
-  transform: scale(0.98);
-}
-
 </style>

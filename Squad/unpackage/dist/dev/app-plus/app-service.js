@@ -55,1846 +55,6 @@ if (uni.restoreGlobal) {
   const onHide = /* @__PURE__ */ createHook(ON_HIDE);
   const onLaunch = /* @__PURE__ */ createHook(ON_LAUNCH);
   const onPullDownRefresh = /* @__PURE__ */ createHook(ON_PULL_DOWN_REFRESH);
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
-    }
-    return target;
-  };
-  const _sfc_main$A = {
-    name: "fui-input",
-    emits: ["input", "update:modelValue", "focus", "blur", "confirm", "click", "keyboardheightchange"],
-    props: {
-      //是否为必填项
-      required: {
-        type: Boolean,
-        default: false
-      },
-      requiredColor: {
-        type: String,
-        default: ""
-      },
-      //左侧标题
-      label: {
-        type: String,
-        default: ""
-      },
-      //标题字体大小
-      labelSize: {
-        type: [Number, String],
-        default: 0
-      },
-      labelColor: {
-        type: String,
-        default: "#333"
-      },
-      //label 最小宽度 rpx
-      labelWidth: {
-        type: [Number, String],
-        default: 140
-      },
-      clearable: {
-        type: Boolean,
-        default: false
-      },
-      clearColor: {
-        type: String,
-        default: "#CCCCCC"
-      },
-      //获取焦点
-      focus: {
-        type: Boolean,
-        default: false
-      },
-      placeholder: {
-        type: String,
-        default: ""
-      },
-      placeholderStyle: {
-        type: String,
-        default: ""
-      },
-      //输入框名称
-      name: {
-        type: String,
-        default: ""
-      },
-      //输入框值 vue2
-      value: {
-        type: [Number, String],
-        default: ""
-      },
-      //输入框值
-      modelValue: {
-        type: [Number, String],
-        default: ""
-      },
-      //vue3
-      modelModifiers: {
-        default: () => ({})
-      },
-      //兼容写法，type为text时也做Number处理，NaN时返回原值
-      number: {
-        type: Boolean,
-        default: false
-      },
-      //与官方input type属性一致
-      type: {
-        type: String,
-        default: "text"
-      },
-      password: {
-        type: Boolean,
-        default: false
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      //V2.1.0+
-      disabledStyle: {
-        type: Boolean,
-        default: false
-      },
-      readonly: {
-        type: Boolean,
-        default: false
-      },
-      maxlength: {
-        type: [Number, String],
-        default: 140
-      },
-      min: {
-        type: [Number, String],
-        default: "NaN"
-      },
-      max: {
-        type: [Number, String],
-        default: "NaN"
-      },
-      cursorSpacing: {
-        type: Number,
-        default: 0
-      },
-      confirmType: {
-        type: String,
-        default: "done"
-      },
-      confirmHold: {
-        type: Boolean,
-        default: false
-      },
-      cursor: {
-        type: Number,
-        default: -1
-      },
-      selectionStart: {
-        type: Number,
-        default: -1
-      },
-      selectionEnd: {
-        type: Number,
-        default: -1
-      },
-      adjustPosition: {
-        type: Boolean,
-        default: true
-      },
-      holdKeyboard: {
-        type: Boolean,
-        default: false
-      },
-      autoBlur: {
-        type: Boolean,
-        default: false
-      },
-      alwaysEmbed: {
-        type: Boolean,
-        default: false
-      },
-      size: {
-        type: [Number, String],
-        default: 0
-      },
-      color: {
-        type: String,
-        default: "#333"
-      },
-      inputBorder: {
-        type: Boolean,
-        default: false
-      },
-      isFillet: {
-        type: Boolean,
-        default: false
-      },
-      radius: {
-        type: [Number, String],
-        default: 8
-      },
-      borderTop: {
-        type: Boolean,
-        default: false
-      },
-      topLeft: {
-        type: [Number, String],
-        default: 0
-      },
-      topRight: {
-        type: [Number, String],
-        default: 0
-      },
-      borderBottom: {
-        type: Boolean,
-        default: true
-      },
-      bottomLeft: {
-        type: [Number, String],
-        default: 32
-      },
-      bottomRight: {
-        type: [Number, String],
-        default: 0
-      },
-      borderColor: {
-        type: String,
-        default: ""
-      },
-      trim: {
-        type: Boolean,
-        default: true
-      },
-      //即将废弃，请使用textAlign属性
-      textRight: {
-        type: Boolean,
-        default: false
-      },
-      //V2.2.0+ 可选值：left/center/right
-      textAlign: {
-        type: String,
-        default: "left"
-      },
-      padding: {
-        type: Array,
-        default() {
-          return ["28rpx", "32rpx"];
-        }
-      },
-      backgroundColor: {
-        type: String,
-        default: "#FFFFFF"
-      },
-      marginTop: {
-        type: [Number, String],
-        default: 0
-      }
-    },
-    data() {
-      return {
-        placeholderStyl: "",
-        focused: false,
-        val: ""
-      };
-    },
-    computed: {
-      getRadius() {
-        let radius = this.radius + "rpx";
-        if (this.isFillet) {
-          radius = "120px";
-        }
-        return radius;
-      },
-      getBorderRadius() {
-        let radius = Number(this.radius) * 2 + "rpx";
-        if (this.isFillet) {
-          radius = "240px";
-        }
-        return radius;
-      },
-      getSize() {
-        const size = uni.$fui && uni.$fui.fuiInput && uni.$fui.fuiInput.size || 32;
-        return `${this.size || size}rpx`;
-      },
-      getLabelSize() {
-        const labelSize = uni.$fui && uni.$fui.fuiInput && uni.$fui.fuiInput.labelSize || 32;
-        return `${this.labelSize || labelSize}rpx`;
-      },
-      dangerColor() {
-        const app = uni && uni.$fui && uni.$fui.color;
-        return app && app.danger || "#FF2B2B";
-      }
-    },
-    watch: {
-      focus(val) {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            this.focused = val;
-          }, 20);
-        });
-      },
-      placeholderStyle() {
-        this.fieldPlaceholderStyle();
-      },
-      modelValue(newVal) {
-        this.val = newVal;
-      },
-      value(newVal) {
-        this.val = newVal;
-      }
-    },
-    created() {
-      this.fieldPlaceholderStyle();
-      setTimeout(() => {
-        if (this.value && !this.modelValue) {
-          this.val = this.value;
-        } else {
-          this.val = this.modelValue;
-        }
-      }, 50);
-    },
-    mounted() {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.focused = this.focus;
-        }, 300);
-      });
-    },
-    methods: {
-      fieldPlaceholderStyle() {
-        if (this.placeholderStyle) {
-          this.placeholderStyl = this.placeholderStyle;
-        } else {
-          const _size = uni.$fui && uni.$fui.fuiInput && uni.$fui.fuiInput.size || 32;
-          const size = uni.upx2px(this.size || _size);
-          this.placeholderStyl = `fontSize:${size}px;`;
-        }
-      },
-      onInput(event) {
-        let value = event.detail.value;
-        if (this.trim)
-          value = this.trimStr(value);
-        this.val = value;
-        const currentVal = Number(value);
-        if ((this.modelModifiers.number || this.number || this.type === "digit" || this.type === "number") && !isNaN(currentVal) && Number.isSafeInteger(currentVal)) {
-          let eVal = this.type === "digit" ? value : currentVal;
-          if (typeof eVal === "number") {
-            const min = Number(this.min);
-            const max = Number(this.max);
-            if (typeof min === "number" && currentVal < min) {
-              eVal = min;
-            } else if (typeof max === "number" && max < currentVal) {
-              eVal = max;
-            }
-          }
-          value = isNaN(eVal) ? value : eVal;
-        }
-        this.$nextTick(() => {
-          event.detail.value !== "" && (this.val = String(value));
-        });
-        const inputValue = event.detail.value !== "" ? value : "";
-        this.$emit("input", inputValue);
-        this.$emit("update:modelValue", inputValue);
-      },
-      onFocus(event) {
-        this.$emit("focus", event);
-      },
-      onBlur(event) {
-        this.$emit("blur", event);
-      },
-      onConfirm(e2) {
-        this.$emit("confirm", e2);
-      },
-      onClear(event) {
-        if (this.disabled && !this.readonly)
-          return;
-        uni.hideKeyboard();
-        this.val = "";
-        this.$emit("input", "");
-        this.$emit("update:modelValue", "");
-      },
-      fieldClick() {
-        this.$emit("click", {
-          name: this.name,
-          target: "wrap"
-        });
-      },
-      /**
-       * 在安卓nvue上，事件无法冒泡 
-       * 外层容器点击事件无法触发，需要单独处理
-       */
-      fieldClickAndroid(e2) {
-      },
-      getParent(name = "fui-form-item") {
-        let parent = this.$parent;
-        let parentName = parent.$options.name;
-        while (parentName !== name) {
-          parent = parent.$parent;
-          if (!parent)
-            return false;
-          parentName = parent.$options.name;
-        }
-        return parent;
-      },
-      onKeyboardheightchange(e2) {
-        this.$emit("keyboardheightchange", e2.detail);
-      },
-      trimStr(str) {
-        return str.replace(/^\s+|\s+$/g, "");
-      }
-    }
-  };
-  function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock(
-      "view",
-      {
-        class: vue.normalizeClass(["fui-input__wrap", { "fui-input__border-nvue": $props.inputBorder }]),
-        style: vue.normalizeStyle({ paddingTop: $props.padding[0] || 0, paddingRight: $props.padding[1] || 0, paddingBottom: $props.padding[2] || $props.padding[0] || 0, paddingLeft: $props.padding[3] || $props.padding[1] || 0, background: $props.backgroundColor, marginTop: $props.marginTop + "rpx", borderRadius: $options.getRadius, borderColor: $props.borderColor }),
-        onClick: _cache[6] || (_cache[6] = (...args) => $options.fieldClick && $options.fieldClick(...args))
-      },
-      [
-        $props.borderTop && !$props.inputBorder ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 0,
-            style: vue.normalizeStyle({ background: $props.borderColor, left: $props.topLeft + "rpx", right: $props.topRight + "rpx" }),
-            class: vue.normalizeClass(["fui-input__border-top", { "fui-input__background": !$props.borderColor }])
-          },
-          null,
-          6
-          /* CLASS, STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        $props.inputBorder ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 1,
-            class: vue.normalizeClass(["fui-input__border", { "fui-input__bordercolor": !$props.borderColor }]),
-            style: vue.normalizeStyle({ borderRadius: $options.getBorderRadius, borderColor: $props.borderColor })
-          },
-          null,
-          6
-          /* CLASS, STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        $props.required ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 2,
-            class: "fui-input__required",
-            style: vue.normalizeStyle({ color: $props.requiredColor || $options.dangerColor })
-          },
-          "*",
-          4
-          /* STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        $props.label ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 3,
-            class: "fui-input__label",
-            style: vue.normalizeStyle({ minWidth: $props.labelWidth + "rpx" })
-          },
-          [
-            vue.createElementVNode(
-              "text",
-              {
-                style: vue.normalizeStyle({ fontSize: $options.getLabelSize, color: $props.labelColor })
-              },
-              vue.toDisplayString($props.label),
-              5
-              /* TEXT, STYLE */
-            )
-          ],
-          4
-          /* STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        vue.renderSlot(_ctx.$slots, "left", {}, void 0, true),
-        vue.createElementVNode("input", {
-          class: vue.normalizeClass(["fui-input__self", { "fui-input__text-right": $props.textRight, "fui-input__disabled-styl": $props.disabled && $props.disabledStyle, "fui-input__disabled": $props.disabled }]),
-          style: vue.normalizeStyle({ fontSize: $options.getSize, color: $props.color, textAlign: $props.textRight ? "right" : $props.textAlign }),
-          "placeholder-class": "fui-input__placeholder",
-          type: $props.type,
-          name: $props.name,
-          value: $data.val,
-          placeholder: $data.val ? "" : $props.placeholder,
-          password: $props.password || $props.type === "password" || null,
-          "placeholder-style": $data.placeholderStyl,
-          disabled: $props.disabled || $props.readonly,
-          "cursor-spacing": $props.cursorSpacing,
-          maxlength: $props.maxlength,
-          focus: $data.focused,
-          "confirm-type": $props.confirmType,
-          "confirm-hold": $props.confirmHold,
-          cursor: $props.cursor,
-          "selection-start": $props.selectionStart,
-          "selection-end": $props.selectionEnd,
-          "adjust-position": $props.adjustPosition,
-          "hold-keyboard": $props.holdKeyboard,
-          "auto-blur": $props.autoBlur,
-          enableNative: false,
-          "always-embed": $props.alwaysEmbed,
-          onFocus: _cache[0] || (_cache[0] = (...args) => $options.onFocus && $options.onFocus(...args)),
-          onBlur: _cache[1] || (_cache[1] = (...args) => $options.onBlur && $options.onBlur(...args)),
-          onInput: _cache[2] || (_cache[2] = (...args) => $options.onInput && $options.onInput(...args)),
-          onConfirm: _cache[3] || (_cache[3] = (...args) => $options.onConfirm && $options.onConfirm(...args)),
-          onKeyboardheightchange: _cache[4] || (_cache[4] = (...args) => $options.onKeyboardheightchange && $options.onKeyboardheightchange(...args))
-        }, null, 46, ["type", "name", "value", "placeholder", "password", "placeholder-style", "disabled", "cursor-spacing", "maxlength", "focus", "confirm-type", "confirm-hold", "cursor", "selection-start", "selection-end", "adjust-position", "hold-keyboard", "auto-blur", "always-embed"]),
-        $props.clearable && $data.val != "" ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 4,
-            class: "fui-input__clear-wrap",
-            style: vue.normalizeStyle({ background: $props.clearColor }),
-            onClick: _cache[5] || (_cache[5] = vue.withModifiers((...args) => $options.onClear && $options.onClear(...args), ["stop"]))
-          },
-          [
-            vue.createElementVNode("view", { class: "fui-input__clear" }, [
-              vue.createElementVNode("view", { class: "fui-input__clear-a" })
-            ]),
-            vue.createElementVNode("view", { class: "fui-input__clear" }, [
-              vue.createElementVNode("view", { class: "fui-input__clear-b" })
-            ])
-          ],
-          4
-          /* STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true),
-        $props.borderBottom && !$props.inputBorder ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 5,
-            style: vue.normalizeStyle({ background: $props.borderColor, left: $props.bottomLeft + "rpx", right: $props.bottomRight + "rpx" }),
-            class: vue.normalizeClass(["fui-input__border-bottom", { "fui-input__background": !$props.borderColor }])
-          },
-          null,
-          6
-          /* CLASS, STYLE */
-        )) : vue.createCommentVNode("v-if", true)
-      ],
-      6
-      /* CLASS, STYLE */
-    );
-  }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-a23503dd"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-input/fui-input.vue"]]);
-  const icons = {
-    "addressbook": "",
-    "addfriends-fill": "",
-    "addfriends": "",
-    "backspace-fill": "",
-    "backspace": "",
-    "bankcard-fill": "",
-    "bankcard": "",
-    "camera-fill": "",
-    "camera": "",
-    "captcha-fill": "",
-    "captcha": "",
-    "cart-fill": "",
-    "cart": "",
-    "classify": "",
-    "classify-fill": "",
-    "comment-fill": "",
-    "comment": "",
-    "community-fill": "",
-    "community": "",
-    "coupon-fill": "",
-    "coupon": "",
-    "delete": "",
-    "delete-fill": "",
-    "edit": "",
-    "edit-fill": "",
-    "fabulous-fill": "",
-    "fabulous": "",
-    "find": "",
-    "find-fill": "",
-    "help-fill": "",
-    "help": "",
-    "home-fill": "",
-    "home": "",
-    "idcard-fill": "",
-    "idcard": "",
-    "info": "",
-    "info-fill": "",
-    "invite-fill": "",
-    "invite": "",
-    "kefu-fill": "",
-    "kefu": "",
-    "like-fill": "",
-    "like": "",
-    "location": "",
-    "location-fill": "",
-    "lock": "",
-    "lock-fill": "",
-    "mail-fill": "",
-    "mail": "",
-    "message": "",
-    "message-fill": "",
-    "mobile-fill": "",
-    "mobile": "",
-    "more": "",
-    "more-fill": "",
-    "my-fill": "",
-    "my": "",
-    "principal": "",
-    "notice-fill": "",
-    "notice": "",
-    "order": "",
-    "order-fill": "",
-    "picture": "",
-    "picture-fill": "",
-    "setup-fill": "",
-    "setup": "",
-    "share": "",
-    "share-fill": "",
-    "shop": "",
-    "shop-fill": "",
-    "star-fill": "",
-    "star": "",
-    "starhalf": "",
-    "stepon-fill": "",
-    "stepon": "",
-    "wait-fill": "",
-    "wait": "",
-    "warning": "",
-    "warning-fill": "",
-    "plus": "",
-    "plussign-fill": "",
-    "plussign": "",
-    "minus": "",
-    "minussign": "",
-    "minussign-fill": "",
-    "close": "",
-    "clear": "",
-    "clear-fill": "",
-    "checkbox-fill": "",
-    "checkround": "",
-    "checkbox": "",
-    "check": "",
-    "pulldown-fill": "",
-    "pullup": "",
-    "pullup-fill": "",
-    "pulldown": "",
-    "roundright-fill": "",
-    "roundright": "",
-    "arrowright": "",
-    "arrowleft": "",
-    "arrowdown": "",
-    "left": "",
-    "up": "",
-    "right": "",
-    "back": "",
-    "top": "",
-    "dropdown": "",
-    "turningleft": "",
-    "turningup": "",
-    "turningright": "",
-    "turningdown": "",
-    "refresh": "",
-    "loading": "",
-    "search": "",
-    "rotate": "",
-    "screen": "",
-    "signin": "",
-    "calendar": "",
-    "scan": "",
-    "qrcode": "",
-    "wallet": "",
-    "telephone": "",
-    "visible": "",
-    "invisible": "",
-    "menu": "",
-    "operate": "",
-    "slide": "",
-    "list": "",
-    "nonetwork": "",
-    "partake": "",
-    "qa": "",
-    "barchart": "",
-    "piechart": "",
-    "linechart": "",
-    "at": "",
-    "face": "",
-    "redpacket": "",
-    "suspend": "",
-    "link": "",
-    "keyboard": "",
-    "play": "",
-    "video": "",
-    "voice": "",
-    "sina": "",
-    "browser": "",
-    "moments": "",
-    "qq": "",
-    "wechat": "",
-    "balance": "",
-    "bankcardpay": "",
-    "wxpay": "",
-    "alipay": "",
-    "payment": "",
-    "receive": "",
-    "sendout": "",
-    "evaluate": "",
-    "aftersale": "",
-    "warehouse": "",
-    "transport": "",
-    "delivery": "",
-    "switch": "",
-    "goods": "",
-    "goods-fill": ""
-  };
-  const _sfc_main$z = {
-    name: "fui-icon",
-    emits: ["click"],
-    props: {
-      name: {
-        type: String,
-        default: ""
-      },
-      size: {
-        type: [Number, String],
-        default: 0
-      },
-      //rpx | px
-      unit: {
-        type: String,
-        default: ""
-      },
-      color: {
-        type: String,
-        default: ""
-      },
-      //字重
-      fontWeight: {
-        type: [Number, String],
-        default: "normal"
-      },
-      //是否禁用点击
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      params: {
-        type: [Number, String],
-        default: 0
-      },
-      customPrefix: {
-        type: String,
-        default: ""
-      },
-      //是否显示为主色调，color为空时有效。【内部使用】
-      primary: {
-        type: Boolean,
-        default: false
-      }
-    },
-    computed: {
-      getSize() {
-        const size = uni.$fui && uni.$fui.fuiIcon && uni.$fui.fuiIcon.size || 64;
-        const unit = uni.$fui && uni.$fui.fuiIcon && uni.$fui.fuiIcon.unit || "rpx";
-        return (this.size || size) + (this.unit || unit);
-      },
-      primaryColor() {
-        const app = uni && uni.$fui && uni.$fui.color;
-        return app && app.primary || "#465CFF";
-      },
-      getColor() {
-        const app = uni && uni.$fui && uni.$fui.fuiIcon;
-        let color = this.color;
-        if (!color || color && color === true) {
-          color = app && app.color;
-        }
-        return color;
-      }
-    },
-    data() {
-      return {
-        icons
-      };
-    },
-    methods: {
-      handleClick() {
-        if (this.disabled)
-          return;
-        this.$emit("click", {
-          params: this.params
-        });
-      }
-    }
-  };
-  function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock(
-      "text",
-      {
-        style: vue.normalizeStyle({ color: $options.getColor, fontSize: $options.getSize, fontWeight: $props.fontWeight }),
-        class: vue.normalizeClass(["fui-icon", [!$options.getColor && !$props.primary ? "fui-icon__color" : "", $props.primary && (!$props.color || $props.color === true) ? "fui-icon__active-color" : "", $props.disabled ? "fui-icon__not-allowed" : "", $props.customPrefix && $props.customPrefix !== true ? $props.customPrefix : "", $props.customPrefix && $props.customPrefix !== true ? $props.name : ""]]),
-        onClick: _cache[0] || (_cache[0] = (...args) => $options.handleClick && $options.handleClick(...args))
-      },
-      vue.toDisplayString($data.icons[$props.name] || ""),
-      7
-      /* TEXT, CLASS, STYLE */
-    );
-  }
-  const __easycom_1$4 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-0d5d8e40"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-icon/fui-icon.vue"]]);
-  const logo$2 = "/static/Squad1.png";
-  const _sfc_main$y = {
-    __name: "Login",
-    setup(__props, { expose: __expose }) {
-      __expose();
-      const isPressed = vue.ref(false);
-      const password = vue.ref(true);
-      const rememberMe = vue.ref(false);
-      vue.onMounted(() => {
-        const savedCredentials = uni.getStorageSync("savedCredentials");
-        if (savedCredentials) {
-          form.value.username = savedCredentials.username;
-          form.value.password = savedCredentials.password;
-          rememberMe.value = true;
-          if (savedCredentials.autoLogin)
-            ;
-        }
-      });
-      const handleRememberMe = (e2) => {
-        rememberMe.value = e2.detail.value.length > 0;
-      };
-      const inputpwd = (e2) => {
-        formatAppLog("log", "at pages/Login/Login.vue:119", e2);
-      };
-      const changepwd_vis = () => {
-        password.value = !password.value;
-      };
-      const onButtonPress = () => {
-        isPressed.value = true;
-      };
-      const onButtonRelease = () => {
-        isPressed.value = false;
-      };
-      const serverUrl = "http://121.37.195.13:3000";
-      const websocketUrl = "ws://121.37.195.13:3001";
-      formatAppLog("log", "at pages/Login/Login.vue:139", serverUrl, websocketUrl);
-      uni.setStorageSync("websocketUrl", websocketUrl);
-      uni.setStorageSync("serverUrl", serverUrl);
-      const form = vue.ref({
-        username: "",
-        password: ""
-      });
-      const submitLogin = () => {
-        if (!form.value.username || !form.value.password) {
-          uni.showToast({
-            title: "请输入账号名和密码",
-            icon: "none"
-          });
-          return;
-        }
-        uni.request({
-          url: serverUrl + "/login",
-          method: "POST",
-          data: {
-            username: form.value.username,
-            password: form.value.password
-          },
-          success: (res) => {
-            if (res.statusCode === 200) {
-              uni.setStorageSync("token", res.data.token);
-              uni.setStorageSync("username", form.value.username);
-              uni.setStorageSync("Level", res.data.Level);
-              if (rememberMe.value) {
-                uni.setStorageSync("savedCredentials", {
-                  username: form.value.username,
-                  password: form.value.password,
-                  autoLogin: true
-                });
-              } else {
-                uni.removeStorageSync("savedCredentials");
-              }
-              uni.showToast({
-                title: "登录成功",
-                icon: "success"
-              });
-              uni.switchTab({
-                url: "/pages/Home/Home"
-              });
-            } else {
-              uni.showToast({
-                title: "登录失败",
-                icon: "none"
-              });
-            }
-          }
-        });
-      };
-      const goRegister = () => {
-        formatAppLog("log", "at pages/Login/Login.vue:203", "前往注册页面");
-        uni.navigateTo({ url: "/pages/Register/Register" });
-      };
-      const __returned__ = { isPressed, password, rememberMe, handleRememberMe, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl, websocketUrl, form, submitLogin, goRegister, ref: vue.ref, onMounted: vue.onMounted };
-      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-      return __returned__;
-    }
-  };
-  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$5);
-    const _component_fui_icon = resolveEasycom(vue.resolveDynamicComponent("fui-icon"), __easycom_1$4);
-    return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
-      vue.createCommentVNode(" Logo 和标题 "),
-      vue.createElementVNode("view", { class: "logo-container" }, [
-        vue.createElementVNode("image", {
-          src: $setup.logo,
-          class: "logo"
-        }),
-        vue.createElementVNode("text", { class: "title" }, "Squad")
-      ]),
-      vue.createCommentVNode(" 登录表单 "),
-      vue.createElementVNode("view", { class: "form-container" }, [
-        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.account"\r\n        placeholder="请输入账号"\r\n        clearable\r\n        class="input-field rounded-input"\r\n      ></uni-easyinput> '),
-        vue.createVNode(_component_fui_input, {
-          placeholder: "请输入账号名",
-          borderTop: "",
-          padding: ["20rpx", "32rpx"],
-          modelValue: $setup.form.username,
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.username = $event),
-          isFillet: true,
-          clearable: ""
-        }, null, 8, ["modelValue"]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 账号和密码之间的间距 "),
-        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.password"\r\n        placeholder="请输入密码"\r\n        type="password"\r\n        clearable\r\n        class="input-field rounded-input"\r\n      ></uni-easyinput> '),
-        vue.createVNode(_component_fui_input, {
-          borderTop: "",
-          padding: ["20rpx", "32rpx"],
-          placeholder: "请输入密码",
-          password: $setup.password,
-          clearable: "",
-          modelValue: $setup.form.password,
-          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.password = $event),
-          isFillet: true,
-          onInput: $setup.inputpwd
-        }, {
-          default: vue.withCtx(() => [
-            vue.createVNode(_component_fui_icon, {
-              name: $setup.password ? "invisible" : "visible",
-              color: "#B2B2B2",
-              size: 50,
-              onClick: $setup.changepwd_vis
-            }, null, 8, ["name"])
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["password", "modelValue"]),
-        vue.createCommentVNode(' <fui-input\r\n        placeholder="请输入密码"\r\n        v-model="form.password"\r\n        :isFillet="true"\r\n        type="password"\r\n        clearable\r\n      ></fui-input> '),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 登录按钮 "),
-        vue.createElementVNode(
-          "button",
-          {
-            class: vue.normalizeClass(["login-button", { active: $setup.isPressed }]),
-            onTouchstart: $setup.onButtonPress,
-            onTouchend: $setup.onButtonRelease,
-            onClick: $setup.submitLogin
-          },
-          " 登录 ",
-          34
-          /* CLASS, NEED_HYDRATION */
-        ),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createElementVNode("view", { class: "b_bar" }, [
-          vue.createCommentVNode(" 注册按钮 "),
-          vue.createElementVNode("text", {
-            class: "register-text",
-            onClick: $setup.goRegister
-          }, "注册"),
-          vue.createCommentVNode(" 添加记住我选项 "),
-          vue.createElementVNode("view", { class: "remember-me" }, [
-            vue.createElementVNode(
-              "checkbox-group",
-              { onChange: $setup.handleRememberMe },
-              [
-                vue.createElementVNode("checkbox", {
-                  checked: $setup.rememberMe,
-                  style: { "transform": "scale(0.7)" }
-                }, null, 8, ["checked"]),
-                vue.createElementVNode("text", null, "记住我")
-              ],
-              32
-              /* NEED_HYDRATION */
-            )
-          ])
-        ])
-      ]),
-      vue.createCommentVNode(" 底部协议 "),
-      vue.createElementVNode("view", { class: "agreement" }, [
-        vue.createTextVNode(" 登录/注册表示您已同意 "),
-        vue.createElementVNode("text", { class: "link" }, "《用户协议》"),
-        vue.createTextVNode(" 和 "),
-        vue.createElementVNode("text", { class: "link" }, "《隐私政策》")
-      ])
-    ]);
-  }
-  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-461d1d79"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Login/Login.vue"]]);
-  const _sfc_main$x = {
-    name: "fui-checkbox",
-    emits: ["change"],
-    props: {
-      //注意：返回值仍为string类型
-      value: {
-        type: [String, Number],
-        default: ""
-      },
-      checked: {
-        type: Boolean,
-        default: false
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      //checkbox选中背景颜色
-      color: {
-        type: String,
-        default: ""
-      },
-      //checkbox未选中时边框颜色
-      borderColor: {
-        type: String,
-        default: "#ccc"
-      },
-      borderRadius: {
-        type: String,
-        default: "50%"
-      },
-      //是否只展示对号，无边框背景
-      isCheckMark: {
-        type: Boolean,
-        default: false
-      },
-      //对号颜色
-      checkMarkColor: {
-        type: String,
-        default: "#fff"
-      },
-      scaleRatio: {
-        type: [Number, String],
-        default: 1
-      }
-    },
-    beforeUnmount() {
-      this.unInstall();
-    },
-    created() {
-      this.val = this.checked;
-      this.group = this.getParent();
-      if (this.group) {
-        this.group.childrens.push(this);
-        if (this.group.value && this.group.value.length > 0) {
-          this.val = this.group.value.includes(this.value);
-        }
-        if (this.group.modelValue && this.group.modelValue.length > 0) {
-          this.val = this.group.modelValue.includes(this.value);
-        }
-      }
-      this.label = this.getParent("fui-label");
-      if (this.label) {
-        this.label.childrens.push(this);
-      }
-    },
-    watch: {
-      checked(newVal) {
-        this.val = newVal;
-      },
-      val(newVal) {
-        if (this.group) {
-          this.group.changeValue(this.val, this);
-        }
-      }
-    },
-    computed: {
-      getColor() {
-        let color = this.color;
-        return color;
-      },
-      getValue() {
-        return String(this.value);
-      }
-    },
-    data() {
-      let isNvue = false;
-      return {
-        val: false,
-        isNvue
-      };
-    },
-    methods: {
-      unInstall() {
-        if (this.group) {
-          this.group.childrens.forEach((item, index) => {
-            if (item === this) {
-              this.group.childrens.splice(index, 1);
-            }
-          });
-        }
-      },
-      getBackgroundColor(val, isCheckMark) {
-        let color = val ? this.getColor : "#fff";
-        if (isCheckMark) {
-          color = "transparent";
-        }
-        return color;
-      },
-      getBorderColor(val, isCheckMark) {
-        let color = val ? this.getColor : this.borderColor;
-        if (isCheckMark) {
-          color = "transparent";
-        }
-        return color;
-      },
-      checkboxChange(e2) {
-        if (this.disabled)
-          return;
-        this.val = !this.val;
-        this.$emit("change", {
-          checked: this.val,
-          value: this.value
-        });
-      },
-      getParent(name = "fui-checkbox-group") {
-        let parent = this.$parent;
-        let parentName = parent.$options.name;
-        while (parentName !== name) {
-          parent = parent.$parent;
-          if (!parent)
-            return false;
-          parentName = parent.$options.name;
-        }
-        return parent;
-      },
-      labelClick() {
-        this.checkboxChange();
-      }
-    }
-  };
-  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock(
-      "view",
-      {
-        class: vue.normalizeClass(["fui-checkbox__input", { "fui-checkbox__disabled": $props.disabled, "fui-checkbox__color": !$options.getColor && $data.val && !$props.isCheckMark }]),
-        style: vue.normalizeStyle({ backgroundColor: $options.getBackgroundColor($data.val, $props.isCheckMark), borderColor: $options.getBorderColor($data.val, $props.isCheckMark), zoom: $data.isNvue ? 1 : $props.scaleRatio, transform: `scale(${$data.isNvue ? $props.scaleRatio : 1})`, borderRadius: $props.borderRadius }),
-        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.checkboxChange && $options.checkboxChange(...args), ["stop"]))
-      },
-      [
-        $data.val ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 0,
-            class: "fui-check__mark",
-            style: vue.normalizeStyle({ borderBottomColor: $props.checkMarkColor, borderRightColor: $props.checkMarkColor })
-          },
-          null,
-          4
-          /* STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        vue.createElementVNode("checkbox", {
-          class: "fui-checkbox__hidden",
-          style: { "opacity": "0", "position": "absolute" },
-          color: $options.getColor,
-          disabled: $props.disabled,
-          value: $options.getValue,
-          checked: $data.val
-        }, null, 8, ["color", "disabled", "value", "checked"])
-      ],
-      6
-      /* CLASS, STYLE */
-    );
-  }
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-bc643473"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
-  const _sfc_main$w = {
-    name: "fui-list-cell",
-    emits: ["click"],
-    props: {
-      //padding值，上、右、下、左,nvue下padding-right(右)无效
-      padding: {
-        type: Array,
-        default() {
-          return [];
-        }
-      },
-      //margin-top 单位rpx
-      marginTop: {
-        type: [Number, String],
-        default: 0
-      },
-      //margin-bottom 单位rpx
-      marginBottom: {
-        type: [Number, String],
-        default: 0
-      },
-      //背景颜色
-      background: {
-        type: String,
-        default: ""
-      },
-      //是否有点击效果
-      highlight: {
-        type: Boolean,
-        default: true
-      },
-      //是否需要右侧箭头
-      arrow: {
-        type: Boolean,
-        default: false
-      },
-      arrowColor: {
-        type: String,
-        default: ""
-      },
-      //是否显示上边框
-      topBorder: {
-        type: Boolean,
-        default: false
-      },
-      //是否显示下边框
-      bottomBorder: {
-        type: Boolean,
-        default: true
-      },
-      //边框颜色，非nvue下传值则全局默认样式失效
-      borderColor: {
-        type: String,
-        default: ""
-      },
-      //上边框left值，单位rpx
-      topLeft: {
-        type: [Number, String],
-        default: 0
-      },
-      //上边框right值，单位rpx
-      topRight: {
-        type: [Number, String],
-        default: 0
-      },
-      //下边框left值，单位rpx
-      bottomLeft: {
-        type: [Number, String],
-        default: -1
-      },
-      //下边框right值，单位rpx
-      bottomRight: {
-        type: [Number, String],
-        default: 0
-      },
-      //border-radius圆角值
-      radius: {
-        type: String,
-        default: "0"
-      },
-      index: {
-        type: Number,
-        default: 0
-      }
-    },
-    computed: {
-      getPadding() {
-        let padding = this.padding;
-        if (Array.isArray(padding) && padding.length === 0) {
-          const app = uni && uni.$fui && uni.$fui.fuiListCell;
-          padding = app && app.padding;
-          if (!padding || Array.isArray(padding) && padding.length === 0) {
-            padding = ["32rpx", "32rpx"];
-          }
-        }
-        return padding;
-      },
-      getArrowColor() {
-        const app = uni && uni.$fui && uni.$fui.fuiListCell;
-        return this.arrowColor || app && app.arrowColor || "#B2B2B2";
-      },
-      getBorderColor() {
-        let color = this.borderColor;
-        return color;
-      },
-      getBottomLeft() {
-        const app = uni && uni.$fui && uni.$fui.fuiListCell;
-        let left = this.bottomLeft;
-        const c_left = app && app.bottomLeft;
-        if (left === -1) {
-          left = c_left === void 0 || c_left === null ? 32 : c_left;
-        }
-        return left;
-      }
-    },
-    methods: {
-      handleClick() {
-        this.$emit("click", {
-          index: this.index
-        });
-      }
-    }
-  };
-  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock(
-      "view",
-      {
-        class: vue.normalizeClass(["fui-list__cell", { "fui-highlight": $props.highlight, "fui-list__cell-background": !$props.background }]),
-        style: vue.normalizeStyle({ paddingTop: $options.getPadding[0] || 0, paddingRight: $options.getPadding[1] || 0, paddingBottom: $options.getPadding[2] || $options.getPadding[0] || 0, paddingLeft: $options.getPadding[3] || $options.getPadding[1] || 0, background: $props.background, marginTop: $props.marginTop + "rpx", marginBottom: $props.marginBottom + "rpx", borderRadius: $props.radius }),
-        onClick: _cache[0] || (_cache[0] = (...args) => $options.handleClick && $options.handleClick(...args))
-      },
-      [
-        $props.topBorder ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 0,
-            style: vue.normalizeStyle({ background: $options.getBorderColor, left: $props.topLeft + "rpx", right: $props.topRight + "rpx" }),
-            class: vue.normalizeClass(["fui-cell__border-top", { "fui-cell__border-color": !$options.getBorderColor }])
-          },
-          null,
-          6
-          /* CLASS, STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true),
-        $props.bottomBorder ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 1,
-            style: vue.normalizeStyle({ background: $options.getBorderColor, left: $options.getBottomLeft + "rpx", right: $props.bottomRight + "rpx" }),
-            class: vue.normalizeClass(["fui-cell__border-bottom", { "fui-cell__border-color": !$options.getBorderColor }])
-          },
-          null,
-          6
-          /* CLASS, STYLE */
-        )) : vue.createCommentVNode("v-if", true),
-        $props.arrow ? (vue.openBlock(), vue.createElementBlock(
-          "view",
-          {
-            key: 2,
-            class: "fui-cell__arrow",
-            style: vue.normalizeStyle({ "border-color": $options.getArrowColor })
-          },
-          null,
-          4
-          /* STYLE */
-        )) : vue.createCommentVNode("v-if", true)
-      ],
-      6
-      /* CLASS, STYLE */
-    );
-  }
-  const __easycom_1$3 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-c16a41c6"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
-  const _sfc_main$v = {
-    name: "fui-label",
-    props: {
-      //padding值：['20rpx','32rpx']->[上，右，下，左]
-      padding: {
-        type: Array,
-        default() {
-          return [];
-        }
-      },
-      //margin值：[上，右，下，左]
-      margin: {
-        type: Array,
-        default() {
-          return [];
-        }
-      },
-      full: {
-        type: Boolean,
-        default: false
-      },
-      inline: {
-        type: Boolean,
-        default: false
-      }
-    },
-    created() {
-      this.childrens = [];
-    },
-    methods: {
-      onClick() {
-        if (this.childrens && this.childrens.length > 0) {
-          for (let child of this.childrens) {
-            child.labelClick();
-          }
-        }
-      }
-    }
-  };
-  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock(
-      "view",
-      {
-        class: vue.normalizeClass(["fui-label__box", { "fui-label__full": $props.full, "fui-label__inline": $props.inline }]),
-        style: vue.normalizeStyle({ paddingTop: $props.padding[0] || 0, paddingRight: $props.padding[1] || 0, paddingBottom: $props.padding[2] || $props.padding[0] || 0, paddingLeft: $props.padding[3] || $props.padding[1] || 0, marginTop: $props.margin[0] || 0, marginRight: $props.margin[1] || 0, marginBottom: $props.margin[2] || $props.margin[0] || 0, marginLeft: $props.margin[3] || $props.margin[1] || 0 }),
-        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.onClick && $options.onClick(...args), ["stop"]))
-      },
-      [
-        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
-      ],
-      6
-      /* CLASS, STYLE */
-    );
-  }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-186dfc0c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
-  const _sfc_main$u = {
-    name: "fui-checkbox-group",
-    emits: ["change", "input", "update:modelValue"],
-    props: {
-      name: {
-        type: String,
-        default: ""
-      },
-      modelValue: {
-        type: Array,
-        default() {
-          return [];
-        }
-      }
-    },
-    data() {
-      return {
-        vals: ""
-      };
-    },
-    watch: {
-      modelValue(vals) {
-        this.modelChange(vals);
-      }
-    },
-    created() {
-      this.childrens = [];
-    },
-    methods: {
-      checkboxChange(e2) {
-        this.$emit("change", e2);
-        this.$emit("input", e2.detail.value);
-        this.$emit("update:modelValue", e2.detail.value);
-      },
-      changeValue(checked, target) {
-        const vals = [];
-        this.childrens.forEach((item) => {
-          if (item.val) {
-            vals.push(item.value);
-          }
-        });
-        this.vals = vals;
-        let e2 = {
-          detail: {
-            value: vals
-          }
-        };
-        this.checkboxChange(e2);
-      },
-      modelChange(vals) {
-        this.childrens.forEach((item) => {
-          if (vals.includes(item.value)) {
-            item.val = true;
-          } else {
-            item.val = false;
-          }
-        });
-      }
-    }
-  };
-  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("checkbox-group", { name: $props.name }, [
-      vue.renderSlot(_ctx.$slots, "default")
-    ], 8, ["name"]);
-  }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
-  const _sfc_main$t = {
-    data() {
-      return {
-        title: "checkbox 复选框",
-        items: [
-          {
-            value: "USA",
-            name: "美国"
-          },
-          {
-            value: "CHN",
-            name: "中国",
-            checked: "true"
-          },
-          {
-            value: "BRA",
-            name: "巴西"
-          },
-          {
-            value: "JPN",
-            name: "日本"
-          },
-          {
-            value: "ENG",
-            name: "英国"
-          },
-          {
-            value: "FRA",
-            name: "法国"
-          }
-        ],
-        vals: ["1"],
-        checkboxItems: [
-          {
-            name: "篮球",
-            value: "1",
-            checked: true
-          },
-          {
-            name: "羽毛球",
-            value: "2",
-            checked: false
-          },
-          {
-            name: "乒乓球",
-            value: "3",
-            checked: false
-          }
-        ]
-      };
-    },
-    methods: {
-      checkboxChange: function(e2) {
-        var items = this.items, values = e2.detail.value;
-        for (var i2 = 0, lenI = items.length; i2 < lenI; ++i2) {
-          const item = items[i2];
-          if (values.includes(item.value)) {
-            this.$set(item, "checked", true);
-          } else {
-            this.$set(item, "checked", false);
-          }
-        }
-      },
-      change(e2) {
-        formatAppLog("log", "at pages/index/index.vue:134", "change:" + JSON.stringify(e2.detail.value));
-      }
-    }
-  };
-  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
-    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$3);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
-    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
-    return vue.openBlock(), vue.createElementBlock("view", null, [
-      vue.createElementVNode("view", { class: "fui-section__title" }, "修改圆角值"),
-      vue.createVNode(_component_fui_checkbox_group, null, {
-        default: vue.withCtx(() => [
-          (vue.openBlock(true), vue.createElementBlock(
-            vue.Fragment,
-            null,
-            vue.renderList($data.checkboxItems, (item, index) => {
-              return vue.openBlock(), vue.createBlock(
-                _component_fui_label,
-                { key: index },
-                {
-                  default: vue.withCtx(() => [
-                    vue.createVNode(
-                      _component_fui_list_cell,
-                      null,
-                      {
-                        default: vue.withCtx(() => [
-                          vue.createElementVNode("view", { class: "fui-align__center" }, [
-                            vue.createVNode(_component_fui_checkbox, {
-                              checked: item.checked,
-                              value: item.value,
-                              color: "#777CFF",
-                              borderColor: "#B2B2B2",
-                              borderRadius: "8rpx"
-                            }, null, 8, ["checked", "value"]),
-                            vue.createElementVNode(
-                              "text",
-                              { class: "fui-text" },
-                              vue.toDisplayString(item.name),
-                              1
-                              /* TEXT */
-                            )
-                          ])
-                        ]),
-                        _: 2
-                        /* DYNAMIC */
-                      },
-                      1024
-                      /* DYNAMIC_SLOTS */
-                    )
-                  ]),
-                  _: 2
-                  /* DYNAMIC */
-                },
-                1024
-                /* DYNAMIC_SLOTS */
-              );
-            }),
-            128
-            /* KEYED_FRAGMENT */
-          ))
-        ]),
-        _: 1
-        /* STABLE */
-      }),
-      vue.createElementVNode("view", { class: "uni-padding-wrap uni-common-mt" }, [
-        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, "默认样式"),
-        vue.createElementVNode("view", null, [
-          vue.createElementVNode("checkbox-group", null, [
-            vue.createElementVNode("label", null, [
-              vue.createElementVNode("checkbox", {
-                value: "cb",
-                checked: "true"
-              }),
-              vue.createTextVNode("选中 ")
-            ]),
-            vue.createElementVNode("label", null, [
-              vue.createElementVNode("checkbox", { value: "cb" }),
-              vue.createTextVNode("未选中 ")
-            ])
-          ])
-        ]),
-        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, "不同颜色和尺寸的checkbox"),
-        vue.createElementVNode("view", null, [
-          vue.createElementVNode("checkbox-group", null, [
-            vue.createElementVNode("label", null, [
-              vue.createElementVNode("checkbox", {
-                value: "cb",
-                checked: "true",
-                color: "#FFCC33",
-                style: { "transform": "scale(0.7)" }
-              }),
-              vue.createTextVNode("选中 ")
-            ]),
-            vue.createElementVNode("label", null, [
-              vue.createElementVNode("checkbox", {
-                value: "cb",
-                color: "#FFCC33",
-                style: { "transform": "scale(0.7)" }
-              }),
-              vue.createTextVNode("未选中 ")
-            ])
-          ])
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "uni-padding-wrap" }, [
-        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, [
-          vue.createTextVNode(" 推荐展示样式 "),
-          vue.createElementVNode("text", null, "\\n使用 uni-list 布局")
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "uni-list" }, [
-        vue.createElementVNode(
-          "checkbox-group",
-          {
-            onChange: _cache[0] || (_cache[0] = (...args) => $options.checkboxChange && $options.checkboxChange(...args))
-          },
-          [
-            (vue.openBlock(true), vue.createElementBlock(
-              vue.Fragment,
-              null,
-              vue.renderList($data.items, (item) => {
-                return vue.openBlock(), vue.createElementBlock("label", {
-                  class: "uni-list-cell uni-list-cell-pd",
-                  key: item.value
-                }, [
-                  vue.createElementVNode("view", null, [
-                    vue.createElementVNode("checkbox", {
-                      value: item.value,
-                      checked: item.checked
-                    }, null, 8, ["value", "checked"])
-                  ]),
-                  vue.createElementVNode(
-                    "view",
-                    null,
-                    vue.toDisplayString(item.name),
-                    1
-                    /* TEXT */
-                  )
-                ]);
-              }),
-              128
-              /* KEYED_FRAGMENT */
-            ))
-          ],
-          32
-          /* NEED_HYDRATION */
-        )
-      ])
-    ]);
-  }
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
-  const logo$1 = "/static/Squad1.png";
-  const _sfc_main$s = {
-    __name: "Register",
-    setup(__props, { expose: __expose }) {
-      __expose();
-      const password = vue.ref(true);
-      const password_confirm = vue.ref(true);
-      const inputpwd = (e2) => {
-        formatAppLog("log", "at pages/Register/Register.vue:91", e2);
-      };
-      const changepwd_vis = () => {
-        password.value = !password.value;
-      };
-      const inputpwd_confirm = (e2) => {
-        formatAppLog("log", "at pages/Register/Register.vue:97", e2);
-      };
-      const changepwd_vis_confirm = () => {
-        password_confirm.value = !password_confirm.value;
-      };
-      const serverUrl = "http://121.37.195.13:3000";
-      const websocketUrl = "ws://121.37.195.13:3001";
-      formatAppLog("log", "at pages/Register/Register.vue:109", serverUrl, websocketUrl);
-      uni.setStorageSync("serverUrl", serverUrl);
-      uni.setStorageSync("websocketUrl", websocketUrl);
-      const form = vue.ref({
-        username: "",
-        password: "",
-        confirmPassword: ""
-      });
-      const submitRegister = () => {
-        if (!form.value.username || !form.value.password || !form.value.confirmPassword) {
-          uni.showToast({
-            title: "请填写完整信息",
-            icon: "none"
-          });
-          return;
-        }
-        if (form.value.password !== form.value.confirmPassword) {
-          uni.showToast({
-            title: "两次密码输入不一致",
-            icon: "none"
-          });
-          return;
-        }
-        formatAppLog("log", "at pages/Register/Register.vue:138", "提交注册表单", form.value);
-        uni.request({
-          url: serverUrl + "/register",
-          method: "POST",
-          data: {
-            username: form.value.username,
-            password: form.value.password,
-            confirmPassword: form.value.confirmPassword
-          },
-          success: (res) => {
-            formatAppLog("log", "at pages/Register/Register.vue:149", "注册请求返回：", res);
-            if (res.statusCode === 201 && res.data.success) {
-              uni.showToast({
-                title: "注册成功",
-                icon: "success"
-              });
-              uni.setStorage({
-                key: "username",
-                data: form.value.username,
-                success: function() {
-                  formatAppLog("log", "at pages/Register/Register.vue:160", "success");
-                }
-              });
-              uni.navigateTo({ url: "/pages/FirstLogin/FirstLogin" }).then(() => {
-                formatAppLog("log", "at pages/Register/Register.vue:166", "跳转成功");
-              }).catch((err) => {
-                formatAppLog("error", "at pages/Register/Register.vue:169", "跳转失败：", err);
-              });
-            } else {
-              uni.showToast({
-                title: res.data.message || "注册失败",
-                icon: "none"
-              });
-            }
-          },
-          fail: (err) => {
-            uni.showToast({
-              title: "网络请求失败",
-              icon: "none"
-            });
-            formatAppLog("error", "at pages/Register/Register.vue:183", "注册请求失败：", err);
-          }
-        });
-      };
-      const __returned__ = { password, password_confirm, inputpwd, changepwd_vis, inputpwd_confirm, changepwd_vis_confirm, logo: logo$1, serverUrl, websocketUrl, form, submitRegister, ref: vue.ref };
-      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
-      return __returned__;
-    }
-  };
-  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_input = resolveEasycom(vue.resolveDynamicComponent("fui-input"), __easycom_0$5);
-    const _component_fui_icon = resolveEasycom(vue.resolveDynamicComponent("fui-icon"), __easycom_1$4);
-    return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
-      vue.createCommentVNode(" Logo 和标题 "),
-      vue.createElementVNode("view", { class: "logo-container" }, [
-        vue.createElementVNode("image", {
-          src: $setup.logo,
-          class: "logo"
-        }),
-        vue.createElementVNode("text", { class: "title" }, "注册")
-      ]),
-      vue.createCommentVNode(" 注册表单 "),
-      vue.createElementVNode("view", { class: "form-container" }, [
-        vue.createVNode(_component_fui_input, {
-          placeholder: "请输入账号名",
-          borderTop: "",
-          padding: ["20rpx", "32rpx"],
-          modelValue: $setup.form.username,
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.username = $event),
-          isFillet: true,
-          clearable: ""
-        }, null, 8, ["modelValue"]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 输入密码 "),
-        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.password"\r\n        type="password"\r\n        placeholder="请输入密码"\r\n        clearable\r\n        class="input-field"\r\n      ></uni-easyinput> '),
-        vue.createVNode(_component_fui_input, {
-          borderTop: "",
-          padding: ["20rpx", "32rpx"],
-          placeholder: "请输入密码",
-          password: $setup.password,
-          clearable: "",
-          modelValue: $setup.form.password,
-          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.password = $event),
-          isFillet: true,
-          onInput: $setup.inputpwd
-        }, {
-          default: vue.withCtx(() => [
-            vue.createVNode(_component_fui_icon, {
-              name: $setup.password ? "invisible" : "visible",
-              color: "#B2B2B2",
-              size: 50,
-              onClick: $setup.changepwd_vis
-            }, null, 8, ["name"])
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["password", "modelValue"]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 再次输入密码 "),
-        vue.createCommentVNode(' <uni-easyinput\r\n        v-model="form.confirmPassword"\r\n        type="password"\r\n        placeholder="请再次输入密码"\r\n        clearable\r\n        class="input-field"\r\n      ></uni-easyinput> '),
-        vue.createVNode(_component_fui_input, {
-          borderTop: "",
-          padding: ["20rpx", "32rpx"],
-          placeholder: "请再次输入密码",
-          password: $setup.password_confirm,
-          clearable: "",
-          modelValue: $setup.form.confirmPassword,
-          "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.confirmPassword = $event),
-          isFillet: true,
-          onInput: $setup.inputpwd_confirm
-        }, {
-          default: vue.withCtx(() => [
-            vue.createVNode(_component_fui_icon, {
-              name: $setup.password_confirm ? "invisible" : "visible",
-              color: "#B2B2B2",
-              size: 50,
-              onClick: $setup.changepwd_vis_confirm
-            }, null, 8, ["name"])
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["password", "modelValue"]),
-        vue.createElementVNode("view", { class: "spacing" }),
-        vue.createCommentVNode(" 注册按钮 "),
-        vue.createElementVNode("button", {
-          class: "register-button",
-          onClick: $setup.submitRegister
-        }, "注册")
-      ]),
-      vue.createCommentVNode(" 底部协议 "),
-      vue.createElementVNode("view", { class: "agreement" }, [
-        vue.createTextVNode(" 登录/注册表示您已同意 "),
-        vue.createElementVNode("text", { class: "link" }, "《用户协议》"),
-        vue.createTextVNode(" 和 "),
-        vue.createElementVNode("text", { class: "link" }, "《隐私政策》")
-      ])
-    ]);
-  }
-  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__scopeId", "data-v-6b0433d4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Register/Register.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -2541,11 +701,18 @@ if (uni.restoreGlobal) {
       "unicode": ""
     }
   ];
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
   const getVal = (val) => {
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$r = {
+  const _sfc_main$y = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -2599,7 +766,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -2614,7 +781,1230 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/coding/sf_enginering/Squad/Squad/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const logo$2 = "/static/Squad1.png";
+  const _sfc_main$x = {
+    __name: "Login",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const showPassword = vue.ref(false);
+      const isPressed = vue.ref(false);
+      const password = vue.ref(true);
+      const rememberMe = vue.ref(false);
+      const savedCredentials = vue.ref(null);
+      vue.onMounted(() => {
+        savedCredentials.value = uni.getStorageSync("savedCredentials");
+        formatAppLog("log", "at pages/Login/Login.vue:103", savedCredentials.value);
+        if (savedCredentials.value) {
+          form.value.username = savedCredentials.value.username;
+          form.value.password = savedCredentials.value.password;
+          rememberMe.value = true;
+          if (savedCredentials.value.autoLogin)
+            ;
+        }
+      });
+      const handleRememberMe = (e2) => {
+        rememberMe.value = e2.detail.value.length > 0;
+        formatAppLog("log", "at pages/Login/Login.vue:119", rememberMe.value);
+      };
+      const inputpwd = (e2) => {
+        formatAppLog("log", "at pages/Login/Login.vue:123", e2);
+      };
+      const changepwd_vis = () => {
+        password.value = !password.value;
+      };
+      const onButtonPress = () => {
+        isPressed.value = true;
+      };
+      const onButtonRelease = () => {
+        isPressed.value = false;
+      };
+      const serverUrl = "http://121.37.195.13:3000";
+      const websocketUrl = "ws://121.37.195.13:3001";
+      formatAppLog("log", "at pages/Login/Login.vue:143", serverUrl, websocketUrl);
+      uni.setStorageSync("websocketUrl", websocketUrl);
+      uni.setStorageSync("serverUrl", serverUrl);
+      const form = vue.ref({
+        username: "",
+        password: ""
+      });
+      const submitLogin = () => {
+        if (!form.value.username || !form.value.password) {
+          uni.showToast({
+            title: "请输入账号名和密码",
+            icon: "none"
+          });
+          return;
+        }
+        uni.request({
+          url: serverUrl + "/login",
+          method: "POST",
+          data: {
+            username: form.value.username,
+            password: form.value.password
+          },
+          success: (res) => {
+            if (res.statusCode === 200) {
+              uni.setStorageSync("token", res.data.token);
+              uni.setStorageSync("username", form.value.username);
+              uni.setStorageSync("Level", res.data.Level);
+              if (rememberMe.value) {
+                uni.setStorageSync("savedCredentials", {
+                  username: form.value.username,
+                  password: form.value.password,
+                  autoLogin: true
+                });
+              } else {
+                uni.removeStorageSync("savedCredentials");
+              }
+              uni.showToast({
+                title: "登录成功",
+                icon: "success"
+              });
+              uni.switchTab({
+                url: "/pages/Home/Home"
+              });
+            } else {
+              uni.showToast({
+                title: "登录失败",
+                icon: "none"
+              });
+            }
+          }
+        });
+      };
+      const goRegister = () => {
+        formatAppLog("log", "at pages/Login/Login.vue:207", "前往注册页面");
+        uni.navigateTo({ url: "/pages/Register/Register" });
+      };
+      const __returned__ = { showPassword, isPressed, password, rememberMe, savedCredentials, handleRememberMe, inputpwd, changepwd_vis, onButtonPress, onButtonRelease, logo: logo$2, serverUrl, websocketUrl, form, submitLogin, goRegister, ref: vue.ref, onMounted: vue.onMounted };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
+      vue.createCommentVNode(" 动态背景 "),
+      vue.createElementVNode("view", { class: "animated-background" }, [
+        vue.createElementVNode("view", { class: "gradient-overlay" }),
+        vue.createElementVNode("view", { class: "particles" }, [
+          (vue.openBlock(), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList(20, (i2) => {
+              return vue.createElementVNode("view", {
+                key: i2,
+                class: "particle"
+              });
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        vue.createElementVNode("view", { class: "wave-container" }, [
+          vue.createElementVNode("view", { class: "wave wave1" }),
+          vue.createElementVNode("view", { class: "wave wave2" })
+        ])
+      ]),
+      vue.createCommentVNode(" Logo区域 "),
+      vue.createElementVNode("view", { class: "logo-section" }, [
+        vue.createElementVNode("image", {
+          src: $setup.logo,
+          class: "logo",
+          mode: "aspectFit"
+        }),
+        vue.createElementVNode("text", { class: "brand-name" }, "Squad"),
+        vue.createElementVNode("text", { class: "slogan" }, "让运动更有趣")
+      ]),
+      vue.createCommentVNode(" 登录表单 "),
+      vue.createElementVNode("view", { class: "form-section" }, [
+        vue.createElementVNode("view", { class: "input-group" }, [
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "person",
+              size: "20",
+              color: "#6e7ff3"
+            }),
+            vue.withDirectives(vue.createElementVNode(
+              "input",
+              {
+                type: "text",
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.username = $event),
+                placeholder: "请输入账号",
+                class: "input"
+              },
+              null,
+              512
+              /* NEED_PATCH */
+            ), [
+              [vue.vModelText, $setup.form.username]
+            ])
+          ]),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "locked",
+              size: "20",
+              color: "#6e7ff3"
+            }),
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.showPassword ? "text" : "password",
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.password = $event),
+              placeholder: "请输入密码",
+              class: "input"
+            }, null, 8, ["type"]), [
+              [vue.vModelDynamic, $setup.form.password]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: _cache[2] || (_cache[2] = ($event) => $setup.showPassword = !$setup.showPassword)
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.showPassword ? "eye-filled" : "eye-slash-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ])
+        ]),
+        vue.createCommentVNode(" 记住我和忘记密码 "),
+        vue.createElementVNode("view", { class: "options-row" }, [
+          vue.createElementVNode(
+            "checkbox-group",
+            { onChange: $setup.handleRememberMe },
+            [
+              vue.createElementVNode("checkbox", {
+                checked: $setup.rememberMe,
+                style: { "transform": "scale(0.7)" }
+              }, null, 8, ["checked"]),
+              vue.createElementVNode("text", null, "记住我")
+            ],
+            32
+            /* NEED_HYDRATION */
+          ),
+          vue.createElementVNode("text", { class: "forgot-password" }, "忘记密码?")
+        ]),
+        vue.createCommentVNode(" 登录按钮 "),
+        vue.createElementVNode(
+          "button",
+          {
+            class: vue.normalizeClass(["login-btn", { active: $setup.isPressed }]),
+            onTouchstart: $setup.onButtonPress,
+            onTouchend: $setup.onButtonRelease,
+            onClick: $setup.submitLogin
+          },
+          [
+            vue.createElementVNode("text", null, "登 录"),
+            vue.createElementVNode("view", { class: "btn-arrow" }, [
+              vue.createVNode(_component_uni_icons, {
+                type: "arrowright",
+                size: "18",
+                color: "#fff"
+              })
+            ])
+          ],
+          34
+          /* CLASS, NEED_HYDRATION */
+        ),
+        vue.createCommentVNode(" 注册链接 "),
+        vue.createElementVNode("view", {
+          class: "register-link",
+          onClick: $setup.goRegister
+        }, [
+          vue.createElementVNode("text", null, "还没有账号？"),
+          vue.createElementVNode("text", { class: "link-text" }, "立即注册")
+        ])
+      ]),
+      vue.createCommentVNode(" 底部协议 "),
+      vue.createElementVNode("view", { class: "agreement" }, [
+        vue.createElementVNode("text", null, "登录即代表同意"),
+        vue.createElementVNode("text", { class: "link" }, "《用户协议》"),
+        vue.createElementVNode("text", null, "和"),
+        vue.createElementVNode("text", { class: "link" }, "《隐私政策》")
+      ])
+    ]);
+  }
+  const PagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-461d1d79"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Login/Login.vue"]]);
+  const _sfc_main$w = {
+    name: "fui-checkbox",
+    emits: ["change"],
+    props: {
+      //注意：返回值仍为string类型
+      value: {
+        type: [String, Number],
+        default: ""
+      },
+      checked: {
+        type: Boolean,
+        default: false
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      //checkbox选中背景颜色
+      color: {
+        type: String,
+        default: ""
+      },
+      //checkbox未选中时边框颜色
+      borderColor: {
+        type: String,
+        default: "#ccc"
+      },
+      borderRadius: {
+        type: String,
+        default: "50%"
+      },
+      //是否只展示对号，无边框背景
+      isCheckMark: {
+        type: Boolean,
+        default: false
+      },
+      //对号颜色
+      checkMarkColor: {
+        type: String,
+        default: "#fff"
+      },
+      scaleRatio: {
+        type: [Number, String],
+        default: 1
+      }
+    },
+    beforeUnmount() {
+      this.unInstall();
+    },
+    created() {
+      this.val = this.checked;
+      this.group = this.getParent();
+      if (this.group) {
+        this.group.childrens.push(this);
+        if (this.group.value && this.group.value.length > 0) {
+          this.val = this.group.value.includes(this.value);
+        }
+        if (this.group.modelValue && this.group.modelValue.length > 0) {
+          this.val = this.group.modelValue.includes(this.value);
+        }
+      }
+      this.label = this.getParent("fui-label");
+      if (this.label) {
+        this.label.childrens.push(this);
+      }
+    },
+    watch: {
+      checked(newVal) {
+        this.val = newVal;
+      },
+      val(newVal) {
+        if (this.group) {
+          this.group.changeValue(this.val, this);
+        }
+      }
+    },
+    computed: {
+      getColor() {
+        let color = this.color;
+        return color;
+      },
+      getValue() {
+        return String(this.value);
+      }
+    },
+    data() {
+      let isNvue = false;
+      return {
+        val: false,
+        isNvue
+      };
+    },
+    methods: {
+      unInstall() {
+        if (this.group) {
+          this.group.childrens.forEach((item, index) => {
+            if (item === this) {
+              this.group.childrens.splice(index, 1);
+            }
+          });
+        }
+      },
+      getBackgroundColor(val, isCheckMark) {
+        let color = val ? this.getColor : "#fff";
+        if (isCheckMark) {
+          color = "transparent";
+        }
+        return color;
+      },
+      getBorderColor(val, isCheckMark) {
+        let color = val ? this.getColor : this.borderColor;
+        if (isCheckMark) {
+          color = "transparent";
+        }
+        return color;
+      },
+      checkboxChange(e2) {
+        if (this.disabled)
+          return;
+        this.val = !this.val;
+        this.$emit("change", {
+          checked: this.val,
+          value: this.value
+        });
+      },
+      getParent(name = "fui-checkbox-group") {
+        let parent = this.$parent;
+        let parentName = parent.$options.name;
+        while (parentName !== name) {
+          parent = parent.$parent;
+          if (!parent)
+            return false;
+          parentName = parent.$options.name;
+        }
+        return parent;
+      },
+      labelClick() {
+        this.checkboxChange();
+      }
+    }
+  };
+  function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["fui-checkbox__input", { "fui-checkbox__disabled": $props.disabled, "fui-checkbox__color": !$options.getColor && $data.val && !$props.isCheckMark }]),
+        style: vue.normalizeStyle({ backgroundColor: $options.getBackgroundColor($data.val, $props.isCheckMark), borderColor: $options.getBorderColor($data.val, $props.isCheckMark), zoom: $data.isNvue ? 1 : $props.scaleRatio, transform: `scale(${$data.isNvue ? $props.scaleRatio : 1})`, borderRadius: $props.borderRadius }),
+        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.checkboxChange && $options.checkboxChange(...args), ["stop"]))
+      },
+      [
+        $data.val ? (vue.openBlock(), vue.createElementBlock(
+          "view",
+          {
+            key: 0,
+            class: "fui-check__mark",
+            style: vue.normalizeStyle({ borderBottomColor: $props.checkMarkColor, borderRightColor: $props.checkMarkColor })
+          },
+          null,
+          4
+          /* STYLE */
+        )) : vue.createCommentVNode("v-if", true),
+        vue.createElementVNode("checkbox", {
+          class: "fui-checkbox__hidden",
+          style: { "opacity": "0", "position": "absolute" },
+          color: $options.getColor,
+          disabled: $props.disabled,
+          value: $options.getValue,
+          checked: $data.val
+        }, null, 8, ["color", "disabled", "value", "checked"])
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-bc643473"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox/fui-checkbox.vue"]]);
+  const _sfc_main$v = {
+    name: "fui-list-cell",
+    emits: ["click"],
+    props: {
+      //padding值，上、右、下、左,nvue下padding-right(右)无效
+      padding: {
+        type: Array,
+        default() {
+          return [];
+        }
+      },
+      //margin-top 单位rpx
+      marginTop: {
+        type: [Number, String],
+        default: 0
+      },
+      //margin-bottom 单位rpx
+      marginBottom: {
+        type: [Number, String],
+        default: 0
+      },
+      //背景颜色
+      background: {
+        type: String,
+        default: ""
+      },
+      //是否有点击效果
+      highlight: {
+        type: Boolean,
+        default: true
+      },
+      //是否需要右侧箭头
+      arrow: {
+        type: Boolean,
+        default: false
+      },
+      arrowColor: {
+        type: String,
+        default: ""
+      },
+      //是否显示上边框
+      topBorder: {
+        type: Boolean,
+        default: false
+      },
+      //是否显示下边框
+      bottomBorder: {
+        type: Boolean,
+        default: true
+      },
+      //边框颜色，非nvue下传值则全局默认样式失效
+      borderColor: {
+        type: String,
+        default: ""
+      },
+      //上边框left值，单位rpx
+      topLeft: {
+        type: [Number, String],
+        default: 0
+      },
+      //上边框right值，单位rpx
+      topRight: {
+        type: [Number, String],
+        default: 0
+      },
+      //下边框left值，单位rpx
+      bottomLeft: {
+        type: [Number, String],
+        default: -1
+      },
+      //下边框right值，单位rpx
+      bottomRight: {
+        type: [Number, String],
+        default: 0
+      },
+      //border-radius圆角值
+      radius: {
+        type: String,
+        default: "0"
+      },
+      index: {
+        type: Number,
+        default: 0
+      }
+    },
+    computed: {
+      getPadding() {
+        let padding = this.padding;
+        if (Array.isArray(padding) && padding.length === 0) {
+          const app = uni && uni.$fui && uni.$fui.fuiListCell;
+          padding = app && app.padding;
+          if (!padding || Array.isArray(padding) && padding.length === 0) {
+            padding = ["32rpx", "32rpx"];
+          }
+        }
+        return padding;
+      },
+      getArrowColor() {
+        const app = uni && uni.$fui && uni.$fui.fuiListCell;
+        return this.arrowColor || app && app.arrowColor || "#B2B2B2";
+      },
+      getBorderColor() {
+        let color = this.borderColor;
+        return color;
+      },
+      getBottomLeft() {
+        const app = uni && uni.$fui && uni.$fui.fuiListCell;
+        let left = this.bottomLeft;
+        const c_left = app && app.bottomLeft;
+        if (left === -1) {
+          left = c_left === void 0 || c_left === null ? 32 : c_left;
+        }
+        return left;
+      }
+    },
+    methods: {
+      handleClick() {
+        this.$emit("click", {
+          index: this.index
+        });
+      }
+    }
+  };
+  function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["fui-list__cell", { "fui-highlight": $props.highlight, "fui-list__cell-background": !$props.background }]),
+        style: vue.normalizeStyle({ paddingTop: $options.getPadding[0] || 0, paddingRight: $options.getPadding[1] || 0, paddingBottom: $options.getPadding[2] || $options.getPadding[0] || 0, paddingLeft: $options.getPadding[3] || $options.getPadding[1] || 0, background: $props.background, marginTop: $props.marginTop + "rpx", marginBottom: $props.marginBottom + "rpx", borderRadius: $props.radius }),
+        onClick: _cache[0] || (_cache[0] = (...args) => $options.handleClick && $options.handleClick(...args))
+      },
+      [
+        $props.topBorder ? (vue.openBlock(), vue.createElementBlock(
+          "view",
+          {
+            key: 0,
+            style: vue.normalizeStyle({ background: $options.getBorderColor, left: $props.topLeft + "rpx", right: $props.topRight + "rpx" }),
+            class: vue.normalizeClass(["fui-cell__border-top", { "fui-cell__border-color": !$options.getBorderColor }])
+          },
+          null,
+          6
+          /* CLASS, STYLE */
+        )) : vue.createCommentVNode("v-if", true),
+        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true),
+        $props.bottomBorder ? (vue.openBlock(), vue.createElementBlock(
+          "view",
+          {
+            key: 1,
+            style: vue.normalizeStyle({ background: $options.getBorderColor, left: $options.getBottomLeft + "rpx", right: $props.bottomRight + "rpx" }),
+            class: vue.normalizeClass(["fui-cell__border-bottom", { "fui-cell__border-color": !$options.getBorderColor }])
+          },
+          null,
+          6
+          /* CLASS, STYLE */
+        )) : vue.createCommentVNode("v-if", true),
+        $props.arrow ? (vue.openBlock(), vue.createElementBlock(
+          "view",
+          {
+            key: 2,
+            class: "fui-cell__arrow",
+            style: vue.normalizeStyle({ "border-color": $options.getArrowColor })
+          },
+          null,
+          4
+          /* STYLE */
+        )) : vue.createCommentVNode("v-if", true)
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-c16a41c6"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-list-cell/fui-list-cell.vue"]]);
+  const _sfc_main$u = {
+    name: "fui-label",
+    props: {
+      //padding值：['20rpx','32rpx']->[上，右，下，左]
+      padding: {
+        type: Array,
+        default() {
+          return [];
+        }
+      },
+      //margin值：[上，右，下，左]
+      margin: {
+        type: Array,
+        default() {
+          return [];
+        }
+      },
+      full: {
+        type: Boolean,
+        default: false
+      },
+      inline: {
+        type: Boolean,
+        default: false
+      }
+    },
+    created() {
+      this.childrens = [];
+    },
+    methods: {
+      onClick() {
+        if (this.childrens && this.childrens.length > 0) {
+          for (let child of this.childrens) {
+            child.labelClick();
+          }
+        }
+      }
+    }
+  };
+  function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["fui-label__box", { "fui-label__full": $props.full, "fui-label__inline": $props.inline }]),
+        style: vue.normalizeStyle({ paddingTop: $props.padding[0] || 0, paddingRight: $props.padding[1] || 0, paddingBottom: $props.padding[2] || $props.padding[0] || 0, paddingLeft: $props.padding[3] || $props.padding[1] || 0, marginTop: $props.margin[0] || 0, marginRight: $props.margin[1] || 0, marginBottom: $props.margin[2] || $props.margin[0] || 0, marginLeft: $props.margin[3] || $props.margin[1] || 0 }),
+        onClick: _cache[0] || (_cache[0] = vue.withModifiers((...args) => $options.onClick && $options.onClick(...args), ["stop"]))
+      },
+      [
+        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-186dfc0c"], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-label/fui-label.vue"]]);
+  const _sfc_main$t = {
+    name: "fui-checkbox-group",
+    emits: ["change", "input", "update:modelValue"],
+    props: {
+      name: {
+        type: String,
+        default: ""
+      },
+      modelValue: {
+        type: Array,
+        default() {
+          return [];
+        }
+      }
+    },
+    data() {
+      return {
+        vals: ""
+      };
+    },
+    watch: {
+      modelValue(vals) {
+        this.modelChange(vals);
+      }
+    },
+    created() {
+      this.childrens = [];
+    },
+    methods: {
+      checkboxChange(e2) {
+        this.$emit("change", e2);
+        this.$emit("input", e2.detail.value);
+        this.$emit("update:modelValue", e2.detail.value);
+      },
+      changeValue(checked, target) {
+        const vals = [];
+        this.childrens.forEach((item) => {
+          if (item.val) {
+            vals.push(item.value);
+          }
+        });
+        this.vals = vals;
+        let e2 = {
+          detail: {
+            value: vals
+          }
+        };
+        this.checkboxChange(e2);
+      },
+      modelChange(vals) {
+        this.childrens.forEach((item) => {
+          if (vals.includes(item.value)) {
+            item.val = true;
+          } else {
+            item.val = false;
+          }
+        });
+      }
+    }
+  };
+  function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("checkbox-group", { name: $props.name }, [
+      vue.renderSlot(_ctx.$slots, "default")
+    ], 8, ["name"]);
+  }
+  const __easycom_4$1 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__file", "D:/coding/sf_enginering/Squad/Squad/node_modules/firstui-uni/firstui/fui-checkbox-group/fui-checkbox-group.vue"]]);
+  const _sfc_main$s = {
+    data() {
+      return {
+        title: "checkbox 复选框",
+        items: [
+          {
+            value: "USA",
+            name: "美国"
+          },
+          {
+            value: "CHN",
+            name: "中国",
+            checked: "true"
+          },
+          {
+            value: "BRA",
+            name: "巴西"
+          },
+          {
+            value: "JPN",
+            name: "日本"
+          },
+          {
+            value: "ENG",
+            name: "英国"
+          },
+          {
+            value: "FRA",
+            name: "法国"
+          }
+        ],
+        vals: ["1"],
+        checkboxItems: [
+          {
+            name: "篮球",
+            value: "1",
+            checked: true
+          },
+          {
+            name: "羽毛球",
+            value: "2",
+            checked: false
+          },
+          {
+            name: "乒乓球",
+            value: "3",
+            checked: false
+          }
+        ]
+      };
+    },
+    methods: {
+      checkboxChange: function(e2) {
+        var items = this.items, values = e2.detail.value;
+        for (var i2 = 0, lenI = items.length; i2 < lenI; ++i2) {
+          const item = items[i2];
+          if (values.includes(item.value)) {
+            this.$set(item, "checked", true);
+          } else {
+            this.$set(item, "checked", false);
+          }
+        }
+      },
+      change(e2) {
+        formatAppLog("log", "at pages/index/index.vue:134", "change:" + JSON.stringify(e2.detail.value));
+      }
+    }
+  };
+  function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_1$2);
+    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_2);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_3$1);
+    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_4$1);
+    return vue.openBlock(), vue.createElementBlock("view", null, [
+      vue.createElementVNode("view", { class: "fui-section__title" }, "修改圆角值"),
+      vue.createVNode(_component_fui_checkbox_group, null, {
+        default: vue.withCtx(() => [
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($data.checkboxItems, (item, index) => {
+              return vue.openBlock(), vue.createBlock(
+                _component_fui_label,
+                { key: index },
+                {
+                  default: vue.withCtx(() => [
+                    vue.createVNode(
+                      _component_fui_list_cell,
+                      null,
+                      {
+                        default: vue.withCtx(() => [
+                          vue.createElementVNode("view", { class: "fui-align__center" }, [
+                            vue.createVNode(_component_fui_checkbox, {
+                              checked: item.checked,
+                              value: item.value,
+                              color: "#777CFF",
+                              borderColor: "#B2B2B2",
+                              borderRadius: "8rpx"
+                            }, null, 8, ["checked", "value"]),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "fui-text" },
+                              vue.toDisplayString(item.name),
+                              1
+                              /* TEXT */
+                            )
+                          ])
+                        ]),
+                        _: 2
+                        /* DYNAMIC */
+                      },
+                      1024
+                      /* DYNAMIC_SLOTS */
+                    )
+                  ]),
+                  _: 2
+                  /* DYNAMIC */
+                },
+                1024
+                /* DYNAMIC_SLOTS */
+              );
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ]),
+        _: 1
+        /* STABLE */
+      }),
+      vue.createElementVNode("view", { class: "uni-padding-wrap uni-common-mt" }, [
+        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, "默认样式"),
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode("checkbox-group", null, [
+            vue.createElementVNode("label", null, [
+              vue.createElementVNode("checkbox", {
+                value: "cb",
+                checked: "true"
+              }),
+              vue.createTextVNode("选中 ")
+            ]),
+            vue.createElementVNode("label", null, [
+              vue.createElementVNode("checkbox", { value: "cb" }),
+              vue.createTextVNode("未选中 ")
+            ])
+          ])
+        ]),
+        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, "不同颜色和尺寸的checkbox"),
+        vue.createElementVNode("view", null, [
+          vue.createElementVNode("checkbox-group", null, [
+            vue.createElementVNode("label", null, [
+              vue.createElementVNode("checkbox", {
+                value: "cb",
+                checked: "true",
+                color: "#FFCC33",
+                style: { "transform": "scale(0.7)" }
+              }),
+              vue.createTextVNode("选中 ")
+            ]),
+            vue.createElementVNode("label", null, [
+              vue.createElementVNode("checkbox", {
+                value: "cb",
+                color: "#FFCC33",
+                style: { "transform": "scale(0.7)" }
+              }),
+              vue.createTextVNode("未选中 ")
+            ])
+          ])
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "uni-padding-wrap" }, [
+        vue.createElementVNode("view", { class: "uni-title uni-common-mt" }, [
+          vue.createTextVNode(" 推荐展示样式 "),
+          vue.createElementVNode("text", null, "\\n使用 uni-list 布局")
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "uni-list" }, [
+        vue.createElementVNode(
+          "checkbox-group",
+          {
+            onChange: _cache[0] || (_cache[0] = (...args) => $options.checkboxChange && $options.checkboxChange(...args))
+          },
+          [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($data.items, (item) => {
+                return vue.openBlock(), vue.createElementBlock("label", {
+                  class: "uni-list-cell uni-list-cell-pd",
+                  key: item.value
+                }, [
+                  vue.createElementVNode("view", null, [
+                    vue.createElementVNode("checkbox", {
+                      value: item.value,
+                      checked: item.checked
+                    }, null, 8, ["value", "checked"])
+                  ]),
+                  vue.createElementVNode(
+                    "view",
+                    null,
+                    vue.toDisplayString(item.name),
+                    1
+                    /* TEXT */
+                  )
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ],
+          32
+          /* NEED_HYDRATION */
+        )
+      ])
+    ]);
+  }
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/index/index.vue"]]);
+  const logo$1 = "/static/Squad1.png";
+  const _sfc_main$r = {
+    __name: "Register",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const password = vue.ref(true);
+      const password_confirm = vue.ref(true);
+      const serverUrl = "http://121.37.195.13:3000";
+      const websocketUrl = "ws://121.37.195.13:3001";
+      const strengthLevel = vue.ref("弱");
+      const form = vue.ref({
+        username: "",
+        password: "",
+        confirmPassword: ""
+      });
+      const isFormValid = vue.computed(() => {
+        return form.value.username && form.value.password && form.value.confirmPassword && form.value.password === form.value.confirmPassword;
+      });
+      const checkPasswordStrength = () => {
+        const pwd = form.value.password;
+        if (!pwd) {
+          strengthLevel.value = "弱";
+          return;
+        }
+        let strength = 0;
+        if (pwd.length >= 8)
+          strength++;
+        if (/[a-zA-Z]/.test(pwd))
+          strength++;
+        if (/[0-9]/.test(pwd))
+          strength++;
+        if (/[!@#$%^&*]/.test(pwd))
+          strength++;
+        if (strength <= 1)
+          strengthLevel.value = "弱";
+        else if (strength === 2)
+          strengthLevel.value = "中";
+        else
+          strengthLevel.value = "强";
+      };
+      const getStrengthClass = (index) => {
+        const strength = {
+          "弱": 1,
+          "中": 2,
+          "强": 3
+        }[strengthLevel.value] || 0;
+        if (index <= strength) {
+          switch (strengthLevel.value) {
+            case "弱":
+              return "weak";
+            case "中":
+              return "medium";
+            case "强":
+              return "strong";
+            default:
+              return "";
+          }
+        }
+        return "";
+      };
+      const changepwd_vis = () => {
+        password.value = !password.value;
+      };
+      const changepwd_vis_confirm = () => {
+        password_confirm.value = !password_confirm.value;
+      };
+      const submitRegister = async () => {
+        if (!isFormValid.value) {
+          uni.showToast({
+            title: "请完善注册信息",
+            icon: "none"
+          });
+          return;
+        }
+        try {
+          const res = await uni.request({
+            url: serverUrl + "/register",
+            method: "POST",
+            data: {
+              username: form.value.username,
+              password: form.value.password,
+              confirmPassword: form.value.confirmPassword
+            }
+          });
+          if (res.statusCode === 201 && res.data.success) {
+            uni.showToast({
+              title: "注册成功",
+              icon: "success"
+            });
+            uni.setStorage({
+              key: "username",
+              data: form.value.username,
+              success: () => {
+                uni.navigateTo({
+                  url: "/pages/FirstLogin/FirstLogin"
+                });
+              }
+            });
+          } else {
+            uni.showToast({
+              title: res.data.message || "注册失败",
+              icon: "none"
+            });
+          }
+        } catch (err) {
+          formatAppLog("error", "at pages/Register/Register.vue:232", "注册失败:", err);
+          uni.showToast({
+            title: "网络错误",
+            icon: "none"
+          });
+        }
+      };
+      const goToLogin = () => {
+        uni.navigateBack();
+      };
+      const __returned__ = { password, password_confirm, logo: logo$1, serverUrl, websocketUrl, strengthLevel, form, isFormValid, checkPasswordStrength, getStrengthClass, changepwd_vis, changepwd_vis_confirm, submitRegister, goToLogin, ref: vue.ref, computed: vue.computed };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
+      vue.createCommentVNode(" 动态背景 "),
+      vue.createElementVNode("view", { class: "animated-background" }, [
+        vue.createElementVNode("view", { class: "gradient-overlay" }),
+        vue.createElementVNode("view", { class: "particles" }, [
+          (vue.openBlock(), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList(20, (i2) => {
+              return vue.createElementVNode("view", {
+                key: i2,
+                class: "particle"
+              });
+            }),
+            64
+            /* STABLE_FRAGMENT */
+          ))
+        ]),
+        vue.createElementVNode("view", { class: "wave-container" }, [
+          vue.createElementVNode("view", { class: "wave wave1" }),
+          vue.createElementVNode("view", { class: "wave wave2" })
+        ])
+      ]),
+      vue.createCommentVNode(" Logo区域 "),
+      vue.createElementVNode("view", { class: "logo-section" }, [
+        vue.createElementVNode("image", {
+          src: $setup.logo,
+          class: "logo",
+          mode: "aspectFit"
+        }),
+        vue.createElementVNode("text", { class: "brand-name" }, "Squad"),
+        vue.createElementVNode("text", { class: "slogan" }, "开启你的运动之旅")
+      ]),
+      vue.createCommentVNode(" 注册表单 "),
+      vue.createElementVNode("view", { class: "form-section" }, [
+        vue.createElementVNode("view", { class: "input-group" }, [
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "person",
+              size: "20",
+              color: "#6e7ff3"
+            }),
+            vue.withDirectives(vue.createElementVNode(
+              "input",
+              {
+                type: "text",
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.username = $event),
+                placeholder: "请设置用户名",
+                class: "input"
+              },
+              null,
+              512
+              /* NEED_PATCH */
+            ), [
+              [vue.vModelText, $setup.form.username]
+            ])
+          ]),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "locked",
+              size: "20",
+              color: "#6e7ff3"
+            }),
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.password ? "password" : "text",
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.password = $event),
+              placeholder: "请设置密码",
+              class: "input",
+              onInput: $setup.checkPasswordStrength
+            }, null, 40, ["type"]), [
+              [vue.vModelDynamic, $setup.form.password]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: $setup.changepwd_vis
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.password ? "eye-slash-filled" : "eye-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ]),
+          vue.createCommentVNode(" 密码强度指示器 "),
+          vue.createElementVNode("view", { class: "password-strength" }, [
+            vue.createElementVNode(
+              "text",
+              { class: "strength-text" },
+              "密码强度: " + vue.toDisplayString($setup.strengthLevel),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode("view", { class: "strength-bars" }, [
+              (vue.openBlock(), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList(3, (n2) => {
+                  return vue.createElementVNode(
+                    "view",
+                    {
+                      key: n2,
+                      class: vue.normalizeClass(["strength-bar", $setup.getStrengthClass(n2)])
+                    },
+                    null,
+                    2
+                    /* CLASS */
+                  );
+                }),
+                64
+                /* STABLE_FRAGMENT */
+              ))
+            ]),
+            vue.createElementVNode("text", { class: "strength-tips" }, "提示：密码需包含字母、数字和特殊字符")
+          ]),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "locked",
+              size: "20",
+              color: "#6e7ff3"
+            }),
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.password_confirm ? "password" : "text",
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.confirmPassword = $event),
+              placeholder: "请确认密码",
+              class: "input"
+            }, null, 8, ["type"]), [
+              [vue.vModelDynamic, $setup.form.confirmPassword]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: $setup.changepwd_vis_confirm
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.password_confirm ? "eye-slash-filled" : "eye-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ])
+        ]),
+        vue.createCommentVNode(" 注册按钮 "),
+        vue.createElementVNode("button", {
+          class: "register-btn",
+          disabled: !$setup.isFormValid,
+          onClick: $setup.submitRegister
+        }, [
+          vue.createElementVNode("text", { class: "register-btn-text" }, "注册账号"),
+          vue.createElementVNode("view", { class: "btn-arrow" }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "arrowright",
+              size: "18",
+              color: "#fff"
+            })
+          ])
+        ], 8, ["disabled"]),
+        vue.createCommentVNode(" 返回登录 "),
+        vue.createElementVNode("view", {
+          class: "back-to-login",
+          onClick: $setup.goToLogin
+        }, [
+          vue.createElementVNode("text", null, "已有账号？"),
+          vue.createElementVNode("text", { class: "link-text" }, "返回登录")
+        ])
+      ]),
+      vue.createCommentVNode(" 底部协议 "),
+      vue.createElementVNode("view", { class: "agreement" }, [
+        vue.createElementVNode("text", null, "注册即代表同意"),
+        vue.createElementVNode("text", { class: "link" }, "《用户协议》"),
+        vue.createElementVNode("text", null, "和"),
+        vue.createElementVNode("text", { class: "link" }, "《隐私政策》")
+      ])
+    ]);
+  }
+  const PagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-6b0433d4"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Register/Register.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -2983,7 +2373,7 @@ if (uni.restoreGlobal) {
     }
   };
   function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -3352,10 +2742,10 @@ if (uni.restoreGlobal) {
   };
   function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_4);
-    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
-    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$3);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
-    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
+    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_1$2);
+    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_2);
+    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_3$1);
+    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_4$1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 返回按钮 "),
       vue.createCommentVNode(' <img\r\n      v-if="step > 1"\r\n      src="@/static/back/返回 (2).png"\r\n      alt="返回"\r\n      class="back-icon"\r\n      @click="prevStep"\r\n    /> '),
@@ -6810,7 +6200,7 @@ ${i3}
     }
   };
   function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
         "span",
@@ -22937,7 +22327,7 @@ This will fail in production.`);
   function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_0$3);
     const _component_uni_section = resolveEasycom(vue.resolveDynamicComponent("uni-section"), __easycom_1$1);
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_uni_calendar = resolveEasycom(vue.resolveDynamicComponent("uni-calendar"), __easycom_3);
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_4);
     const _component_uni_forms_item = resolveEasycom(vue.resolveDynamicComponent("uni-forms-item"), __easycom_5);
@@ -25559,7 +24949,7 @@ This will fail in production.`);
     }
   };
   function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 顶部导航栏 "),
@@ -26689,7 +26079,7 @@ This will fail in production.`);
       const targetCalories = vue.ref(100);
       const username = uni.getStorageSync("username");
       onPullDownRefresh(async () => {
-        formatAppLog("log", "at pages/My_Info/My_Info.vue:80", "refresh");
+        formatAppLog("log", "at pages/My_Info/My_Info.vue:124", "refresh");
         await fetchUserTargets();
         uni.stopPullDownRefresh();
       });
@@ -26703,7 +26093,7 @@ This will fail in production.`);
         try {
           const username2 = uni.getStorageSync("username");
           uni.setStorageSync(`username`, username2);
-          formatAppLog("log", "at pages/My_Info/My_Info.vue:96", `username: ${username2}`);
+          formatAppLog("log", "at pages/My_Info/My_Info.vue:140", `username: ${username2}`);
           const res = await uni.request({
             url: `${serverUrl}/getTargets`,
             method: "POST",
@@ -26723,7 +26113,7 @@ This will fail in production.`);
             uni.showToast({ title: "加载用户数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_Info/My_Info.vue:119", "获取用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_Info/My_Info.vue:163", "获取用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -26745,26 +26135,47 @@ This will fail in production.`);
             uni.showToast({ title: "更新失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/My_Info/My_Info.vue:144", "更新用户目标失败:", error2);
+          formatAppLog("error", "at pages/My_Info/My_Info.vue:188", "更新用户目标失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
+      const popup = vue.ref(null);
       const openEditModal = () => {
         editDuration.value = targetDuration.value;
         editCalories.value = targetCalories.value;
-        isEditing.value = true;
+        popup.value.open();
       };
-      const saveEdit = () => {
-        updateUserTargets(editCalories.value, editDuration.value);
-        isEditing.value = false;
+      const cancelEdit = () => {
+        popup.value.close();
+      };
+      const saveEdit = async () => {
+        try {
+          const res = await uni.request({
+            url: `${serverUrl}/updateTargets`,
+            method: "POST",
+            data: {
+              username: uni.getStorageSync("username"),
+              calories_goal: editCalories.value,
+              sport_time_goal: editDuration.value
+            }
+          });
+          if (res.data.success) {
+            targetCalories.value = editCalories.value;
+            targetDuration.value = editDuration.value;
+            uni.showToast({ title: "更新成功", icon: "success" });
+            popup.value.close();
+          } else {
+            uni.showToast({ title: "更新失败", icon: "none" });
+          }
+        } catch (error2) {
+          formatAppLog("error", "at pages/My_Info/My_Info.vue:231", "更新用户目标失败:", error2);
+          uni.showToast({ title: "服务器错误", icon: "none" });
+        }
       };
       const goToSettings = () => {
         uni.navigateTo({
           url: "/pages/Setting/Setting"
         });
-      };
-      const cancelEdit = () => {
-        isEditing.value = false;
       };
       const userInfo = vue.ref({
         username: uni.getStorageSync("username") || "",
@@ -26782,7 +26193,7 @@ This will fail in production.`);
           success: async (chooseResult) => {
             const filePath = chooseResult.tempFilePaths[0];
             const username2 = uni.getStorageSync("username");
-            formatAppLog("log", "at pages/My_Info/My_Info.vue:190", `username: ${username2}`);
+            formatAppLog("log", "at pages/My_Info/My_Info.vue:262", `username: ${username2}`);
             try {
               const uploadRes = await uni.uploadFile({
                 url: `${serverUrl}/upload`,
@@ -26812,7 +26223,7 @@ This will fail in production.`);
                 uni.showToast({ title: "上传失败", icon: "none" });
               }
             } catch (error2) {
-              formatAppLog("error", "at pages/My_Info/My_Info.vue:224", "更换头像失败:", error2);
+              formatAppLog("error", "at pages/My_Info/My_Info.vue:296", "更换头像失败:", error2);
               uni.showToast({ title: "服务器错误", icon: "none" });
             }
           },
@@ -26820,7 +26231,7 @@ This will fail in production.`);
           }
         });
       };
-      const __returned__ = { serverUrl, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, openEditModal, saveEdit, goToSettings, cancelEdit, userInfo, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, get onPullDownRefresh() {
+      const __returned__ = { serverUrl, defaultAvatar: defaultAvatar$1, isEditing, editDuration, editCalories, targetDuration, targetCalories, username, fetchUserTargets, updateUserTargets, popup, openEditModal, cancelEdit, saveEdit, goToSettings, userInfo, changeAvatar, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, get onPullDownRefresh() {
         return onPullDownRefresh;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
@@ -26828,123 +26239,214 @@ This will fail in production.`);
     }
   };
   function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+    const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
-      vue.createCommentVNode(" 头部信息卡片 "),
-      vue.createElementVNode("view", { class: "info-card" }, [
-        vue.createCommentVNode(" 添加设置按钮 "),
-        vue.createElementVNode("view", { class: "header" }, [
-          vue.createElementVNode("text", { class: "header-title" }, "个人信息"),
-          vue.createElementVNode("button", {
-            class: "settings-btn",
-            onClick: $setup.goToSettings
-          }, " ⚙️ ")
-        ]),
+      vue.createCommentVNode(" 顶部背景 "),
+      vue.createElementVNode("view", { class: "top-bg" }, [
+        vue.createElementVNode("view", { class: "bg-pattern" })
+      ]),
+      vue.createCommentVNode(" 个人信息卡片 "),
+      vue.createElementVNode("view", { class: "profile-card" }, [
         vue.createElementVNode("view", { class: "avatar-section" }, [
-          vue.createElementVNode("image", {
-            src: $setup.userInfo.avatar || $setup.defaultAvatar,
-            class: "avatar",
+          vue.createElementVNode("view", {
+            class: "avatar-wrapper",
             onClick: $setup.changeAvatar
-          }, null, 8, ["src"]),
+          }, [
+            vue.createElementVNode("image", {
+              src: $setup.userInfo.avatar || $setup.defaultAvatar,
+              class: "avatar",
+              mode: "aspectFill"
+            }, null, 8, ["src"]),
+            vue.createElementVNode("view", { class: "edit-overlay" }, [
+              vue.createVNode(_component_uni_icons, {
+                type: "camera-filled",
+                size: "24",
+                color: "#fff"
+              })
+            ])
+          ]),
           vue.createElementVNode(
             "text",
             { class: "username" },
             vue.toDisplayString($setup.username || "未登录"),
             1
             /* TEXT */
+          ),
+          vue.createElementVNode(
+            "text",
+            { class: "user-id" },
+            "ID: " + vue.toDisplayString($setup.userInfo.id || "-"),
+            1
+            /* TEXT */
           )
         ])
       ]),
-      vue.createElementVNode("view", { class: "info-section" }, [
+      vue.createCommentVNode(" 数据卡片 "),
+      vue.createElementVNode("view", { class: "data-section" }, [
         vue.createElementVNode("view", { class: "section-header" }, [
-          vue.createElementVNode("text", { class: "section-title" }, "我的数据"),
+          vue.createElementVNode("text", { class: "section-title" }, "运动数据"),
           vue.createElementVNode("button", {
             class: "edit-btn",
             onClick: $setup.openEditModal
-          }, "编辑")
-        ]),
-        vue.createElementVNode("view", { class: "info-list" }, [
-          vue.createElementVNode("view", { class: "info-item" }, [
-            vue.createElementVNode("text", { class: "label" }, "目标时长"),
-            vue.createElementVNode(
-              "text",
-              { class: "value" },
-              vue.toDisplayString($setup.targetDuration || "- -") + " 分钟",
-              1
-              /* TEXT */
-            )
-          ]),
-          vue.createElementVNode("view", { class: "info-item" }, [
-            vue.createElementVNode("text", { class: "label" }, "目标热量"),
-            vue.createElementVNode(
-              "text",
-              { class: "value" },
-              vue.toDisplayString($setup.targetCalories || "- -") + " kcal",
-              1
-              /* TEXT */
-            )
+          }, [
+            vue.createVNode(_component_uni_icons, {
+              type: "compose",
+              size: "16",
+              color: "#fff"
+            }),
+            vue.createElementVNode("text", null, "编辑")
           ])
         ]),
-        vue.createCommentVNode(" 编辑弹窗 "),
-        $setup.isEditing ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 0,
-          class: "modal"
-        }, [
-          vue.createElementVNode("view", { class: "modal-content" }, [
-            vue.createCommentVNode(" 弹窗头部 "),
-            vue.createElementVNode("view", { class: "modal-header" }, [
-              vue.createElementVNode("text", { class: "modal-title" }, "编辑目标")
-            ]),
-            vue.createCommentVNode(" 弹窗内容 "),
-            vue.createElementVNode("view", { class: "modal-body" }, [
-              vue.createElementVNode("view", { class: "input-group" }, [
-                vue.createElementVNode("text", { class: "label" }, "目标时长 (分钟)"),
-                vue.withDirectives(vue.createElementVNode(
-                  "input",
-                  {
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.editDuration = $event),
-                    type: "number",
-                    class: "input",
-                    placeholder: "请输入目标时长"
-                  },
-                  null,
-                  512
-                  /* NEED_PATCH */
-                ), [
-                  [vue.vModelText, $setup.editDuration]
-                ])
-              ]),
-              vue.createElementVNode("view", { class: "input-group" }, [
-                vue.createElementVNode("text", { class: "label" }, "目标热量 (kcal)"),
-                vue.withDirectives(vue.createElementVNode(
-                  "input",
-                  {
-                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editCalories = $event),
-                    type: "number",
-                    class: "input",
-                    placeholder: "请输入目标热量"
-                  },
-                  null,
-                  512
-                  /* NEED_PATCH */
-                ), [
-                  [vue.vModelText, $setup.editCalories]
-                ])
-              ])
-            ]),
-            vue.createCommentVNode(" 弹窗底部 "),
-            vue.createElementVNode("view", { class: "modal-footer" }, [
-              vue.createElementVNode("button", {
-                class: "cancel-btn",
-                onClick: $setup.cancelEdit
-              }, "取消"),
-              vue.createElementVNode("button", {
-                class: "save-btn",
-                onClick: $setup.saveEdit
-              }, "保存")
+        vue.createElementVNode("view", { class: "data-grid" }, [
+          vue.createElementVNode("view", { class: "data-item" }, [
+            vue.createElementVNode("view", { class: "data-icon" }, "🎯"),
+            vue.createElementVNode("text", { class: "data-label" }, "目标时长"),
+            vue.createElementVNode(
+              "text",
+              { class: "data-value" },
+              vue.toDisplayString($setup.targetDuration) + "分钟",
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode("view", { class: "progress-bar" }, [
+              vue.createElementVNode(
+                "view",
+                {
+                  class: "progress",
+                  style: vue.normalizeStyle({ width: `${$setup.targetDuration / 120 * 100}%` })
+                },
+                null,
+                4
+                /* STYLE */
+              )
+            ])
+          ]),
+          vue.createElementVNode("view", { class: "data-item" }, [
+            vue.createElementVNode("view", { class: "data-icon" }, "🔥"),
+            vue.createElementVNode("text", { class: "data-label" }, "目标热量"),
+            vue.createElementVNode(
+              "text",
+              { class: "data-value" },
+              vue.toDisplayString($setup.targetCalories) + "kcal",
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode("view", { class: "progress-bar" }, [
+              vue.createElementVNode(
+                "view",
+                {
+                  class: "progress",
+                  style: vue.normalizeStyle({ width: `${$setup.targetCalories / 1e3 * 100}%` })
+                },
+                null,
+                4
+                /* STYLE */
+              )
             ])
           ])
-        ])) : vue.createCommentVNode("v-if", true)
-      ])
+        ])
+      ]),
+      vue.createCommentVNode(" 功能按钮区 "),
+      vue.createElementVNode("view", { class: "action-section" }, [
+        vue.createElementVNode("view", {
+          class: "action-btn",
+          onClick: $setup.goToSettings
+        }, [
+          vue.createVNode(_component_uni_icons, {
+            type: "gear-filled",
+            size: "24",
+            color: "#5B8FF9"
+          }),
+          vue.createElementVNode("text", null, "设置")
+        ]),
+        vue.createElementVNode("view", { class: "action-btn" }, [
+          vue.createVNode(_component_uni_icons, {
+            type: "help-filled",
+            size: "24",
+            color: "#5B8FF9"
+          }),
+          vue.createElementVNode("text", null, "帮助")
+        ]),
+        vue.createElementVNode("view", { class: "action-btn" }, [
+          vue.createVNode(_component_uni_icons, {
+            type: "info-filled",
+            size: "24",
+            color: "#5B8FF9"
+          }),
+          vue.createElementVNode("text", null, "关于")
+        ])
+      ]),
+      vue.createElementVNode("view", { class: "space" }),
+      vue.createCommentVNode(" 编辑弹窗 "),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "popup",
+          type: "center"
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "modal" }, [
+              vue.createElementVNode("view", { class: "modal-content" }, [
+                vue.createElementVNode("view", { class: "modal-header" }, [
+                  vue.createElementVNode("text", { class: "modal-title" }, "编辑目标")
+                ]),
+                vue.createElementVNode("view", { class: "modal-body" }, [
+                  vue.createElementVNode("view", { class: "input-group" }, [
+                    vue.createElementVNode("text", { class: "label" }, "目标时长 (分钟)"),
+                    vue.withDirectives(vue.createElementVNode(
+                      "input",
+                      {
+                        type: "number",
+                        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.editDuration = $event),
+                        class: "input",
+                        placeholder: "请输入目标时长"
+                      },
+                      null,
+                      512
+                      /* NEED_PATCH */
+                    ), [
+                      [vue.vModelText, $setup.editDuration]
+                    ])
+                  ]),
+                  vue.createElementVNode("view", { class: "input-group" }, [
+                    vue.createElementVNode("text", { class: "label" }, "目标热量 (kcal)"),
+                    vue.withDirectives(vue.createElementVNode(
+                      "input",
+                      {
+                        type: "number",
+                        "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editCalories = $event),
+                        class: "input",
+                        placeholder: "请输入目标热量"
+                      },
+                      null,
+                      512
+                      /* NEED_PATCH */
+                    ), [
+                      [vue.vModelText, $setup.editCalories]
+                    ])
+                  ])
+                ]),
+                vue.createElementVNode("view", { class: "modal-footer" }, [
+                  vue.createElementVNode("button", {
+                    class: "cancel-btn",
+                    onClick: $setup.cancelEdit
+                  }, "取消"),
+                  vue.createElementVNode("button", {
+                    class: "save-btn",
+                    onClick: $setup.saveEdit
+                  }, "保存")
+                ])
+              ])
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      )
     ]);
   }
   const PagesMyInfoMyInfo = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__scopeId", "data-v-4788b7bf"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/My_Info/My_Info.vue"]]);
@@ -27264,7 +26766,7 @@ This will fail in production.`);
     }
   };
   function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createCommentVNode(" 顶部导航栏 "),
       vue.createElementVNode("view", { class: "nav-bar" }, [
@@ -28020,7 +27522,7 @@ This will fail in production.`);
     }
   };
   function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_1);
     return vue.openBlock(), vue.createElementBlock("view", { class: "chat-container" }, [
       vue.createCommentVNode(" 顶部导航栏 "),
@@ -28936,7 +28438,7 @@ This will fail in production.`);
   };
   function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_l_circle = resolveEasycom(vue.resolveDynamicComponent("l-circle"), __easycom_0$1);
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_1$2);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "challenge-container" }, [
       vue.createCommentVNode(" 顶部卡片 "),
       vue.createElementVNode("view", { class: "challenge-card" }, [
@@ -29582,7 +29084,8 @@ This will fail in production.`);
           content: "确认退出登录吗？",
           success: (res) => {
             if (res.confirm) {
-              uni.clearStorageSync();
+              uni.removeStorageSync("username");
+              uni.removeStorageSync("friendsList");
               const store = useWebSocketStore();
               store.closeWebSocket();
               uni.reLaunch({
@@ -29671,7 +29174,7 @@ This will fail in production.`);
             uni.showToast({ title: "获取用户信息失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Setting/Info/Info.vue:97", "获取用户信息失败:", error2);
+          formatAppLog("error", "at pages/Setting/Info/Info.vue:140", "获取用户信息失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -29701,18 +29204,15 @@ This will fail in production.`);
             userInfo.value = { ...editData.value };
             uni.setStorageSync(`username`, userInfo.value.username);
             const username2 = uni.getStorageSync("username");
-            formatAppLog("log", "at pages/Setting/Info/Info.vue:129", `1: ${username2}`);
+            formatAppLog("log", "at pages/Setting/Info/Info.vue:172", `1: ${username2}`);
             uni.$emit("saveEdit");
-            uni.navigateTo({
-              url: "/pages/My_Info/My_Info"
-              // 替换为你想刷新的页面路径
-            });
+            uni.navigateBack();
             uni.showToast({ title: "修改成功", icon: "success" });
           } else {
             uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Setting/Info/Info.vue:140", "保存用户信息失败:", error2);
+          formatAppLog("error", "at pages/Setting/Info/Info.vue:184", "保存用户信息失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         } finally {
           isEditing.value = false;
@@ -29724,11 +29224,17 @@ This will fail in production.`);
     }
   };
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "profile-container" }, [
-      vue.createCommentVNode(" 信息展示部分 "),
-      vue.createElementVNode("view", { class: "info-display" }, [
+      vue.createCommentVNode(" 顶部标题 "),
+      vue.createElementVNode("view", { class: "header" }, [
+        vue.createElementVNode("text", { class: "page-title" }, "个人资料"),
+        vue.createElementVNode("text", { class: "sub-title" }, "完善你的个人信息")
+      ]),
+      vue.createCommentVNode(" 信息展示卡片 "),
+      vue.createElementVNode("view", { class: "info-card" }, [
         vue.createElementVNode("view", { class: "info-item" }, [
-          vue.createElementVNode("text", { class: "label" }, "用户名："),
+          vue.createElementVNode("text", { class: "label" }, "用户名"),
           vue.createElementVNode(
             "text",
             { class: "value" },
@@ -29738,7 +29244,7 @@ This will fail in production.`);
           )
         ]),
         vue.createElementVNode("view", { class: "info-item" }, [
-          vue.createElementVNode("text", { class: "label" }, "身高："),
+          vue.createElementVNode("text", { class: "label" }, "身高"),
           vue.createElementVNode(
             "text",
             { class: "value" },
@@ -29748,7 +29254,7 @@ This will fail in production.`);
           )
         ]),
         vue.createElementVNode("view", { class: "info-item" }, [
-          vue.createElementVNode("text", { class: "label" }, "体重："),
+          vue.createElementVNode("text", { class: "label" }, "体重"),
           vue.createElementVNode(
             "text",
             { class: "value" },
@@ -29758,7 +29264,7 @@ This will fail in production.`);
           )
         ]),
         vue.createElementVNode("view", { class: "info-item" }, [
-          vue.createElementVNode("text", { class: "label" }, "年龄："),
+          vue.createElementVNode("text", { class: "label" }, "年龄"),
           vue.createElementVNode(
             "text",
             { class: "value" },
@@ -29768,7 +29274,7 @@ This will fail in production.`);
           )
         ]),
         vue.createElementVNode("view", { class: "info-item" }, [
-          vue.createElementVNode("text", { class: "label" }, "性别："),
+          vue.createElementVNode("text", { class: "label" }, "性别"),
           vue.createElementVNode(
             "text",
             { class: "value" },
@@ -29782,7 +29288,14 @@ This will fail in production.`);
       vue.createElementVNode("button", {
         class: "edit-btn",
         onClick: $setup.openEditModal
-      }, "编辑"),
+      }, [
+        vue.createVNode(_component_uni_icons, {
+          type: "compose",
+          size: "16",
+          color: "#fff"
+        }),
+        vue.createElementVNode("text", null, "编辑资料")
+      ]),
       vue.createCommentVNode(" 编辑弹窗 "),
       $setup.isEditing ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
@@ -29790,16 +29303,20 @@ This will fail in production.`);
       }, [
         vue.createElementVNode("view", { class: "modal-content" }, [
           vue.createElementVNode("view", { class: "modal-header" }, [
-            vue.createElementVNode("text", null, "编辑个人信息")
+            vue.createElementVNode("text", { class: "modal-title" }, "编辑个人信息")
           ]),
-          vue.createElementVNode("view", { class: "modal-body" }, [
+          vue.createElementVNode("scroll-view", {
+            class: "modal-body",
+            "scroll-y": ""
+          }, [
             vue.createElementVNode("view", { class: "input-group" }, [
-              vue.createElementVNode("text", { class: "label" }, "用户名："),
+              vue.createElementVNode("text", { class: "label" }, "用户名"),
               vue.withDirectives(vue.createElementVNode(
                 "input",
                 {
                   "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.editData.username = $event),
-                  placeholder: "请输入用户名"
+                  placeholder: "请输入用户名",
+                  class: "input"
                 },
                 null,
                 512
@@ -29809,13 +29326,14 @@ This will fail in production.`);
               ])
             ]),
             vue.createElementVNode("view", { class: "input-group" }, [
-              vue.createElementVNode("text", { class: "label" }, "身高："),
+              vue.createElementVNode("text", { class: "label" }, "身高 (cm)"),
               vue.withDirectives(vue.createElementVNode(
                 "input",
                 {
                   "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.editData.height = $event),
                   type: "number",
-                  placeholder: "请输入身高(cm)"
+                  placeholder: "请输入身高",
+                  class: "input"
                 },
                 null,
                 512
@@ -29825,13 +29343,14 @@ This will fail in production.`);
               ])
             ]),
             vue.createElementVNode("view", { class: "input-group" }, [
-              vue.createElementVNode("text", { class: "label" }, "体重："),
+              vue.createElementVNode("text", { class: "label" }, "体重 (kg)"),
               vue.withDirectives(vue.createElementVNode(
                 "input",
                 {
                   "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.editData.weight = $event),
                   type: "number",
-                  placeholder: "请输入体重(kg)"
+                  placeholder: "请输入体重",
+                  class: "input"
                 },
                 null,
                 512
@@ -29841,13 +29360,14 @@ This will fail in production.`);
               ])
             ]),
             vue.createElementVNode("view", { class: "input-group" }, [
-              vue.createElementVNode("text", { class: "label" }, "年龄："),
+              vue.createElementVNode("text", { class: "label" }, "年龄"),
               vue.withDirectives(vue.createElementVNode(
                 "input",
                 {
                   "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => $setup.editData.age = $event),
                   type: "number",
-                  placeholder: "请输入年龄"
+                  placeholder: "请输入年龄",
+                  class: "input"
                 },
                 null,
                 512
@@ -29857,19 +29377,27 @@ This will fail in production.`);
               ])
             ]),
             vue.createElementVNode("view", { class: "input-group" }, [
-              vue.createElementVNode("text", { class: "label" }, "性别："),
-              vue.withDirectives(vue.createElementVNode(
-                "input",
+              vue.createElementVNode("text", { class: "label" }, "性别"),
+              vue.createElementVNode(
+                "picker",
                 {
-                  "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.editData.gender = $event),
-                  placeholder: "请输入性别"
+                  mode: "selector",
+                  range: ["男", "女"],
+                  onChange: _cache[4] || (_cache[4] = (...args) => _ctx.onGenderChange && _ctx.onGenderChange(...args)),
+                  class: "picker"
                 },
-                null,
-                512
-                /* NEED_PATCH */
-              ), [
-                [vue.vModelText, $setup.editData.gender]
-              ])
+                [
+                  vue.createElementVNode(
+                    "view",
+                    { class: "picker-value" },
+                    vue.toDisplayString($setup.editData.gender || "请选择性别"),
+                    1
+                    /* TEXT */
+                  )
+                ],
+                32
+                /* NEED_HYDRATION */
+              )
             ])
           ]),
           vue.createElementVNode("view", { class: "modal-footer" }, [
@@ -29897,7 +29425,36 @@ This will fail in production.`);
         newPassword: "",
         confirmPassword: ""
       });
+      const showOldPassword = vue.ref(false);
+      const showNewPassword = vue.ref(false);
+      const showConfirmPassword = vue.ref(false);
       const isFormValid = vue.ref(false);
+      const getStrengthClass = (index) => {
+        const password = form.value.newPassword;
+        if (!password)
+          return "";
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*]/.test(password);
+        const isLongEnough = password.length >= 8;
+        let strength = 0;
+        if (hasLetter)
+          strength++;
+        if (hasNumber)
+          strength++;
+        if (hasSpecial)
+          strength++;
+        if (isLongEnough)
+          strength++;
+        if (index < strength) {
+          if (strength === 1)
+            return "weak";
+          if (strength === 2)
+            return "medium";
+          return "strong";
+        }
+        return "";
+      };
       const validateForm = () => {
         isFormValid.value = form.value.oldPassword && form.value.newPassword && form.value.confirmPassword;
       };
@@ -29928,73 +29485,167 @@ This will fail in production.`);
             uni.showToast({ title: res.data.message || "修改失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Setting/changePassword/changePassword.vue:97", "密码修改请求失败:", error2);
+          formatAppLog("error", "at pages/Setting/changePassword/changePassword.vue:170", "密码修改请求失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
-      const __returned__ = { serverUrl, form, isFormValid, validateForm, submitPassword, ref: vue.ref };
+      const strengthText = vue.computed(() => {
+        const password = form.value.newPassword;
+        if (!password)
+          return "弱";
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*]/.test(password);
+        const isLongEnough = password.length >= 8;
+        let strength = 0;
+        if (hasLetter)
+          strength++;
+        if (hasNumber)
+          strength++;
+        if (hasSpecial)
+          strength++;
+        if (isLongEnough)
+          strength++;
+        if (strength <= 1)
+          return "弱";
+        if (strength === 2)
+          return "中";
+        return "强";
+      });
+      const __returned__ = { serverUrl, form, showOldPassword, showNewPassword, showConfirmPassword, isFormValid, getStrengthClass, validateForm, submitPassword, strengthText, ref: vue.ref, computed: vue.computed };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
   function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "password-container" }, [
-      vue.createElementVNode("view", { class: "input-group" }, [
-        vue.createElementVNode("text", { class: "label" }, "原密码："),
-        vue.withDirectives(vue.createElementVNode(
-          "input",
-          {
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.oldPassword = $event),
-            placeholder: "请输入原密码",
-            type: "password",
-            onInput: $setup.validateForm
-          },
-          null,
-          544
-          /* NEED_HYDRATION, NEED_PATCH */
-        ), [
-          [vue.vModelText, $setup.form.oldPassword]
+      vue.createCommentVNode(" 顶部标题区域 "),
+      vue.createElementVNode("view", { class: "header" }, [
+        vue.createElementVNode("text", { class: "page-title" }, "修改密码"),
+        vue.createElementVNode("text", { class: "sub-title" }, "请设置一个安全的新密码")
+      ]),
+      vue.createCommentVNode(" 密码表单区域 "),
+      vue.createElementVNode("view", { class: "form-card" }, [
+        vue.createCommentVNode(" 原密码输入框 "),
+        vue.createElementVNode("view", { class: "input-group" }, [
+          vue.createElementVNode("text", { class: "label" }, "当前密码"),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.showOldPassword ? "text" : "password",
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.oldPassword = $event),
+              placeholder: "请输入当前密码",
+              class: "input"
+            }, null, 8, ["type"]), [
+              [vue.vModelDynamic, $setup.form.oldPassword]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: _cache[1] || (_cache[1] = ($event) => $setup.showOldPassword = !$setup.showOldPassword)
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.showOldPassword ? "eye-filled" : "eye-slash-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ])
+        ]),
+        vue.createCommentVNode(" 新密码输入框 "),
+        vue.createElementVNode("view", { class: "input-group" }, [
+          vue.createElementVNode("text", { class: "label" }, "新密码"),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.showNewPassword ? "text" : "password",
+              "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.newPassword = $event),
+              placeholder: "请输入新密码",
+              class: "input",
+              onInput: $setup.validateForm
+            }, null, 40, ["type"]), [
+              [vue.vModelDynamic, $setup.form.newPassword]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: _cache[3] || (_cache[3] = ($event) => $setup.showNewPassword = !$setup.showNewPassword)
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.showNewPassword ? "eye-filled" : "eye-slash-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ]),
+          vue.createCommentVNode(" 添加密码强度提示 "),
+          vue.createElementVNode("view", { class: "password-strength-section" }, [
+            vue.createElementVNode(
+              "text",
+              { class: "strength-label" },
+              "密码强度: " + vue.toDisplayString($setup.strengthText),
+              1
+              /* TEXT */
+            ),
+            vue.createElementVNode("view", { class: "password-strength" }, [
+              (vue.openBlock(), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList(3, (level, index) => {
+                  return vue.createElementVNode(
+                    "view",
+                    {
+                      key: index,
+                      class: vue.normalizeClass(["strength-bar", $setup.getStrengthClass(index)])
+                    },
+                    null,
+                    2
+                    /* CLASS */
+                  );
+                }),
+                64
+                /* STABLE_FRAGMENT */
+              ))
+            ]),
+            vue.createElementVNode("text", { class: "strength-tips" }, "提示：密码需包含字母、数字和特殊字符")
+          ])
+        ]),
+        vue.createCommentVNode(" 确认密码输入框 "),
+        vue.createElementVNode("view", { class: "input-group" }, [
+          vue.createElementVNode("text", { class: "label" }, "确认新密码"),
+          vue.createElementVNode("view", { class: "input-wrapper" }, [
+            vue.withDirectives(vue.createElementVNode("input", {
+              type: $setup.showConfirmPassword ? "text" : "password",
+              "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => $setup.form.confirmPassword = $event),
+              placeholder: "请再次输入新密码",
+              class: "input",
+              onInput: $setup.validateForm
+            }, null, 40, ["type"]), [
+              [vue.vModelDynamic, $setup.form.confirmPassword]
+            ]),
+            vue.createElementVNode("view", {
+              class: "eye-icon",
+              onClick: _cache[5] || (_cache[5] = ($event) => $setup.showConfirmPassword = !$setup.showConfirmPassword)
+            }, [
+              vue.createVNode(_component_uni_icons, {
+                type: $setup.showConfirmPassword ? "eye-filled" : "eye-slash-filled",
+                size: "20",
+                color: "#999"
+              }, null, 8, ["type"])
+            ])
+          ])
         ])
       ]),
-      vue.createElementVNode("view", { class: "input-group" }, [
-        vue.createElementVNode("text", { class: "label" }, "新密码："),
-        vue.withDirectives(vue.createElementVNode(
-          "input",
-          {
-            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.newPassword = $event),
-            placeholder: "请输入新密码",
-            type: "password",
-            onInput: $setup.validateForm
-          },
-          null,
-          544
-          /* NEED_HYDRATION, NEED_PATCH */
-        ), [
-          [vue.vModelText, $setup.form.newPassword]
-        ])
-      ]),
-      vue.createElementVNode("view", { class: "input-group" }, [
-        vue.createElementVNode("text", { class: "label" }, "确认密码："),
-        vue.withDirectives(vue.createElementVNode(
-          "input",
-          {
-            "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.form.confirmPassword = $event),
-            placeholder: "请再次输入新密码",
-            type: "password",
-            onInput: $setup.validateForm
-          },
-          null,
-          544
-          /* NEED_HYDRATION, NEED_PATCH */
-        ), [
-          [vue.vModelText, $setup.form.confirmPassword]
-        ])
-      ]),
+      vue.createCommentVNode(" 提交按钮 "),
       vue.createElementVNode("button", {
-        class: vue.normalizeClass(["submit-btn", { "active": $setup.isFormValid }]),
+        class: vue.normalizeClass(["submit-btn", { active: $setup.isFormValid }]),
         disabled: !$setup.isFormValid,
         onClick: $setup.submitPassword
-      }, " 提交 ", 10, ["disabled"])
+      }, [
+        vue.createElementVNode("text", null, "确认修改"),
+        vue.createVNode(_component_uni_icons, {
+          type: "checkmarkempty",
+          size: "20",
+          color: "#fff"
+        })
+      ], 10, ["disabled"])
     ]);
   }
   const PagesSettingChangePasswordChangePassword = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-ad9c736f"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/changePassword/changePassword.vue"]]);
@@ -30024,6 +29675,22 @@ This will fail in production.`);
       const isFormValid = vue.computed(() => {
         return form.value.goals.length > 0 && form.value.types.length > 0;
       });
+      const toggleGoal = (value) => {
+        const index = form.value.goals.indexOf(value);
+        if (index === -1) {
+          form.value.goals.push(value);
+        } else {
+          form.value.goals.splice(index, 1);
+        }
+      };
+      const toggleType = (value) => {
+        const index = form.value.types.indexOf(value);
+        if (index === -1) {
+          form.value.types.push(value);
+        } else {
+          form.value.types.splice(index, 1);
+        }
+      };
       vue.onMounted(() => {
         fetchUserSportData();
       });
@@ -30054,7 +29721,7 @@ This will fail in production.`);
             uni.showToast({ title: "获取数据失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:120", "获取运动数据失败:", error2);
+          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:159", "获取运动数据失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
@@ -30077,149 +29744,114 @@ This will fail in production.`);
             uni.showToast({ title: res.data.message || "提交失败", icon: "none" });
           }
         } catch (error2) {
-          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:146", "提交数据失败:", error2);
+          formatAppLog("error", "at pages/Setting/sportSetting/sportSetting.vue:185", "提交数据失败:", error2);
           uni.showToast({ title: "服务器错误", icon: "none" });
         }
       };
-      const __returned__ = { serverUrl, goalOptions, typeOptions, form, isFormValid, fetchUserSportData, submitData, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed };
+      const __returned__ = { serverUrl, goalOptions, typeOptions, form, isFormValid, toggleGoal, toggleType, fetchUserSportData, submitData, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_fui_checkbox = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox"), __easycom_0$4);
-    const _component_fui_list_cell = resolveEasycom(vue.resolveDynamicComponent("fui-list-cell"), __easycom_1$3);
-    const _component_fui_label = resolveEasycom(vue.resolveDynamicComponent("fui-label"), __easycom_2);
-    const _component_fui_checkbox_group = resolveEasycom(vue.resolveDynamicComponent("fui-checkbox-group"), __easycom_3$1);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "sport-container" }, [
-      vue.createCommentVNode(" 运动目标多选框 "),
-      vue.createElementVNode("view", { class: "checkbox-group" }, [
-        vue.createElementVNode("text", { class: "label" }, "运动目标："),
-        vue.createVNode(_component_fui_checkbox_group, {
-          modelValue: $setup.form.goals,
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.form.goals = $event)
-        }, {
-          default: vue.withCtx(() => [
-            (vue.openBlock(true), vue.createElementBlock(
-              vue.Fragment,
-              null,
-              vue.renderList($setup.goalOptions, (item, index) => {
-                return vue.openBlock(), vue.createBlock(
-                  _component_fui_label,
-                  { key: index },
-                  {
-                    default: vue.withCtx(() => [
-                      vue.createVNode(
-                        _component_fui_list_cell,
-                        null,
-                        {
-                          default: vue.withCtx(() => [
-                            vue.createElementVNode("view", { class: "fui-align__center" }, [
-                              vue.createVNode(_component_fui_checkbox, {
-                                checked: item.checked,
-                                value: item.value,
-                                color: "#777CFF",
-                                borderColor: "#B2B2B2",
-                                borderRadius: "8rpx"
-                              }, null, 8, ["checked", "value"]),
-                              vue.createElementVNode(
-                                "text",
-                                { class: "fui-text" },
-                                vue.toDisplayString(item.name),
-                                1
-                                /* TEXT */
-                              )
-                            ])
-                          ]),
-                          _: 2
-                          /* DYNAMIC */
-                        },
-                        1024
-                        /* DYNAMIC_SLOTS */
-                      )
-                    ]),
-                    _: 2
-                    /* DYNAMIC */
-                  },
-                  1024
-                  /* DYNAMIC_SLOTS */
-                );
-              }),
-              128
-              /* KEYED_FRAGMENT */
-            ))
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"])
+      vue.createCommentVNode(" 顶部标题区域 "),
+      vue.createElementVNode("view", { class: "header" }, [
+        vue.createElementVNode("text", { class: "page-title" }, "运动偏好设置"),
+        vue.createElementVNode("text", { class: "sub-title" }, "选择你感兴趣的运动目标和类型")
       ]),
-      vue.createCommentVNode(" 运动类型多选框 "),
-      vue.createElementVNode("view", { class: "checkbox-group" }, [
-        vue.createElementVNode("text", { class: "label" }, "运动类型："),
-        vue.createVNode(_component_fui_checkbox_group, {
-          modelValue: $setup.form.types,
-          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => $setup.form.types = $event)
-        }, {
-          default: vue.withCtx(() => [
-            (vue.openBlock(true), vue.createElementBlock(
-              vue.Fragment,
-              null,
-              vue.renderList($setup.typeOptions, (item, index) => {
-                return vue.openBlock(), vue.createBlock(
-                  _component_fui_label,
-                  { key: index },
-                  {
-                    default: vue.withCtx(() => [
-                      vue.createVNode(
-                        _component_fui_list_cell,
-                        null,
-                        {
-                          default: vue.withCtx(() => [
-                            vue.createElementVNode("view", { class: "fui-align__center" }, [
-                              vue.createVNode(_component_fui_checkbox, {
-                                checked: item.checked,
-                                value: item.value,
-                                color: "#777CFF",
-                                borderColor: "#B2B2B2",
-                                borderRadius: "8rpx"
-                              }, null, 8, ["checked", "value"]),
-                              vue.createElementVNode(
-                                "text",
-                                { class: "fui-text" },
-                                vue.toDisplayString(item.name),
-                                1
-                                /* TEXT */
-                              )
-                            ])
-                          ]),
-                          _: 2
-                          /* DYNAMIC */
-                        },
-                        1024
-                        /* DYNAMIC_SLOTS */
-                      )
-                    ]),
-                    _: 2
-                    /* DYNAMIC */
-                  },
-                  1024
-                  /* DYNAMIC_SLOTS */
-                );
-              }),
-              128
-              /* KEYED_FRAGMENT */
-            ))
-          ]),
-          _: 1
-          /* STABLE */
-        }, 8, ["modelValue"])
+      vue.createCommentVNode(" 运动目标选择区域 "),
+      vue.createElementVNode("view", { class: "section goals-section" }, [
+        vue.createElementVNode("view", { class: "section-title" }, [
+          vue.createVNode(_component_uni_icons, {
+            type: "star-filled",
+            size: "20",
+            color: "#5B8FF9"
+          }),
+          vue.createElementVNode("text", null, "运动目标")
+        ]),
+        vue.createElementVNode("view", { class: "checkbox-grid" }, [
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($setup.goalOptions, (item, index) => {
+              return vue.openBlock(), vue.createElementBlock("view", {
+                key: index,
+                class: vue.normalizeClass(["checkbox-item", { active: $setup.form.goals.includes(item.value) }]),
+                onClick: ($event) => $setup.toggleGoal(item.value)
+              }, [
+                vue.createVNode(_component_uni_icons, {
+                  type: $setup.form.goals.includes(item.value) ? "checkbox-filled" : "circle",
+                  size: "18",
+                  color: $setup.form.goals.includes(item.value) ? "#5B8FF9" : "#999"
+                }, null, 8, ["type", "color"]),
+                vue.createElementVNode(
+                  "text",
+                  null,
+                  vue.toDisplayString(item.name),
+                  1
+                  /* TEXT */
+                )
+              ], 10, ["onClick"]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ])
+      ]),
+      vue.createCommentVNode(" 运动类型选择区域 "),
+      vue.createElementVNode("view", { class: "section types-section" }, [
+        vue.createElementVNode("view", { class: "section-title" }, [
+          vue.createVNode(_component_uni_icons, {
+            type: "flag-filled",
+            size: "20",
+            color: "#5B8FF9"
+          }),
+          vue.createElementVNode("text", null, "运动类型")
+        ]),
+        vue.createElementVNode("view", { class: "checkbox-grid" }, [
+          (vue.openBlock(true), vue.createElementBlock(
+            vue.Fragment,
+            null,
+            vue.renderList($setup.typeOptions, (item, index) => {
+              return vue.openBlock(), vue.createElementBlock("view", {
+                key: index,
+                class: vue.normalizeClass(["checkbox-item", { active: $setup.form.types.includes(item.value) }]),
+                onClick: ($event) => $setup.toggleType(item.value)
+              }, [
+                vue.createVNode(_component_uni_icons, {
+                  type: $setup.form.types.includes(item.value) ? "checkbox-filled" : "circle",
+                  size: "18",
+                  color: $setup.form.types.includes(item.value) ? "#5B8FF9" : "#999"
+                }, null, 8, ["type", "color"]),
+                vue.createElementVNode(
+                  "text",
+                  null,
+                  vue.toDisplayString(item.name),
+                  1
+                  /* TEXT */
+                )
+              ], 10, ["onClick"]);
+            }),
+            128
+            /* KEYED_FRAGMENT */
+          ))
+        ])
       ]),
       vue.createCommentVNode(" 提交按钮 "),
       vue.createElementVNode("button", {
         class: "submit-btn",
         disabled: !$setup.isFormValid,
         onClick: $setup.submitData
-      }, "提交", 8, ["disabled"])
+      }, [
+        vue.createElementVNode("text", { class: "submit-text" }, "保存设置"),
+        vue.createVNode(_component_uni_icons, {
+          type: "checkmarkempty",
+          size: "20",
+          color: "#fff"
+        })
+      ], 8, ["disabled"])
     ]);
   }
   const PagesSettingSportSettingSportSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__scopeId", "data-v-ff4fc63b"], ["__file", "D:/coding/sf_enginering/Squad/Squad/pages/Setting/sportSetting/sportSetting.vue"]]);
